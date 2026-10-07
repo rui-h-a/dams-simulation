@@ -1,0 +1,18 @@
+{"stage": "pilot", "worlds": 20, "state_byte_matches": 20, "differences": 0}
+{"stage": "confirmation", "worlds": 960, "state_byte_matches": 960, "differences": 0}
+{"stage": "mechanisms", "worlds": 0, "state_byte_matches": 0, "differences": 0}
+{"stage": "stress", "worlds": 496, "state_byte_matches": 496, "differences": 0}
+{"stage": "sensitivity", "worlds": 312, "state_byte_matches": 312, "differences": 0}
+{"stage": "scenarios", "worlds": 360, "state_byte_matches": 360, "differences": 0}
+{"stage": "extended", "worlds": 240, "state_byte_matches": 240, "differences": 0}
+{"stage": "recovery", "worlds": 0, "state_byte_matches": 0, "differences": 0}
+{
+  "status": "passed",
+  "compared_complete_persisted_worlds": 2388,
+  "summary_byte_matches": 2388,
+  "final_state_byte_matches": 2388,
+  "timeseries_byte_matches": 2388,
+  "scientific_or_integrity_difference_count": 0,
+  "fresh_origin_git_commit": "a9f6d711ca23f2bc9762b7a6d2bba42db95be275",
+  "fresh_git_dirty": false
+}

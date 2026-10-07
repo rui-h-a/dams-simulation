@@ -1,0 +1,81 @@
+{
+  "copied_chain_files": [
+    {
+      "bytes": 2872,
+      "path": "pipeline_manifest.json",
+      "sha256": "c099573ff4655124800a47cb92ee4c903dceb851001f0f9ac0970ee66236c9eb"
+    },
+    {
+      "bytes": 2882,
+      "path": "tests.log",
+      "sha256": "0d9dc6da353de4b2e3885fea761db7358601b18ff8b59201084b8ee2998421aa"
+    },
+    {
+      "bytes": 1199,
+      "path": "smoke.log",
+      "sha256": "8096d13731a0169d6ac06bf48bd3a493992c0f58e06b24cc44fcb6ece27dbad4"
+    },
+    {
+      "bytes": 231,
+      "path": "pilot.log",
+      "sha256": "ddead54d87321bfaa9a58a4079733c12a6c94ce63f5001d38b154a94cdb173d5"
+    },
+    {
+      "bytes": 1056,
+      "path": "confirmation.log",
+      "sha256": "348a076c40de0270d6e0f7e0af9bc7964c9b3fc969fcf7ad0d816e2ecc2d26ca"
+    },
+    {
+      "bytes": 37,
+      "path": "mechanisms.log",
+      "sha256": "c0b7d892ee381de3cc3f6ff5e1da517841047884287d727d11249ac706e8d840"
+    },
+    {
+      "bytes": 16,
+      "path": "stress.log",
+      "sha256": "2c902be39059759e3b3b2d987f1bfb113b88a864457568b99d82a3e7abcea016"
+    },
+    {
+      "bytes": 200,
+      "path": "sensitivity.log",
+      "sha256": "85143d8a33a7c337873c57043c9dc50e09003ff129d9ccd7861f1fc387303a41"
+    },
+    {
+      "bytes": 348,
+      "path": "scenarios.log",
+      "sha256": "45aec1ef0f4f600b5ac99df6cff7f5985e5e35c7d3d3f8bd60e7781678612b8c"
+    },
+    {
+      "bytes": 663,
+      "path": "extended.log",
+      "sha256": "a05a2f10c5128186e9bca30f52fcc82e9a5db86e0540d840503ecacaf232067e"
+    },
+    {
+      "bytes": 989,
+      "path": "recovery.log",
+      "sha256": "ff970cb403ed76b41ddb55572d9f401c6c6a97cce6853657e4be4186002f8cd8"
+    },
+    {
+      "bytes": 221,
+      "path": "analysis.log",
+      "sha256": "a2915d34b98cea13108f4bb9460f96a602348036ee882b7e1192e22ad34c8890"
+    }
+  ],
+  "original_core_sha256": "3d67a62e6eb2c78b4ac28aec497c7b5e43390d476cb8196309da0a9b9f644b90",
+  "original_git_commit": "a9f6d711ca23f2bc9762b7a6d2bba42db95be275",
+  "original_report_generation_manifest_sha256": "06c0968134e503d961b20b32def267608e524dd1f415f517f6c1b627118329c7",
+  "original_report_html_sha256": "d0fd260a2f86a7af5d593855ac91cc561dd89cff1e32409fe1b11f0be9e44732",
+  "original_study_sha256": "bafa8f5e2d0bf318696e8f4b8dda36ee48a5bf586009fa490b5c6938d1b84838",
+  "preserved_utc": "2026-10-07T15:44:17.646036+00:00",
+  "raw_stage_links": {
+    "confirmation": "../fresh-full/confirmation",
+    "extended": "../fresh-full/extended",
+    "mechanisms": "../fresh-full/mechanisms",
+    "pilot": "../fresh-full/pilot",
+    "recovery": "../fresh-full/recovery",
+    "scenarios": "../fresh-full/scenarios",
+    "sensitivity": "../fresh-full/sensitivity",
+    "stress": "../fresh-full/stress"
+  },
+  "scope": "Copies original pipeline and all11 stage logs before any cached wrapper execution. Science-stage links reference the same actual freshly simulated raw outputs; no reference outputs copied and no origin metadata rewritten. Entire original self-contained report copied separately."
+}
