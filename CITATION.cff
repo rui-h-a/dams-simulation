@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Cite the exact source commit and run manifest used; this reference has no assigned DOI."
+title: "DAMS research reference implementation"
+type: software
+version: 0.1.0
+date-released: 2026-10-07
+authors:
+  - family-names: Rui
+license: MIT
