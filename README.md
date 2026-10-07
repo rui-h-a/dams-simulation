@@ -16,6 +16,8 @@ Raw cases, stage logs and `pipeline_manifest.json` are saved under `runs/thesis-
 
 First use can fetch the pinned build/analysis dependencies. The runtime model requires no external service, credentials, dataset download, paid compute or GPU. The full study has an 8 GB free-disk and 4 GB installed-RAM preflight; those are rejection thresholds, not certified minimum hardware. Consult [resource measurements and operating tiers](docs/INFRASTRUCTURE.md) before choosing concurrency. The complete study is deliberately larger than the quick check below. Hardware timing and local-EVM validation are separate experiments, described in the [reproduction guide and support matrix](docs/REPRODUCIBILITY.md).
 
+A [clean public-clone reproduction](evidence/fresh-clone/README.md) actually completed this command at commit `a9f6d711ca23f2bc9762b7a6d2bba42db95be275` in 970.782 seconds on the recorded macOS/arm64 host, using locked CPython 3.14.2. All 2,388 persisted world summaries, final states and time series matched the reported CPython 3.14.6 outputs byte for byte. The 328 recovery executions save observable patterns and fits rather than full states; those outputs also matched exactly. Runtime and provenance differences are retained separately. The final paper snapshot updates typography, report licensing and explicit failure records while preserving the scientific core and study design.
+
 ## Run a small world
 
 The standard-library path needs no package installation:
@@ -43,6 +45,7 @@ The core `reproduce` command runs five policies and three stylized evidence scen
 - [Factor disposition](docs/factor_disposition.json): implemented mechanisms, experimental controls, proxies, limitations and exclusions.
 - [Source/claim registry](docs/source_claim_registry.json): what each retained source supports.
 - [Reproduction/support guide](docs/REPRODUCIBILITY.md) and [computational infrastructure](docs/INFRASTRUCTURE.md): commands, provenance, tested boundaries, measured capacity and unexecuted plans.
+- [Optional container packaging](docs/CONTAINER.md): explicit file allowlist, immutable official image identities and amd64/arm64 targets. Local daemon failures are retained; container execution remains unverified.
 - [Security boundary](SECURITY.md): integrity is distinct from authentication, input truth, privacy and unique-person admission.
 
 Inference pairs the same independent world across policies; people and events are not independent replications. The `central`, `witness` and `consensus` labels encode delay, per-record cost and censorship assumptions. They do not start a database, transparency-log protocol, BFT client or network of validators. Central records can be sufficient under a trustworthy operator; replication has no universal modeled benefit.
@@ -67,8 +70,19 @@ uv build
 
 `uv.lock` pins the environment; the model runtime dependency list is empty, the optional analysis extra pins Matplotlib, and the build backend is pinned. Run research tools from the source checkout. The wheel exposes the core `dams-sim` CLI rather than bundling the entire research evidence tree.
 
-Use [CITATION.cff](CITATION.cff), cite the exact source commit and manifest, and retain the effective configuration and analysis version. The software is [MIT licensed](LICENSE) and has no assigned DOI. A public URL or release is stated only after its actual remote/release evidence exists.
+Use [CITATION.cff](CITATION.cff), cite the exact source commit and manifest, and retain the effective configuration and analysis version. The software is [MIT licensed](LICENSE) and has no assigned DOI. [Third-party notices](THIRD_PARTY_NOTICES.md) preserve the license for the unmodified Computer Modern font embedded in the report. The public repository and release URLs below are verified against the GitHub API.
 
-The publication layout keeps inspectable code, compact metadata/CSV/SVG, manifests and an evidence index in Git; full raw state, trajectories and retained attempts belong in a checksummed compressed release asset. The original local evidence is preserved. Archive/download URLs and their hashes are added after the asset is actually uploaded and verified; this statement alone is not evidence of a published asset. A fresh full reproduction can generate its own raw cases without a private thesis checkout.
+The publication layout keeps inspectable code, compact metadata/CSV/SVG, manifests and an evidence index in Git; full raw state, trajectories and retained attempts belong in a checksummed compressed release asset. The original local evidence is preserved. The original raw archive is available in [v0.1.0](https://github.com/rui-h-a/dams-simulation/releases/tag/v0.1.0), with SHA-256 `77c02991aaa39964b34831c99f375c1b77497640d3de8e3e74601af557a5a06a` and 676,674,034 bytes. Its companion index and server-reported digest match the retained local archive. A fresh full reproduction can generate its own raw cases without a private thesis checkout.
 
-Research repository: [rui-h-a/dams-simulation](https://github.com/rui-h-a/dams-simulation). The raw asset is verified separately; its absence must not be described as a completed data publication.
+Research repository: [rui-h-a/dams-simulation](https://github.com/rui-h-a/dams-simulation).
+
+To audit the reported raw cases, download the `.tar.gz` asset and restore it without overwriting differing evidence:
+
+```sh
+python3 research_tools/unpack_evidence.py --archive dams-research-evidence-v0.1.0.tar.gz --sha256 77c02991aaa39964b34831c99f375c1b77497640d3de8e3e74601af557a5a06a
+uv run --locked --extra analysis python research_tools/reproduce_thesis.py --output runs/revision-v2 --workers 2
+```
+
+The final paper snapshot uses a unified Computer Modern font family for text, mathematics and plots. This changes figure styling and source hashes; the model core, configurations, seeds, numerical analysis and retained raw outputs are unchanged. Cite the exact final snapshot commit as well as model version 0.1.0.
+
+The [current complete-entry manifest and logs](evidence/full-entry-final/content-manifest.json) record actual tests, smoke and analysis together with hash-verified reuse of the complete scientific stages. The generated [self-contained report](data/report.html) retains its exact content hash. These current postprocessing records supplement the original raw release; they do not replace its execution provenance. The formal paper cites the `paper-2026-10-08` snapshot.

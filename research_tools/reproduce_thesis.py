@@ -6,6 +6,7 @@ sample. The standard-library `python3 -m dams_sim smoke` is the bounded quick pa
 """
 from __future__ import annotations
 import argparse
+import base64
 import html
 import json
 from pathlib import Path
@@ -21,12 +22,15 @@ from research_tools.inventory import validate_protocol
 def full_report(directory):
     claims=json.loads((directory/'generated/analysis/claims.json').read_text())
     primary=claims['primary']
+    import matplotlib
+    font_path=Path(matplotlib.get_data_path())/'fonts/ttf/cmr10.ttf'
+    font_b64=base64.b64encode(font_path.read_bytes()).decode()
     text=f'''<!doctype html><html lang="en"><meta charset="utf-8"><title>DAMS research reproduction</title>
-<style>body{{max-width:1000px;margin:3rem auto;padding:0 1rem;color:#171717;background:white;font:18px Georgia,serif;line-height:1.5}}svg{{width:100%;height:auto}}pre{{overflow:auto;font:14px monospace}}h1,h2{{font-weight:normal}}figure{{margin:2rem 0}}figcaption{{font-size:15px}}</style>
+<style>@font-face{{font-family:'cmr10';src:url(data:font/ttf;base64,{font_b64}) format('truetype')}}body{{max-width:1000px;margin:3rem auto;padding:0 1rem;color:#171717;background:white;font:18px cmr10,serif;line-height:1.5}}svg{{width:100%;height:auto}}pre{{overflow:auto;font:14px monospace}}h1,h2{{font-weight:normal}}figure{{margin:2rem 0}}figcaption{{font-size:15px}}</style>
 <h1>DAMS contribution-contingent authority: research reproduction</h1>
 <p>All data are synthetic model outputs. Independent worlds are the inference units. This report uses the complete fixed design; it makes no claim of field effectiveness, real consensus-client performance or empirically calibrated human behavior.</p>
 <p>Prespecified DAMS minus linear work contrast: {primary['mean']:.5f} units/member-day; conditional normal 95% Monte Carlo interval [{primary['low']:.5f}, {primary['high']:.5f}], {primary['n']} independent matched worlds. The substantive design threshold is 0.02; a resolved small positive effect is not a substantive or universal DAMS advantage.</p>
-<p>Source: <code>{html.escape(claims['source_sha256'])}</code>. Exact finite-grid parameters recovered in {claims['exact_parameter_recovery']} of {claims['rule_recovery']} generating conditions; behavioral class recovery alone does not imply unique identification.</p>
+<p>Source: <code>{html.escape(claims['source_sha256'])}</code>. Exact finite-grid parameters recovered in {claims['exact_parameter_recovery']} of {claims['recovery_cases']} generating conditions; behavioral class recovery alone does not imply unique identification.</p>
 <p>Full methods, metrics, sample definitions, captions and limitations accompany the generated TeX fragments. Machine-readable calculations are in <code>generated/analysis/</code>; manifests retain provenance and output hashes. Hardware timing belongs to a separately measured host-specific benchmark, not this outcome report.</p>'''
     captions={
       'allocation-effects':'Matched-world effects on generated work, relative to linear credit; bars are conditional normal 95% Monte Carlo intervals.',
@@ -44,7 +48,9 @@ def full_report(directory):
         if not svg.exists():raise ValueError('missing report figure '+name)
         content=svg.read_text();content=content[content.index('<svg'):]
         text+='<figure>'+content+'<figcaption>'+html.escape(caption)+'</figcaption></figure>'
-    text+='<h2>Machine-readable primary claims</h2><pre>'+html.escape(json.dumps(claims,indent=2))+'</pre></html>\n'
+    font_notice=(ROOT/'docs/third_party/BaKoMa-Fonts-LICENSE.txt').read_text()
+    text+='<h2>Machine-readable primary claims</h2><pre>'+html.escape(json.dumps(claims,indent=2))+'</pre>'
+    text+='<details><summary>Computer Modern font license</summary><pre>'+html.escape(font_notice)+'</pre></details></html>\n'
     (directory/'report.html').write_text(text)
 
 def main():
@@ -59,8 +65,6 @@ def main():
       'study_driver_sha256':DRIVER_SHA,'inventory_driver_sha256':digest((ROOT/'research_tools/inventory.py').read_bytes()),
       'dependency_lock_sha256':digest((ROOT/'uv.lock').read_bytes()),'doctor':doctor(),'workers':args.workers,'stages':[],
       'scope':'complete fixed synthetic study; hardware benchmarks must be measured separately on the host'}
-    if metadata['doctor']['free_disk_bytes']<8_000_000_000:raise RuntimeError('full study requires at least 8 GB free disk; no smaller model is substituted')
-    if metadata['doctor']['physical_ram_bytes'] is not None and metadata['doctor']['physical_ram_bytes']<4_000_000_000:raise RuntimeError('full study reference requires at least 4 GB host RAM')
     atomic_json(marker,metadata)
     def call(name,command):
         with (out/f'{name}.log').open('a') as log:
@@ -80,6 +84,8 @@ def main():
         metadata['stages'].append({'stage':stage,'status':'cached-complete-output-hashes-verified','manifest_sha256':digest(mfile.read_bytes())})
         atomic_json(marker,metadata);print(stage+' verified cache',flush=True);return True
     try:
+        if metadata['doctor']['free_disk_bytes']<8_000_000_000:raise RuntimeError('full study requires at least 8 GB free disk; no smaller model is substituted')
+        if metadata['doctor']['physical_ram_bytes'] is not None and metadata['doctor']['physical_ram_bytes']<4_000_000_000:raise RuntimeError('full study reference requires at least 4 GB host RAM')
         call('tests',['-m','unittest','discover','-s','tests','-v'])
         call('smoke',['-m','dams_sim','smoke','--output',str(out/'smoke')])
         pilot=out/'pilot/protocol.json'
@@ -99,7 +105,7 @@ def main():
           self_contained_report_sha256=digest((report/'report.html').read_bytes()))
         atomic_json(marker,metadata);print('complete scientific reproduction: '+str(report/'report.html'),flush=True)
     except BaseException as error:
-        metadata.update(status='failed',error_type=type(error).__name__,error=str(error),wall_seconds=time.monotonic()-started)
+        metadata.update(status='failed',exit_code=130 if isinstance(error,KeyboardInterrupt) else 1,error_type=type(error).__name__,error=str(error),wall_seconds=time.monotonic()-started)
         atomic_json(marker,metadata);raise
 
 if __name__=='__main__':main()

@@ -1,11 +1,14 @@
 {
   "status": "passed",
+  "style": "Computer Modern family via bundled cmr10",
   "core_source_unchanged": true,
   "postprocessor_stable_across_two_actual_generations_and_validation": true,
   "original_execution_snapshot_unchanged": true,
   "all_published_file_hashes_match": true,
   "model_source_sha256": "3d67a62e6eb2c78b4ac28aec497c7b5e43390d476cb8196309da0a9b9f644b90",
   "measurement_tool_sha256": "664706e36c8b58a76b9c9e0e6d5679bedb05a8b607960a0a767a918edb88189c",
-  "postprocessor_sha256": "a9ae2e3a904b874af82d88efc267f915f123fc67b647bdd812022ab8dc463494",
-  "summarizer_sha256": "bd79f203cfed8f8057ffc6c6b7bd2af346a5875ce3d91da745f23cf0a68279aa"
+  "postprocessor_sha256": "d4ce25723ee8298b46587f2f99a2b629996735ec8f9ce7d51bd1c31b0b767685",
+  "summarizer_sha256": "bd79f203cfed8f8057ffc6c6b7bd2af346a5875ce3d91da745f23cf0a68279aa",
+  "numeric_analysis_unchanged": true,
+  "caption_correction": "Hatched -> Shaded; six figure files byte-identical to earlier CM render"
 }

@@ -1,0 +1,15 @@
+{
+  "scope": "Final wrapper: tests/smoke/analysis actually executed; seven scientific stages verified compatible complete cached evidence. Original fresh full rerun retained separately.",
+  "files": {
+    "evidence/full-entry-final/analysis.log": "2c118c22054d28a581bc40294019b5288ecb5a0ee7789e5b3bf889a5ba938cd9",
+    "evidence/full-entry-final/pipeline_manifest.json": "f13af04dc3f3afb3ffabedb343fa4844ff387e0509772d8e78cac178cc80dd99",
+    "evidence/full-entry-final/preflight-refusal-regression.json": "c1dddf29a9615e15cb858ee0ad1368d0adb5f2942b1816594c442503a9fd2578",
+    "evidence/full-entry-final/publication-allowlist-scan.json": "1d109ff484126de79787a539f18a1cd8bd5c351a617b7fd8c2fa10ad4fc8dc9e",
+    "evidence/full-entry-final/raw-archive-verification.json": "cf08ad8d6c2dcabecdfc76144334dd4b90401daecc166bef092f5e2fea294830",
+    "evidence/full-entry-final/report-denominator-regression.json": "94b27e9b1a1c31e72046606d92fe6071a62913b491cca46056f9db746f623164",
+    "evidence/full-entry-final/smoke.log": "5e95070d1d8f6d0ff0187f8b1637f2ca3f34bc072b944a33e6456ca02620a36b",
+    "evidence/full-entry-final/syntax-final.json": "b060cb14d0d79c8926d02cd98fb61e1e298d5296212cc0022690ffdc6af62948",
+    "evidence/full-entry-final/tests.log": "fd798fb39ccbc70321f702e367eb8bed3e6c8063129a427eb70bcb14dae1aa02",
+    "data/report.html": "a81995138bd1fcd8b7a62b559b27b12d10b4f28758bb66f74c9c9d19c56d1639"
+  }
+}

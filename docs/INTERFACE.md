@@ -9,7 +9,7 @@ Raw summary fields (nonnegative counters may be absent when no corresponding eve
 | produced_work_units | Sum of generated model work, not money or observed employee productivity |
 | effort_hours | Model hour-equivalents of production effort |
 | cooperation_units | Sum of bounded help choices; reserved help time =0.05×units |
-| decision_regret_units | Sum of ex-post binary-action |θ| regret, including unresolved decisions |
+| decision_regret_units | Sum of ex-post binary-action \|θ\| regret, including unresolved decisions |
 | decision_errors / decisions_completed / decisions_unresolved | Guild proposal counts |
 | review_hours / appeal_hours | Actual pooled human hour-equivalents (0.1/0.15 per record) |
 | verification_resource_units | Extra per-record backend resource cost beyond common human appraisal |

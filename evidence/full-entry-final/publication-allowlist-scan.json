@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "tracked_files": 2023,
+  "tracked_bytes": 17562887,
+  "explicit_allowed_roots": [
+    "configs",
+    "contracts",
+    "dams_sim",
+    "data",
+    "docs",
+    "evidence",
+    "research_tools",
+    "tests"
+  ],
+  "explicit_allowed_top_files": [
+    ".dockerignore",
+    ".gitignore",
+    "CITATION.cff",
+    "Dockerfile",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "pyproject.toml",
+    "uv.lock"
+  ],
+  "credential_value_output": false,
+  "private_thesis_commit_present": false,
+  "issues": []
+}

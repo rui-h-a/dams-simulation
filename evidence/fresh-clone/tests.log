@@ -1,0 +1,31 @@
+test_boundaries (test_authority.AuthorityTests.test_boundaries) ... ok
+test_cap_and_split_boundary (test_authority.AuthorityTests.test_cap_and_split_boundary) ... ok
+test_concentration_signed_and_population_invariant (test_authority.AuthorityTests.test_concentration_signed_and_population_invariant) ... ok
+test_independent_pairwise_gini (test_authority.AuthorityTests.test_independent_pairwise_gini) ... ok
+test_independent_power_oracle (test_authority.AuthorityTests.test_independent_power_oracle) ... ok
+test_ties_are_permutation_equivariant (test_authority.AuthorityTests.test_ties_are_permutation_equivariant) ... ok
+test_import_is_side_effect_free (test_cli.CliTests.test_import_is_side_effect_free) ... ok
+test_resume_exact_result (test_cli.CliTests.test_resume_exact_result) ... ok
+test_resume_rejects_changed_checkpoint_bytes (test_cli.CliTests.test_resume_rejects_changed_checkpoint_bytes) ... ok
+test_smoke_unique_and_hashes (test_cli.CliTests.test_smoke_unique_and_hashes) ... ok
+test_all_attacks_consume_real_time (test_model.ModelTests.test_all_attacks_consume_real_time) ... ok
+test_counter_rng_has_no_cursor (test_model.ModelTests.test_counter_rng_has_no_cursor) ... ok
+test_daily_capacity_expires_and_actual_hours_fit_reservation (test_model.ModelTests.test_daily_capacity_expires_and_actual_hours_fit_reservation) ... ok
+test_free_riding_changes_behaviour (test_model.ModelTests.test_free_riding_changes_behaviour) ... ok
+test_invalid_configs (test_model.ModelTests.test_invalid_configs) ... ok
+test_no_future_credit (test_model.ModelTests.test_no_future_credit) ... ok
+test_queue_capacity_and_explicit_unfinished (test_model.ModelTests.test_queue_capacity_and_explicit_unfinished) ... ok
+test_resource_stops (test_model.ModelTests.test_resource_stops) ... ok
+test_restart_and_schedule_order_exact (test_model.ModelTests.test_restart_and_schedule_order_exact) ... ok
+test_same_attack_budget_and_unique_credit (test_model.ModelTests.test_same_attack_budget_and_unique_credit) ... ok
+test_simultaneous_review_order_is_common_keyed_lottery (test_model.ModelTests.test_simultaneous_review_order_is_common_keyed_lottery) ... ok
+test_structural_alternatives_and_quorum_recovery (test_model.ModelTests.test_structural_alternatives_and_quorum_recovery) ... ok
+test_zero_attack_budget_is_a_true_null_control (test_model.ModelTests.test_zero_attack_budget_is_a_true_null_control) ... ok
+test_modified_summary_cannot_enter_ensemble (test_study.StudyIntegrityTests.test_modified_summary_cannot_enter_ensemble) ... ok
+test_orphan_before_manifest_is_preserved_then_retried (test_study.StudyIntegrityTests.test_orphan_before_manifest_is_preserved_then_retried) ... ok
+test_successful_retry_is_idempotent (test_study.StudyIntegrityTests.test_successful_retry_is_idempotent) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 1.343s
+
+OK

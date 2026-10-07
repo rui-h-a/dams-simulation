@@ -1,0 +1,18 @@
+{
+  "changed_only": "caption word Hatched -> Shaded; graph data, styles and geometry unchanged",
+  "generator_sha256": "d4ce25723ee8298b46587f2f99a2b629996735ec8f9ce7d51bd1c31b0b767685",
+  "figures_byte_identical_to_previous_cm_render": true,
+  "figures_sha256": {
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_projection.pdf": "b4fad412d6b72793873ea8d0037f24cf7baf0928eb29b7491210500e1e120a74",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_parallel.pdf": "af0ca379c3be9e8351d138dd2a87b4350a8ff4611ee2b2ff0e7d16133dbeadd2",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_workloads.pdf": "e1d563c9bdd38d97445e2c6c02392d8f78ee509e3c4aa74a8768bd57b688c836",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_parallel.svg": "9d0e60226166a9e7c831d9e00038b30af5493646ce483e2e122d6ccf3a028c92",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_projection.svg": "44ad2788da83c92de2672fe7c07fa5b88f663d5ca3afe6abbe6891b230f52888",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_workloads.svg": "c2b17b61004440d9ed68e7348365aaa80b8851db7e50b7b9edcbc5621d24a59d"
+  },
+  "two_actual_generation_passes_exit_code": 0,
+  "generated_fragment_contains_Shaded": true,
+  "source_sha256": "3d67a62e6eb2c78b4ac28aec497c7b5e43390d476cb8196309da0a9b9f644b90",
+  "created_utc": "2026-10-07T15:20:21.574426+00:00",
+  "all_publication_artifact_hashes_recomputed_and_verified": true
+}

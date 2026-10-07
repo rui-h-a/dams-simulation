@@ -1,0 +1,9 @@
+{
+  "status": "pass",
+  "archive_sha256": "77c02991aaa39964b34831c99f375c1b77497640d3de8e3e74601af557a5a06a",
+  "files": 17267,
+  "uncompressed_bytes": 3342193009,
+  "errors": [],
+  "seconds": 4.0973572919992876,
+  "method": "actual safe extractor whole-archive SHA check followed by every restored file size and SHA256 check; local uploaded archive, not remote download"
+}

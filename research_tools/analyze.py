@@ -127,7 +127,7 @@ def main():
     matplotlib.use('Agg')
     import matplotlib.pyplot as pyplot
     plt=pyplot
-    plt.rcParams.update({'font.family':'serif','font.serif':['STIXGeneral'],'mathtext.fontset':'stix','font.size':9,
+    plt.rcParams.update({'font.family':'serif','font.serif':['cmr10'],'mathtext.fontset':'cm','axes.formatter.use_mathtext':True,'axes.unicode_minus':False,'font.size':9,
       'axes.titlesize':9,'axes.labelsize':9,'legend.fontsize':8.5,'pdf.fonttype':42,'ps.fonttype':42,
       'svg.fonttype':'none','svg.hashsalt':'DAMS-ABM-0.1.0','axes.spines.top':False,'axes.spines.right':False,'axes.linewidth':.6,
       'lines.linewidth':1.0,'figure.facecolor':'white','axes.facecolor':'white','savefig.facecolor':'white'})
@@ -285,7 +285,7 @@ def main():
        b=select(alternatives,behavior_rule=rule,autonomy_response=response,regime='linear')
        v=paired(a,b,work);vs.append(v);boundary.append(dict(behavior_rule=rule,response=response,**v))
       ax.errorbar([-.25,0,.25],[v['mean'] for v in vs],yerr=[1.96*v['se'] for v in vs],color='.1',marker='o',markersize=3,capsize=2)
-      ax.axhline(0,color='.6',linewidth=.6);ax.set_title(rule.replace('_',' ').capitalize());ax.set_xlabel('Share-response coefficient');ax.set_xticks([-.25,0,.25],['−0.25','0','0.25'])
+      ax.axhline(0,color='.6',linewidth=.6);ax.set_title(rule.replace('_',' ').capitalize());ax.set_xlabel('Share-response coefficient');ax.set_xticks([-.25,0,.25],['-0.25','0','0.25'])
     axs[0].set_ylabel('DAMS minus linear\n(work units/member-day)');fig.tight_layout();savefig(fig,'response-boundaries',figdir)
     tex+=figtex('response-boundaries','response-boundaries','Structural dependence of the DAMS--linear work contrast. Eight paired worlds per point; three effort rules and three predeclared response coefficients. Bars are descriptive 95\\% Monte Carlo intervals conditional on each rule. Lines join sampled points without fitting. The zero channel is a mechanism null; negative responses provide an adverse case. Coefficients are unestimated design assumptions, not psychological measurements.')
     # Morris-style elementary effects: explicitly not fitted/independent real input distributions.
@@ -364,7 +364,7 @@ def main():
        tradeoffs.append(dict(policy=pol,backend=backend,work_per_member_day=x,regret_per_guild_day=y))
     for pol in POLICIES:
       color,line,marker=STYLE[pol];ax.scatter([],[],color=color,marker=marker,label=SHORT[pol],s=25)
-    ax.set_xlabel('Generated work (units/member-day; higher preferred)');ax.set_ylabel('Decision regret\n(units/guild-day; lower preferred)');ax.legend(frameon=False,ncol=2,loc='upper left');ax.margins(.25,.25);fig.tight_layout();savefig(fig,'outcome-tradeoffs',figdir)
+    ax.set_xlabel('Generated work (units/member-day; higher preferred)');ax.set_ylabel('Decision regret\n(units/guild-day; lower preferred)');ax.legend(frameon=False,ncol=3,loc='lower center',bbox_to_anchor=(.5,1.01));ax.margins(.25,.25);fig.tight_layout();savefig(fig,'outcome-tradeoffs',figdir)
     tex+=figtex('outcome-tradeoffs','outcome-tradeoffs',f'Outcome-vector comparison for five policies and three record settings: {worlds}-world means under daily update. Filled symbols denote central, hollow symbols witnessed and lighter filled symbols consensus assumptions. This diagram shows competing modeled objectives without converting them into welfare or money; uncertainty and paired effects are reported separately. A mean-position advantage does not establish universal Pareto dominance.')
     # Emit machine-readable calculations used by the text and figures.
     analysis=out/'generated/analysis';analysis.mkdir(parents=True,exist_ok=True)
@@ -384,7 +384,7 @@ def main():
       'outputs':{str(x.relative_to(out)):digest(x.read_bytes()) for x in [texdir/'revision_results.tex',texdir/'revision_macros.tex',*[texdir/f'revision_{k}.tex' for k in parts],analysis/'claims.json',*sorted(analysis.glob('*.csv')),*sorted(figdir.glob('*.pdf')),*sorted(figdir.glob('*.svg'))]},
       'recovery_driver_sha256':rm['driver_sha256'],'extended_driver_sha256':em['driver_sha256'],
       'dependency_lock_sha256':digest((ROOT/'uv.lock').read_bytes()),
-      'graphics_library':matplotlib.__version__,'font':'bundled STIXGeneral serif; embedded TrueType PDF'})
+      'graphics_library':matplotlib.__version__,'font':'bundled Computer Modern cmr10 and mathtext cm; embedded TrueType PDF; same family as LaTeX Latin Modern'})
     print(json.dumps({'primary':primary,'recovered':recovered,'rules':rules,'figures':len(list(figdir.glob('*.pdf')))},indent=2))
 
 if __name__=='__main__':main()

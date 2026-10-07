@@ -33,7 +33,7 @@ Inside the chosen study directory:
 | `STAGE.log` | Actual subprocess output; logs append on retry rather than concealing the earlier attempt |
 | Stage manifests and summaries | Fixed case design, source/driver provenance, hashes, world-level summaries and retained noncomplete attempts |
 | Per-case `manifest.json` | Effective configuration, source/config/output hashes, host/runtime details and actual status |
-| `final_state.json`, `timeseries.csv`, `summary.json` | Complete raw state, recorded trajectory and metric definitions; hashes are checked before cached analysis |
+| `final_state.json`, `timeseries.csv`, `summary.json` | Complete raw state and recorded trajectory for the 2,388 stored pilot/organization cases; hashes are checked before cached analysis. Recovery retains its four-pattern observations and derived fits for 328 model executions, without serialized final states |
 | `report/generated/analysis/` | Recomputable calculations, primary claims and `generation_manifest.json` |
 | `report/generated/` | Automatically generated LaTeX result fragments and macros |
 | `report/figures/results/` | Editable SVG and vector PDF ensemble figures |
@@ -68,11 +68,12 @@ Publication postprocessing is separate from the actual executing driver. It read
 | Environment or path | Actual evidence status | Practical boundary |
 |---|---|---|
 | macOS 26.6, Apple M2 Pro arm64, CPython 3.14.6 | Core runs, bounded scale measurements, independent-world batching, output integrity and same-platform state equality actually exercised | 12 physical/logical cores and 16 GiB RAM are observed hardware, not universal minima; user applications continued during timing |
+| Same macOS/arm64 host, uv-managed CPython 3.14.2 | Clean public clone executed the complete scientific study; all 2,388 persisted world states, summaries and time series matched the reported 3.14.6 outputs byte for byte, with recovery patterns/fits checked separately | This is one measured cross-version reproduction on the same host; it does not certify Linux, Windows or arbitrary Python versions |
 | Optional Matplotlib 3.11.2 analysis | Locked environment actually produced grayscale vector PDF/SVG performance figures and generated LaTeX | Requires the `analysis` extra; scientific calculations, data provenance and figure generation remain separately versioned |
-| Other Python versions ≥3.11 | Declared portability target | Not certified by the measured 3.14.6 host; rerun tests, source/hash checks and bounded timing |
+| Other Python versions ≥3.11 | Declared portability target | Only the named 3.14.6/3.14.2 paths were exercised; rerun tests, source/hash checks and bounded timing |
 | Linux/WSL CPU | Portability target; `/proc` monitoring path exists | No current measured run certifies this environment or identical timing/bit patterns |
 | Native Windows | Untested portability target | POSIX child/watchdog handling is not certified; unavailable resource measurements must remain null |
-| Docker/container | Untested; local Docker CLI exists but its daemon was unreachable | No successful container build/run or fixed image digest is asserted |
+| Docker/container, linux/amd64 and linux/arm64 targets | [Explicit allowlist recipe and fixed official Python/uv image-index digests](CONTAINER.md); local build/doctor/smoke attempts failed at the unavailable daemon socket | Upstream identities are verified metadata; no application image, container run or cross-platform numerical equality is asserted |
 | MPI/GPU | No implemented simulation path | Parallelism is across independent CPU worlds, not a distributed single-world benchmark |
 | Workstation/HPC allocation | Conditional resource plan | Profile the actual N, horizon, guild/site/link structure and retained outputs before raising limits |
 | GCP cloud burst | Price/planning dry run only | No VM was started; VM-hour reservations are assumptions, not measured E2 runtime |
@@ -95,3 +96,22 @@ The core package can be built with `uv build`; the source checkout is required f
 ## Evidence distribution
 
 The release layout separates the compact Git tree from the complete raw bundle. Code, configuration/registries, summary CSVs, vector diagnostics, manifests and an evidence index remain directly inspectable; the compressed release asset retains all original full states, trajectories and failed/orphaned attempts. Archive byte count, SHA-256 and download URL must match the actual uploaded asset before it is called available. Do not substitute a summary-only tree for the complete raw evidence or rewrite old-source manifests when preparing a new release. Downloading the bundle is optional for a fresh execution, but required when auditing raw cases from the reported run.
+
+The reported complete raw bundle is published at [v0.1.0](https://github.com/rui-h-a/dams-simulation/releases/tag/v0.1.0):
+
+```sh
+curl -L --fail -o dams-research-evidence-v0.1.0.tar.gz https://github.com/rui-h-a/dams-simulation/releases/download/v0.1.0/dams-research-evidence-v0.1.0.tar.gz
+python3 research_tools/unpack_evidence.py --archive dams-research-evidence-v0.1.0.tar.gz --sha256 77c02991aaa39964b34831c99f375c1b77497640d3de8e3e74601af557a5a06a --destination raw-evidence
+```
+
+The archive is 676,674,034 compressed bytes. The companion [index](../evidence/raw-release-index.json) lists every retained file's original byte count and hash. The extractor verifies the whole archive before writing, accepts only regular relative evidence files, and refuses to overwrite differing data. It needs enough free space for the uncompressed files. The release preserves the measured model and tool snapshots. Subsequent typography changes use unchanged raw scientific data and record their own postprocessing hashes; they do not rewrite the original execution metadata.
+
+## Independent exact comparison
+
+The [fresh-clone evidence](../evidence/fresh-clone/README.md) records a complete clean execution without copying reference world states into its inputs. Its portable read-only comparer uses the fixed protocol inventory, verifies every recorded output digest and exact persisted scientific bytes, and retains runtime/provenance differences separately. Recovery patterns and finite-grid fits are compared without claiming that unpersisted recovery states were checked.
+
+```sh
+python3 research_tools/compare_reproduction.py --reference raw-evidence/runs/revision-v2 --fresh runs/thesis-reproduction --output runs/comparison --expected-origin-commit EXACT_EXECUTED_COMMIT --expected-checkout-commit EXACT_CURRENT_CLEAN_COMMIT
+```
+
+Supply the commits actually recorded by the fresh execution and current checkout. The defaults identify the original validated `a9f6d7` reproduction. This comparator is deliberately specific to the retained thesis protocol; it does not substitute a tolerance, treat missing matching stages as equality or certify unrelated design changes. It expects a complete fresh pipeline manifest and a clean public checkout. If only postprocessing has been refreshed, preserve the original full-execution manifest before overwriting it and retain the new wrapper evidence separately.

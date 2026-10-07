@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="456.39pt" height="196.56pt" viewBox="0 0 456.39 196.56" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="455.086406pt" height="196.425703pt" viewBox="0 0 455.086406 196.425703" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
@@ -20,19 +20,19 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 196.56 
-L 456.39 196.56 
-L 456.39 0 
+   <path d="M 0 196.425703 
+L 455.086406 196.425703 
+L 455.086406 0 
 L 0 0 
 z
 " style="fill: #ffffff"/>
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 61.13 160.36 
-L 449.19 160.36 
-L 449.19 7.2 
-L 61.13 7.2 
+    <path d="M 51.420898 161.025508 
+L 447.886406 161.025508 
+L 447.886406 7.2 
+L 51.420898 7.2 
 z
 " style="fill: #ffffff"/>
    </g>
@@ -50,33 +50,33 @@ C -1.102195 1.897805 -0.562581 2.12132 0 2.12132
 z
 " style="stroke: #262626"/>
     </defs>
-    <g clip-path="url(#pcd6c859c55)">
-     <use xlink:href="#m1ac188c511" x="143.010021" y="134.867771" style="fill: #262626; stroke: #262626"/>
+    <g clip-path="url(#p68390cd3fd)">
+     <use xlink:href="#m1ac188c511" x="135.074468" y="135.42251" style="fill: #262626; stroke: #262626"/>
     </g>
    </g>
    <g id="PathCollection_2">
-    <g clip-path="url(#pcd6c859c55)">
-     <use xlink:href="#m1ac188c511" x="145.472122" y="50.96" style="fill: #262626; stroke: #262626"/>
+    <g clip-path="url(#p68390cd3fd)">
+     <use xlink:href="#m1ac188c511" x="137.589898" y="51.150145" style="fill: #262626; stroke: #262626"/>
     </g>
    </g>
    <g id="PathCollection_3">
-    <g clip-path="url(#pcd6c859c55)">
-     <use xlink:href="#m1ac188c511" x="79.39037" y="133.96461" style="fill: #262626; stroke: #262626"/>
+    <g clip-path="url(#p68390cd3fd)">
+     <use xlink:href="#m1ac188c511" x="70.076795" y="134.515425" style="fill: #262626; stroke: #262626"/>
     </g>
    </g>
    <g id="PathCollection_4">
-    <g clip-path="url(#pcd6c859c55)">
-     <use xlink:href="#m1ac188c511" x="82.509193" y="130.086027" style="fill: #262626; stroke: #262626"/>
+    <g clip-path="url(#p68390cd3fd)">
+     <use xlink:href="#m1ac188c511" x="73.263171" y="130.619989" style="fill: #262626; stroke: #262626"/>
     </g>
    </g>
    <g id="PathCollection_5">
-    <g clip-path="url(#pcd6c859c55)">
-     <use xlink:href="#m1ac188c511" x="224.670123" y="60.65888" style="fill: #262626; stroke: #262626"/>
+    <g clip-path="url(#p68390cd3fd)">
+     <use xlink:href="#m1ac188c511" x="218.503354" y="60.891168" style="fill: #262626; stroke: #262626"/>
     </g>
    </g>
    <g id="PathCollection_6">
-    <g clip-path="url(#pcd6c859c55)">
-     <use xlink:href="#m1ac188c511" x="319.836667" y="141.874486" style="fill: #262626; stroke: #262626"/>
+    <g clip-path="url(#p68390cd3fd)">
+     <use xlink:href="#m1ac188c511" x="315.731237" y="142.459671" style="fill: #262626; stroke: #262626"/>
     </g>
    </g>
    <g id="matplotlib.axis_1">
@@ -88,85 +88,157 @@ L 0 3.5
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#md8807f1e3d" x="61.13" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="51.420898" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="61.13" y="174.11" transform="rotate(-0 61.13 174.11)">0.000</text>
+      <!-- $\mathdefault{0.000}$ -->
+      <g transform="translate(41.160898 174.371211)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="15.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#md8807f1e3d" x="110.924072" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="102.293527" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="110.924072" y="174.11" transform="rotate(-0 110.924072 174.11)">0.025</text>
+      <!-- $\mathdefault{0.025}$ -->
+      <g transform="translate(92.033527 174.371211)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">2</tspan>
+        <tspan x="15.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use xlink:href="#md8807f1e3d" x="160.718145" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="153.166155" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_3">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="160.718145" y="174.11" transform="rotate(-0 160.718145 174.11)">0.050</text>
+      <!-- $\mathdefault{0.050}$ -->
+      <g transform="translate(142.906155 174.371211)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+        <tspan x="15.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
-       <use xlink:href="#md8807f1e3d" x="210.512217" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="204.038784" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_4">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="210.512217" y="174.11" transform="rotate(-0 210.512217 174.11)">0.075</text>
+      <!-- $\mathdefault{0.075}$ -->
+      <g transform="translate(193.778784 174.371211)">
+       <text>
+        <tspan x="0" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">7</tspan>
+        <tspan x="15.991699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_5">
      <g id="line2d_5">
       <g>
-       <use xlink:href="#md8807f1e3d" x="260.30629" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="254.911412" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_5">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="260.30629" y="174.11" transform="rotate(-0 260.30629 174.11)">0.100</text>
+      <!-- $\mathdefault{0.100}$ -->
+      <g transform="translate(244.651412 174.371211)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">1</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="15.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_6">
      <g id="line2d_6">
       <g>
-       <use xlink:href="#md8807f1e3d" x="310.100362" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="305.784041" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_6">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="310.100362" y="174.11" transform="rotate(-0 310.100362 174.11)">0.125</text>
+      <!-- $\mathdefault{0.125}$ -->
+      <g transform="translate(295.524041 174.371211)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">1</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">2</tspan>
+        <tspan x="15.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_7">
      <g id="line2d_7">
       <g>
-       <use xlink:href="#md8807f1e3d" x="359.894435" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="356.65667" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_7">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="359.894435" y="174.11" transform="rotate(-0 359.894435 174.11)">0.150</text>
+      <!-- $\mathdefault{0.150}$ -->
+      <g transform="translate(346.39667 174.371211)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">1</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+        <tspan x="15.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="xtick_8">
      <g id="line2d_8">
       <g>
-       <use xlink:href="#md8807f1e3d" x="409.688507" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#md8807f1e3d" x="407.529298" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_8">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="409.688507" y="174.11" transform="rotate(-0 409.688507 174.11)">0.175</text>
+      <!-- $\mathdefault{0.175}$ -->
+      <g transform="translate(397.269298 174.371211)">
+       <text>
+        <tspan x="0" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">1</tspan>
+        <tspan x="11.491699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">7</tspan>
+        <tspan x="15.991699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="text_9">
-     <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: middle" x="255.16" y="187.11" transform="rotate(-0 255.16 187.11)">Mean absolute elementary effect (work/member-day)</text>
+     <text style="font-size: 9px; font-family: 'cmr10', serif; text-anchor: middle" x="249.653652" y="186.975703" transform="rotate(-0 249.653652 186.975703)">Mean absolute elementary effect (work/member-day)</text>
     </g>
    </g>
    <g id="matplotlib.axis_2">
@@ -178,121 +250,185 @@ L -3.5 0
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="160.36" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="161.025508" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_10">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="163.735" transform="rotate(-0 54.13 163.735)">0.00</text>
+      <!-- $\mathdefault{0.00}$ -->
+      <g transform="translate(28.400898 164.198359)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_2">
      <g id="line2d_10">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="140.376879" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="140.955557" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_11">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="143.751879" transform="rotate(-0 54.13 143.751879)">0.01</text>
+      <!-- $\mathdefault{0.01}$ -->
+      <g transform="translate(28.400898 144.128408)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">1</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_3">
      <g id="line2d_11">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="120.393758" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="120.885606" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_12">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="123.768758" transform="rotate(-0 54.13 123.768758)">0.02</text>
+      <!-- $\mathdefault{0.02}$ -->
+      <g transform="translate(28.400898 124.058457)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">2</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_4">
      <g id="line2d_12">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="100.410637" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="100.815654" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_13">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="103.785637" transform="rotate(-0 54.13 103.785637)">0.03</text>
+      <!-- $\mathdefault{0.03}$ -->
+      <g transform="translate(28.400898 103.988506)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">3</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_5">
      <g id="line2d_13">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="80.427517" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="80.745703" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_14">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="83.802517" transform="rotate(-0 54.13 83.802517)">0.04</text>
+      <!-- $\mathdefault{0.04}$ -->
+      <g transform="translate(28.400898 83.918555)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">4</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_6">
      <g id="line2d_14">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="60.444396" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="60.675752" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_15">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="63.819396" transform="rotate(-0 54.13 63.819396)">0.05</text>
+      <!-- $\mathdefault{0.05}$ -->
+      <g transform="translate(28.400898 63.848604)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">5</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_7">
      <g id="line2d_15">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="40.461275" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="40.605801" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_16">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="43.836275" transform="rotate(-0 54.13 43.836275)">0.06</text>
+      <!-- $\mathdefault{0.06}$ -->
+      <g transform="translate(28.400898 43.778653)">
+       <text>
+        <tspan x="0" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0" style="font-size: 9px; font-family: 'cmr10'">6</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_8">
      <g id="line2d_16">
       <g>
-       <use xlink:href="#ma8b4d1e9b7" x="61.13" y="20.478154" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#ma8b4d1e9b7" x="51.420898" y="20.53585" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_17">
-      <text style="font-size: 9px; font-family: 'STIXGeneral', serif; text-anchor: end" x="54.13" y="23.853154" transform="rotate(-0 54.13 23.853154)">0.07</text>
+      <!-- $\mathdefault{0.07}$ -->
+      <g transform="translate(28.400898 23.708701)">
+       <text>
+        <tspan x="0" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="4.5" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">.</tspan>
+        <tspan x="6.991699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">0</tspan>
+        <tspan x="11.491699" y="-0.921875" style="font-size: 9px; font-family: 'cmr10'">7</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="text_18">
-     <text style="font-size: 9px; font-family: 'STIXGeneral', serif" transform="translate(16.245 128.506484) rotate(-90)">SD of elementary effects</text>
-     <text style="font-size: 9px; font-family: 'STIXGeneral', serif" transform="translate(29.835 119.617578) rotate(-90)">(work/member-day)</text>
+     <text style="font-size: 9px; font-family: 'cmr10', serif" transform="translate(13.546406 132.034941) rotate(-90)">SD of elementary effects</text>
+     <text style="font-size: 9px; font-family: 'cmr10', serif" transform="translate(22.150898 123.854082) rotate(-90)">(work/member-day)</text>
     </g>
    </g>
    <g id="patch_3">
-    <path d="M 61.13 160.36 
-L 61.13 7.2 
+    <path d="M 51.420898 161.025508 
+L 51.420898 7.2 
 " style="fill: none; stroke: #000000; stroke-width: 0.6; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="patch_4">
-    <path d="M 61.13 160.36 
-L 449.19 160.36 
+    <path d="M 51.420898 161.025508 
+L 447.886406 161.025508 
 " style="fill: none; stroke: #000000; stroke-width: 0.6; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_19">
-    <text style="font-size: 8.5px; font-family: 'STIXGeneral', serif; text-anchor: start" x="150.010021" y="147.867771" transform="rotate(-0 150.010021 147.867771)">review error sd</text>
+    <text style="font-size: 8.5px; font-family: 'cmr10', serif; text-anchor: start" x="142.074468" y="148.42251" transform="rotate(-0 142.074468 148.42251)">review error sd</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 8.5px; font-family: 'STIXGeneral', serif; text-anchor: start" x="152.472122" y="43.96" transform="rotate(-0 152.472122 43.96)">review capacity per member day</text>
+    <text style="font-size: 8.5px; font-family: 'cmr10', serif; text-anchor: start" x="144.589898" y="44.150145" transform="rotate(-0 144.589898 44.150145)">review capacity per member day</text>
    </g>
    <g id="text_21">
-    <text style="font-size: 8.5px; font-family: 'STIXGeneral', serif; text-anchor: start" x="86.39037" y="146.96461" transform="rotate(-0 86.39037 146.96461)">alpha</text>
+    <text style="font-size: 8.5px; font-family: 'cmr10', serif; text-anchor: start" x="77.076795" y="147.515425" transform="rotate(-0 77.076795 147.515425)">alpha</text>
    </g>
    <g id="text_22">
-    <text style="font-size: 8.5px; font-family: 'STIXGeneral', serif; text-anchor: start" x="89.509193" y="123.086027" transform="rotate(-0 89.509193 123.086027)">update interval days</text>
+    <text style="font-size: 8.5px; font-family: 'cmr10', serif; text-anchor: start" x="80.263171" y="123.619989" transform="rotate(-0 80.263171 123.619989)">update interval days</text>
    </g>
    <g id="text_23">
-    <text style="font-size: 8.5px; font-family: 'STIXGeneral', serif; text-anchor: start" x="231.670123" y="53.65888" transform="rotate(-0 231.670123 53.65888)">autonomy response</text>
+    <text style="font-size: 8.5px; font-family: 'cmr10', serif; text-anchor: start" x="225.503354" y="53.891168" transform="rotate(-0 225.503354 53.891168)">autonomy response</text>
    </g>
    <g id="text_24">
-    <text style="font-size: 8.5px; font-family: 'STIXGeneral', serif; text-anchor: start" x="326.836667" y="134.874486" transform="rotate(-0 326.836667 134.874486)">cooperation strength</text>
+    <text style="font-size: 8.5px; font-family: 'cmr10', serif; text-anchor: start" x="322.731237" y="135.459671" transform="rotate(-0 322.731237 135.459671)">cooperation strength</text>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="pcd6c859c55">
-   <rect x="61.13" y="7.2" width="388.06" height="153.16"/>
+  <clipPath id="p68390cd3fd">
+   <rect x="51.420898" y="7.2" width="396.465508" height="153.825508"/>
   </clipPath>
  </defs>
 </svg>

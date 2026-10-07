@@ -10,7 +10,7 @@
   "measurement_tool_sha256": "664706e36c8b58a76b9c9e0e6d5679bedb05a8b607960a0a767a918edb88189c",
   "measurement_tool_snapshot_matches_plan": true,
   "numpy_version": "2.5.3",
-  "postprocessor_sha256": "a9ae2e3a904b874af82d88efc267f915f123fc67b647bdd812022ab8dc463494",
+  "postprocessor_sha256": "ad3b637b16ed80314b01420e685af4cccea8fb9fecd7b59d9c673d2d830c7490",
   "scipy_oracle_version": "1.18.1",
   "source_sha256": "3d67a62e6eb2c78b4ac28aec497c7b5e43390d476cb8196309da0a9b9f644b90",
   "status": "passed",
