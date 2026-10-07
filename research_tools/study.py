@@ -19,9 +19,14 @@ sys.path.insert(0, str(ROOT))
 from dams_sim.config import Config
 from dams_sim.model import Model
 from dams_sim.cli import run_world
-from dams_sim.storage import atomic_json, atomic_csv, canonical, digest, provenance, source_hash
+from dams_sim.storage import atomic_json, atomic_csv, canonical, digest, provenance as core_provenance, source_hash, verify_outputs, output_hashes
 from dams_sim.authority import authority, tier_authority, total_variation, gini, split_gain
 from dams_sim.randomness import WorldRandom
+
+DRIVER_SHA = digest(Path(__file__).read_bytes())
+
+def provenance():
+    return {**core_provenance(), 'research_driver_sha256': DRIVER_SHA, 'research_driver': 'research_tools/study.py'}
 
 POLICIES = ('equal','linear','sublinear','hierarchy','hierarchy_tenure')
 BACKENDS = ('central','witness','consensus')
@@ -35,30 +40,63 @@ def case_id(config):
 def saved_case(base, config):
     ident = case_id(config)
     case = base/('case-'+ident)
-    if case.exists():
-        manifest = json.loads((case/'manifest.json').read_text())
-        if manifest['source_sha256'] != source_hash():
+    candidates = [case, *sorted(base.glob(f'case-{ident}-retry-*'))]
+    for candidate in candidates:
+        if not candidate.exists(): continue
+        if not (candidate/'manifest.json').is_file():
+            # An interruption between mkdir and the first atomic manifest write
+            # leaves an orphan. Preserve it as evidence and use a fresh retry.
+            atomic_json(candidate/'interruption.json',{'status':'orphaned-before-manifest',
+              'expected_config_sha256':ident,'resume_policy':'preserve directory; new semantic retry'})
+            continue
+        manifest = json.loads((candidate/'manifest.json').read_text())
+        if manifest['source_sha256'] != source_hash() or manifest.get('research_driver_sha256') != DRIVER_SHA:
             raise RuntimeError('existing case source changed; create a new experiment directory')
         if manifest['status'] == 'complete' and manifest['config'] == json.loads(canonical(config.to_dict())):
-            return json.loads((case/'summary.json').read_text())
+            verify_outputs(candidate,manifest,required=('summary.json','final_state.json','timeseries.csv'))
+            return json.loads((candidate/'summary.json').read_text())
+    if case.exists():
         # Keep failed and checkpointed evidence. Retry never overwrites it.
         suffix = 1
         while (base/f'case-{ident}-retry-{suffix}').exists(): suffix += 1
         case = base/f'case-{ident}-retry-{suffix}'
     case.mkdir(parents=True,exist_ok=False)
-    result = run_world(config,case)
+    try:
+        result = run_world(config,case)
+    finally:
+        manifest_path=case/'manifest.json'
+        if manifest_path.exists():
+            manifest=json.loads(manifest_path.read_text())
+            manifest.update(research_driver_sha256=DRIVER_SHA, research_driver='research_tools/study.py')
+            atomic_json(manifest_path,manifest)
     if result['status'] != 'complete': raise RuntimeError('incomplete horizon cannot enter ensemble')
     return result['summary']
 
 def records_for(base):
     rows=[]
     for case in sorted(base.glob('case-*')):
+        if not (case/'manifest.json').is_file() and (case/'interruption.json').is_file():
+            continue
         m=json.loads((case/'manifest.json').read_text())
         if m['status']!='complete': continue
+        verify_outputs(case,m,required=('summary.json',))
         r=json.loads((case/'summary.json').read_text())
         r.update(case=case.name, config_sha256=m['config_sha256'], source_sha256=m['source_sha256'])
         rows.append(r)
     return rows
+
+def seal_ensemble(path, metadata):
+    statuses=[]
+    for case in sorted(path.glob('case-*')):
+        record=case/'manifest.json'
+        if not record.exists(): record=case/'interruption.json'
+        m=json.loads(record.read_text())
+        statuses.append({'case':case.name,'status':m['status'],'error_type':m.get('error_type')})
+    atomic_json(path/'case_statuses.json',statuses)
+    files = {p.name:digest(p.read_bytes()) for p in sorted(path.iterdir())
+             if p.is_file() and p.name != 'ensemble_manifest.json'}
+    atomic_json(path/'ensemble_manifest.json',{**provenance(),**metadata,'output_sha256':files,
+      'noncomplete_attempts':sum(r['status']!='complete' for r in statuses)})
 
 def interval(values):
     """Mean, independent-world SE and fixed normal Monte Carlo interval.
@@ -114,7 +152,7 @@ def pilot(path):
 
 def confirmation(path, protocol_path):
     protocol=json.loads(protocol_path.read_text())
-    if protocol['source_sha256']!=source_hash(): raise RuntimeError('protocol source differs; rerun a new pilot before confirmation')
+    if protocol['source_sha256']!=source_hash() or protocol.get('research_driver_sha256')!=DRIVER_SHA: raise RuntimeError('protocol source differs; rerun a new pilot before confirmation')
     path.mkdir(parents=True,exist_ok=True)
     atomic_json(path/'protocol.json',protocol)
     p0=Config.from_dict(protocol['base'])
@@ -127,7 +165,7 @@ def confirmation(path, protocol_path):
                     rows.append(saved_case(path,p))
         atomic_csv(path/'world_summary.csv',rows)
         print('completed independent world',w,flush=True)
-    atomic_json(path/'ensemble_manifest.json',{**provenance(),'status':'complete','protocol_sha256':digest(protocol_path.read_bytes()),'policy_runs':len(rows),'worlds':len(protocol['confirm_worlds'])})
+    seal_ensemble(path,{'status':'complete','protocol_sha256':digest(protocol_path.read_bytes()),'policy_runs':len(rows),'worlds':len(protocol['confirm_worlds'])})
 
 
 def stress(path):
@@ -148,7 +186,7 @@ def stress(path):
             p=dataclasses.replace(BASE,world=w,backend=backend,quorum_unavailable_start_day=20,quorum_unavailable_stop_day=35)
             r=saved_case(path,p);r['stress_kind']='quorum_unavailable';rows.append(r)
     atomic_csv(path/'stress_summary.csv',rows)
-    atomic_json(path/'ensemble_manifest.json',{**provenance(),'status':'complete','policy_runs':len(rows),'independent_world_ranges':[[2000,2007],[2100,2107]],'descriptive_only':True})
+    seal_ensemble(path,{'status':'complete','policy_runs':len(rows),'independent_world_ranges':[[2000,2007],[2100,2107]],'descriptive_only':True})
     print('stress runs',len(rows),flush=True)
 
 
@@ -186,7 +224,7 @@ def mechanisms(path):
         tv=total_variation(a,b);old=math.fsum(abs(x-y) for x,y in zip(a,b))/len(a)
         replication.append(dict(n=len(a),tv=tv,legacy_mean_absolute_deviation=old))
     atomic_csv(path/'metric_replication.csv',replication)
-    atomic_json(path/'manifest.json',{**provenance(),'status':'complete','evidence_type':'analytical and fixed-stream synthetic diagnostic','not_dynamic_experiment':True})
+    atomic_json(path/'manifest.json',{**provenance(),'status':'complete','evidence_type':'analytical and fixed-stream synthetic diagnostic','not_dynamic_experiment':True, 'output_sha256':output_hashes(path)})
     print('mechanism and metric checks complete',flush=True)
 
 
@@ -228,12 +266,38 @@ def sensitivity(path):
                     p=dataclasses.replace(BASE,world=w,regime=policy,behavior_rule=behavior,autonomy_response=response)
                     r=saved_case(path,p);r.update(behavior_rule=behavior,autonomy_response=response);alternatives.append(r)
     atomic_csv(path/'structural_alternatives.csv',alternatives)
-    atomic_json(path/'ensemble_manifest.json',{**provenance(),'status':'complete','design':'finite-difference elementary effects; eight randomized paths, three paired worlds per path, independent design factors; not Sobol indices','structural_runs':len(alternatives)})
+    seal_ensemble(path,{'status':'complete','design':'finite-difference elementary effects; eight randomized paths, three paired worlds per path, independent design factors; not Sobol indices','structural_runs':len(alternatives)})
+
+def scenarios(path):
+    """Mechanistic adverse contexts, not calibrated industry representatives."""
+    path.mkdir(parents=True,exist_ok=True)
+    contexts={
+      'noisy_knowledge':dict(decision_noise_sd=1.2,shared_signal_sd=.4,cooperation_strength=.6),
+      'interdependent_delivery':dict(cooperation_strength=.9,review_capacity_per_member_day=1.2,review_error_sd=.3),
+      'distributed_disruption':dict(guilds=8,sites=4,fault_start_day=10,fault_stop_day=25,review_capacity_per_member_day=.7),
+      'high_observation_error':dict(review_error_sd=.6,review_capacity_per_member_day=1.2,appeal_capacity_per_member_day=.2),
+      'cross_principal_confirmation':dict(backend='witness',review_capacity_per_member_day=.7,backend_review_multipliers=(1.,1.3,1.8)),
+      'review_scarcity':dict(review_capacity_per_member_day=.4,appeal_capacity_per_member_day=.05,cooperation_strength=.6),
+      'delayed_accountability':dict(update_interval_days=14,appeal_delay_days=7,appeal_capacity_per_member_day=.2),
+      'zero_response':dict(autonomy_response=0.),
+      'reversed_response':dict(autonomy_response=-.5),
+    }
+    atomic_json(path/'scenario_definitions.json',{'type':'synthetic design stress contexts','contexts':contexts,
+      'scope':'Work, regret, delay and resource outcomes remain a vector. Labels do not establish industry, jurisdiction, ESG, profit or demographic realism.'})
+    rows=[]
+    for name,changes in contexts.items():
+        for w in range(5000,5008):
+            for policy in POLICIES:
+                p=dataclasses.replace(BASE,world=w,regime=policy,**changes)
+                r=saved_case(path,p);r['scenario']=name;rows.append(r)
+        print('scenario',name,'complete',flush=True)
+    atomic_csv(path/'scenario_summary.csv',rows)
+    seal_ensemble(path,{'status':'complete','policy_runs':len(rows),'descriptive_only':True,'scenarios':list(contexts)})
 
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('stage',choices=['pilot','confirmation','stress','mechanisms','sensitivity'])
+    ap.add_argument('stage',choices=['pilot','confirmation','stress','mechanisms','sensitivity','scenarios'])
     ap.add_argument('--output',type=Path,required=True);ap.add_argument('--protocol',type=Path)
     args=ap.parse_args()
     if args.stage=='confirmation':

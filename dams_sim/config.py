@@ -38,6 +38,7 @@ class Config:
     quorum_unavailable_stop_day: int = 0
     attack: str = "none"
     attack_budget_hours_per_day: float = 2.0
+    attack_cohort_fraction: float = 0.5
     attack_start_day: int = 15
     attack_stop_day: int = 25
     fault_start_day: int = 25
@@ -69,6 +70,10 @@ class Config:
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:
                 raise ValueError(f"{name} must be finite in [{low}, {high}]")
+        if isinstance(self.attack_cohort_fraction, bool) or not isinstance(self.attack_cohort_fraction, (int, float)) or not math.isfinite(self.attack_cohort_fraction) or not 0 < self.attack_cohort_fraction <= 1:
+            raise ValueError("attack_cohort_fraction must be finite in (0,1]")
+        if self.attack == "censor" and math.ceil(self.n * self.attack_cohort_fraction) >= self.n:
+            raise ValueError("censor requires a nonattacking target population")
         if self.attack_start_day > self.attack_stop_day or self.fault_start_day > self.fault_stop_day or self.quorum_unavailable_start_day > self.quorum_unavailable_stop_day:
             raise ValueError("event starts must not exceed stops")
         for name in ("backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):

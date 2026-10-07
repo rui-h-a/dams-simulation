@@ -82,3 +82,20 @@ def unique_run(root: Path, kind: str) -> Path:
 
 def output_hashes(path: Path) -> dict[str, str]:
     return {str(p.relative_to(path)): digest(p.read_bytes()) for p in sorted(path.rglob("*")) if p.is_file() and p.name != "manifest.json"}
+
+
+def verify_outputs(path: Path, manifest: dict, *, required: tuple[str, ...] = ()) -> None:
+    """Verify recorded bytes before using cached evidence or restarting.
+
+    Hashes detect accidental change against the retained manifest. An unsigned
+    manifest is not authentication against an attacker who can replace both.
+    """
+    hashes = manifest.get("output_sha256")
+    if not isinstance(hashes, dict) or not hashes or any(name not in hashes for name in required):
+        raise ValueError("required output integrity record is missing")
+    for name, expected in hashes.items():
+        file = path/name
+        if not file.resolve().is_relative_to(path.resolve()) or not file.is_file():
+            raise ValueError("recorded output is missing or outside the run directory")
+        if digest(file.read_bytes()) != expected:
+            raise ValueError(f"output integrity mismatch: {name}")

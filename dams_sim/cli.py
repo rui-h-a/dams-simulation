@@ -18,7 +18,7 @@ import time
 from .config import Config
 from .model import Model
 from .report import report
-from .storage import atomic_csv, atomic_json, canonical, digest, output_hashes, provenance, source_hash, unique_run
+from .storage import atomic_csv, atomic_json, canonical, digest, output_hashes, provenance, source_hash, unique_run, verify_outputs
 
 
 def rss_mb() -> float | None:
@@ -49,10 +49,12 @@ def load_config(args: argparse.Namespace) -> Config:
     return Config.from_dict(values)
 
 
-def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, restored: Model | None = None) -> dict:
+def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, restored: Model | None = None, restart_origin: dict | None = None) -> dict:
     wall, cpu = time.monotonic(), time.process_time()
     metadata = provenance()
     metadata.update({"run_id": path.name, "status": "running", "config_sha256": digest(canonical(p.to_dict())), "config": p.to_dict()})
+    if restart_origin is not None:
+        metadata["restart_origin"] = restart_origin
     atomic_json(path/"manifest.json", metadata)
     model = restored
     try:
@@ -151,11 +153,17 @@ def main(argv: list[str] | None = None) -> int:
             if args.command == "resume":
                 if not args.checkpoint:
                     raise ValueError("resume requires --checkpoint")
+                origin = json.loads((args.checkpoint.parent/"manifest.json").read_text())
+                verify_outputs(args.checkpoint.parent, origin, required=(args.checkpoint.name,))
                 value = json.loads(args.checkpoint.read_text())
                 if value["source_sha256"] != source_hash():
                     raise ValueError("checkpoint source hash differs; migration is not supported")
                 restored = Model.restore(value["state"])
-                result = run_world(restored.config, path, restored=restored)
+                restart_origin = {"parent_run_id":origin["run_id"],
+                    "parent_manifest_sha256":digest((args.checkpoint.parent/"manifest.json").read_bytes()),
+                    "checkpoint_file":args.checkpoint.name,"checkpoint_sha256":digest(args.checkpoint.read_bytes()),
+                    "parent_source_sha256":origin["source_sha256"],"parent_config_sha256":origin["config_sha256"]}
+                result = run_world(restored.config, path, restored=restored, restart_origin=restart_origin)
             elif args.command == "reproduce":
                 if not 2 <= args.worlds <= 1000:
                     raise ValueError("worlds must be between 2 and 1000")

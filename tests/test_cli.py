@@ -38,6 +38,19 @@ class CliTests(unittest.TestCase):
             self.assertEqual(main(["run", "--n", "24", "--days", "12", "--output", tmp]), 0)
             runs = [p for p in Path(tmp).iterdir() if json.loads((p/"manifest.json").read_text())["status"] == "complete"]
             self.assertEqual((runs[0]/"final_state.json").read_bytes(), (runs[1]/"final_state.json").read_bytes())
+            resumed=json.loads((runs[0]/"manifest.json").read_text())["restart_origin"]
+            self.assertEqual(resumed["parent_run_id"],partial.name)
+            self.assertEqual(resumed["checkpoint_sha256"],digest((partial/"checkpoint.json").read_bytes()))
+            self.assertEqual(resumed["parent_manifest_sha256"],digest((partial/"manifest.json").read_bytes()))
+
+    def test_resume_rejects_changed_checkpoint_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(main(["run", "--n", "24", "--days", "12", "--checkpoint-day", "6", "--output", tmp]), 0)
+            partial = next(Path(tmp).iterdir())
+            value = json.loads((partial/"checkpoint.json").read_text())
+            value["state"]["agents"][0]["confirmed"] = 1e12
+            (partial/"checkpoint.json").write_text(json.dumps(value))
+            self.assertEqual(main(["resume", "--checkpoint", str(partial/"checkpoint.json"), "--output", tmp]), 1)
 
 
 if __name__ == "__main__":

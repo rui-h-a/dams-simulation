@@ -51,7 +51,7 @@ class ModelTests(unittest.TestCase):
         self.assertTrue(any(a.confirmed > 0 for a in m.agents))
 
     def test_free_riding_changes_behaviour(self):
-        p = Config(n=24, days=12, guilds=3, attack_start_day=0, attack_stop_day=12, attack_budget_hours_per_day=8)
+        p = Config(n=24, days=12, guilds=3, attack_start_day=0, attack_stop_day=12, attack_budget_hours_per_day=8, attack_cohort_fraction=1)
         baseline = Model(p).run()
         attacked = Model(dataclasses.replace(p, attack="freeride")).run()
         self.assertLess(attacked.summary()["effort_hours"], baseline.summary()["effort_hours"])
@@ -100,6 +100,43 @@ class ModelTests(unittest.TestCase):
                        {"guilds": 121}, {"typo": 1}, {"regime": "magical"}, {"review_capacity_per_member_day": 10}):
             with self.assertRaises((ValueError, TypeError)):
                 Config.from_dict(values)
+
+        with self.assertRaises(ValueError):
+            Config(n=2, guilds=2, team_size=1, attack="censor", attack_cohort_fraction=.9).validate()
+
+    def test_simultaneous_review_order_is_common_keyed_lottery(self):
+        p = Config(n=20, days=4, guilds=1, review_capacity_per_member_day=.1,
+                   appeal_capacity_per_member_day=0)
+        model = Model(p)
+        model.step()
+        expected = sorted(range(p.n), key=lambda i: model.rng.uniform("review_priority", 0, i))[:2]
+        model._review(1)
+        actual = [c.agent for c in sorted(model.commits)]
+        # Alarms can reject an early claim; both processed claims still use the
+        # lottery rather than a fixed lower-ID prefix.
+        processed = set(actual) | {c.agent for c in model.appeals[0]}
+        self.assertTrue(processed.issubset(set(expected)))
+        self.assertNotEqual(expected, [0, 1])
+
+    def test_daily_capacity_expires_and_actual_hours_fit_reservation(self):
+        for backend in ("central", "witness", "consensus"):
+            p = Config(n=2, days=10, guilds=2, sites=2, team_size=1,
+                       backend=backend, review_capacity_per_member_day=.9)
+            m = Model(p)
+            for _ in range(p.days):
+                before = m.metrics["review_hours"]
+                m.step()
+                self.assertLessEqual(m.metrics["review_hours"]-before, .1*p.n*p.review_capacity_per_member_day+1e-12)
+            self.assertEqual(m.metrics["confirmed_records"], 0)
+
+    def test_zero_attack_budget_is_a_true_null_control(self):
+        p = Config(n=24, days=12, guilds=3, attack_start_day=0, attack_stop_day=12,
+                   attack_budget_hours_per_day=0)
+        baseline = Model(p).run()
+        for attack in ("forge", "duplicate", "freeride", "censor"):
+            other = Model(dataclasses.replace(p, attack=attack)).run()
+            self.assertEqual(other.metrics, baseline.metrics)
+            self.assertEqual(other.agents, baseline.agents)
 
 
 if __name__ == "__main__":
