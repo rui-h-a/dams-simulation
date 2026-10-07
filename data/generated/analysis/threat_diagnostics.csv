@@ -1,0 +1,6 @@
+attack,budget_hours_day,fraudulent_records_accepted,fraudulent_records_detected,honest_records_rejected,duplicate_records_rejected,censored_records,unfinished_records,unfinished_appeals
+none,8,0.0,0.0,1449.25,0.0,0.0,914.25,4.625
+forge,8,229.5,401.0,1365.5,0.0,0.0,918.125,5.125
+duplicate,8,0.0,0.0,1666.0,405.75,0.0,1515.0,4.875
+freeride,8,0.0,0.0,1540.25,0.0,0.0,915.25,4.625
+censor,8,0.0,0.0,1585.25,0.0,43.875,872.375,5.125

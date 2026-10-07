@@ -5,5 +5,8 @@ type: software
 version: 0.1.0
 date-released: 2026-10-07
 authors:
-  - family-names: Rui
+  - family-names: Hsieh
+    given-names: Hung-Jui
 license: MIT
+repository-code: "https://github.com/rui-h-a/dams-simulation"
+url: "https://github.com/rui-h-a/dams-simulation"

@@ -1,0 +1,17 @@
+{
+  "files": {
+    "__init__.py": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44",
+    "__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "authority.py": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+    "cli.py": "d7ba0bafa8cce45245657229f067cdc301241ae22640e4cdedd363d0d91f78d6",
+    "config.py": "9239abe242a8d2cc8ee4ed119c10561ba9d48327d24037a832bf51c4bd299a0d",
+    "model.py": "e87a0a7d6263a4dc6b82cdb72a3f81f2fed1f5f45e682ebc1cd075adb9026b15",
+    "randomness.py": "185b56c5e4cccabe742a6281b2904aadb2311347290d97265695075a33bb3f86",
+    "report.py": "6e86527a9ed785108f0c0e25b03b14f7e5e83871641977cd91eabbbe00bf3efc",
+    "storage.py": "fbe4e82a740b762cd06e1eb03c2a04467ebcfe220825a7c2492f3d9d769e2fb2"
+  },
+  "measurement_tool_sha256": "664706e36c8b58a76b9c9e0e6d5679bedb05a8b607960a0a767a918edb88189c",
+  "method": "Exact current source copied during final measured batch; both source aggregate and tool byte hash match pinned plan.",
+  "model_rule_sha256": "e87a0a7d6263a4dc6b82cdb72a3f81f2fed1f5f45e682ebc1cd075adb9026b15",
+  "source_sha256": "3d67a62e6eb2c78b4ac28aec497c7b5e43390d476cb8196309da0a9b9f644b90"
+}

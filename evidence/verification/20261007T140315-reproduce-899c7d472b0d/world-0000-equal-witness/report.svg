@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="490" viewBox="0 0 760 490">
+<rect width="760" height="490" fill="white"/>
+<style>text{font-family:serif;font-size:14px;fill:#202020}.line{fill:none;stroke:#303030;stroke-width:1.8}</style>
+<text x="70" y="24">DAMS model 0.1.0: one synthetic world, equal/witness</text>
+<text x="70" y="48">Unfinished review/settlement records (records)</text>
+<path d="M70,60V210H720" fill="none" stroke="#404040"/>
+<text x="60" y="214" text-anchor="end">0</text>
+<text x="60" y="139.0" text-anchor="end">62.5</text>
+<text x="60" y="64" text-anchor="end">125</text>
+<polyline class="line" points="70.000,181.188 365.455,109.160 660.909,73.145 720.000,67.143"/>
+<text x="70" y="232">0</text><text x="720" y="232" text-anchor="end">11 days</text>
+<text x="70" y="258">Formal authority / linear credit share deviation (TV [0,1])</text>
+<path d="M70,270V420H720" fill="none" stroke="#404040"/>
+<text x="60" y="424" text-anchor="end">0</text>
+<text x="60" y="349.0" text-anchor="end">0.126</text>
+<text x="60" y="274" text-anchor="end">0.252</text>
+<polyline class="line" points="70.000,420.000 365.455,277.143 660.909,319.486 720.000,320.240"/>
+<text x="70" y="442">0</text><text x="720" y="442" text-anchor="end">11 days</text>
+<text x="70" y="480">Recorded daily snapshots; line connects observations. No empirical calibration or uncertainty interval.</text></svg>

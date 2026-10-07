@@ -38,7 +38,9 @@ class CliTests(unittest.TestCase):
             self.assertEqual(main(["run", "--n", "24", "--days", "12", "--output", tmp]), 0)
             runs = [p for p in Path(tmp).iterdir() if json.loads((p/"manifest.json").read_text())["status"] == "complete"]
             self.assertEqual((runs[0]/"final_state.json").read_bytes(), (runs[1]/"final_state.json").read_bytes())
-            resumed=json.loads((runs[0]/"manifest.json").read_text())["restart_origin"]
+            origins=[json.loads((p/"manifest.json").read_text())["restart_origin"] for p in runs if "restart_origin" in json.loads((p/"manifest.json").read_text())]
+            self.assertEqual(len(origins),1)
+            resumed=origins[0]
             self.assertEqual(resumed["parent_run_id"],partial.name)
             self.assertEqual(resumed["checkpoint_sha256"],digest((partial/"checkpoint.json").read_bytes()))
             self.assertEqual(resumed["parent_manifest_sha256"],digest((partial/"manifest.json").read_bytes()))

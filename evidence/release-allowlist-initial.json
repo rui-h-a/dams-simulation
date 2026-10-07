@@ -1,0 +1,42 @@
+{
+  "status": "local initial allowlist scan passed; public release still pending full audit",
+  "files": [
+    ".gitignore",
+    "CITATION.cff",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md",
+    "configs/reference.json",
+    "contracts/.gitignore",
+    "contracts/DAMSGovernance.sol",
+    "contracts/package-lock.json",
+    "contracts/package.json",
+    "contracts/validate.cjs",
+    "dams_sim/__init__.py",
+    "dams_sim/__main__.py",
+    "dams_sim/authority.py",
+    "dams_sim/cli.py",
+    "dams_sim/config.py",
+    "dams_sim/model.py",
+    "dams_sim/randomness.py",
+    "dams_sim/report.py",
+    "dams_sim/storage.py",
+    "docs/INTERFACE.md",
+    "docs/ODD.md",
+    "docs/factor_disposition.json",
+    "docs/parameters.json",
+    "pyproject.toml",
+    "research_tools/study.py",
+    "tests/test_authority.py",
+    "tests/test_cli.py",
+    "tests/test_model.py",
+    "uv.lock"
+  ],
+  "excluded": [
+    "private thesis history",
+    "restricted literature fulltexts",
+    "cloud credentials",
+    "raw private inputs",
+    "generated test dependencies"
+  ]
+}

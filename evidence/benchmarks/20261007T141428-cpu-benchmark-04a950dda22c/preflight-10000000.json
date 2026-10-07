@@ -1,0 +1,1 @@
+{"actual_agent_allocation":false,"days":1,"n":10000000,"reason":"declared work events exceed max_events; explicitly revise resource limit","status":"preflight_refused"}

@@ -1,0 +1,19 @@
+[
+  {
+    "target": "rss_mb",
+    "oracle": "scipy.optimize.nnls",
+    "scipy_version": "1.18.1",
+    "max_coefficient_absolute_difference": 2.1316282072803006e-14
+  },
+  {
+    "target": "output_mb",
+    "oracle": "scipy.optimize.nnls",
+    "scipy_version": "1.18.1",
+    "max_coefficient_absolute_difference": 1.4210854715202004e-14
+  },
+  {
+    "test": "older-source final publication refused",
+    "exit_code": 1,
+    "placeholder_unchanged": true
+  }
+]

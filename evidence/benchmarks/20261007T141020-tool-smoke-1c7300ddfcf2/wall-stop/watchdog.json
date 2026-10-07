@@ -1,0 +1,1 @@
+{"exit_code":1,"monitor_cadence_seconds":0.05,"resource_stop":null,"sampled_peak_rss_mb":31.71875,"sampled_process_disk_read_bytes":0,"sampled_process_disk_write_bytes":4096,"spawn_to_exit_wall_seconds":0.28792512499967415,"status":"failed","task":"wall-stop","task_path":"evidence/benchmarks/20261007T141020-tool-smoke-1c7300ddfcf2/wall-stop"}

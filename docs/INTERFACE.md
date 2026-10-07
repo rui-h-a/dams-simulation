@@ -14,7 +14,7 @@ Raw summary fields (nonnegative counters may be absent when no corresponding eve
 | review_hours / appeal_hours | Actual pooled human hour-equivalents (0.1/0.15 per record) |
 | verification_resource_units | Extra per-record backend resource cost beyond common human appraisal |
 | confirmed_records | Unique committed event IDs, including successfully appealed records |
-| fraudulent_records_submitted / detected / accepted | Evaluator-truth fraud counts; pending/appealed cases remain distinct |
+| fraudulent_records_submitted / detected / accepted | Evaluator-truth counts: detected means initial-review rejection of a fraudulent claim, which can subsequently be appealed and committed; these counts are not mutually exclusive. Pending cases remain distinct |
 | reviews_rejected / honest_records_rejected / appeals_denied / corrections | Procedure outcome counts |
 | duplicate_records_rejected / censored_records | Explicit modeled threat counts |
 | attack_budget_hours | Common declared opportunity-cost bound per active day |

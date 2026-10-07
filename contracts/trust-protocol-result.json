@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "source_sha256": "56327de92c7b8bec313db46e535464d045818d6b66780b70ffae113d1c84061b",
+  "ethers": "6.13.5",
+  "tests": [
+    "invalid thresholds, empty sets and duplicate configured identities rejected",
+    "valid 3-of-4 typed confirmation",
+    "replay and sequence rejected",
+    "duplicate stable event rejected",
+    "signed wrong scope rejected",
+    "duplicate credentials do not increase quorum",
+    "invalid and outsider signatures rejected",
+    "changed evidence invalidates signatures",
+    "honest in-memory slot lock refuses equivocation",
+    "trusted administrator can confirm a false source: residual failure",
+    "authenticated three-signer quorum without source appraisal can accept false work: residual failure",
+    "64 exhaustive quorum-intersection checks under <=1 corrupt signer",
+    "two compromised/colluding credentials can form conflicting accepted quorums: residual failure",
+    "2+2 partition stops both sides; 3+1 permits a majority",
+    "all-node outage blocks signing; persisted signed-record recovery retains head",
+    "corrupt persisted evidence rejected at recovery",
+    "new explicitly configured epoch rejects old-record replay"
+  ],
+  "exhaustive_quorum_cases": 64,
+  "scope": "local serialized-slot typed-signature harness; no network protocol, independent-controller deployment or full BFT consensus",
+  "key_policy": "ephemeral randomly generated test credentials, private key values never output or stored",
+  "assumptions": "fixed authorized identities, intact honest slot locks, correct public-key configuration, threshold 3 of 4; two compromised keys violate the assumed fault bound",
+  "not_tested": [
+    "log-tail omission without an external trusted head checkpoint",
+    "cross-epoch history continuity",
+    "certificate aggregation against invalid-extra-signature denial of service",
+    "durable signer-lock recovery or rollback protection",
+    "authorized membership/key migration protocol",
+    "end-to-end confidentiality",
+    "real geographic networking or clock bounds",
+    "production consensus-client safety/liveness",
+    "truth of off-chain work",
+    "legal adjudication"
+  ]
+}

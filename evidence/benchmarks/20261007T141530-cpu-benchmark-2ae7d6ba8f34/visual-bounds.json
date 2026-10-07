@@ -1,0 +1,23 @@
+[
+  {
+    "file": "benchmark_parallel.pdf",
+    "pages": 1,
+    "font_min_pt": 9.0,
+    "font_max_pt": 10.0,
+    "outside_text": []
+  },
+  {
+    "file": "benchmark_projection.pdf",
+    "pages": 1,
+    "font_min_pt": 9.0,
+    "font_max_pt": 10.0,
+    "outside_text": []
+  },
+  {
+    "file": "benchmark_workloads.pdf",
+    "pages": 1,
+    "font_min_pt": 9.0,
+    "font_max_pt": 10.0,
+    "outside_text": []
+  }
+]

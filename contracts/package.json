@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "test": "node validate.cjs"
+    "test": "node validate.cjs && node trust-protocol-test.cjs"
   },
   "devDependencies": {
     "ethers": "6.13.5",

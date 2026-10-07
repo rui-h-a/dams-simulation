@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/akira/dams-simulation/research_tools/performance_figures.py", line 297, in <module>
+    main()
+    ~~~~^^
+  File "/Users/akira/dams-simulation/research_tools/performance_figures.py", line 273, in main
+    raise ValueError("final artifacts require exactly the current complete core source hash; retain older measurements as preliminary")
+ValueError: final artifacts require exactly the current complete core source hash; retain older measurements as preliminary

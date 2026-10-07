@@ -1,0 +1,2 @@
+actual_agent_allocation,days,n,reason,status
+False,1,10000000,declared work events exceed max_events; explicitly revise resource limit,preflight_refused

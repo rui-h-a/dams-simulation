@@ -1,0 +1,19 @@
+\begin{table}[tbp]
+\centering\small
+\caption{Synthetic parameter and behavioral-model recovery with held-out worlds.}
+\label{tab:synthetic-recovery}
+\begin{tabular}{lrrrrr}
+\toprule
+Generating rule & Response & Chosen rule & Chosen response & Capacity & Holdout loss \\
+\midrule
+Linear & 0.00 & Linear & 0.25 & 0.9 & 5.26 \\
+Linear & 0.25 & Linear & 0.50 & 0.9 & 6.90 \\
+Satisficing & 0.00 & Satisficing & 0.00 & 0.9 & 5.72 \\
+Satisficing & 0.25 & Satisficing & 0.00 & 0.9 & 7.60 \\
+Memory & 0.00 & Memory & 0.00 & 0.9 & 2.97 \\
+Memory & 0.25 & Memory & 0.25 & 0.9 & 2.93 \\
+\bottomrule
+\end{tabular}
+\par\smallskip\begin{minipage}{0.96\textwidth}\footnotesize Six synthetic generating conditions; eight observation-training worlds and eight disjoint candidate-prediction worlds, with four fresh worlds in each held-out set. Distance combines work, regret, queue stock and trust after declared standardization. Selection uses training only. It is a procedure diagnostic with a finite candidate grid, not external calibration or statistical identification in real firms.\end{minipage}
+\end{table}
+Exact grid parameters were recovered in 3 of 6 generating conditions and the effort-rule class in 6 of 6. Multiple settings within the declared diagnostic tolerance remain in the retained feasible sets; their multiplicity is part of the result. Output-only linear and sublinear worlds with zero share response are exactly observationally equivalent in the dedicated null check.

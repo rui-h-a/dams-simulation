@@ -1,0 +1,137 @@
+{
+  "equation": "intercept + b_N*(N/100000) + b_E*(N*T/300000), nonnegative constrained least squares",
+  "fit_method": "Exact active-set constrained least squares across all nonempty subsets of three cost coefficients; negative unconstrained output intercept rejected, boundary model refitted rather than clipped.",
+  "independent_external_validation": false,
+  "memory_coefficients_mb": [
+    30.25534844032859,
+    362.21498943738044,
+    67.31152776641642
+  ],
+  "memory_local_fit_residuals": [
+    {
+      "days": 60,
+      "fitted": 32.30548309404744,
+      "n": 120,
+      "observed": 31.84375,
+      "relative_error": 0.01449995977381555
+    },
+    {
+      "days": 30,
+      "fitted": 40.60865111134404,
+      "n": 1000,
+      "observed": 41.109375,
+      "relative_error": -0.012180284634732636
+    },
+    {
+      "days": 30,
+      "fitted": 133.78837515048306,
+      "n": 10000,
+      "observed": 133.75,
+      "relative_error": 0.00028691701295747833
+    },
+    {
+      "days": 3,
+      "fitted": 459.78186564412545,
+      "n": 100000,
+      "observed": 459.78125,
+      "relative_error": 1.338993544095424e-06
+    }
+  ],
+  "output_coefficients_decimal_mb": [
+    0.0,
+    64.45658520623364,
+    9.154423841865626
+  ],
+  "output_local_fit_residuals": [
+    {
+      "days": 60,
+      "fitted": 0.2970540744522554,
+      "n": 120,
+      "observed": 0.300018,
+      "relative_error": -0.009879159076270776
+    },
+    {
+      "days": 30,
+      "fitted": 1.560008236248899,
+      "n": 1000,
+      "observed": 1.530831,
+      "relative_error": 0.019059736998335478
+    },
+    {
+      "days": 30,
+      "fitted": 15.60008236248899,
+      "n": 10000,
+      "observed": 15.602925,
+      "relative_error": -0.00018218619335864507
+    },
+    {
+      "days": 3,
+      "fitted": 73.61100904809926,
+      "n": 100000,
+      "observed": 73.611013,
+      "relative_error": -5.368627025035102e-08
+    }
+  ],
+  "projections": [
+    {
+      "days": 30,
+      "default_event_limit_would_refuse": true,
+      "evidence_type": "conditional_extrapolation_unexecuted",
+      "n": 100000,
+      "output_central_mb": 156.0008236248899,
+      "rss_central_mb": 1065.5856155418733,
+      "rss_high_mb": 2131.1712310837465,
+      "rss_low_mb": 532.7928077709366,
+      "time_high_seconds": 304.9872165063322,
+      "time_low_seconds": 106.01724298648674,
+      "upper_logarithmic_growth_factor": 1.182577663245687,
+      "work_events": 3000000
+    },
+    {
+      "days": 30,
+      "default_event_limit_would_refuse": true,
+      "evidence_type": "conditional_extrapolation_unexecuted",
+      "n": 1000000,
+      "output_central_mb": 1560.0082362488988,
+      "rss_central_mb": 10383.558019455775,
+      "rss_high_mb": 20767.11603891155,
+      "rss_low_mb": 5191.779009727888,
+      "time_high_seconds": 3515.704211390568,
+      "time_low_seconds": 1060.1724298648674,
+      "upper_logarithmic_growth_factor": 1.3651553264913738,
+      "work_events": 30000000
+    },
+    {
+      "days": 30,
+      "default_event_limit_would_refuse": true,
+      "evidence_type": "conditional_extrapolation_unexecuted",
+      "n": 10000000,
+      "output_central_mb": 15600.082362488989,
+      "rss_central_mb": 103563.28205859479,
+      "rss_high_mb": 207126.56411718958,
+      "rss_low_mb": 51781.641029297396,
+      "time_high_seconds": 39815.36257717814,
+      "time_low_seconds": 10601.724298648674,
+      "upper_logarithmic_growth_factor": 1.5477329897370604,
+      "work_events": 300000000
+    }
+  ],
+  "rationale": "Explicit Agent/Claim Python objects, per-agent snapshots and sparse maps contribute N; seen IDs, completed delays and outstanding claims contribute N*T. Full-state dict/JSON serialization duplicates retained state. Two measured cells share 300000 claims but differ tenfold in N, separating population and retained-event terms locally.",
+  "runtime_phase_rate_ranges": {
+    "initialization_seconds_per_person": [
+      1.3836870799968892e-05,
+      1.6310758333778115e-05
+    ],
+    "residual_seconds_per_output_byte": [
+      2.3157020302337882e-08,
+      9.89350338978724e-08
+    ],
+    "simulation_seconds_per_work_claim": [
+      3.367368055554228e-05,
+      3.73789944433338e-05
+    ]
+  },
+  "scope": "Four measured workload cells, N=120..100000, T=3..60, emitted claims=7200..300000, G=max(4,N//100), team five, ring one. Not a fit for fixed G, altered backlog, other backends, long horizons or optimized/aggregated agents.",
+  "source_sha256": "61149d88f0df519415814b032ec44dc4237b0c3f9eebafd3a60bacb265923e59",
+  "uncertainty": "Broad planning envelopes, not confidence intervals, guaranteed memory bounds or measured completion. Coefficients fit the same local observations; small residual is not independent validation. Memory 0.5x..2x central prediction reflects structural/allocator uncertainty. Time upper adds observed phase maxima, logarithmic heap/sort growth and explicit 2x margin. Increasing N/T far beyond observed event counts can invalidate these forms."
+}

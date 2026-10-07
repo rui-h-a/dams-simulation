@@ -1,0 +1,17 @@
+{
+  "byte_identical": true,
+  "generator_sha256": "a9ae2e3a904b874af82d88efc267f915f123fc67b647bdd812022ab8dc463494",
+  "hashes": {
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_parallel.pdf": "bfd712b1abe7434b2e77041bb189ff3ca34e807fc07bc5c844c5ac49dacda0e1",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_parallel.svg": "810fb462dc4b23f74cc4381db7dd1ba06a9f4733d4cc05b025e695cd9a70d0d9",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_projection.pdf": "6f38f25c50409240a2502c08923d308d82c254b71899549ab47cee6399d726d8",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_projection.svg": "f196c3bb3c3b066e2920f68cef50bc7cae86c59e8cd3198ceaa9fa9c20cb3077",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_workloads.pdf": "f0df74b3dfe4d80cf6d35a3ba67430fa983e34a47bd225dd43a98921ead59bc5",
+    "/Users/akira/\u8ad6\u6587/05_thesis/figures/results/benchmark_workloads.svg": "4bd718a05f90532427b897baae18b23cadd79cd34e52eff2d674ec34313f1fc1"
+  },
+  "method": "Fixed SVG hash salt; suppressed SVG date and PDF creation/modification dates. This verifies regenerated figures, not repeatable physical timing.",
+  "pdf_svg_files": 6,
+  "runs": 2,
+  "same_raw_batch": true,
+  "status": "passed"
+}

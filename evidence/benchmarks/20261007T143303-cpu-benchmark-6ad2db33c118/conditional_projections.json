@@ -1,0 +1,228 @@
+{
+  "equation": "intercept + b_N*(N/100000) + b_E*(N*T/300000), nonnegative constrained least squares",
+  "fit_method": "Exact active-set constrained least squares across all nonempty subsets of three cost coefficients; negative unconstrained output intercept rejected, boundary model refitted rather than clipped.",
+  "independent_external_validation": false,
+  "leave_one_workload_out_diagnostics": [
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 32.109375,
+      "predicted": 32.51678472222201,
+      "relative_error": 0.012688185996208684,
+      "target": "rss_mb",
+      "training_cells": 3,
+      "withheld_days": 60,
+      "withheld_n": 120
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 42.078125,
+      "predicted": 41.70243980532792,
+      "relative_error": -0.008928277927594921,
+      "target": "rss_mb",
+      "training_cells": 3,
+      "withheld_days": 30,
+      "withheld_n": 1000
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 149.296875,
+      "predicted": 154.19886363635916,
+      "relative_error": 0.032833832833802874,
+      "target": "rss_mb",
+      "training_cells": 3,
+      "withheld_days": 30,
+      "withheld_n": 10000
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 529.78125,
+      "predicted": 835.3385416615583,
+      "relative_error": 0.576761241855121,
+      "target": "rss_mb",
+      "training_cells": 3,
+      "withheld_days": 3,
+      "withheld_n": 100000
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 0.300005,
+      "predicted": 0.2970522848316832,
+      "relative_error": -0.009842219857391707,
+      "target": "output_mb",
+      "training_cells": 3,
+      "withheld_days": 60,
+      "withheld_n": 120
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 1.530831,
+      "predicted": 1.5629475471311618,
+      "relative_error": 0.02097981235757686,
+      "target": "output_mb",
+      "training_cells": 3,
+      "withheld_days": 30,
+      "withheld_n": 1000
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 15.602929,
+      "predicted": 15.183868171117187,
+      "relative_error": -0.02685783091641403,
+      "target": "output_mb",
+      "training_cells": 3,
+      "withheld_days": 30,
+      "withheld_n": 10000
+    },
+    {
+      "diagnostic": "leave_one_workload_cell_out_refit; not independent hardware validation",
+      "observed": 73.611014,
+      "predicted": 71.3964776237573,
+      "relative_error": -0.030084307441311582,
+      "target": "output_mb",
+      "training_cells": 3,
+      "withheld_days": 3,
+      "withheld_n": 100000
+    }
+  ],
+  "memory_coefficients_mb": [
+    29.938324091455897,
+    422.7434582783336,
+    77.09971647612623
+  ],
+  "memory_local_fit_residuals": [
+    {
+      "days": 60,
+      "fitted": 32.296009436816924,
+      "n": 120,
+      "observed": 32.109375,
+      "relative_error": 0.005812459346123172
+    },
+    {
+      "days": 30,
+      "fitted": 41.875730321851854,
+      "n": 1000,
+      "observed": 42.078125,
+      "relative_error": -0.004809973784434206
+    },
+    {
+      "days": 30,
+      "fitted": 149.3123863954155,
+      "n": 10000,
+      "observed": 149.296875,
+      "relative_error": 0.00010389631675479666
+    },
+    {
+      "days": 3,
+      "fitted": 529.7814988459157,
+      "n": 100000,
+      "observed": 529.78125,
+      "relative_error": 4.697144637240726e-07
+    }
+  ],
+  "memory_observation": "Median of three whole-child guardian RSS peaks at 50 ms cadence. Each child includes two fresh models; this captures final hashing and allocator carryover conservatively, but is a sampled process peak rather than a reset per-world high-water.",
+  "output_coefficients_decimal_mb": [
+    0.0,
+    64.45658230112767,
+    9.154427764425796
+  ],
+  "output_local_fit_residuals": [
+    {
+      "days": 60,
+      "fitted": 0.2970541651075723,
+      "n": 120,
+      "observed": 0.300005,
+      "relative_error": -0.009835952375552742
+    },
+    {
+      "days": 30,
+      "fitted": 1.5600085994538564,
+      "n": 1000,
+      "observed": 1.530831,
+      "relative_error": 0.019059974258331808
+    },
+    {
+      "days": 30,
+      "fitted": 15.600085994538563,
+      "n": 10000,
+      "observed": 15.602929,
+      "relative_error": -0.0001822097287910572
+    },
+    {
+      "days": 3,
+      "fitted": 73.61101006555346,
+      "n": 100000,
+      "observed": 73.611014,
+      "relative_error": -5.344915557382825e-08
+    }
+  ],
+  "projections": [
+    {
+      "days": 30,
+      "default_event_limit_would_refuse": true,
+      "evidence_type": "conditional_extrapolation_unexecuted",
+      "n": 100000,
+      "output_central_mb": 156.00085994538563,
+      "rss_central_mb": 1223.6789471310517,
+      "rss_high_mb": 2447.3578942621034,
+      "rss_low_mb": 611.8394735655259,
+      "time_high_seconds": 327.1320160371956,
+      "time_low_seconds": 115.70860066476929,
+      "upper_logarithmic_growth_factor": 1.182577663245687,
+      "work_events": 3000000
+    },
+    {
+      "days": 30,
+      "default_event_limit_would_refuse": true,
+      "evidence_type": "conditional_extrapolation_unexecuted",
+      "n": 1000000,
+      "output_central_mb": 1560.0085994538563,
+      "rss_central_mb": 11967.344554487416,
+      "rss_high_mb": 23934.68910897483,
+      "rss_low_mb": 5983.672277243708,
+      "time_high_seconds": 3768.9581427147587,
+      "time_low_seconds": 1157.0836392741915,
+      "upper_logarithmic_growth_factor": 1.3651553264913738,
+      "work_events": 30000000
+    },
+    {
+      "days": 30,
+      "default_event_limit_would_refuse": true,
+      "evidence_type": "conditional_extrapolation_unexecuted",
+      "n": 10000000,
+      "output_central_mb": 15600.085994538564,
+      "rss_central_mb": 119404.00062805106,
+      "rss_high_mb": 238808.0012561021,
+      "rss_low_mb": 59702.00031402553,
+      "time_high_seconds": 42667.38813361466,
+      "time_low_seconds": 11570.834025368415,
+      "upper_logarithmic_growth_factor": 1.5477329897370604,
+      "work_events": 300000000
+    }
+  ],
+  "rationale": "Explicit Agent/Claim Python objects, per-agent snapshots and sparse maps contribute N; seen IDs, completed delays and outstanding claims contribute N*T. Full-state dict/JSON serialization duplicates retained state. Summary quantiles sort completed delay histories, so their observed per-claim rate receives the event logarithmic margin; diagnostic SVG generation scales with recorded days. Two measured cells share 300000 claims but differ tenfold in N, separating population and retained-event terms locally.",
+  "runtime_phase_rate_ranges": {
+    "diagnostic_plotting_seconds_per_day": [
+      8.768050004922164e-06,
+      0.000293597333135646
+    ],
+    "initialization_seconds_per_person": [
+      1.4100254100048915e-05,
+      2.342777499961812e-05
+    ],
+    "residual_seconds_per_output_byte": [
+      2.445604655382074e-08,
+      1.1927036882969063e-07
+    ],
+    "simulation_seconds_per_work_claim": [
+      3.682529777999965e-05,
+      3.922208916669155e-05
+    ],
+    "statistics_seconds_per_work_claim": [
+      2.4181933349609608e-09,
+      1.7349583332462416e-08
+    ]
+  },
+  "scope": "Four measured workload cells, N=120..100000, T=3..60, emitted claims=7200..300000, G=max(4,N//100), team five, ring one. Not a fit for fixed G, altered backlog, other backends, long horizons or optimized/aggregated agents.",
+  "source_sha256": "3d67a62e6eb2c78b4ac28aec497c7b5e43390d476cb8196309da0a9b9f644b90",
+  "uncertainty": "Broad planning envelopes, not confidence intervals, guaranteed memory bounds or measured completion. Coefficients fit the same local observations; small residual is not independent validation. Memory 0.5x..2x central prediction reflects structural/allocator uncertainty. Time upper adds observed phase maxima, logarithmic heap/sort growth and explicit 2x margin. Increasing N/T far beyond observed event counts can invalidate these forms."
+}

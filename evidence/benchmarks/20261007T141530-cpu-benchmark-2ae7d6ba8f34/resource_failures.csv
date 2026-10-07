@@ -1,0 +1,2 @@
+exit_code,monitor_cadence_seconds,resource_stop,sampled_peak_rss_mb,sampled_process_disk_read_bytes,sampled_process_disk_write_bytes,spawn_to_exit_wall_seconds,status,task,task_path,n,days,core_manifest_status,core_error,evidence_type
+-15,0.05,external_RSS_watchdog,1025.09375,1650688,4096,34.234963792000144,terminated,partial-n1000000-t1,evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/partial-n1000000-t1,1000000,1,running,,bounded_actual_partial_attempt
