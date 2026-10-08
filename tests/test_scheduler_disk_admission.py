@@ -14,7 +14,7 @@ from dams_sim.scheduler import Scheduler
 class DiskAdmissionTests(unittest.TestCase):
     def limits(self):
         return RuntimeLimits.from_dict({
-            'max_workers': 2, 'cpu_budget': 2, 'memory_budget_bytes': 512_000_000,
+            'max_workers': 2, 'cpu_budget': 2, 'memory_budget_bytes': 1_000_000_000,
             'max_output_bytes': 2_000_000, 'batch_max_output_bytes': 3_500_000,
             'max_events': 1000, 'max_retries': 0, 'world_timeout_seconds': 30,
             'checkpoint_interval_days': 2,
@@ -23,12 +23,19 @@ class DiskAdmissionTests(unittest.TestCase):
 
     def configs(self):
         return [Config(n=12, days=3, world=w, max_output_mb=2,
-                       max_rss_mb=128, max_events=1000) for w in (7101, 7102, 7103)]
+                       max_rss_mb=256, max_events=1000) for w in (7101, 7102, 7103)]
 
     def test_occupied_disk_slots_wait_for_actual_owned_workers(self):
         with tempfile.TemporaryDirectory() as directory:
             scheduler = Scheduler(Path(directory), self.limits(), driver_hash())
             configs = self.configs()
+            # RAM can admit both workers; only the two complete-output disk
+            # reservations exceed this fixture's batch budget. The 256 MiB
+            # per-worker limit also accommodates the actual Linux CI baseline.
+            self.assertLessEqual(2 * configs[0].max_rss_mb * 1024**2,
+                                 scheduler.limits.memory_budget_bytes)
+            self.assertGreater(2 * configs[0].max_output_mb * 1_000_000,
+                               scheduler.limits.batch_max_output_bytes)
             results = scheduler.run(configs)
             self.assertEqual(scheduler.peak_active, 1)
             self.assertEqual(len(results), 3)
