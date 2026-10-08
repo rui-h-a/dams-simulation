@@ -1,5 +1,6 @@
 import hashlib
 from copy import deepcopy
+from contextlib import closing
 import io
 import json
 from pathlib import Path
@@ -19,7 +20,8 @@ sys.path.insert(0,str(ROOT/'research_tools'))
 from cloud_control import GuardError
 from cloud_worker import (snapshot, final_snapshot, download_snapshot, Store, PersistenceError, persistence_error_facts,
                           guest_memory, guest_metadata, root_block_interface, verify_guest, run_guest)
-from cloud_worker import wait_pipeline_group_absent
+from cloud_worker import wait_pipeline_group_absent, archive_options, main
+from cloud_archive import CODEC, RAW_CODEC, CHUNK_BYTES, MAX_DESCRIPTOR_BYTES
 
 
 class ProtocolResponse(io.BytesIO):
@@ -139,7 +141,7 @@ class StoreProtocolTests(unittest.TestCase):
             root = Path(tmp); payload = b'confirmed-bytes'; store = self.store(root)
             transport = ProtocolTransport(payload, 'put_412_match')
             sha = hashlib.sha256(payload).hexdigest()
-            def lying_digest(key, path):
+            def lying_digest(key, path, **kwargs):
                 Path(path).write_bytes(payload + b'extra')
                 return sha
             with patch.object(store, 'download', lying_digest), self.assertRaises(PersistenceError) as raised:
@@ -253,6 +255,58 @@ class StoreProtocolTests(unittest.TestCase):
             self.assertFalse((root/'transfer.json').exists())
             self.assertEqual(transport.verifications, 1)
 
+    def test_actual_download_bounds_declared_and_unknown_length_before_excess_write(self):
+        for headers in ({'Content-Length':'100'},{}):
+            with self.subTest(headers=headers),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);store=self.store(root);target=root/'received'
+                with patch('cloud_worker.urllib.request.urlopen',return_value=ProtocolResponse(b'x'*100,headers)):
+                    with self.assertRaises(GuardError):store.download('bounded',target,max_bytes=3)
+                self.assertEqual(target.stat().st_size,0)
+
+    def test_remote_json_duplicate_binding_keys_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);store=self.store(root);raw=b'{"codec":"raw-v1","codec":"deflate-chunks-v1"}'
+            with patch('cloud_worker.urllib.request.urlopen',return_value=ProtocolResponse(raw,{'Content-Length':str(len(raw))})):
+                with self.assertRaisesRegex(GuardError,'duplicate key'):store.get_json('descriptor')
+
+    def test_periodic_cannot_spend_final_reserve_and_phase_fences_reopened_uploaders(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);kwargs={'request_state':root/'requests.json','max_requests':12,'final_storage_requests_reserved':8}
+            periodic=self.store(root,**kwargs)
+            for _ in range(4):periodic.charge_request()
+            with self.assertRaises(GuardError):periodic.charge_request()
+            self.assertEqual(json.loads((root/'requests.json').read_text())['requests_upper'],4)
+            final=self.store(root,**kwargs);final.begin_final()
+            reopened=self.store(root,**kwargs)
+            for uploader in (periodic,reopened):
+                with self.assertRaises(GuardError):uploader.check_deadline()
+                with self.assertRaises(GuardError):uploader.charge_request()
+            for _ in range(8):final.charge_request()
+            with self.assertRaises(GuardError):final.charge_request()
+            self.assertEqual(json.loads((root/'requests.json').read_text())['requests_upper'],12)
+
+    def test_final_byte_reserve_reuses_original_cap_and_survives_reopened_store(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);kwargs={'request_state':root/'requests.json','max_requests':12,
+                                  'final_storage_requests_reserved':8,'final_storage_bytes_reserved':80}
+            periodic=self.store(root,**kwargs);self.assertEqual(periodic.storage_byte_limit(100),20)
+            reopened=self.store(root,**kwargs);self.assertEqual(reopened.storage_byte_limit(100),20)
+            for invalid in (True,-1):
+                with self.assertRaises(GuardError):self.store(root,**(kwargs|{'final_storage_bytes_reserved':invalid}))
+            with self.assertRaises(GuardError):periodic.storage_byte_limit(80)
+            final=self.store(root,**kwargs);final.begin_final();self.assertEqual(final.storage_byte_limit(100),100)
+            with self.assertRaises(GuardError):reopened.storage_byte_limit(100)
+
+    def test_metadata_hard_bound_writer_and_reservation_match_reader(self):
+        from cloud_worker import reserve_metadata
+        state={'metadata_sizes':{},'bytes':0};value={'large':'x'*MAX_DESCRIPTOR_BYTES}
+        with self.assertRaises(GuardError):reserve_metadata(state,'snapshots/test.json',value,100_000_000)
+        self.assertEqual(state,{'metadata_sizes':{},'bytes':0})
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);store=self.store(root)
+            with patch.object(store,'put_file',side_effect=AssertionError('upload before metadata admission')):
+                with self.assertRaises(GuardError):store.put_json('oversize.json',value)
+
     def test_conflicting_snapshot_retains_ambiguous_bytes_without_latest_or_terminal(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); source = root/'source'; source.mkdir(); payload = b'confirmed-bytes'
@@ -279,8 +333,11 @@ class FakeStore:
     def put_json(self,key,data,immutable=True): self.files[key]=json.dumps(data).encode()
     def get_json(self,key): return json.loads(self.files[key]) if key in self.files else None
     def reconcile_usage(self,state,max_bytes): return state
-    def download(self,key,path):
-        data=self.files[key]+(b'corruption' if self.corrupt else b'');Path(path).write_bytes(data)
+    def begin_final(self):pass
+    def download(self,key,path,*,max_bytes=None):
+        data=self.files[key]+(b'corruption' if self.corrupt else b'')
+        if max_bytes is not None and len(data)>max_bytes:raise GuardError('fake bounded download refuses oversize data')
+        Path(path).write_bytes(data)
         return hashlib.sha256(data).hexdigest()
 
 
@@ -309,7 +366,7 @@ class CloudWorkerTests(unittest.TestCase):
             root=Path(tmp);source=root/'source';complete=source/'complete';running=source/'running'
             complete.mkdir(parents=True);running.mkdir();store=FakeStore();(source/'.pipeline.lock').touch()
             working=complete/'.longitudinal-working.sqlite'
-            with sqlite3.connect(working) as db:
+            with closing(sqlite3.connect(working)) as db,db:
                 db.execute('CREATE TABLE fixture(value INTEGER)');db.execute('INSERT INTO fixture VALUES(42)')
             (complete/'final_state.sqlite').write_bytes(working.read_bytes())
             for name in ('summary.json','timeseries.csv','final_state.json','report.md','report.svg'):
@@ -337,7 +394,7 @@ class CloudWorkerTests(unittest.TestCase):
             self.assertEqual({p.name for p in restored.iterdir()},set(hashes)|{'manifest.json'})
             for name in set(hashes)|{'manifest.json'}:
                 self.assertEqual((restored/name).read_bytes(),(complete/name).read_bytes())
-            with sqlite3.connect(f'file:{restored/working.name}?mode=ro',uri=True) as db:
+            with closing(sqlite3.connect(f'file:{restored/working.name}?mode=ro',uri=True)) as db:
                 self.assertEqual(db.execute('SELECT value FROM fixture').fetchone(),(42,))
 
     def test_periodic_complete_working_requires_precopy_complete_manifest_hash_binding(self):
@@ -400,7 +457,7 @@ class CloudWorkerTests(unittest.TestCase):
                 original(key,copied,sha,immutable)
                 path.write_bytes(b'new-state');os.utime(path,ns=(info.st_atime_ns,info.st_mtime_ns))
             store.put_file=mutate
-            with self.assertRaisesRegex(GuardError,'source hash changed'):
+            with self.assertRaisesRegex(GuardError,'source (file|hash) changed'):
                 snapshot(source,store,root/'state.json',100_000)
             self.assertNotIn('latest.json',store.files)
 
@@ -410,8 +467,8 @@ class CloudWorkerTests(unittest.TestCase):
             (source/'a').write_bytes(b'a');(source/'b').write_bytes(b'b')
             sid=snapshot(source,store,root/'first-ledger.json',10000);before=store.files['latest.json']
             original=store.download
-            def concurrent_download(key,path):
-                result=original(key,path)
+            def concurrent_download(key,path,**kwargs):
+                result=original(key,path,**kwargs)
                 with self.assertRaises(BlockingIOError):snapshot(root/'restored',store,root/'second-ledger.json',10000)
                 self.assertEqual(store.files['latest.json'],before)
                 return result
@@ -523,6 +580,342 @@ run_world(Config.from_dict(json.loads(%r)),Path(%r),checkpoint_interval_days=1,s
             with self.assertRaises(GuardError): snapshot(src,store,state,4096)
             (src/'huge').unlink();(src/'linked').symlink_to(src/'checkpoint-index.json')
             with self.assertRaises(GuardError): snapshot(src,store,state,4096)
+
+
+class CompressedWorkerTests(unittest.TestCase):
+    options={'transport_codec':CODEC,'archive_max_raw_bytes':32*1024**2,'archive_min_free_bytes':0}
+
+    def fixture(self,root):
+        source=root/'source';case=source/'case';case.mkdir(parents=True)
+        (source/'.pipeline.lock').touch()
+        for name in ('.longitudinal-working.sqlite','final_state.sqlite','checkpoint-day-000003.sqlite'):
+            (case/name).write_bytes(b'exact-SQLite-fixture\x00'*1000)
+        cp=case/'checkpoint-day-000003.json';cp.write_text('{"day":3}')
+        files=[{'file':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size}
+               for p in (cp,cp.with_suffix('.sqlite'))]
+        (case/'checkpoint-index.json').write_text(json.dumps({'snapshots':[{'file':cp.name,'sha256':files[0]['sha256'],'files':files}]}))
+        outputs={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in case.iterdir()}
+        (case/'manifest.json').write_text(json.dumps({'status':'complete','output_sha256':outputs}))
+        return source
+
+    def test_compressed_complete_checkpoint_and_hidden_roster_restore_exact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            desc=download_snapshot(store,sid,root/'restored',**self.options)
+            self.assertEqual(desc['version'],2);self.assertEqual(desc['transport_codec'],CODEC)
+            self.assertEqual(desc['working_databases']['complete_manifest_bound'],['case/.longitudinal-working.sqlite'])
+            original={p.relative_to(source).as_posix():p.read_bytes() for p in source.rglob('*') if p.is_file()}
+            restored={p.relative_to(root/'restored').as_posix():p.read_bytes() for p in (root/'restored').rglob('*') if p.is_file()}
+            self.assertEqual(original,restored)
+            self.assertTrue((root/'restored-download-verification.json').is_file())
+            self.assertFalse(any(key.startswith('blobs/') for key in store.files))
+
+    def test_default_legacy_and_explicit_compressed_restore_legacy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            sid=snapshot(source,store,root/'state.json',10_000_000)
+            self.assertEqual(store.get_json('snapshots/'+sid+'.json')['version'],1)
+            download_snapshot(store,sid,root/'restored',**self.options)
+            self.assertEqual((root/'restored/case/final_state.sqlite').read_bytes(),(source/'case/final_state.sqlite').read_bytes())
+            self.assertFalse(any(key.startswith('chunks/') for key in store.files))
+
+    def test_chunk_dedup_generations_and_partial_retry_reserve_actual_encoded_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=root/'source';source.mkdir();store=FakeStore();state=root/'state.json'
+            (source/'a').write_bytes(b'x'*CHUNK_BYTES+b'a');(source/'b').write_bytes(b'x'*CHUNK_BYTES+b'b')
+            store.fail=True
+            with self.assertRaises(OSError):snapshot(source,store,state,10_000_000,**self.options)
+            first_state=json.loads(state.read_text());self.assertEqual(len(first_state['uploaded']),1)
+            self.assertEqual(first_state['verified'],[]);self.assertNotIn('latest.json',store.files)
+            store.fail=False;sid=snapshot(source,store,state,10_000_000,**self.options)
+            chunks=[key for key in store.files if key.startswith('chunks/')]
+            self.assertEqual(len(chunks),3)
+            calls=store.calls;same=snapshot(source,store,state,10_000_000,**self.options)
+            self.assertEqual(sid,same);self.assertEqual(store.calls,calls)
+            (source/'b').write_bytes(b'x'*CHUNK_BYTES+b'c')
+            new=snapshot(source,store,state,10_000_000,**self.options)
+            self.assertNotEqual(new,sid);self.assertIn('snapshots/'+sid+'.json',store.files)
+            self.assertEqual(len([key for key in store.files if key.startswith('chunks/')]),4)
+            download_snapshot(store,sid,root/'old',**self.options)
+            self.assertTrue((root/'old/b').read_bytes().endswith(b'b'))
+            used=json.loads(state.read_text());self.assertTrue(all(key.startswith(CODEC+':') for key in used['uploaded']))
+            self.assertEqual(sum(used['uploaded'].values()),sum(len(store.files[key]) for key in store.files if key.startswith('chunks/')))
+
+    def test_compressed_restore_rejects_missing_corrupt_and_wrong_codec_without_touching_old_tree(self):
+        for fault in ('missing','corrupt','codec'):
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);source=self.fixture(root);store=FakeStore()
+                sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+                destination=root/'old';destination.mkdir();(destination/'previous').write_bytes(b'committed')
+                chunk=next(key for key in store.files if key.startswith('chunks/'))
+                if fault=='missing':store.files.pop(chunk)
+                if fault=='corrupt':store.files[chunk]=b'z'*len(store.files[chunk])
+                options={} if fault=='codec' else self.options
+                with self.assertRaises((GuardError,KeyError)):download_snapshot(store,sid,destination,**options)
+                self.assertEqual(list(destination.iterdir()),[destination/'previous'])
+                self.assertEqual((destination/'previous').read_bytes(),b'committed')
+                self.assertFalse((root/'old-snapshot-history').exists())
+                self.assertFalse(list(root.glob('old-restore-*')))
+
+    def test_unknown_manifest_paths_offsets_extra_and_raw_cap_rejected_before_chunk_fetch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            good=store.get_json('snapshots/'+sid+'.json')
+            mutations=[lambda d:d.update(transport_codec='unknown'),lambda d:d.update(version=3),
+                       lambda d:d.update(extra=1),lambda d:d['files'].update({'../escape':next(iter(d['files'].values()))}),
+                       lambda d:next(v for v in d['files'].values() if v['archive']['chunks'])['archive']['chunks'][0].update(offset=1)]
+            from cloud_control import digest
+            for mutate in mutations:
+                bad=deepcopy(good);mutate(bad);bad['inventory_sha256']=digest(bad['files']);bad_id=digest(bad)
+                store.files['snapshots/'+bad_id+'.json']=json.dumps(bad).encode()
+                with patch.object(store,'download',side_effect=AssertionError('fetch occurred before admission')):
+                    with self.assertRaises(GuardError):download_snapshot(store,bad_id,root/'bad',**self.options)
+                self.assertFalse((root/'bad').exists())
+            limited={**self.options,'archive_max_raw_bytes':1}
+            with patch.object(store,'download',side_effect=AssertionError('fetch occurred before raw admission')):
+                with self.assertRaises(GuardError):download_snapshot(store,sid,root/'bad',**limited)
+
+    def test_capacity_and_bad_path_roster_do_not_mutate_existing_tree(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            destination=root/'old';destination.mkdir();(destination/'previous').write_bytes(b'committed')
+            with patch('cloud_archive.shutil.disk_usage',return_value=type('Usage',(),{'free':0})()),patch.object(store,'download',side_effect=AssertionError('fetch before disk admission')):
+                with self.assertRaises(GuardError):download_snapshot(store,sid,destination,**self.options)
+            self.assertEqual((destination/'previous').read_bytes(),b'committed')
+            self.assertFalse(list(root.glob('old-restore-*')))
+
+    def test_restore_history_receipt_and_lock_symlinks_refused_before_io_without_external_changes(self):
+        for suffix,kind in (('-snapshot-history','directory'),('-snapshot.lock','file'),('-download-verification.json','file')):
+            with self.subTest(suffix=suffix),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);source=self.fixture(root);store=FakeStore()
+                sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+                destination=root/'old';destination.mkdir();(destination/'previous').write_bytes(b'committed')
+                external=root/'external'
+                if kind=='directory':external.mkdir();(external/'sentinel').write_bytes(b'external')
+                else:external.write_bytes(b'external');external.chmod(0o644)
+                link=destination.with_name(destination.name+suffix);link.symlink_to(external,target_is_directory=kind=='directory')
+                before=external.stat()
+                with patch.object(store,'get_json',side_effect=AssertionError('remote I/O before local path admission')):
+                    with self.assertRaises(GuardError):download_snapshot(store,sid,destination,**self.options)
+                self.assertEqual((destination/'previous').read_bytes(),b'committed');self.assertTrue(link.is_symlink())
+                if kind=='directory':self.assertEqual(list(external.iterdir()),[external/'sentinel'])
+                else:self.assertEqual(external.read_bytes(),b'external')
+                self.assertEqual(external.stat().st_mode,before.st_mode)
+                self.assertEqual(external.stat().st_mtime_ns,before.st_mtime_ns)
+
+    def test_snapshot_state_and_lock_symlinks_refused_without_external_chmod_or_upload(self):
+        for label in ('state','ledger-lock','source-lock'):
+            with self.subTest(label=label),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);source=self.fixture(root);store=FakeStore();state=root/'state.json'
+                external=root/'external';external.write_bytes(b'external');external.chmod(0o644)
+                paths={'state':state,'ledger-lock':state.with_suffix('.lock'),'source-lock':source.with_name(source.name+'-snapshot.lock')}
+                paths[label].symlink_to(external);before=external.stat()
+                with self.assertRaises(GuardError):snapshot(source,store,state,10_000_000,**self.options)
+                self.assertEqual(store.files,{});self.assertEqual(external.read_bytes(),b'external')
+                self.assertEqual(external.stat().st_mode,before.st_mode)
+
+    def test_ancestor_symlink_refused_before_resolve_for_restore_source_state_and_locks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            outside=root/'external';outside.mkdir();alias=root/'alias';alias.symlink_to(outside,target_is_directory=True)
+            destination=outside/'restored';destination.mkdir();(destination/'old').write_bytes(b'committed')
+            with patch.object(store,'get_json',side_effect=AssertionError('remote I/O before ancestor admission')):
+                with self.assertRaises(GuardError):download_snapshot(store,sid,alias/'restored',**self.options)
+            self.assertEqual(list(outside.iterdir()),[destination]);self.assertEqual((destination/'old').read_bytes(),b'committed')
+            outside_source=self.fixture(outside);lock=outside_source.with_name(outside_source.name+'-snapshot.lock');lock.write_bytes(b'');lock.chmod(0o644)
+            before=lock.stat();other=FakeStore()
+            with self.assertRaises(GuardError):snapshot(alias/'source',other,alias/'state.json',10_000_000,**self.options)
+            self.assertEqual(other.files,{});self.assertEqual(lock.stat().st_mode,before.st_mode);self.assertFalse((outside/'state.json').exists())
+
+    def test_whole_roster_addition_during_upload_refuses_latest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=root/'source';source.mkdir();(source/'a').write_bytes(b'a');store=FakeStore();original=store.put_file
+            def add(key,path,sha,immutable=True):
+                original(key,path,sha,immutable);(source/'b').write_bytes(b'b')
+            with patch.object(store,'put_file',add),self.assertRaisesRegex(GuardError,'roster changed'):
+                snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            self.assertNotIn('latest.json',store.files)
+
+    def test_zero_inodes_and_file_roster_cap_refuse_before_download_or_upload(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            with self.assertRaises(GuardError):snapshot(source,store,root/'too-small.json',10_000_000,**(self.options|{'archive_max_files':1}))
+            self.assertEqual(store.files,{})
+            sid=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            with patch('cloud_worker.os.statvfs',return_value=SimpleNamespace(f_favail=0,f_frsize=4096)),patch.object(store,'download',side_effect=AssertionError('download with zero inodes')):
+                with self.assertRaisesRegex(GuardError,'inode capacity'):download_snapshot(store,sid,root/'restored',**self.options)
+            self.assertFalse((root/'restored').exists())
+
+    def test_snapshot_source_rewrite_keeps_previous_pointer_and_retains_ambiguous_chunk_cost(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=root/'source';source.mkdir();path=source/'raw';path.write_bytes(b'previous')
+            store=FakeStore();state=root/'state.json';sid=snapshot(source,store,state,10_000_000,**self.options)
+            pointer=store.files['latest.json'];original=store.put_file
+            path.write_bytes(b'new-content')
+            def mutate(key,encoded,sha,immutable=True):
+                original(key,encoded,sha,immutable)
+                before=path.stat();path.write_bytes(b'z'*before.st_size);os.utime(path,ns=(before.st_atime_ns,before.st_mtime_ns))
+            with patch.object(store,'put_file',mutate),self.assertRaises(GuardError):
+                snapshot(source,store,state,10_000_000,**self.options)
+            self.assertEqual(store.files['latest.json'],pointer)
+            download_snapshot(store,sid,root/'old',**self.options)
+            self.assertEqual((root/'old/raw').read_bytes(),b'previous')
+            self.assertGreater(len(json.loads(state.read_text())['uploaded']),1)
+
+    def test_frozen_options_cli_selection_and_upload_real_codec(self):
+        for runtime in ({'transport_codec':'unknown'},{'transport_codec':CODEC},
+                        {'transport_codec':CODEC,'archive_max_raw_bytes':100,'archive_min_free_bytes':True}):
+            with self.assertRaises(GuardError):archive_options(runtime)
+        self.assertEqual(archive_options({}),{'transport_codec':RAW_CODEC})
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=root/'work';output=work/'output';output.mkdir(parents=True);(output/'raw').write_bytes(b'raw bytes')
+            runtime={**self.options,'bucket':'fake','prefix':'fake','deadline_utc':'2099-01-01T00:00:00Z',
+                     'max_storage_requests':100,'max_upload_bytes':1_000_000}
+            path=root/'runtime.json';path.write_text(json.dumps(runtime));store=FakeStore()
+            with patch('cloud_worker.Store',return_value=store):
+                self.assertEqual(main(['upload','--runtime',str(path),'--work',str(work),'--transport-codec',CODEC]),0)
+                with self.assertRaises(GuardError):main(['upload','--runtime',str(path),'--work',str(work),'--transport-codec',RAW_CODEC])
+            sid=store.get_json('latest.json')['snapshot'];self.assertEqual(store.get_json('snapshots/'+sid+'.json')['transport_codec'],CODEC)
+
+    def test_final_partial_compressed_envelope_preserves_incomplete_status(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);case=source/'case';store=FakeStore()
+            manifest=json.loads((case/'manifest.json').read_text());manifest['status']='failed';(case/'manifest.json').write_text(json.dumps(manifest))
+            periodic=snapshot(source,store,root/'state.json',10_000_000,**self.options)
+            self.assertNotIn('case/.longitudinal-working.sqlite',store.get_json('snapshots/'+periodic+'.json')['files'])
+            sid=final_snapshot(source,store,root/'state.json',10_000_000,'2099-01-01T00:00:00Z',**self.options)
+            desc=download_snapshot(store,sid,root/'restored',**self.options)
+            self.assertEqual(desc['working_databases']['included_uncompleted_after_reap'],['case/.longitudinal-working.sqlite'])
+            self.assertEqual(json.loads((root/'restored/case/manifest.json').read_text())['status'],'failed')
+
+
+class InterruptedEvidenceTests(unittest.TestCase):
+    options={'transport_codec':CODEC,'archive_max_raw_bytes':32*1024**2,'archive_min_free_bytes':0,'archive_max_files':8192}
+
+    def fixture(self,root):
+        source=CompressedWorkerTests().fixture(root)
+        failed=source/'interrupted';failed.mkdir()
+        (failed/'.longitudinal-working.sqlite').write_bytes(b'not-a-certified-database')
+        for suffix in ('-wal','-shm','-journal'):
+            (failed/('.longitudinal-working.sqlite'+suffix)).write_bytes(b'stable-hot-sidecar'+suffix.encode())
+        (failed/'checkpoint-index.json').write_bytes(b'{interrupted invalid JSON')
+        (failed/'manifest.json').write_text(json.dumps({'status':'failed','output_sha256':{'.longitudinal-working.sqlite':'0'*64}}))
+        (failed/'.partial.tmp').write_bytes(b'exact hidden temporary evidence')
+        (failed/'output.atomic').write_bytes(b'exact atomic temporary evidence')
+        return source
+
+    def publish(self,source,store,state,**options):
+        with patch('cloud_worker.os.killpg',side_effect=ProcessLookupError):
+            return final_snapshot(source,store,state,10_000_000,'2099-01-01T00:00:00Z',
+                                  preserve_interrupted_evidence=True,owned_pipeline_group_id=12345,**options)
+
+    def test_corrupted_metadata_hot_sidecars_and_valid_prior_checkpoint_are_exact_evidence(self):
+        for options in ({},self.options):
+            with self.subTest(codec=options.get('transport_codec',RAW_CODEC)),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);source=self.fixture(root);store=FakeStore()
+                original={p.relative_to(source).as_posix():p.read_bytes() for p in source.rglob('*') if p.is_file()}
+                sid=self.publish(source,store,root/'state.json',**options)
+                descriptor=store.get_json('snapshots/'+sid+'.json')
+                self.assertEqual(descriptor['kind'],'interrupted-evidence-v1')
+                self.assertIs(descriptor['science_complete'],False)
+                self.assertEqual(descriptor['sqlite_evidence_status'],'UNVALIDATED_SQLITE_EVIDENCE')
+                self.assertNotIn('working_databases',descriptor)
+                self.assertIn('interrupted/checkpoint-index.json',descriptor['unvalidated_metadata'])
+                self.assertIn('interrupted/.longitudinal-working.sqlite-wal',descriptor['unvalidated_sqlite_evidence'])
+                self.assertIn('case/checkpoint-day-000003.sqlite',descriptor['unvalidated_sqlite_evidence'])
+                destination=root/'restored';destination.mkdir();(destination/'old-tree').write_bytes(b'keep until successful explicit collection')
+                with self.assertRaisesRegex(GuardError,'cannot be automatically resumed'):
+                    download_snapshot(store,sid,destination,**options)
+                self.assertEqual((destination/'old-tree').read_bytes(),b'keep until successful explicit collection')
+                download_snapshot(store,sid,destination,allow_interrupted_evidence=True,**options)
+                restored={p.relative_to(destination).as_posix():p.read_bytes() for p in destination.rglob('*') if p.is_file()}
+                self.assertEqual(original,restored)
+                self.assertTrue(json.loads((root/'restored-download-verification.json').read_text())['evidence_only'])
+
+    def test_forensic_capture_requires_actual_owned_group_absence_and_exact_boolean(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root)
+            for outcome in (None,PermissionError()):
+                store=FakeStore()
+                with patch('cloud_worker.os.killpg',side_effect=outcome) as probe:
+                    with self.assertRaises(GuardError):
+                        final_snapshot(source,store,root/'state.json',10_000_000,'2099-01-01T00:00:00Z',
+                                       preserve_interrupted_evidence=True,owned_pipeline_group_id=12345,**self.options)
+                probe.assert_called_once_with(12345,0);self.assertEqual(store.files,{})
+            for invalid in ('true',1,None):
+                with self.assertRaises(GuardError):
+                    final_snapshot(source,FakeStore(),root/'state.json',10_000_000,'2099-01-01T00:00:00Z',
+                                   preserve_interrupted_evidence=invalid,owned_pipeline_group_id=12345,**self.options)
+            with self.assertRaises(GuardError):
+                snapshot(source,FakeStore(),root/'state.json',10_000_000,preserve_interrupted_evidence=True,**self.options)
+
+    def test_real_owned_subprocess_is_absent_before_evidence_capture(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore()
+            process=subprocess.Popen([sys.executable,'-c','pass'],start_new_session=True)
+            process.wait(timeout=5)
+            sid=final_snapshot(source,store,root/'state.json',10_000_000,'2099-01-01T00:00:00Z',
+                               preserve_interrupted_evidence=True,owned_pipeline_group_id=process.pid,**self.options)
+            proof=store.get_json('snapshots/'+sid+'.json')['owned_pipeline_group_verification']
+            self.assertEqual(proof['owned_pipeline_group_id'],process.pid);self.assertTrue(proof['owned_pipeline_group_absent'])
+
+    def test_forensic_roster_and_raw_caps_include_temporary_hidden_and_journal_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);actual=[p for p in source.rglob('*') if p.is_file()]
+            for extra in ({'archive_max_files':len(actual)-1},{'archive_max_raw_bytes':sum(p.stat().st_size for p in actual)-1}):
+                store=FakeStore()
+                with self.assertRaises(GuardError):self.publish(source,store,root/'state.json',**(self.options|extra))
+                self.assertEqual(store.files,{})
+
+    def test_evidence_bindings_cannot_drop_unvalidated_markers_or_claim_complete(self):
+        from cloud_control import digest
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=self.fixture(root);store=FakeStore();sid=self.publish(source,store,root/'state.json',**self.options)
+            descriptor=store.get_json('snapshots/'+sid+'.json')
+            for mutation in ({'science_complete':True},{'unvalidated_sqlite_evidence':[]},{'unvalidated_metadata':[]},
+                             {'sqlite_evidence_status':'VALID_STATE'}):
+                bad=descriptor|mutation;bad_sid=digest(bad);store.put_json('snapshots/'+bad_sid+'.json',bad)
+                with self.assertRaises(GuardError):download_snapshot(store,bad_sid,root/'bad',allow_interrupted_evidence=True,**self.options)
+                self.assertFalse((root/'bad').exists())
+            for invalid in ('true',1):
+                with self.assertRaises(GuardError):download_snapshot(store,sid,root/'bad',allow_interrupted_evidence=invalid,**self.options)
+
+    def test_periodic_snapshot_cannot_consume_encoded_final_byte_share(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=root/'source';source.mkdir();(source/'raw').write_bytes(b'x'*30_000)
+            guard=Store('synthetic','offline',request_state=root/'requests.json',max_requests=100,
+                        final_storage_requests_reserved=80,final_storage_bytes_reserved=80_000)
+            store=FakeStore();store.storage_byte_limit=guard.storage_byte_limit;store.check_deadline=guard.check_deadline;store.begin_final=guard.begin_final
+            with self.assertRaisesRegex(GuardError,'immutable upload bytes'):
+                snapshot(source,store,root/'state.json',100_000)
+            self.assertEqual(store.files,{})
+            sid=final_snapshot(source,store,root/'state.json',100_000,'2099-01-01T00:00:00Z')
+            self.assertEqual(store.get_json('snapshots/'+sid+'.json')['files']['raw']['bytes'],30_000)
+            self.assertLessEqual(json.loads((root/'state.json').read_text())['bytes'],100_000)
+
+    def test_inflight_periodic_snapshot_releases_tree_when_final_phase_begins(self):
+        for options in ({},self.options):
+            with self.subTest(codec=options.get('transport_codec',RAW_CODEC)),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);source=CompressedWorkerTests().fixture(root);kwargs={'request_state':root/'requests.json','max_requests':100}
+                periodic=Store('synthetic','offline',**kwargs);final=Store('synthetic','offline',**kwargs)
+                store=FakeStore();store.check_deadline=periodic.check_deadline;state=root/'state.json'
+                old=snapshot(source,store,state,30_000_000,**options)
+                (source/'new-raw').write_bytes(b'fresh bounded stream'*(CHUNK_BYTES//10))
+                original_put=store.put_file
+                def start_final(*args,**kwargs):
+                    original_put(*args,**kwargs);final.begin_final()
+                store.put_file=start_final
+                with self.assertRaisesRegex(GuardError,'fenced periodic'):
+                    snapshot(source,store,state,30_000_000,**options)
+                self.assertEqual(store.get_json('latest.json')['snapshot'],old)
+                store.put_file=original_put;store.check_deadline=final.check_deadline;store.begin_final=final.begin_final
+                sid=final_snapshot(source,store,state,30_000_000,'2099-01-01T00:00:00Z',**options)
+                self.assertNotEqual(sid,old)
 
 
 class GuestCapabilityTests(unittest.TestCase):
@@ -675,6 +1068,98 @@ class GuestCapabilityTests(unittest.TestCase):
                              ['failed-case/.longitudinal-working.sqlite'])
             self.assertEqual(descriptor['working_databases']['complete_manifest_bound'],[])
             self.assertEqual(json.loads((work/'output/failed-case/manifest.json').read_text())['status'],'failed')
+
+    def test_explicit_failed_attempt_preserves_forensics_but_guest_never_auto_resumes_them(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work=Path(tmp)/'work';runtime=self.profile();store=FakeStore()
+            runtime.update(bucket='synthetic',prefix='offline',deadline_utc='2099-01-01T00:00:00Z',
+                           max_storage_requests=100,max_upload_bytes=1_000_000,source_commit='a'*40,
+                           spec='longitudinal-adoption-5y',scale=1000,preserve_interrupted_evidence=True,
+                           final_storage_requests_reserved=80,final_storage_bytes_reserved=800_000)
+            process=Mock(pid=12345);process.poll.return_value=1;process.wait.return_value=1
+            def launch(*args,**kwargs):
+                case=work/'output/failed-case';case.mkdir()
+                (case/'.longitudinal-working.sqlite').write_bytes(b'failed-child-stable-raw')
+                (case/'.longitudinal-working.sqlite-journal').write_bytes(b'hot-journal-never-valid-state')
+                (case/'checkpoint-index.json').write_bytes(b'broken-index')
+                return process
+            with patch('cloud_worker.guest_metadata',return_value=self.measurements()), \
+                 patch('cloud_worker.Store',return_value=store),patch('cloud_worker.subprocess.Popen',side_effect=launch), \
+                 patch('cloud_worker.signal.signal'),patch('cloud_worker.io_cpu_snapshot',return_value={}), \
+                 patch('cloud_worker.os.killpg',side_effect=ProcessLookupError):
+                self.assertEqual(run_guest(runtime,ROOT,work),1)
+            terminal=store.get_json('terminal.json');descriptor=store.get_json('snapshots/'+terminal['snapshot']+'.json')
+            self.assertEqual(descriptor['kind'],'interrupted-evidence-v1');self.assertIs(descriptor['science_complete'],False)
+            original={p.relative_to(work/'output').as_posix():p.read_bytes() for p in (work/'output').rglob('*') if p.is_file()}
+            with patch('cloud_worker.guest_metadata',return_value=self.measurements()), \
+                 patch('cloud_worker.Store',return_value=store),patch('cloud_worker.subprocess.Popen') as launch:
+                with self.assertRaisesRegex(GuardError,'cannot be automatically resumed'):
+                    run_guest(runtime,ROOT,work)
+                launch.assert_not_called()
+            self.assertEqual(original,{p.relative_to(work/'output').as_posix():p.read_bytes() for p in (work/'output').rglob('*') if p.is_file()})
+
+    def test_explicit_pipeline_grace_uses_scientific_soft_deadline_and_absolute_reap_cutoff(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work=Path(tmp)/'work';runtime=self.profile();store=FakeStore()
+            runtime.update(bucket='synthetic',prefix='offline',deadline_utc='2099-01-01T02:00:00Z',
+                           max_storage_requests=100,max_upload_bytes=1_000_000,source_commit='a'*40,
+                           spec='longitudinal-adoption-5y',scale=1000,shutdown_margin_seconds=3600,
+                           pipeline_stop_grace_seconds=360,preserve_interrupted_evidence=True,
+                           final_storage_requests_reserved=80,final_storage_bytes_reserved=800_000)
+            runtime['runtime_limits'].update(deadline_utc='2099-01-01T00:54:00Z',stop_cutoff_utc='2099-01-01T01:00:00Z',
+                                             cooperative_stop_grace_seconds=300)
+            from cloud_control import utc
+            now=utc('2099-01-01T00:54:00Z').timestamp();process=Mock(pid=12345)
+            process.poll.return_value=None;process.wait.side_effect=[subprocess.TimeoutExpired('owned pipeline',355),1,1]
+            def signal_group(pid,sig):
+                if sig==0:raise ProcessLookupError
+            with patch('cloud_worker.guest_metadata',return_value=self.measurements()), \
+                 patch('cloud_worker.Store',return_value=store),patch('cloud_worker.subprocess.Popen',return_value=process), \
+                 patch('cloud_worker.signal.signal'),patch('cloud_worker.io_cpu_snapshot',return_value={}), \
+                 patch('cloud_worker.time.time',return_value=now),patch('cloud_worker.os.killpg',side_effect=signal_group) as signals:
+                self.assertEqual(run_guest(runtime,ROOT,work),1)
+            self.assertEqual(process.wait.call_args_list[0].kwargs['timeout'],355)
+            self.assertEqual(process.wait.call_args_list[1].kwargs['timeout'],5)
+            self.assertEqual([(c.args[0],c.args[1]) for c in signals.call_args_list[:2]],[(12345,signal.SIGTERM),(12345,signal.SIGKILL)])
+
+    def test_invalid_final_shares_or_stop_deadlines_refuse_before_pipeline_and_store(self):
+        runtime=self.profile();runtime.update(deadline_utc='2099-01-01T02:00:00Z',shutdown_margin_seconds=3600,
+            pipeline_stop_grace_seconds=360,preserve_interrupted_evidence=True,final_storage_requests_reserved=80,
+            final_storage_bytes_reserved=800_000,max_storage_requests=100,max_upload_bytes=1_000_000)
+        runtime['runtime_limits'].update(deadline_utc='2099-01-01T00:54:00Z',stop_cutoff_utc='2099-01-01T01:00:00Z',cooperative_stop_grace_seconds=300)
+        invalids=[{'final_storage_bytes_reserved':0},{'final_storage_requests_reserved':True},
+                  {'final_storage_bytes_reserved':1_000_000},{'preserve_interrupted_evidence':'true'},
+                  {'runtime_limits':runtime['runtime_limits']|{'stop_cutoff_utc':'2099-01-01T01:00:01Z'}},
+                  {'runtime_limits':runtime['runtime_limits']|{'deadline_utc':'2099-01-01T00:54:01Z'}},
+                  {'runtime_limits':runtime['runtime_limits']|{'stop_cutoff_utc':None}}]
+        with tempfile.TemporaryDirectory() as tmp:
+            for invalid in invalids:
+                with self.subTest(invalid=invalid),patch('cloud_worker.Store') as store,patch('cloud_worker.subprocess.Popen') as launch:
+                    with self.assertRaises(GuardError):run_guest(runtime|invalid,ROOT,Path(tmp)/'work')
+                    launch.assert_not_called();store.assert_not_called()
+
+    def test_manual_term_before_soft_deadline_starts_bounded_checkpoint_grace_immediately(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work=Path(tmp)/'work';runtime=self.profile();store=FakeStore()
+            runtime.update(bucket='synthetic',prefix='offline',deadline_utc='2099-01-01T02:00:00Z',
+                           max_storage_requests=100,max_upload_bytes=1_000_000,source_commit='a'*40,
+                           spec='longitudinal-adoption-5y',scale=1000,shutdown_margin_seconds=3630,pipeline_stop_grace_seconds=360)
+            runtime['runtime_limits'].update(deadline_utc='2099-01-01T00:53:30Z',stop_cutoff_utc='2099-01-01T00:59:30Z',cooperative_stop_grace_seconds=300)
+            process=Mock(pid=12345);process.poll.return_value=None;process.wait.return_value=1
+            from cloud_control import utc
+            def register(sig,handler):
+                if sig==signal.SIGTERM:handler(sig,None)
+            def probe(pid,sig):
+                if sig==0:raise ProcessLookupError
+            with patch('cloud_worker.guest_metadata',return_value=self.measurements()), \
+                 patch('cloud_worker.Store',return_value=store),patch('cloud_worker.subprocess.Popen',return_value=process), \
+                 patch('cloud_worker.signal.signal',side_effect=register),patch('cloud_worker.io_cpu_snapshot',return_value={}), \
+                 patch('cloud_worker.time.time',return_value=utc('2099-01-01T00:01:00Z').timestamp()), \
+                 patch('cloud_worker.time.sleep',side_effect=AssertionError('manual stop must not wait for scientific soft deadline')), \
+                 patch('cloud_worker.os.killpg',side_effect=probe) as signals:
+                self.assertEqual(run_guest(runtime,ROOT,work),1)
+            self.assertEqual(process.wait.call_args_list[0].kwargs['timeout'],360)
+            self.assertFalse(any(c.args[1]==signal.SIGKILL for c in signals.call_args_list))
 
     def test_owned_group_absence_check_uses_only_signal_zero_and_records_scoped_receipt(self):
         with patch('cloud_worker.os.killpg',side_effect=ProcessLookupError) as probe,patch('cloud_worker.time.sleep') as pause:

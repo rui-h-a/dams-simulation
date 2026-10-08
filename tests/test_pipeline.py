@@ -90,7 +90,14 @@ class PipelineTests(unittest.TestCase):
             complete=[a for a in root.rglob('manifest.json') if json.loads(a.read_text())['status']=='complete']
             self.assertEqual(len(complete),1)
             final=json.loads((complete[0].parent/'final_state.json').read_text())
-            self.assertEqual(canonical(final),canonical(Model(p).run().state()))
+            # Compare against an uninterrupted worker with the same RSS cap.
+            # The test runner has unrelated plotting/archive allocations;
+            # its resident memory is not this world's execution environment.
+            reference_code="import json,sys;from dams_sim.config import Config;from dams_sim.model import Model;from dams_sim.storage import canonical;sys.stdout.buffer.write(canonical(Model(Config.from_dict(json.loads(sys.argv[1]))).run().state()))"
+            reference=subprocess.run([sys.executable,'-c',reference_code,json.dumps(p.to_dict())],
+                                     cwd=Path(__file__).resolve().parents[1],capture_output=True,timeout=60)
+            self.assertEqual(reference.returncode,0,reference.stderr.decode())
+            self.assertEqual(canonical(final),reference.stdout)
             self.assertIn('restart_origin',json.loads(complete[0].read_text()))
     def test_scale_confirmation_prespecified_worlds_and_exploratory_exception(self):
         for n in (120,1000,10000,100000,1000000):

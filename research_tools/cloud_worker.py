@@ -6,7 +6,8 @@ Tokens/session URLs never enter logs. No VM management permissions are needed.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from contextlib import contextmanager
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal, InvalidOperation
 import hashlib
 import json
@@ -16,6 +17,7 @@ import platform
 import re
 import shutil
 import signal
+import stat
 import subprocess
 import tempfile
 import time
@@ -24,6 +26,65 @@ import urllib.parse
 import urllib.request
 
 from cloud_control import GuardError, atomic, digest, locked, stamp, utc
+from cloud_archive import (CODEC, RAW_CODEC, CHUNK_BYTES, MAX_ENCODED_CHUNK, encode_file, restore_file,
+                           validate_manifest, natural, safe_name, require_capacity, identity,
+                           lexical_path, file_limit, MAX_DESCRIPTOR_BYTES, MAX_ARCHIVE_FILES)
+
+
+def unique_json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise GuardError('duplicate key in remote JSON descriptor')
+        result[key] = value
+    return result
+
+
+def guarded_local_path(path, anchor, *, directory=False):
+    """Check a local sibling and every existing ancestor up to its trusted parent."""
+    path, anchor = lexical_path(path), lexical_path(anchor)
+    if not path.is_relative_to(anchor):
+        raise GuardError('local snapshot path escapes its trusted parent')
+    current = path
+    while True:
+        if current.is_symlink():
+            raise GuardError('symlink in local snapshot path')
+        if current.exists():
+            if current != path or directory:
+                if not current.is_dir():
+                    raise GuardError('local snapshot ancestor is not a directory')
+            elif not current.is_file():
+                raise GuardError('local snapshot metadata is not a regular file')
+        if current == anchor:
+            break
+        current = current.parent
+    return path
+
+
+@contextmanager
+def snapshot_locked(path):
+    """Same POSIX lock contract, with no symlink-following file open/chmod."""
+    import fcntl
+    path = lexical_path(path)
+    anchor = path.parent.resolve()
+    path = guarded_local_path(anchor/path.name,anchor)
+    anchor.mkdir(parents=True,exist_ok=True,mode=0o700)
+    try:
+        fd=os.open(path,os.O_RDWR|os.O_CREAT|os.O_NONBLOCK|getattr(os,'O_NOFOLLOW',0),0o600)
+    except OSError:
+        raise GuardError('cannot safely open local snapshot lock') from None
+    try:
+        info=os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            raise GuardError('snapshot lock is not a private regular file')
+        os.fchmod(fd,0o600)
+        fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        try:
+            yield
+        finally:
+            fcntl.flock(fd,fcntl.LOCK_UN)
+    finally:
+        os.close(fd)
 
 
 class PersistenceError(GuardError):
@@ -52,24 +113,70 @@ def persistence_error_facts(error):
 
 class Store:
     def __init__(self, bucket, prefix, gcloud_project=None, deadline=None, transfer_state=None, max_transfer_bytes=None,
-                 gcloud_configuration=None, gcloud_account=None, request_state=None, max_requests=None):
+                 gcloud_configuration=None, gcloud_account=None, request_state=None, max_requests=None,
+                 final_storage_requests_reserved=0, final_storage_bytes_reserved=0, persistence_role='periodic'):
         self.bucket, self.prefix = bucket, prefix.strip("/")
         self.project, self.deadline = gcloud_project, deadline
         self.gcloud_configuration, self.gcloud_account = gcloud_configuration, gcloud_account
         self.token, self.token_until = "", 0
         self.transfer_state, self.max_transfer_bytes = transfer_state, max_transfer_bytes
-        self.request_state, self.max_requests = request_state, max_requests
+        self.request_state = lexical_path(request_state) if request_state is not None else None
+        self.max_requests = max_requests
+        self.final_storage_requests_reserved=natural(final_storage_requests_reserved,'final request reserve')
+        self.final_storage_bytes_reserved=natural(final_storage_bytes_reserved,'final byte reserve')
+        if persistence_role not in ('periodic','final'):
+            raise GuardError('unsupported persistence request role')
+        if self.final_storage_requests_reserved and (self.request_state is None or type(max_requests) is not int
+                                                     or self.final_storage_requests_reserved>max_requests):
+            raise GuardError('final request reserve exceeds its shared actor allowance')
+        self.persistence_role=persistence_role
+        self.phase_state=self.request_state.with_suffix('.phase.json') if self.request_state is not None else None
+        if self.phase_state is not None:lexical_path(self.phase_state)
 
     def check_deadline(self):
+        self.check_phase()
         if self.deadline and datetime.now(timezone.utc) >= utc(self.deadline):
             raise GuardError("remote persistence deadline expired")
+
+    def check_phase(self):
+        if self.final_phase_active() and self.persistence_role!='final':
+            raise GuardError('final preservation has fenced periodic persistence')
+
+    def final_phase_active(self):
+        if self.phase_state is None:return False
+        path=lexical_path(self.phase_state)
+        if not path.exists():return False
+        if not path.is_file() or path.stat().st_size>128:
+            raise GuardError('invalid final preservation fence')
+        try:value=json.loads(path.read_text())
+        except (ValueError,OSError):raise GuardError('invalid final preservation fence') from None
+        if (not isinstance(value,dict) or set(value)!={'version','phase'}
+                or type(value['version']) is not int or value['version']!=1 or value['phase']!='final'):
+            raise GuardError('invalid final preservation fence')
+        return True
+
+    def begin_final(self):
+        if self.request_state is not None:
+            with snapshot_locked(self.request_state.with_suffix('.lock')):
+                atomic(self.phase_state,{'version':1,'phase':'final'})
+        self.persistence_role='final'
+
+    def storage_byte_limit(self,max_bytes):
+        """Reserve final bytes inside the same original cumulative storage cap."""
+        max_bytes=natural(max_bytes,'cumulative storage cap',positive=True)
+        self.check_phase()
+        if self.final_storage_bytes_reserved>=max_bytes:
+            raise GuardError('final byte reserve exceeds the original storage allowance')
+        return max_bytes-self.final_storage_bytes_reserved if self.persistence_role=='periodic' else max_bytes
 
     def charge_request(self):
         if self.request_state is None:return
         path=Path(self.request_state)
-        with locked(path.with_suffix('.lock')):
+        with snapshot_locked(path.with_suffix('.lock')):
+            self.check_phase()
             d=json.loads(path.read_text()) if path.exists() else {'requests_upper':0}
-            if d['requests_upper']>=self.max_requests:raise GuardError('reserved storage HTTP request allowance exhausted')
+            ceiling=self.max_requests-(self.final_storage_requests_reserved if self.persistence_role=='periodic' else 0)
+            if d['requests_upper']>=ceiling:raise GuardError('reserved storage HTTP request allowance exhausted')
             d['requests_upper']+=1
             atomic(path,d)
 
@@ -121,29 +228,37 @@ class Store:
         try:
             with self.request(self.url(key, media=True)) as r:
                 # Bound JSON descriptors independently of raw streaming files.
-                length = int(r.headers.get("Content-Length", 32 * 1024**2))
-                if length > 32 * 1024**2:
+                length = int(r.headers.get("Content-Length", MAX_DESCRIPTOR_BYTES))
+                if length < 0 or length > MAX_DESCRIPTOR_BYTES:
                     raise GuardError("remote JSON descriptor exceeds the metadata bound")
                 self.charge_transfer(length)
-                raw = r.read(32 * 1024**2 + 1)
-                if len(raw) > 32 * 1024**2:
+                raw = r.read(MAX_DESCRIPTOR_BYTES + 1)
+                if len(raw) > MAX_DESCRIPTOR_BYTES:
                     raise GuardError("oversize remote JSON descriptor")
-                return json.loads(raw)
+                return json.loads(raw, object_pairs_hook=unique_json_object)
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 return None
             raise
 
-    def download(self, key, dest):
+    def download(self, key, dest, *, max_bytes=None):
         h = hashlib.sha256()
+        if max_bytes is not None:
+            natural(max_bytes, 'download cap')
+        count = 0
         with self.request(self.url(key, media=True)) as r, Path(dest).open("wb") as f:
             length = r.headers.get("Content-Length")
             if length is not None:
+                if int(length) < 0 or (max_bytes is not None and int(length) > max_bytes):
+                    raise GuardError('remote object exceeds the trusted download bound')
                 self.charge_transfer(int(length))  # reserve before reading response payload
-            while block := r.read(8 * 1024**2):
+            while block := r.read(min(8 * 1024**2, max_bytes - count + 1) if max_bytes is not None else 8 * 1024**2):
                 self.check_deadline()
+                count += len(block)
                 if length is None:
                     self.charge_transfer(len(block))
+                if max_bytes is not None and count > max_bytes:
+                    raise GuardError('remote object exceeds the trusted download bound')
                 h.update(block)
                 f.write(block)
             f.flush()
@@ -171,7 +286,7 @@ class Store:
         context.update(phase="verify", http_status=None)
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "verify"
-            actual_sha = self.download(key, target)
+            actual_sha = self.download(key, target, max_bytes=length)
             if actual_sha != expected_sha or target.stat().st_size != length:
                 context["reason"] = "remote_byte_verification_mismatch"
                 raise GuardError("remote object content or size differs")
@@ -248,7 +363,9 @@ class Store:
     def put_json(self, key, data, immutable=True):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "value.json"
-            path.write_text(json.dumps(data, sort_keys=True, indent=2) + "\n")
+            raw=(json.dumps(data,sort_keys=True,indent=2)+'\n').encode()
+            if len(raw)>MAX_DESCRIPTOR_BYTES:raise GuardError('outgoing JSON exceeds the shared metadata bound')
+            path.write_bytes(raw)
             self.put_file(key, path, hashlib.sha256(path.read_bytes()).hexdigest(), immutable)
 
     def reconcile_usage(self,state,max_bytes):
@@ -268,6 +385,11 @@ class Store:
                     sha=key.removeprefix('blobs/')
                     if len(sha)!=64 or any(c not in '0123456789abcdef' for c in sha):raise GuardError('unexpected object in content-addressed storage')
                     state['uploaded'][sha]=size
+                elif key.startswith('chunks/'+CODEC+'/'):
+                    sha=key.removeprefix('chunks/'+CODEC+'/')
+                    if re.fullmatch('[0-9a-f]{64}',sha) is None or not 0 < size <= MAX_ENCODED_CHUNK:
+                        raise GuardError('unexpected object in encoded content-addressed storage')
+                    state['uploaded'][CODEC+':'+sha]=size
                 else:state['metadata_sizes'][key]=max(size,state['metadata_sizes'].get(key,0))
             token=data.get('nextPageToken')
             if not token:break
@@ -275,12 +397,13 @@ class Store:
         return state
 
 
-def stable_copy(source, dest):
+def stable_copy(source, dest, *, check=None):
     """Reject an in-flight rewrite; source outputs are atomically published."""
     before = source.stat()
     h = hashlib.sha256()
     with source.open("rb") as a, dest.open("wb") as b:
         while block := a.read(8 * 1024**2):
+            if check is not None:check()
             h.update(block)
             b.write(block)
     after = source.stat()
@@ -289,37 +412,145 @@ def stable_copy(source, dest):
     return h.hexdigest(), after.st_size
 
 
-def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=False):
-    source, state_path = Path(source), Path(state_path)
-    with locked(state_path.with_suffix(".lock")), locked(source.with_name(source.name+'-snapshot.lock')):
+def archive_options(runtime):
+    """Private frozen selection, independent of any untrusted remote descriptor."""
+    codec = runtime.get('transport_codec', RAW_CODEC)
+    if codec not in (RAW_CODEC, CODEC):
+        raise GuardError('unsupported frozen transport codec')
+    options = {'transport_codec': codec}
+    if codec == CODEC:
+        options.update(archive_max_raw_bytes=natural(runtime.get('archive_max_raw_bytes'), 'raw cap', positive=True),
+                       archive_min_free_bytes=natural(runtime.get('archive_min_free_bytes'), 'minimum free bytes'),
+                       archive_max_files=file_limit(runtime.get('archive_max_files',MAX_ARCHIVE_FILES)))
+    else:
+        for key,label,positive in (('archive_max_raw_bytes','raw cap',True),('archive_min_free_bytes','minimum free bytes',False)):
+            if runtime.get(key) is not None:
+                options[key]=natural(runtime[key],label,positive=positive)
+        if runtime.get('archive_max_files') is not None:
+            options['archive_max_files']=file_limit(runtime['archive_max_files'])
+    return options
+
+
+def snapshot_paths(source, include_reaped_working, max_files, interrupted_evidence=False):
+    """Whole eligible roster admission; never truncate a research snapshot."""
+    paths=[]
+    for path in source.rglob('*'):
+        relative=path.relative_to(source).as_posix();safe_name(relative)
+        if path.is_symlink():raise GuardError('symlinks cannot enter remote research snapshots')
+        if not path.is_file():continue
+        if interrupted_evidence:
+            paths.append(path)
+            if len(paths)>max_files:raise GuardError('snapshot exceeds the trusted file allowance')
+            continue
+        if path.name.endswith(('-wal','-shm','-journal')):
+            if include_reaped_working:raise GuardError('SQLite journal sidecars cannot certify a completed snapshot')
+            continue
+        known_hidden=(path.name in ('.pipeline.lock','.longitudinal-working.sqlite')
+                      and not any(part.startswith('.') for part in Path(relative).parts[:-1]))
+        if any(part.startswith('.') for part in Path(relative).parts) and not known_hidden:continue
+        if path.name=='.longitudinal-working.sqlite' and not include_reaped_working:
+            manifest=path.parent/'manifest.json'
+            if manifest.is_symlink():raise GuardError('symlinked working database completion manifest')
+            if not manifest.is_file():continue
+            if manifest.stat().st_size>MAX_DESCRIPTOR_BYTES:raise GuardError('working completion manifest exceeds its bound')
+            if json.loads(manifest.read_text()).get('status')!='complete':continue
+        if path.name!='.pipeline.lock' and path.suffix in ('.tmp','.lock','.download-part'):continue
+        paths.append(path)
+        if len(paths)>max_files:raise GuardError('snapshot exceeds the trusted file allowance')
+    return sorted(paths)
+
+
+def recheck_snapshot_roster(source,inventory,identities,include_reaped_working,max_files,interrupted_evidence=False):
+    actual={path.relative_to(source).as_posix() for path in snapshot_paths(source,include_reaped_working,max_files,interrupted_evidence)}
+    if actual!=set(inventory):raise GuardError('whole source file roster changed before snapshot publication')
+    for relative,before in identities.items():
+        path=source/relative
+        if path.is_symlink() or identity(path)!=before:raise GuardError('source identity changed before snapshot publication')
+
+
+def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=False,
+             transport_codec=RAW_CODEC, archive_max_raw_bytes=None, archive_min_free_bytes=None,
+             archive_max_files=None, preserve_interrupted_evidence=False,
+             owned_pipeline_group_id=None, owned_pipeline_deadline=None):
+    if type(preserve_interrupted_evidence) is not bool:
+        raise GuardError('interrupted evidence selection must be boolean')
+    group_verification=None
+    if hasattr(store,'storage_byte_limit'):max_bytes=store.storage_byte_limit(max_bytes)
+    if preserve_interrupted_evidence:
+        if not include_reaped_working or owned_pipeline_deadline is None:
+            raise GuardError('interrupted evidence requires a reaped owned pipeline group')
+        group_verification=wait_pipeline_group_absent(owned_pipeline_group_id,owned_pipeline_deadline,max_wait_seconds=0)
+    options = archive_options({'transport_codec': transport_codec, 'archive_max_raw_bytes': archive_max_raw_bytes,
+                               'archive_min_free_bytes': archive_min_free_bytes,
+                               **({'archive_max_files':archive_max_files} if archive_max_files is not None else {})})
+    max_files=options.get('archive_max_files',MAX_ARCHIVE_FILES)
+    source, state_path = lexical_path(source), lexical_path(state_path)
+    if source.is_symlink():
+        raise GuardError('snapshot source is not a regular directory')
+    state_path=guarded_local_path(state_path.parent.resolve()/state_path.name,state_path.parent.resolve())
+    with snapshot_locked(state_path.with_suffix(".lock")), snapshot_locked(source.with_name(source.name+'-snapshot.lock')):
+        if not source.is_dir():
+            raise GuardError('snapshot source is not a regular directory')
+        selected=snapshot_paths(source,include_reaped_working,max_files,preserve_interrupted_evidence)
+        if options.get('archive_max_raw_bytes') is not None and sum(path.stat().st_size for path in selected)>options['archive_max_raw_bytes']:
+            raise GuardError('whole snapshot exceeds the trusted logical raw allowance')
         state = json.loads(state_path.read_text()) if state_path.exists() else {"uploaded": {}, "bytes": 0}
+        if state['bytes']>max_bytes:raise GuardError('prior storage reservations exceed this persistence phase allowance')
         state.setdefault('verified',list(state['uploaded']))
         state.setdefault('metadata_sizes',{})
         inventory, checkpoint_indices, manifests, identities = {}, {}, {}, {}
         completed_working, completion_manifests, excluded_working, reaped_incomplete_working = {}, {}, [], []
-        with tempfile.TemporaryDirectory(prefix="dams-snapshot-") as tmp:
-            for path in sorted(source.rglob("*")):
+        if not include_reaped_working:
+            selected_names={p.relative_to(source).as_posix() for p in selected}
+            excluded_working=sorted(p.relative_to(source).as_posix() for p in source.rglob('.longitudinal-working.sqlite')
+                                    if p.is_file() and p.relative_to(source).as_posix() not in selected_names
+                                    and not any(x.startswith('.') for x in p.relative_to(source).parts[:-1]))
+        total_raw = 0
+        scratch_parent = source.parent if transport_codec == CODEC else None
+        with tempfile.TemporaryDirectory(prefix="dams-snapshot-", dir=scratch_parent) as tmp:
+            def publish_chunk(copied, chunk):
+                if hasattr(store,'check_deadline'):store.check_deadline()
+                sha, size = chunk['encoded_sha256'], chunk['encoded_bytes']
+                token = CODEC + ':' + sha
+                if token not in state['uploaded']:
+                    if state['bytes'] + size > max_bytes:
+                        raise GuardError('cumulative encoded upload bytes exceed reserved storage')
+                    state['uploaded'][token] = size; state['bytes'] += size
+                    atomic(state_path, state)
+                elif state['uploaded'][token] != size:
+                    raise GuardError('encoded object reservation has inconsistent size')
+                if token not in state['verified']:
+                    store.put_file('chunks/' + CODEC + '/' + sha, copied, sha)
+                    state['verified'].append(token); atomic(state_path, state)
+            for path in selected:
+                if hasattr(store,'check_deadline'):store.check_deadline()
                 relative = path.relative_to(source).as_posix()
+                safe_name(relative)
                 if path.is_symlink():
                     raise GuardError("symlinks cannot enter remote research snapshots")
                 if not path.is_file():
                     continue
-                if path.name.endswith(('-wal', '-shm', '-journal')):
+                if not preserve_interrupted_evidence and path.name.endswith(('-wal', '-shm', '-journal')):
                     if include_reaped_working:
                         raise GuardError("SQLite journal sidecars cannot certify a completed snapshot")
                     continue
                 known_hidden = (path.name in ('.pipeline.lock', '.longitudinal-working.sqlite')
                                 and not any(part.startswith('.') for part in Path(relative).parts[:-1]))
-                if any(part.startswith('.') for part in Path(relative).parts) and not known_hidden:
+                if not preserve_interrupted_evidence and any(part.startswith('.') for part in Path(relative).parts) and not known_hidden:
                     continue
-                if path.name == '.longitudinal-working.sqlite':
+                if not preserve_interrupted_evidence and path.name == '.longitudinal-working.sqlite':
                     manifest_path = path.parent / 'manifest.json'
                     manifest = None
                     if manifest_path.is_symlink():
                         raise GuardError("symlinked working database completion manifest")
                     if manifest_path.is_file():
+                        manifest_size=manifest_path.stat().st_size
+                        if manifest_size > 32*1024**2:
+                            raise GuardError('working database completion metadata exceeds its bound')
+                        if transport_codec == CODEC:
+                            require_capacity(tmp,manifest_size+MAX_ENCODED_CHUNK*2,options['archive_min_free_bytes'])
                         manifest_copy = Path(tmp) / 'working-completion-manifest'
-                        manifest_sha, _ = stable_copy(manifest_path, manifest_copy)
+                        manifest_sha, _ = stable_copy(manifest_path, manifest_copy,check=getattr(store,'check_deadline',None))
                         manifest = json.loads(manifest_copy.read_text())
                     if manifest is not None and manifest.get('status') == 'complete':
                         expected_sha = manifest.get('output_sha256', {}).get(path.name)
@@ -332,29 +563,46 @@ def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=Fal
                         continue  # Never copy an active or incomplete SQLite writer's working database.
                     else:
                         reaped_incomplete_working.append(relative)
-                if path.name != '.pipeline.lock' and path.suffix in (".tmp", ".lock", ".download-part"):
+                if not preserve_interrupted_evidence and path.name != '.pipeline.lock' and path.suffix in (".tmp", ".lock", ".download-part"):
                     continue
                 copied = Path(tmp) / "current"
-                sha, size = stable_copy(path, copied)
+                archive = None
+                before = identity(path)
+                if transport_codec == CODEC:
+                    archive = encode_file(path, publish_chunk, max_raw_bytes=options['archive_max_raw_bytes'] - total_raw,
+                                          minimum_free_bytes=options['archive_min_free_bytes'], scratch=tmp)
+                    sha, size = archive['raw_sha256'], archive['raw_bytes']
+                    total_raw += size
+                    if not preserve_interrupted_evidence and (path.name == 'checkpoint-index.json' or path.name.endswith('manifest.json')):
+                        if size > 32 * 1024**2:
+                            raise GuardError('snapshot scientific metadata exceeds its bound')
+                        copied_sha, _ = stable_copy(path, copied,check=getattr(store,'check_deadline',None))
+                        if copied_sha != sha:
+                            raise GuardError('scientific metadata changed after encoding')
+                else:
+                    sha, size = stable_copy(path, copied,check=getattr(store,'check_deadline',None))
                 if relative in completed_working and sha != completed_working[relative]:
                     raise GuardError("completed working database differs from its manifest checksum")
-                info = path.stat()
-                identities[relative] = (info.st_ino, info.st_size, info.st_mtime_ns)
-                if path.name == "checkpoint-index.json":
+                if identity(path) != before:
+                    raise GuardError('source changed while snapshotting')
+                identities[relative] = before
+                if not preserve_interrupted_evidence and path.name == "checkpoint-index.json":
                     checkpoint_indices[relative] = json.loads(copied.read_text())
-                if path.name.endswith('manifest.json'):
+                if not preserve_interrupted_evidence and path.name.endswith('manifest.json'):
                     manifests[relative] = json.loads(copied.read_text())
-                if sha not in state["uploaded"]:
+                if archive is None and sha not in state["uploaded"]:
                     if state["bytes"] + size > max_bytes:
                         raise GuardError("cumulative immutable upload bytes exceed reserved storage")
                     state["uploaded"][sha] = size
                     state["bytes"] += size
                     atomic(state_path,state)  # reserve even an ambiguous completed upload
-                if sha not in state['verified']:
+                if archive is None and sha not in state['verified']:
                     store.put_file("blobs/" + sha, copied, sha)
                     state['verified'].append(sha)
                     atomic(state_path, state)
                 inventory[relative] = {"sha256": sha, "bytes": size}
+                if archive is not None:
+                    inventory[relative]['archive'] = archive
         for name, sha in completion_manifests.items():
             if inventory.get(name, {}).get('sha256') != sha:
                 raise GuardError("working database completion manifest changed before snapshot publication")
@@ -389,22 +637,35 @@ def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=Fal
                         raise GuardError("checkpoint group is incomplete or has an unexpected sidecar")
                     for component in components:
                         member = (Path(name).parent / component['file']).as_posix()
-                        if inventory.get(member) != {'sha256': component.get('sha256'), 'bytes': component.get('bytes')}:
+                        actual = inventory.get(member, {})
+                        if {'sha256':actual.get('sha256'),'bytes':actual.get('bytes')} != {'sha256': component.get('sha256'), 'bytes': component.get('bytes')}:
                             raise GuardError("checkpoint group checksum/size mismatch; snapshot not published")
         # Reject rewrites after copying too, including before metadata publication.
-        for relative, identity in identities.items():
+        for relative, source_identity in identities.items():
             path = source / relative
-            info = path.stat()
-            if path.is_symlink() or identity != (info.st_ino, info.st_size, info.st_mtime_ns):
+            if path.is_symlink() or source_identity != identity(path):
                 raise GuardError("source file changed before snapshot publication")
             with path.open('rb') as stream:
-                if hashlib.file_digest(stream, 'sha256').hexdigest() != inventory[relative]['sha256']:
+                h=hashlib.sha256()
+                while block:=stream.read(CHUNK_BYTES):
+                    if hasattr(store,'check_deadline'):store.check_deadline()
+                    h.update(block)
+                if h.hexdigest() != inventory[relative]['sha256']:
                     raise GuardError("source hash changed before snapshot publication")
-            after = path.stat()
-            if path.is_symlink() or identity != (after.st_ino, after.st_size, after.st_mtime_ns):
+            if path.is_symlink() or source_identity != identity(path):
                 raise GuardError("source file changed during snapshot recheck")
+        recheck_snapshot_roster(source,inventory,identities,include_reaped_working,max_files,preserve_interrupted_evidence)
         descriptor = {"version": 1, "files": inventory, "inventory_sha256": digest(inventory)}
-        if completed_working or excluded_working or any(Path(name).name == '.longitudinal-working.sqlite' for name in inventory):
+        if transport_codec == CODEC:
+            descriptor.update(version=2, transport_codec=CODEC)
+        if preserve_interrupted_evidence:
+            descriptor.update(kind='interrupted-evidence-v1',science_complete=False,
+                              sqlite_evidence_status='UNVALIDATED_SQLITE_EVIDENCE',
+                              unvalidated_sqlite_evidence=sorted(name for name in inventory
+                                  if name.endswith(('.sqlite','.sqlite3','.db','-wal','-shm','-journal'))),
+                              unvalidated_metadata=sorted(name for name in inventory if name.endswith('.json')),
+                              owned_pipeline_group_verification=group_verification)
+        if not preserve_interrupted_evidence and (completed_working or excluded_working or any(Path(name).name == '.longitudinal-working.sqlite' for name in inventory)):
             descriptor['working_databases'] = {'complete_manifest_bound': sorted(completed_working),
                                                'include_after_pipeline_reaped': include_reaped_working,
                                                'included_uncompleted_after_reap': sorted(reaped_incomplete_working),
@@ -424,6 +685,9 @@ def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=Fal
         atomic(state_path,state)
         store.put_json("snapshots/" + sid + ".json", descriptor)
         store.put_json("upload-ledger.json", state, immutable=False)
+        recheck_snapshot_roster(source,inventory,identities,include_reaped_working,max_files,preserve_interrupted_evidence)
+        if preserve_interrupted_evidence:
+            wait_pipeline_group_absent(owned_pipeline_group_id,owned_pipeline_deadline,max_wait_seconds=0)
         # Mutable pointer is only a convenience; callers retain immutable ID.
         store.put_json("latest.json", latest, immutable=False)
         return sid
@@ -431,6 +695,7 @@ def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=Fal
 
 def reserve_metadata(state,key,value,max_bytes):
     size=len((json.dumps(value,sort_keys=True,indent=2)+'\n').encode())
+    if size>MAX_DESCRIPTOR_BYTES:raise GuardError('outgoing JSON exceeds the shared metadata bound')
     old=state['metadata_sizes'].get(key,0)
     delta=max(0,size-old)
     if state['bytes']+delta>max_bytes:raise GuardError('snapshot/ledger/pointer metadata exceeds reserved total storage')
@@ -439,7 +704,10 @@ def reserve_metadata(state,key,value,max_bytes):
 
 
 def publish_terminal(store,state_path,value,max_bytes):
-    with locked(Path(state_path).with_suffix('.lock')):
+    if hasattr(store,'storage_byte_limit'):max_bytes=store.storage_byte_limit(max_bytes)
+    state_path=lexical_path(state_path)
+    state_path=guarded_local_path(state_path.parent.resolve()/state_path.name,state_path.parent.resolve())
+    with snapshot_locked(state_path.with_suffix('.lock')):
         state=json.loads(Path(state_path).read_text())
         reserve_metadata(state,'terminal.json',value,max_bytes)
         for _ in range(8):
@@ -452,49 +720,163 @@ def publish_terminal(store,state_path,value,max_bytes):
         store.put_json('terminal.json',value,immutable=False)
 
 
-def download_snapshot(store, sid, destination):
+def download_snapshot(store, sid, destination, *, transport_codec=RAW_CODEC,
+                      archive_max_raw_bytes=None, archive_min_free_bytes=None, archive_max_files=None,
+                      allow_interrupted_evidence=False):
+    if type(allow_interrupted_evidence) is not bool:
+        raise GuardError('interrupted evidence collection must be boolean')
+    options = archive_options({'transport_codec':transport_codec, 'archive_max_raw_bytes':archive_max_raw_bytes,
+                               'archive_min_free_bytes':archive_min_free_bytes,
+                               **({'archive_max_files':archive_max_files} if archive_max_files is not None else {})})
+    destination=lexical_path(destination)
+    if Path(destination).is_symlink():
+        raise GuardError('symlinked snapshot destination')
     destination=Path(destination).resolve()
-    with locked(destination.with_name(destination.name+'-snapshot.lock')):
-        return _download_snapshot(store,sid,destination)
+    admit_restore_paths(destination)
+    with snapshot_locked(destination.with_name(destination.name+'-snapshot.lock')):
+        return _download_snapshot(store,sid,destination,allow_interrupted_evidence=allow_interrupted_evidence,**options)
 
 
-def _download_snapshot(store, sid, destination):
+def admit_restore_paths(destination):
+    guarded_local_path(destination,destination.parent,directory=True)
+    guarded_local_path(destination.with_name(destination.name+'-snapshot-history'),destination.parent,directory=True)
+    guarded_local_path(destination.with_name(destination.name+'-download-verification.json'),destination.parent)
+    guarded_local_path(destination.with_name(destination.name+'-snapshot.lock'),destination.parent)
+
+
+def _download_snapshot(store, sid, destination, *, transport_codec=RAW_CODEC,
+                       archive_max_raw_bytes=None, archive_min_free_bytes=None, archive_max_files=None,
+                       allow_interrupted_evidence=False):
+    if type(allow_interrupted_evidence) is not bool:
+        raise GuardError('interrupted evidence collection must be boolean')
+    destination=lexical_path(destination)
+    if destination.is_symlink():
+        raise GuardError('symlinked snapshot destination')
+    destination=destination.resolve()
+    admit_restore_paths(destination)
+    if not isinstance(sid,str) or re.fullmatch('[0-9a-f]{64}',sid) is None:
+        raise GuardError('invalid immutable snapshot identity')
     descriptor = store.get_json("snapshots/" + sid + ".json")
-    if descriptor is None or digest(descriptor) != sid or digest(descriptor["files"]) != descriptor["inventory_sha256"]:
+    if (not isinstance(descriptor,dict) or digest(descriptor) != sid or not isinstance(descriptor.get('files'),dict)
+            or digest(descriptor['files']) != descriptor.get('inventory_sha256')):
         raise GuardError("snapshot descriptor does not match immutable identity")
+    version = descriptor.get('version')
+    allowed = {'version','files','inventory_sha256','working_databases'}
+    evidence_fields={'kind','science_complete','sqlite_evidence_status','unvalidated_sqlite_evidence',
+                     'unvalidated_metadata','owned_pipeline_group_verification'}
+    is_evidence=bool(set(descriptor)&evidence_fields)
+    if is_evidence:
+        if (not evidence_fields<=set(descriptor) or descriptor['kind']!='interrupted-evidence-v1'
+                or descriptor['science_complete'] is not False
+                or descriptor['sqlite_evidence_status']!='UNVALIDATED_SQLITE_EVIDENCE'):
+            raise GuardError('invalid interrupted evidence envelope')
+        if not allow_interrupted_evidence:
+            raise GuardError('interrupted evidence cannot be automatically resumed; explicit collection required')
+        allowed.update(evidence_fields)
+    if version == 2:
+        allowed.add('transport_codec')
+    if (type(version) is not int or version not in (1,2) or set(descriptor)-allowed
+            or (version == 2 and (transport_codec != CODEC or descriptor.get('transport_codec') != CODEC))):
+        raise GuardError('snapshot codec differs from the trusted transport selection')
+    files = descriptor['files']
+    if not files:
+        raise GuardError('empty snapshot inventory')
+    if len(files)>file_limit(archive_max_files if archive_max_files is not None else MAX_ARCHIVE_FILES):
+        raise GuardError('snapshot exceeds the trusted file allowance')
+    if len((json.dumps(descriptor,sort_keys=True,indent=2)+'\n').encode())>MAX_DESCRIPTOR_BYTES:
+        raise GuardError('snapshot exceeds the shared metadata bound')
+    total = 0; directories=set()
+    for name,data in files.items():
+        safe_name(name)
+        if any(parent.as_posix() in files for parent in Path(name).parents if parent.as_posix() != '.'):
+            raise GuardError('snapshot path is both a file and a directory')
+        directories.update(parent.as_posix() for parent in Path(name).parents if parent.as_posix() != '.')
+        keys = {'sha256','bytes','archive'} if version == 2 else {'sha256','bytes'}
+        if not isinstance(data,dict) or set(data) != keys or re.fullmatch('[0-9a-f]{64}',str(data['sha256'])) is None:
+            raise GuardError('invalid snapshot file binding')
+        total += natural(data['bytes'],'file bytes')
+        if version == 2:
+            archive = validate_manifest(data['archive'])
+            if archive['raw_bytes'] != data['bytes'] or archive['raw_sha256'] != data['sha256']:
+                raise GuardError('archive and logical file bindings differ')
+    if is_evidence:
+        verification=descriptor['owned_pipeline_group_verification']
+        if (descriptor['unvalidated_sqlite_evidence']!=sorted(name for name in files if name.endswith(('.sqlite','.sqlite3','.db','-wal','-shm','-journal')))
+                or descriptor['unvalidated_metadata']!=sorted(name for name in files if name.endswith('.json'))
+                or not isinstance(verification,dict)
+                or set(verification)!={'owned_pipeline_group_id','owned_pipeline_group_absent','absence_checked_utc','check'}
+                or type(verification['owned_pipeline_group_id']) is not int or verification['owned_pipeline_group_id']<=0
+                or verification['owned_pipeline_group_absent'] is not True
+                or not isinstance(verification['absence_checked_utc'],str)
+                or len(verification['absence_checked_utc'])>128
+                or verification['check']!='killpg(group_id, 0) returned ESRCH'):
+            raise GuardError('invalid interrupted evidence bindings')
+    if archive_max_raw_bytes is not None and total > archive_max_raw_bytes:
+        raise GuardError('snapshot exceeds the trusted logical raw allowance')
     destination = Path(destination).resolve()
-    destination.mkdir(parents=True, exist_ok=True)
-    # A restored tree is exactly the selected immutable snapshot. Move older
-    # unlisted files into a sibling history directory, preserving evidence.
-    stale = [p for p in destination.rglob("*") if p.is_file() and p.relative_to(destination).as_posix() not in descriptor["files"]]
-    if stale:
-        history = destination.parent / (destination.name + "-snapshot-history") / (sid + "-" + str(time.time_ns()))
-        for old in stale:
-            if old.is_symlink(): raise GuardError("symlink in prior restored output")
-            target = history / old.relative_to(destination)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            os.replace(old, target)
-    for name, data in descriptor["files"].items():
-        rel = Path(name)
-        if rel.is_absolute() or ".." in rel.parts:
-            raise GuardError("invalid remote output path")
-        target = destination / rel
-        if target.is_symlink() or not target.resolve().is_relative_to(destination):
-            raise GuardError("symlink in remote output destination")
-        target.parent.mkdir(parents=True, exist_ok=True)
-        tmp = target.with_suffix(target.suffix + ".download-part")
-        if store.download("blobs/" + data["sha256"], tmp) != data["sha256"] or tmp.stat().st_size != data["bytes"]:
-            raise GuardError("downloaded research output checksum/size mismatch")
-        os.replace(tmp, target)
-    atomic(destination / "download-verification.json", {"utc": stamp(), "snapshot": sid, "files": len(descriptor["files"]), "all_bytes_verified": True})
+    for old in destination.rglob('*'):
+        if old.is_symlink():
+            raise GuardError('symlink in prior restored output')
+    # Hard admission uses raw bytes and filesystem overhead, never a sample ratio.
+    filesystem=destination.parent
+    while not filesystem.exists():filesystem=filesystem.parent
+    stats=os.statvfs(filesystem)
+    entries=len(files)+len(directories)+4
+    if stats.f_favail < entries:
+        raise GuardError('actual archive inode capacity is insufficient')
+    required = total + entries*max(8192,stats.f_frsize) + MAX_ENCODED_CHUNK
+    require_capacity(destination.parent,required,archive_min_free_bytes or 0)
+    destination.parent.mkdir(parents=True,exist_ok=True)
+    temporary = Path(tempfile.mkdtemp(prefix=destination.name+'-restore-',dir=destination.parent))
+    try:
+        def fetch(chunk,path):
+            sha = store.download('chunks/'+CODEC+'/'+chunk['encoded_sha256'],path,max_bytes=chunk['encoded_bytes'])
+            if sha != chunk['encoded_sha256'] or path.stat().st_size != chunk['encoded_bytes']:
+                raise GuardError('downloaded encoded chunk checksum/size mismatch')
+        for name,data in files.items():
+            target = temporary / name
+            if version == 2:
+                restore_file(data['archive'],fetch,target,max_raw_bytes=archive_max_raw_bytes,
+                             minimum_free_bytes=archive_min_free_bytes)
+            else:
+                if target.exists() or target.is_symlink():
+                    raise GuardError('snapshot paths alias an existing staged file')
+                target.parent.mkdir(parents=True,exist_ok=True)
+                if store.download('blobs/'+data['sha256'],target,max_bytes=data['bytes']) != data['sha256'] or target.stat().st_size != data['bytes']:
+                    raise GuardError('downloaded research output checksum/size mismatch')
+        history = None
+        if destination.exists():
+            history = destination.parent/(destination.name+'-snapshot-history')/(sid+'-'+str(time.time_ns()))
+            guarded_local_path(history,destination.parent,directory=True)
+            history.parent.mkdir(parents=True,exist_ok=True)
+            guarded_local_path(history,destination.parent,directory=True)
+            os.replace(destination,history)
+        try:
+            os.replace(temporary,destination)
+        except BaseException:
+            if history is not None:
+                os.replace(history,destination)
+            raise
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
+    # Keep the receipt outside the exact restored logical file roster.
+    atomic(destination.with_name(destination.name+'-download-verification.json'),
+           {'utc':stamp(),'snapshot':sid,'files':len(files),'all_bytes_verified':True,
+            'transport_codec':CODEC if version == 2 else RAW_CODEC,'raw_bytes':total,
+            'evidence_only':is_evidence})
     return descriptor
 
 
-def final_snapshot(source, store, state_path, max_bytes, deadline):
+def final_snapshot(source, store, state_path, max_bytes, deadline, *,
+                   preserve_interrupted_evidence=False,owned_pipeline_group_id=None,**options):
     """Snapshot only after the pipeline child has been reaped; writers are gone."""
+    store.begin_final()
     while True:
         try:
-            return snapshot(source, store, state_path, max_bytes, include_reaped_working=True)
+            return snapshot(source, store, state_path, max_bytes, include_reaped_working=True,
+                            preserve_interrupted_evidence=preserve_interrupted_evidence,
+                            owned_pipeline_group_id=owned_pipeline_group_id,owned_pipeline_deadline=deadline,**options)
         except BlockingIOError:
             if time.time() + 1 >= utc(deadline).timestamp():
                 raise GuardError("snapshot lock remained busy until the absolute deadline")
@@ -663,18 +1045,61 @@ def wait_pipeline_group_absent(pid, deadline, max_wait_seconds=5):
         time.sleep(min(.1, remaining))
 
 
+def service_stop_timeout(runtime, *, now=None):
+    """Bound a manual unit stop by the frozen CP/archive allowance and expiry."""
+    if 'pipeline_stop_grace_seconds' not in runtime:return 45
+    grace=runtime['pipeline_stop_grace_seconds'];margin=runtime.get('shutdown_margin_seconds')
+    cooperative=runtime.get('runtime_limits',{}).get('cooperative_stop_grace_seconds',10)
+    if (type(grace) is not int or type(margin) is not int or type(cooperative) is not int
+            or cooperative<1 or not cooperative+60<=grace<margin or grace+margin>172800):
+        raise GuardError('invalid frozen service checkpoint/archive stop allowance')
+    try:remaining=(utc(runtime['deadline_utc'])-(now or datetime.now(timezone.utc))).total_seconds()
+    except (KeyError,AttributeError,TypeError,ValueError):
+        raise GuardError('invalid frozen service absolute expiry') from None
+    if remaining<1:raise GuardError('service installation cannot extend an expired cloud stage')
+    return min(grace+margin,int(remaining))
+
+
 def run_guest(runtime, root, work):
+    options = archive_options(runtime)
+    preserve_evidence=runtime.get('preserve_interrupted_evidence',False)
+    if type(preserve_evidence) is not bool:
+        raise GuardError('interrupted evidence selection must be boolean')
+    if preserve_evidence:
+        for field,cap in (('final_storage_requests_reserved','max_storage_requests'),('final_storage_bytes_reserved','max_upload_bytes')):
+            if (type(runtime.get(field)) is not int or type(runtime.get(cap)) is not int
+                    or not 0<runtime[field]<runtime[cap]):
+                raise GuardError('interrupted evidence requires final shares inside original actor/storage caps')
+    work=lexical_path(work)
+    grace=runtime.get('pipeline_stop_grace_seconds',30)
+    if type(grace) is not int or not 1<=grace<=86400:
+        raise GuardError('invalid frozen pipeline stop grace')
+    if 'pipeline_stop_grace_seconds' in runtime:
+        cooperative=runtime['runtime_limits'].get('cooperative_stop_grace_seconds',10)
+        margin=runtime.get('shutdown_margin_seconds',90)
+        if type(cooperative) is not int or not 1<=cooperative<=86400 or type(margin) is not int or grace<cooperative+60 or grace>=margin:
+            raise GuardError('pipeline stop grace cannot cover frozen checkpoint/reaping within archive margin')
+        try:
+            cutoff=utc(runtime['deadline_utc'])-timedelta(seconds=margin)
+            owned_cutoff=utc(runtime['runtime_limits'].get('stop_cutoff_utc'))
+            soft_deadline=utc(runtime['runtime_limits'].get('deadline_utc'))
+        except (AttributeError,TypeError,ValueError):
+            raise GuardError('invalid frozen pipeline stop deadlines') from None
+        if owned_cutoff>cutoff or soft_deadline>cutoff-timedelta(seconds=grace) or owned_cutoff<soft_deadline:
+            raise GuardError('pipeline stop deadlines cannot consume the frozen archive margin')
     work.mkdir(parents=True, exist_ok=True)
-    with locked(work / "pipeline.lock"):
+    with snapshot_locked(work / "pipeline.lock"):
         provenance = guest_metadata()
         verification = verify_guest(runtime, provenance)
         atomic(work / 'guest-hardware-verification.json', verification)
         output = work / "output"
         store = Store(runtime["bucket"], runtime["prefix"], deadline=runtime["deadline_utc"],
-                      request_state=work/'storage-requests.json',max_requests=runtime['max_storage_requests'])
+                      request_state=work/'storage-requests.json',max_requests=runtime['max_storage_requests'],
+                      final_storage_requests_reserved=runtime.get('final_storage_requests_reserved',0),
+                      final_storage_bytes_reserved=runtime.get('final_storage_bytes_reserved',0))
         # The same guard excludes the periodic uploader for the ENTIRE restore,
         # including before destination files/partial downloads first appear.
-        with locked(output.with_name(output.name+'-snapshot.lock')):
+        with snapshot_locked(output.with_name(output.name+'-snapshot.lock')):
             remote=store.get_json('upload-ledger.json') or {'uploaded':{},'bytes':0}
             if remote['bytes']>runtime['max_upload_bytes']:raise GuardError('prior cumulative storage exceeds this task reservation')
             remote=store.reconcile_usage(remote,runtime['max_upload_bytes'])
@@ -682,7 +1107,7 @@ def run_guest(runtime, root, work):
             latest=store.get_json('latest.json')
             if latest:
                 temporary=Path(tempfile.mkdtemp(prefix='restored-output-',dir=work))
-                download_snapshot(store,latest['snapshot'],temporary)
+                download_snapshot(store,latest['snapshot'],temporary,**options)
                 if output.exists():
                     history=work/'output-restore-history';history.mkdir(exist_ok=True)
                     os.replace(output,history/str(time.time_ns()))
@@ -702,29 +1127,39 @@ def run_guest(runtime, root, work):
         with (output / "pipeline.log").open("a") as log:
             p = subprocess.Popen(command, cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             atomic(work / "process.json", {"pid": p.pid, "start_utc": stamp(), "deadline_utc": runtime["deadline_utc"]})
+            stop_requested=False
             def stop(*_):
+                nonlocal stop_requested
+                stop_requested=True
                 if p.poll() is None:
                     os.killpg(p.pid, signal.SIGTERM)
             signal.signal(signal.SIGTERM, stop)
             signal.signal(signal.SIGINT, stop)
             stop_time = utc(runtime["deadline_utc"]).timestamp() - runtime.get("shutdown_margin_seconds", 90)
+            cutoff=utc(runtime['deadline_utc']).timestamp()
+            if 'pipeline_stop_grace_seconds' in runtime:
+                stop_time=min(stop_time,utc(runtime['runtime_limits']['deadline_utc']).timestamp())
+                cutoff=min(cutoff,utc(runtime['runtime_limits']['stop_cutoff_utc']).timestamp())
             while p.poll() is None:
-                if time.time() >= stop_time:
+                if stop_requested or time.time() >= stop_time:
                     stop()
                     try:
-                        p.wait(timeout=30)
+                        p.wait(timeout=max(0.,min(grace,cutoff-time.time()-5)))
                     except subprocess.TimeoutExpired:
                         os.killpg(p.pid, signal.SIGKILL)
+                        p.wait(timeout=max(0.,min(5.,cutoff-time.time())))
                     break
                 time.sleep(2)
             code = p.wait()
-        group_verification = wait_pipeline_group_absent(p.pid, runtime['deadline_utc'])
+        group_deadline=runtime['runtime_limits']['stop_cutoff_utc'] if 'pipeline_stop_grace_seconds' in runtime else runtime['deadline_utc']
+        group_verification = wait_pipeline_group_absent(p.pid, group_deadline)
         atomic(work / 'process-group-verification.json', group_verification)
         atomic(output / "cloud-terminal.json", {"source_commit": runtime["source_commit"], "exit_code": code, "end_utc": stamp(),
                                                "cpu_io_counters_after":io_cpu_snapshot(),
                                                "guest_hardware_verification": verification,
                                                "owned_pipeline_group_verification": group_verification, **provenance})
-        sid = final_snapshot(output, store, work / "upload-state.json", runtime["max_upload_bytes"], runtime["deadline_utc"])
+        sid = final_snapshot(output, store, work / "upload-state.json", runtime["max_upload_bytes"], runtime["deadline_utc"],
+                             preserve_interrupted_evidence=preserve_evidence and code!=0,owned_pipeline_group_id=p.pid,**options)
         # Pointer is written only after all remote raw bytes are verified.
         publish_terminal(store,work/'upload-state.json', {"source_commit": runtime["source_commit"], "instance_id": provenance["instance_id"],
                                         "exit_code": code, "snapshot": sid, "utc": stamp()},runtime['max_upload_bytes'])
@@ -737,16 +1172,30 @@ def main(argv=None):
     p.add_argument("--runtime", type=Path, default=Path("/var/lib/dams/guest-runtime.json"))
     p.add_argument("--root", type=Path, default=Path("/opt/dams"))
     p.add_argument("--work", type=Path, default=Path("/var/lib/dams"))
+    p.add_argument('--transport-codec',choices=(RAW_CODEC,CODEC),help='Must match the private frozen runtime selection.')
     a = p.parse_args(argv)
-    runtime = json.loads(a.runtime.read_text())
+    runtime = json.loads(lexical_path(a.runtime).read_text())
+    a.work=lexical_path(a.work)
+    options = archive_options(runtime)
+    if a.transport_codec is not None and a.transport_codec != options['transport_codec']:
+        raise GuardError('CLI codec differs from the frozen runtime selection')
     if a.action == "run":
         return run_guest(runtime, a.root, a.work)
     if a.action == "upload":
         output = a.work / "output"
         if output.exists():
-            snapshot(output, Store(runtime["bucket"], runtime["prefix"], deadline=runtime["deadline_utc"],
-                                   request_state=a.work/'storage-requests.json',max_requests=runtime['max_storage_requests']),
-                     a.work / "upload-state.json", runtime["max_upload_bytes"])
+            store=Store(runtime["bucket"], runtime["prefix"], deadline=runtime["deadline_utc"],
+                        request_state=a.work/'storage-requests.json',max_requests=runtime['max_storage_requests'],
+                        final_storage_requests_reserved=runtime.get('final_storage_requests_reserved',0),
+                        final_storage_bytes_reserved=runtime.get('final_storage_bytes_reserved',0))
+            if ('pipeline_stop_grace_seconds' in runtime and hasattr(store,'final_phase_active')
+                    and store.final_phase_active()):
+                # ExecStopPost/timer cannot replace the owned final/evidence
+                # pointer. A phase fence alone never claims successful archival.
+                print(json.dumps({'event':'periodic_persistence_skipped','reason':'owned_final_phase'}))
+                return 0
+            snapshot(output, store,
+                     a.work / "upload-state.json", runtime["max_upload_bytes"], **options)
         return 0
     # Independent guest watchdog is supplemental to server terminationTime.
     while time.time() < utc(runtime["deadline_utc"]).timestamp() - runtime.get("shutdown_margin_seconds", 90):

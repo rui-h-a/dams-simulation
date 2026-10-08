@@ -3,7 +3,18 @@ set -euo pipefail
 umask 077
 cd /opt/dams
 test -f /var/lib/dams/guest-runtime.json
-cat > /etc/systemd/system/dams-pipeline.service <<'UNIT'
+# Explicit stages reserve cooperative CP/reaping plus archive time inside the
+# original server expiry. The worker/HTTP guards and provider DELETE remain the
+# absolute bound; this avoids a separate 45-second manual-stop SIGKILL.
+stop_timeout=$(python3 - <<'PY'
+import json,sys
+sys.path.insert(0,'/opt/dams/research_tools')
+from cloud_worker import service_stop_timeout
+with open('/var/lib/dams/guest-runtime.json') as stream:runtime=json.load(stream)
+print(service_stop_timeout(runtime))
+PY
+)
+cat > /etc/systemd/system/dams-pipeline.service <<UNIT
 [Unit]
 Description=DAMS fixed-source research pipeline
 After=network-online.target
@@ -15,7 +26,7 @@ WorkingDirectory=/opt/dams
 ExecStart=/usr/bin/python3 /opt/dams/research_tools/cloud_worker.py run
 ExecStopPost=/usr/bin/python3 /opt/dams/research_tools/cloud_worker.py upload
 Restart=no
-TimeoutStopSec=45
+TimeoutStopSec=${stop_timeout}
 KillMode=mixed
 UMask=0077
 NoNewPrivileges=true

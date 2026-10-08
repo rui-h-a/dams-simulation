@@ -41,17 +41,24 @@ class RuntimeLimits:
     max_events: int = 2_000_000
     max_output_bytes: int = 100_000_000
     batch_max_output_bytes: int = 8_000_000_000
+    batch_max_output_files: int = 0
+    per_world_output_files: int = 0
     min_free_disk_bytes: int = 100_000_000
     world_timeout_seconds: float = 300.
     deadline_utc: str = ''
     checkpoint_interval_days: int = 5
     checkpoint_interval_seconds: float = 60.
     max_retries: int = 1
+    cooperative_stop_grace_seconds: float = 10.
+    stop_cutoff_utc: str = ''
     provenance: dict = dataclasses.field(default_factory=dict)
 
     def to_dict(self): return dataclasses.asdict(self)
     @property
     def deadline(self): return parse_deadline(self.deadline_utc)
+    @property
+    def stop_cutoff(self):
+        return parse_deadline(self.stop_cutoff_utc) if self.stop_cutoff_utc else self.deadline+self.cooperative_stop_grace_seconds
 
     @classmethod
     def from_dict(cls, value, *, deadline=None):
@@ -66,6 +73,7 @@ class RuntimeLimits:
                           'memory_budget_bytes':(1_000_000,4_000_000_000_000),
                           'max_events':(1,1_000_000_000_000),'max_output_bytes':(100_000,10_000_000_000_000),
                           'batch_max_output_bytes':(100_000,100_000_000_000_000),
+                          'batch_max_output_files':(0,1_000_000_000),'per_world_output_files':(0,1_000_000),
                           'min_free_disk_bytes':(0,10_000_000_000_000),
                           'checkpoint_interval_days':(1,3650),'max_retries':(0,10)}
         for name,(lo,hi) in integer_ranges.items():
@@ -76,7 +84,7 @@ class RuntimeLimits:
             raise ValueError('explicit workers exceed CPU budget')
         if p.per_world_rss_bytes is not None and (type(p.per_world_rss_bytes) is not int or not 1_000_000<=p.per_world_rss_bytes<=p.memory_budget_bytes):
             raise ValueError('per_world_rss_bytes exceeds whole-machine budget')
-        for name in ('world_timeout_seconds','checkpoint_interval_seconds'):
+        for name in ('world_timeout_seconds','checkpoint_interval_seconds','cooperative_stop_grace_seconds'):
             x=getattr(p,name)
             if isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) or not .1<=x<=86400:
                 raise ValueError(name+' outside permitted finite range')
@@ -85,5 +93,9 @@ class RuntimeLimits:
         if any(not isinstance(v,str) or len(v)>512 for v in p.provenance.values()):
             raise ValueError('runtime provenance values must be bounded strings')
         p.deadline
+        if p.stop_cutoff<p.deadline:
+            raise ValueError('stop_cutoff_utc precedes the scientific deadline')
         if p.max_output_bytes>p.batch_max_output_bytes: raise ValueError('world output bound exceeds batch output bound')
+        if bool(p.batch_max_output_files)!=bool(p.per_world_output_files) or p.per_world_output_files>p.batch_max_output_files:
+            raise ValueError('prospective file controls require matching nonzero batch/world bounds')
         return p

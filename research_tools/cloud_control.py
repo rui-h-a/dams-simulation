@@ -224,6 +224,7 @@ def checked_config(c, now=None):
             raise GuardError("invalid scientific specification/scale")
         if not s.get("runtime_limits") or s["runtime_limits"].get("version") != 1:
             raise GuardError("each stage requires explicit versioned scientific resource limits")
+        stage_archive_options(s)
         for field in ("max_result_gib", "max_egress_gib", "storage_operations_usd_upper", "other_usd_upper"):
             money(s[field])
         duration=money(s['max_seconds'])/3600
@@ -232,12 +233,127 @@ def checked_config(c, now=None):
         if money(s['max_result_gib'])<=0 or money(s['max_egress_gib'])<=0:
             raise GuardError('complete results require positive storage/download reservations')
         storage_request_allowance(c,s)
+        stage_stop_options(c, s)
     if money(c.get("cost_margin", "1.2")) < 1:
         raise GuardError("cost margin cannot discount reserved fees")
     cap, reserve, prior = map(money, (c["budget_cap_usd"], c["reserve_usd"], c["prior_spend_usd"]))
     if cap <= reserve + prior or prior + reserve + sum(stage_cost(c, s) for s in c["stages"]) > cap:
         raise GuardError("all stages and cleanup reserve must fit the same cumulative budget")
     return c
+
+
+def stage_archive_options(s):
+    """Freeze transport and raw restore capacity independently of compression."""
+    codec = s.get("transport_codec", "raw-v1")
+    if codec not in ("raw-v1", "deflate-chunks-v1"):
+        raise GuardError("unsupported stage transport codec")
+    fields = ("archive_max_raw_bytes", "archive_min_free_bytes")
+    if codec == "raw-v1":
+        if any(field in s for field in (*fields, 'archive_max_files')):
+            raise GuardError("raw transport cannot silently ignore archive capacity fields")
+        return {"transport_codec": codec}
+    for field, minimum, maximum in (
+        (fields[0], 1_000_000, 100_000_000_000_000),
+        (fields[1], 0, 10_000_000_000_000),
+    ):
+        value = s.get(field)
+        if type(value) is not int or not minimum <= value <= maximum:
+            raise GuardError("compressed transport requires bounded integer " + field)
+    # Atomic restore keeps the old tree until all reconstructed bytes verify.
+    # Reserve both trees and free space; a sampled ratio cannot reduce this.
+    capacity = money(s.get("disk_gib", 50)) * 1024**3
+    if 2 * s[fields[0]] + s[fields[1]] > capacity:
+        raise GuardError("disk cannot reserve old and staged raw archive trees")
+    options = {"transport_codec": codec, **{field: s[field] for field in fields}}
+    if 'archive_max_files' in s:
+        files = s['archive_max_files']
+        if type(files) is not int or not 1 <= files <= 8192:
+            raise GuardError('archive file count must fit the trusted 8192-file bound')
+        options['archive_max_files'] = files
+    return options
+
+
+def stage_stop_options(c, s):
+    """Keep checkpoint grace and final persistence inside existing limits."""
+    options = {}
+    limits = s['runtime_limits']
+    if 'stop_cutoff_utc' in limits:
+        raise GuardError('cloud stop cutoff is derived from the reserved server deadline')
+    if 'pipeline_stop_grace_seconds' in s:
+        grace = s['pipeline_stop_grace_seconds']
+        cooperative = limits.get('cooperative_stop_grace_seconds', 10)
+        margin = s.get('shutdown_margin_seconds', 180)
+        if (type(grace) is not int or type(cooperative) is not int
+                or type(margin) is not int or cooperative < 1
+                or grace < cooperative + 60 or not grace < margin
+                or grace + margin >= s['max_seconds']):
+            raise GuardError('pipeline grace must cover cooperative checkpoint/reap and leave the archive margin')
+        options['pipeline_stop_grace_seconds'] = grace
+    elif 'cooperative_stop_grace_seconds' in limits:
+        raise GuardError('cloud cooperative grace requires an explicit covering pipeline grace')
+    if 'final_storage_requests_reserved' in s:
+        reserve = s['final_storage_requests_reserved']
+        allowance = storage_request_allowance(c, s)
+        if type(reserve) is not int or not 1 <= reserve <= allowance - 10:
+            raise GuardError('final storage requests must leave startup/periodic requests inside the actor allowance')
+        options['final_storage_requests_reserved'] = reserve
+    if 'final_storage_bytes_reserved' in s:
+        reserve = s['final_storage_bytes_reserved']
+        total = int(money(s['max_result_gib']) * 1024**3)
+        if type(reserve) is not int or not 1 <= reserve < total:
+            raise GuardError('final storage bytes must leave periodic space inside the original storage cap')
+        options['final_storage_bytes_reserved'] = reserve
+    if 'preserve_interrupted_evidence' in s:
+        enabled = s['preserve_interrupted_evidence']
+        if type(enabled) is not bool or (enabled and not all(field in options for field in (
+                'final_storage_requests_reserved', 'final_storage_bytes_reserved'))):
+            raise GuardError('interrupted evidence requires an explicit boolean and final request/byte reserves')
+        options['preserve_interrupted_evidence'] = enabled
+    coordinator_archive_reservation(c, s)
+    return options
+
+
+def coordinator_archive_reservation(c, s):
+    """Split one coordinator share; external archival gets no extra budget."""
+    fields = ('archive_source_requests_reserved', 'archive_source_egress_gib_reserved')
+    if not any(field in s for field in fields):
+        return 0, 0
+    if not all(field in s for field in fields):
+        raise GuardError('external archive requires both request and transfer reservations')
+    requests = s[fields[0]]
+    if type(requests) is not int or not 1 <= requests <= storage_request_allowance(c, s) - 10:
+        raise GuardError('archive requests must fit inside the existing coordinator allowance')
+    transfer = int(money(s[fields[1]]) * 1024**3)
+    total = int(money(s['max_egress_gib']) * 1024**3)
+    if not 1 <= transfer < total:
+        raise GuardError('archive transfer must leave a collector share inside the original egress cap')
+    return requests, transfer
+
+
+def coordinator_request_allowance(c, s):
+    requests, _ = coordinator_archive_reservation(c, s)
+    return storage_request_allowance(c, s) - requests
+
+
+def coordinator_transfer_allowance(c, s):
+    _, transfer = coordinator_archive_reservation(c, s)
+    return int(money(s['max_egress_gib']) * 1024**3) - transfer
+
+
+def stage_evidence_download_options(s):
+    # Root collection can preserve forensic bytes. Guest auto-resume keeps the
+    # reader's default refusal and never receives this opt-in.
+    return {'allow_interrupted_evidence': True} if s.get('preserve_interrupted_evidence') is True else {}
+
+
+def stage_science_deadlines(s, termination_utc):
+    deadline = utc(termination_utc)
+    margin = s.get('shutdown_margin_seconds', 180)
+    grace = s.get('pipeline_stop_grace_seconds', 60)
+    limits = {'deadline_utc': stamp(deadline - timedelta(seconds=margin + grace))}
+    if 'pipeline_stop_grace_seconds' in s:
+        limits['stop_cutoff_utc'] = stamp(deadline - timedelta(seconds=margin))
+    return limits
 
 
 def stage_cost(c, s):
@@ -748,10 +864,12 @@ def execute(c, folder):
                        "upload_interval_seconds": s.get("upload_interval_seconds", 60),
                        "max_storage_requests":storage_request_allowance(c,s),
                        "max_upload_bytes": int(money(s["max_result_gib"]) * 1024**3), "runtime_limits": s["runtime_limits"]}
+            runtime.update(stage_archive_options(s))
+            runtime.update(stage_stop_options(c, s))
             if "purchase_mode" in s:
                 runtime.update(purchase_mode=stage_capabilities(c, s)["purchase_mode"], machine_type=s["machine_type"],
                                expected_guest=s.get("expected_guest", {}))
-            runtime["runtime_limits"] = {**runtime["runtime_limits"], "deadline_utc": stamp(utc(e["termination_utc"]) - timedelta(seconds=runtime["shutdown_margin_seconds"] + 60)),
+            runtime["runtime_limits"] = {**runtime["runtime_limits"], **stage_science_deadlines(s, e["termination_utc"]),
                                          "provenance": cloud_origin(c,s)}
             base = "gs://" + c["bucket"] + "/packages/" + c["source_commit"]
             script = folder / (s["id"] + "-startup.sh")
@@ -804,8 +922,8 @@ def execute(c, folder):
             store = Store(c["bucket"], runtime["prefix"], gcloud_project=c["project"], deadline=c["global_deadline_utc"],
                           gcloud_configuration=c["gcloud_configuration"], gcloud_account=c["gcloud_account"],
                           transfer_state=folder / (s["id"] + "-transfer-ledger.json"),
-                          request_state=folder / (s["id"] + "-storage-requests.json"),max_requests=runtime['max_storage_requests'],
-                          max_transfer_bytes=int(money(s["max_egress_gib"]) * 1024**3))
+                          request_state=folder / (s["id"] + "-storage-requests.json"),max_requests=coordinator_request_allowance(c, s),
+                          max_transfer_bytes=coordinator_transfer_allowance(c, s))
             result = None;marker=None
             while datetime.now(timezone.utc) < utc(e["termination_utc"]):
                 try:
@@ -837,7 +955,8 @@ def execute(c, folder):
             if not absent:
                 raise GuardError("post-stage VM/disk absence unverified; resource lock retained")
             if result:
-                result=download_snapshot(store,marker['snapshot'],folder/'results'/s['id'])
+                result=download_snapshot(store,marker['snapshot'],folder/'results'/s['id'],
+                                         **stage_archive_options(s), **stage_evidence_download_options(s))
             if not result or marker.get("exit_code") != 0:
                 ledger.event(s["id"], state="uncertain", failure="stage interrupted/failed; resume requires completed operation/absence proof")
                 raise GuardError("stage interrupted/failed or results not verified; no escalation")

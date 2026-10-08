@@ -108,6 +108,20 @@ def disk_bytes(path):
     return total
 
 
+def output_files(path):
+    """All regular scientific/evidence files, including hidden and temporary."""
+    total=0
+    for file in path.rglob('*'):
+        if file.is_symlink():raise RuntimeError('symlink in bounded pipeline output')
+        try:
+            if file.is_file():total+=1
+        except FileNotFoundError:
+            # Atomic publication can remove a name; active reservations still
+            # cover the complete owned attempt until its process is reaped.
+            continue
+    return total
+
+
 class Scheduler:
     def __init__(self, root: Path, limits: RuntimeLimits, driver_hash: str):
         if limits.memory_budget_bytes>available_memory():
@@ -118,6 +132,21 @@ class Scheduler:
         self.peak_active = 0
         self.ctx = multiprocessing.get_context('spawn')
     def stop(self): self.stopped = True
+
+    def _reap_cooperatively(self,processes):
+        """SIGTERM requests a completed-day checkpoint, within one absolute cutoff."""
+        processes=list(processes)
+        for proc in processes:
+            if proc.is_alive():proc.terminate()
+        end=time.monotonic()+max(0.,min(self.limits.cooperative_stop_grace_seconds,
+                                      self.limits.stop_cutoff-time.time()))
+        for proc in processes:proc.join(max(0.,end-time.monotonic()))
+        for proc in processes:
+            if proc.is_alive():proc.kill()
+        reap_end=time.monotonic()+max(0.,min(5.,self.limits.stop_cutoff-time.time()))
+        for proc in processes:proc.join(max(0.,reap_end-time.monotonic()))
+        if any(proc.is_alive() for proc in processes):
+            raise RuntimeError('owned worker reaping is unverified at the absolute stop cutoff')
 
     def _inspect(self, config, branch_origin=None):
         case = self.root/'cases'/case_key(config)
@@ -220,16 +249,20 @@ class Scheduler:
             while queue or active:
                 expired=time.time()>=l.deadline
                 if self.stopped or expired:
-                    for proc,c,attempt,start in active.values():
-                        if proc.is_alive(): proc.terminate()
-                    end=time.monotonic()+10
-                    for proc,*_ in active.values(): proc.join(max(0,end-time.monotonic()))
-                    for proc,*_ in active.values():
-                        if proc.is_alive():proc.kill();proc.join()
+                    self._reap_cooperatively(proc for proc,*_ in active.values())
                     self._write_status()
                     raise InterruptedError('batch interrupted or absolute deadline reached; complete/checkpoint evidence retained')
                 used=disk_bytes(self.root)
                 if used>l.batch_max_output_bytes: raise RuntimeError('batch output budget exceeded')
+                files=output_files(self.root) if l.batch_max_output_files else 0
+                if l.batch_max_output_files:
+                    for proc,c,attempt,start in active.values():
+                        actual_files=output_files(attempt)
+                        if actual_files+1>l.per_world_output_files:
+                            raise InterruptedError('owned attempt exceeds its prospective file reservation')
+                        files+=max(0,l.per_world_output_files-actual_files)
+                    if files>l.batch_max_output_files:
+                        raise InterruptedError('whole pipeline file reservation exhausted; assigned cases retained')
                 free=shutil.disk_usage(self.root).free
                 outstanding=sum(max(0,int(c.max_output_mb*1_000_000)-disk_bytes(attempt)) for proc,c,attempt,start in active.values())
                 free-=outstanding;used+=outstanding
@@ -239,6 +272,9 @@ class Scheduler:
                     if len(active)>=self.worker_limit: break
                     c=unique[ident];rss=int(c.max_rss_mb*1024*1024)
                     if reserved+rss>l.memory_budget_bytes: continue
+                    if l.batch_max_output_files and files+l.per_world_output_files>l.batch_max_output_files:
+                        if active:break
+                        raise InterruptedError('insufficient whole pipeline file slots for a complete owned attempt')
                     # Reserve latest+previous checkpoint and final serialization
                     # before starting; no silent suppression of complete state.
                     required=int(c.max_output_mb*1_000_000)
@@ -262,10 +298,10 @@ class Scheduler:
                     proc.start();active[ident]=(proc,c,attempt,time.monotonic());reserved+=rss
                     queue.remove(ident);launched=True
                     self.peak_active=max(self.peak_active,len(active));free-=required;used+=required
+                    if l.batch_max_output_files:files+=l.per_world_output_files
                 for ident,(proc,c,attempt,start) in list(active.items()):
                     if proc.is_alive() and time.monotonic()-start>l.world_timeout_seconds-elapsed[ident]:
-                        proc.terminate();proc.join(5)
-                        if proc.is_alive():proc.kill();proc.join()
+                        self._reap_cooperatively([proc])
                     if proc.is_alive():continue
                     finished=True
                     proc.join();reserved-=int(c.max_rss_mb*1024*1024);del active[ident]
@@ -280,11 +316,7 @@ class Scheduler:
                 if active: time.sleep(.05)
             return [results[case_key(c)] for c in configs]
         finally:
-            for proc,*_ in active.values():
-                if proc.is_alive():proc.terminate()
-            for proc,*_ in active.values():
-                proc.join(5)
-                if proc.is_alive():proc.kill();proc.join()
+            self._reap_cooperatively(proc for proc,*_ in active.values())
             for proc,c,attempt,start in active.values():self._record_exit(proc,c,attempt,start)
             self._write_status()
             for sig,handler in old_handlers.items():signal.signal(sig,handler)
