@@ -13,6 +13,9 @@ from pathlib import Path
 import statistics
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from research_tools.figure_style import apply_style, style_metadata, MEASURED, PLANNED, REFERENCE, grid
+
 
 def solve(matrix: list[list[float]], values: list[float]) -> list[float]:
     rows = [list(row) + [value] for row, value in zip(matrix, values)]
@@ -190,7 +193,7 @@ def projections(path: Path, scales: list[dict], plan: dict) -> dict:
 
 def grouped_parallel(parallel: list[dict], kind: str, key: str) -> list[dict]:
     out = []
-    for workers in (1, 2, 4):
+    for workers in sorted({int(r["workers"]) for r in parallel if r["kind"]==kind}):
         rows = [r for r in parallel if r["kind"] == kind and r["workers"] == workers]
         values = [r[key] for r in rows]
         out.append({"workers": workers, "median": statistics.median(values), "min": min(values), "max": max(values)})
@@ -201,31 +204,32 @@ def latex_tables(path: Path, scales: list[dict], parallel: list[dict], plan: dic
     lines = ["% Automatically generated from CPU benchmark CSVs; do not hand edit.",
              "% Source: " + plan["source_sha256"],
              r"\begin{table}[tbp]", r"\centering\small",
-             r"\caption{Research resource tiers. The M2 Pro environment is measured; lower provisions, HPC and cloud are conditional plans, not certified platforms. CPU-model members are distinct from ledger nodes.}",
+             r"\caption{CPU resource tiers for DAMS evaluation. Native reference measurements and unexecuted cloud provisions are distinguished; catalog specifications do not certify a completed workload.}",
              r"\label{tab:infrastructure-tiers}",
-             r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{.14\textwidth}>{\raggedright\arraybackslash}p{.24\textwidth}>{\raggedright\arraybackslash}p{.54\textwidth}@{}}",
-             r"\toprule Tier & Environment & Explicit workload and limits \\ \midrule",
-             r"Minimum & Measured: M2 Pro, 12 cores, 16 GiB, macOS 26.6, Python 3.14.6 & $N=120,T=60,G=4,S=2$; team size 5, ring degree 1; all daily modules, one world at a time. A 2-core/4--8 GiB machine is an untested estimated lower provision. No GPU/MPI/runtime network; keep raw state and traces. \\ \addlinespace",
-             r"Recommended & Same measured workstation; other 8-core/16--32 GiB SSD systems untested & $N=1{,}000$--$10{,}000,T=30,G=N/100,S=2$--8. One to four independent worlds; the four-worker speedup is measured at $N=1{,}000$, not certified for all larger workloads. Model cap 1.5 GiB/child, external cap 2 GiB; keep at least 4 GiB OS headroom and twice projected outputs plus 5 GiB free disk. \\ \addlinespace",
-             r"Large/HPC & Untested Linux CPU node, 16+ physical cores, 64--128 GiB RAM, NVMe/scratch & Recheck $N=100{,}000,T=3$ first; longer or million-person individual worlds require explicit event/RAM/output caps and new profiling. Independent-world scheduler jobs, no implemented MPI split. 8 h wall budget and 100 GiB scratch are planning values; no certified GPU kernel. \\ \addlinespace",
-             r"Cloud burst & Untested GCP E2, us-central1, 4 vCPU/16 GiB & First profile $N\leq10{,}000,T=30$ with the same modules, up to two worlds; 50 GiB balanced disk. Batch plan: 12 VM-hour maximum, USD 10 budget, checkpoint/stop rules required before provision. Network for setup/transfer; no paid resource was started. \\",
+             r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{.16\textwidth}>{\raggedright\arraybackslash}p{.26\textwidth}>{\raggedright\arraybackslash}p{.50\textwidth}@{}}",
+             r"\toprule Tier & Evidence and provision & Workload condition \\ \midrule",
+             r"Minimum CPU & Estimated 2 cores/4--8 GiB; measured reference: M2 Pro, 12 cores/16 GiB & Small individual worlds and one worker. Only the named native reference was measured; the smaller provision requires its own preflight. Retain full state and traces. \\ \addlinespace",
+             r"Recommended cloud entry & Unexecuted C4D highmem-4: catalog 4 vCPUs/31 GiB; Hyperdisk Balanced & Execute the frozen 30-day specification after resource admission. Baseline disk service is 3,000 IOPS/140 MiB/s; capacity, workers and output limits must fit the actual case inventory. \\ \addlinespace",
+             r"Scale-up candidates & Unexecuted C4D highmem-96/192/384: catalog 756/1,512/3,024 GiB & Preserve the same full 30-day individual specification; measure memory, event growth and output before escalation. Independent-world batching does not imply within-world MPI or GPU speedup. \\ \addlinespace",
+             r"Completion gate & Source/configuration hashes; durable checkpoints; verified archive & Confirm all prescribed worlds and output bytes before analysis. Interrupted stages remain visible. Resource cleanup and verified evidence are separate requirements. \\",
              r"\bottomrule\end{tabular}", r"\end{table}",
              r"\begin{table}[tbp]", r"\centering\small",
              r"\caption{Sublinear/central CPU reference worlds on the M2 Pro: medians of three fresh child processes, each followed by one fresh-model warm repeat (C/W). $T$ differs across cells; these are explicit workloads, not a population-only scaling experiment. Initialization includes population generation. Run wall and CPU include output hashing, final manifest and measurement readback, excluding process launch. RSS is OS high-water (MiB) read before final output hashes; warm values inherit earlier allocation/high-water. Whole-child guardian peaks are retained separately.}",
              r"\label{tab:benchmark}",
-             r"\setlength{\tabcolsep}{4pt}",
+             r"\setlength{\tabcolsep}{5pt}",
              r"\begin{tabular}{@{}rrcrrrrrr@{}}",
              r"\toprule $N$ & $T$ (d) & C/W & Init. (s) & Sim. (s) & Run (s) & CPU (s) & RSS & Output (MB) \\ \midrule"]
+    def seconds(value): return f"{value:.2f}" if value>=1 else f"{value:.3f}"
     for s in scales:
         temp = "C" if s["temperature"] == "fresh_interpreter" else "W"
         n = f"{int(s['n']):,}".replace(",", "{,}")
-        lines.append(f"${n}$ & {int(s['days'])} & {temp} & {s['initialization_population_generation_seconds_median']:.3f} & {s['simulation_seconds_median']:.3f} & {s['wrapper_wall_seconds_median']:.3f} & {s['cpu_seconds_median']:.3f} & {s['peak_process_rss_mb_median']:.1f} & {s['output_bytes_median']/1_000_000:.2f} " + r"\\")
+        lines.append(f"${n}$ & {int(s['days'])} & {temp} & {seconds(s['initialization_population_generation_seconds_median'])} & {seconds(s['simulation_seconds_median'])} & {seconds(s['wrapper_wall_seconds_median'])} & {seconds(s['cpu_seconds_median'])} & {s['peak_process_rss_mb_median']:.1f} & {s['output_bytes_median']/1_000_000:.2f} " + r"\\")
     lines.extend([r"\bottomrule\end{tabular}", r"\end{table}"])
     stop = json.loads((path / "partial-n1000000-t1" / "watchdog.json").read_text())
     strong = grouped_parallel(parallel, "strong", "speedup")
     weak = grouped_parallel(parallel, "weak", "weak_scaling_efficiency")
     lines.append(f"The million-person, one-day attempt stopped after {stop['spawn_to_exit_wall_seconds']:.2f} s at sampled resident memory {stop['sampled_peak_rss_mb']:.1f} MiB under the 1 GiB watchdog; it produced no complete world. The ten-million-person request was refused by the default two-million-event bound before population allocation. For four matched independent worlds of 1,000 people over 30 days, median speedups were {strong[1]['median']:.2f} and {strong[2]['median']:.2f} with two and four workers; weak-scaling efficiencies were {weak[1]['median']:.3f} and {weak[2]['median']:.3f} with two worlds per worker. All eight world identifiers retained exactly one final-state hash across worker counts. These results support independent-world batching on this host, not single-world MPI or GPU claims.")
-    lines.append("The exact full benchmark source, rule-module hash and complete source snapshot remain available with the raw manifests. Final publication mode requires that this batch's full-core hash equals the currently installed core. Statistics, SVG generation, serialization/hash/I/O residuals, CPU time and kernel-accounted disk bytes are recorded in the public benchmark CSVs; a separate population-generation subphase was not timed. Planning envelopes outside the measured range are conditional on the retained Python objects, queues and full-state serialization, not certified capacity.")
+    lines.append("The retained benchmark binds each batch to its executed archived source, with the exact full-core hash, rule-module hash and complete source snapshot available in the raw manifests. The current pipeline core differs: these native measurements do not certify its revised serializer or validation guard, or Linux execution. Statistics, SVG generation, serialization/hash/I/O residuals, CPU time and kernel-accounted disk bytes are recorded in the public benchmark CSVs; a separate population-generation subphase was not timed. Planning envelopes outside the measured range are conditional on the retained Python objects, queues and full-state serialization, not certified capacity.")
     worst=max((d for d in projection["leave_one_workload_out_diagnostics"] if d["target"]=="rss_mb"),key=lambda d:abs(d["relative_error"]))
     lines.append(f"A leave-one-workload-out memory refit misses the withheld {worst['withheld_n']:,}-person/{worst['withheld_days']}-day cell by {abs(worst['relative_error'])*100:.1f}\\%, despite small full-fit residuals. This checks local cross-workload sensitivity; it neither validates the structural coefficients nor measures prediction error at million-person scales. The factor-two planning margins are declared allowances, not empirically established coverage or guaranteed upper bounds.")
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -236,16 +240,11 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
-    # 9.6 pt in a 17 cm source remains approximately 9 pt when the thesis's
-    # 15.92 cm text width scales the figure. Do not make printed labels tiny.
-    plt.rcParams.update({"font.family": "serif", "font.serif": ["cmr10"], "mathtext.fontset": "cm",
-                         "axes.formatter.use_mathtext": True, "axes.unicode_minus": False,
-                         "font.size": 9.6, "axes.labelsize": 9.6,
-                         "axes.titlesize": 10, "legend.fontsize": 9.6, "xtick.labelsize": 9.6, "ytick.labelsize": 9.6,
-                         "text.color": "#202020", "axes.labelcolor": "#202020", "axes.edgecolor": "#555555",
-                         "figure.facecolor": "white", "axes.facecolor": "white", "pdf.fonttype": 42, "svg.fonttype": "none",
-                         "svg.hashsalt": "DAMS-performance-"+plan["source_sha256"]})
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
+    apply_style(plt)
+    starting_style=style_metadata()
     output.mkdir(parents=True, exist_ok=True)
     paths = []
     def save(fig, name):
@@ -258,78 +257,95 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
         plt.close(fig)
     def style(ax):
         ax.spines[["top", "right"]].set_visible(False)
-        ax.grid(axis="y", color="#dddddd", linewidth=0.5)
+        ax.grid(axis="y", which="major", color="#E7E9EC", linewidth=0.4)
         ax.set_axisbelow(True)
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 8.8/2.54))
-    for panel, (key, ylabel) in enumerate((("wrapper_wall_seconds", "Complete run wall time (s)"), ("peak_process_rss_mb", "OS high-water RSS (MiB)"))):
+        ax.xaxis.set_minor_locator(NullLocator())
+        ax.yaxis.set_minor_locator(NullLocator())
+        ax.tick_params(which="major", length=0, width=.5, pad=5)
+        ax.xaxis.labelpad=9
+        ax.yaxis.labelpad=9
+    def finish(fig, *, bottom=.24):
+        # Keep legends in their own strip and leave a real gutter between axes.
+        # Fixed margins are shared across all three retained-data figures.
+        fig.subplots_adjust(left=.105, right=.99, bottom=bottom, top=.90, wspace=.32)
+    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 10.2/2.54))
+    for panel, (key, ylabel) in enumerate((("wrapper_wall_seconds", "Run wall time (s)"), ("peak_process_rss_mb", "Peak RSS (MiB)"))):
         ax = axes[panel]
-        for temp, offset, marker, label, color in (("fresh_interpreter", -0.08, "o", "Process-cold", "#202020"), ("same_interpreter_fresh_model", 0.08, "s", "Fresh model, warm process", "#777777")):
+        for temp, offset, marker, label, color in (("fresh_interpreter", -0.08, "o", "Process-cold", MEASURED), ("same_interpreter_fresh_model", 0.08, "s", "Fresh model, warm process", REFERENCE)):
             rows = [s for s in scales if s["temperature"] == temp]
             med = [s[key + "_median"] for s in rows]
             lo, hi = [s[key + "_min"] for s in rows], [s[key + "_max"] for s in rows]
             ax.errorbar([i+offset for i in range(len(rows))], med, yerr=[[a-b for a,b in zip(med,lo)], [b-a for a,b in zip(med,hi)]],
-                        fmt=marker, color=color, markerfacecolor="white" if offset > 0 else color, markersize=5, capsize=3, linewidth=1, label=label)
-        ax.set_xticks(range(4), ["120\n60 d", "1,000\n30 d", "10,000\n30 d", "100,000\n3 d"])
-        ax.set_xlabel("People N and explicit horizon T")
+                        fmt=marker, color=color, markerfacecolor="white" if offset > 0 else color, markersize=5.8, capsize=2.5, linewidth=.9, label=label, zorder=3)
+        cells=[s for s in scales if s["temperature"]=="fresh_interpreter"]
+        ax.set_xticks(range(len(cells)), [f"{int(s['n']):,}\n{int(s['days'])} d" for s in cells])
+        ax.set_xlabel("People N; horizon T (days)")
         ax.set_ylabel(ylabel)
         ax.set_yscale("log")
-        ax.yaxis.set_major_locator(FixedLocator([0.1,1,10] if panel == 0 else [30,50,100,200,500]))
+        ax.yaxis.set_major_locator(FixedLocator([0.1,1,10] if panel == 0 else [30,100,500]))
         ax.yaxis.set_major_formatter(FuncFormatter(lambda x,_: f"{x:g}"))
-        ax.yaxis.set_minor_formatter(NullFormatter())
-        ax.set_title("(a) Complete worlds" if panel == 0 else "(b) CLI high-water reading", loc="left")
+        ax.set_title("(a) Wall time" if panel == 0 else "(b) Resident memory", loc="left", pad=12)
         style(ax)
-    axes[1].legend(loc="upper left", frameon=False)
-    fig.tight_layout(pad=0.7, w_pad=1.7)
+    fig.legend(*axes[0].get_legend_handles_labels(), loc="lower center", bbox_to_anchor=(.55,.025),
+               ncol=2, frameon=False, columnspacing=2, handletextpad=.7)
+    finish(fig)
     save(fig, "benchmark_workloads")
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 9.3/2.54))
+    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 10.6/2.54))
     actual = [s for s in scales if s["temperature"] == "fresh_interpreter" and s["days"] == 30]
-    for i, (key, lower, upper, ylabel, divisor) in enumerate((("wrapper_wall_seconds_median", "time_low_seconds", "time_high_seconds", "Complete run wall time (min)", 60),
-                                                            ("complete_child_sampled_peak_rss_mb_median", "rss_low_mb", "rss_high_mb", "Whole-child sampled RSS (GiB)", 1024))):
+    for i, (key, lower, upper, ylabel, divisor) in enumerate((("wrapper_wall_seconds_median", "time_low_seconds", "time_high_seconds", "Run wall time (min)", 60),
+                                                            ("complete_child_sampled_peak_rss_mb_median", "rss_low_mb", "rss_high_mb", "Peak RSS (GiB)", 1024))):
         ax = axes[i]
-        ax.plot([s["n"] for s in actual], [s[key]/divisor for s in actual], "o", color="#202020", label="Measured T=30")
+        ax.plot([s["n"] for s in actual], [s[key]/divisor for s in actual], "o", color=MEASURED, markersize=5.8, label="Measured (30 d)", zorder=3)
         rows = projection["projections"]
         n = [r["n"] for r in rows]
         low, high = [r[lower]/divisor for r in rows], [r[upper]/divisor for r in rows]
         center = [math.sqrt(a*b) for a,b in zip(low,high)]
-        ax.fill_between(n, low, high, color="#e4e4e4", hatch="///", edgecolor="#aaaaaa", linewidth=0.5, label="Planning envelope")
-        ax.plot(n, center, "D--", color="#555555", markerfacecolor="white", markersize=4, linewidth=1, label="Unexecuted projection")
+        ax.fill_between(n, low, high, facecolor="#F3F0EA", edgecolor=PLANNED, linewidth=.55, label="Planning envelope", zorder=1)
+        ax.plot(n, center, "D--", color=PLANNED, markerfacecolor="white", markersize=5.2, linewidth=1.2, label="Unexecuted (30 d)", zorder=3)
         ax.set_xscale("log");ax.set_yscale("log")
         ax.xaxis.set_major_locator(FixedLocator([1000,10000,100000,1000000,10000000]))
         ax.xaxis.set_major_formatter(FuncFormatter(lambda x,_: f"{int(x/1000)}k" if x<1_000_000 else f"{int(x/1_000_000)}m"))
         ax.yaxis.set_major_formatter(FuncFormatter(lambda x,_: f"{x:g}"))
-        ax.yaxis.set_minor_formatter(NullFormatter())
-        ax.set_xlabel("People N; 30-day projection")
-        ax.set_ylabel(ylabel);ax.set_title("(a) Conditional completion time" if i==0 else "(b) Conditional memory", loc="left")
+        ax.set_xlabel("People N")
+        ax.set_ylabel(ylabel);ax.set_title("(a) Wall time" if i==0 else "(b) Resident memory", loc="left", pad=12)
         style(ax)
     stop = json.loads((path / "partial-n1000000-t1" / "watchdog.json").read_text())
-    axes[1].plot([1_000_000], [stop["sampled_peak_rss_mb"]/1024], "x", color="#202020", markersize=6)
-    axes[1].annotate("T=1 guard stop\n(no complete world)", (1_000_000, stop["sampled_peak_rss_mb"]/1024), xytext=(-10,-35), textcoords="offset points", ha="center", fontsize=9.6)
-    axes[1].axhline(16, color="#999999", linestyle=":", linewidth=0.8)
-    axes[1].text(1.1e3, 17.5, "Local RAM: 16 GiB\n(reserve OS headroom)", fontsize=9.6, va="bottom")
-    axes[0].legend(loc="upper left", frameon=False)
-    fig.tight_layout(pad=0.7, w_pad=1.7)
+    axes[1].plot([1_000_000], [stop["sampled_peak_rss_mb"]/1024], "x", color=MEASURED, markersize=6.5, markeredgewidth=1.2, zorder=4)
+    axes[1].axhline(16, color=REFERENCE, linestyle=":", linewidth=.85, zorder=2)
+    handles=[Line2D([],[],marker="o",linestyle="none",color=MEASURED,markersize=5.8),
+             Line2D([],[],marker="D",linestyle="--",color=PLANNED,markerfacecolor="white",markersize=5.2,linewidth=1.2),
+             Patch(facecolor="#F3F0EA",edgecolor=PLANNED,linewidth=.55),
+             Line2D([],[],marker="x",linestyle="none",color=MEASURED,markersize=6.5),
+             Line2D([],[],linestyle=":",color=REFERENCE,linewidth=.85)]
+    fig.legend(handles,["Measured (30 d)","Unexecuted (30 d)","Planning envelope","Guard stop (1 d)","Local RAM (16 GiB)"],
+               loc="lower center",bbox_to_anchor=(.55,.025),ncol=3,frameon=False,columnspacing=1.6,
+               handletextpad=.65,labelspacing=.7)
+    finish(fig,bottom=.265)
     save(fig, "benchmark_projection")
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 8.0/2.54))
+    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 10.2/2.54))
     for panel, (kind, key, ylabel) in enumerate((("strong", "speedup", "Strong-scaling speedup"), ("weak", "weak_scaling_efficiency", "Weak-scaling efficiency"))):
         ax=axes[panel];rows=grouped_parallel(parallel, kind, key)
         xs,ys=[r["workers"] for r in rows],[r["median"] for r in rows]
-        ax.errorbar(xs,ys,yerr=[[r["median"]-r["min"] for r in rows],[r["max"]-r["median"] for r in rows]],fmt="o-",color="#202020",markersize=5,capsize=3,linewidth=1,label="Measured median/range")
-        ax.plot(xs, xs if kind=="strong" else [1]*3, "--",color="#888888",linewidth=1,label="Ideal reference")
+        ax.errorbar(xs,ys,yerr=[[r["median"]-r["min"] for r in rows],[r["max"]-r["median"] for r in rows]],fmt="o-",color=MEASURED,markersize=5.8,capsize=2.5,linewidth=1.3,label="Measured median and range",zorder=3)
+        ax.plot(xs, xs if kind=="strong" else [1]*3, "--",color=REFERENCE,linewidth=.9,label="Ideal reference",zorder=2)
         ax.set_xticks(xs);ax.set_xlabel("Independent-world workers");ax.set_ylabel(ylabel)
         upper=max(4.3 if kind=="strong" else 1.15, max(r["max"] for r in rows)*1.1)
-        ax.set_ylim(0,upper);style(ax)
-        ax.set_title("(a) Fixed four-world batch" if kind=="strong" else "(b) Two worlds per worker",loc="left")
-    axes[0].legend(frameon=False,loc="upper left")
-    fig.tight_layout(pad=0.7,w_pad=1.7);save(fig,"benchmark_parallel")
+        ax.set_ylim(0,upper);ax.set_yticks([0,1,2,3,4] if kind=="strong" else [0,.5,1]);style(ax)
+        ax.set_title("(a) Strong scaling" if kind=="strong" else "(b) Weak scaling",loc="left",pad=12)
+    handles,legend_labels=axes[0].get_legend_handles_labels()
+    fig.legend(handles,legend_labels,loc="lower center",bbox_to_anchor=(.55,.025),ncol=2,
+               frameon=False,columnspacing=2,handletextpad=.7)
+    finish(fig);save(fig,"benchmark_parallel")
     sha=plan["source_sha256"][:12]
     fragments=[]
-    captions=[("benchmark_workloads","Measured CPU reference workloads",f"Complete runs including output hashes, final manifests and measurement readback, excluding process launch, on Apple M2 Pro/macOS 26.6/Python 3.14.6, benchmark source {sha}. Points are medians and bars min--max of three child-process repeats; every warm repeat initializes a fresh full model. Horizons differ explicitly, so the populations are not a common-horizon scaling series. CLI RSS is OS high-water read before final output hashes; warm points inherit prior high-water and allocator state. The whole-child guardian peak is separately retained and used for conservative memory planning. All normal daily modules and full-state output are retained. This is software resource evidence, not organizational efficiency."),
-              ("benchmark_projection","Conditional large-scale resource projections",f"Source {sha}; black circles are complete measured 30-day workloads, hollow diamonds/dashes are unexecuted 30-day projections. Shaded bands are deliberately broad structural planning envelopes, not confidence intervals or guaranteed limits. A fitted N plus NT memory/output model and observed phase rates with logarithmic heap/sort growth give these scenarios. Memory fits the median whole-child guardian peaks sampled every 50 ms, including both fresh models and final hashing, rather than a reset per-world high-water. Four measured cells (including 100,000 people for three days) fit local coefficients; they do not independently validate large-scale prediction. The cross marks the actual million-person one-day RSS stop, not a completed world's peak. All projected thirty-day requests exceed the default event limit; no completed results or cloud performance are implied."),
-              ("benchmark_parallel","Independent-world CPU batching",f"Benchmark source {sha}; N=1,000, T=30, full modules and outputs. Strong scaling holds four matched worlds fixed; weak scaling holds two worlds per worker. Points are medians and bars min--max across three batches; dashed lines show ideal references. Launch, execution and monitoring enter batch wall time. Each of eight world IDs has exactly one final-state SHA-256 across worker counts and repeats. These are same-platform deterministic checks, not external validation, single-world MPI scaling or a GPU benchmark.")]
+    captions=[("benchmark_workloads","Measured CPU reference workloads",f"Historical sublinear/central reference runs on Apple M2 Pro/macOS 26.6/Python 3.14.6, source {sha}. Points are medians and bars min--max of three fresh child-process repeats; warm repeats initialize fresh models. Horizons are labelled for each workload. Complete-run wall time includes hashes and manifests, excluding process launch. RSS is OS high-water before final output hashes; warm runs inherit earlier allocation and high-water."),
+              ("benchmark_projection","Conditional large-scale resource projections",f"Native-source {sha}, 30-day scenarios. Filled circles are completed measurements; hollow diamonds/dashes are unexecuted projections. Shaded bands are structural planning envelopes, not confidence intervals. The cross is the million-person, one-day memory stop, not a completed world; the dotted reference is 16 GiB physical RAM before OS headroom. Four measured workloads fit local coefficients and do not certify C4D guest performance or successful large-population execution."),
+              ("benchmark_parallel","Independent-world CPU batching",f"Historical native source {sha}; N=1,000, T=30, full modules and outputs. Strong scaling fixes four matched worlds; weak scaling fixes two worlds per worker. Points are medians and bars min--max of three batches; dashed lines are ideal references. Batch wall time includes launch and monitoring. All eight world IDs retain one final-state hash across worker counts and repeats.")]
     for name,title,caption in captions:
         fragments.extend([r"\begin{figure}[tbp]",r"\centering",rf"\includegraphics[width=\linewidth]{{figures/results/{name}.pdf}}",rf"\caption{{{caption}}}",rf"\label{{fig:{name.replace('_','-')}}}",r"\end{figure}"])
     fragment.parent.mkdir(parents=True,exist_ok=True);fragment.write_text("\n".join(fragments)+"\n")
-    (path / "publication_artifacts.json").write_text(json.dumps({"source_sha256":plan["source_sha256"],"generator_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),"matplotlib":matplotlib.__version__,"files":{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}},sort_keys=True)+"\n")
+    if starting_style!=style_metadata():raise RuntimeError("figure style changed during generation")
+    (path / "publication_artifacts.json").write_text(json.dumps({"figure_style":style_metadata(),"source_sha256":plan["source_sha256"],"generator_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),"matplotlib":matplotlib.__version__,"cloud_catalog_sha256":hashlib.sha256((Path(__file__).resolve().parents[1]/"docs/CLOUD_PRICE_SNAPSHOT.json").read_bytes()).hexdigest(),"files":{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}},sort_keys=True)+"\n")
 
 
 def main() -> None:

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import dataclasses
 import heapq
+import json
 import math
 import statistics
 import time
@@ -58,7 +59,7 @@ class Claim:
 class Model:
     """Nested agents→teams→guilds→sites; sparse team and cross-guild ring links.
 
-    Day order: commit yesterday's reviewed claims; decay/update shares; freeze
+    Day order: decay credit; commit yesterday's reviewed claims; update shares; freeze
     weights; vote from noisy current signals; choose effort/cooperation; reveal
     outcomes; submit observed claims; review prior claims; schedule appeals.
     Simultaneous updates use a common morning snapshot and stable event IDs.
@@ -377,13 +378,68 @@ class Model:
                 "authority_changes": self.authority_changes, "metrics": dict(self.metrics),
                 "review_credit": self.review_credit, "appeal_credit": self.appeal_credit}
 
+    def write_state(self, stream) -> None:
+        """Canonical raw state, streaming agents/claims rather than copying all.
+
+        Bytes match canonical(state()); this is a serialization change only.
+        Seen IDs still require exact lexicographic sorting; resource estimates
+        explicitly include that retained-event and sorting cost.
+        """
+        from .storage import canonical
+        fields = self.state_fields()
+        stream.write("{")
+        for number, key in enumerate(sorted(fields)):
+            if number: stream.write(",")
+            stream.write(canonical(key)); stream.write(":")
+            kind, value = fields[key]
+            if kind == "array":
+                stream.write("[")
+                for i, item in enumerate(value):
+                    if i: stream.write(",")
+                    stream.write(canonical(dataclasses.asdict(item)))
+                stream.write("]")
+            elif kind == "queues":
+                stream.write("{")
+                for i, (guild, queue) in enumerate(sorted(value.items())):
+                    if i: stream.write(",")
+                    stream.write(canonical(str(guild))); stream.write(":[")
+                    for j, claim in enumerate(queue):
+                        if j: stream.write(",")
+                        stream.write(canonical(dataclasses.asdict(claim)))
+                    stream.write("]")
+                stream.write("}")
+            else:
+                for chunk in json.JSONEncoder(sort_keys=True, separators=(",", ":"), allow_nan=False).iterencode(value):
+                    stream.write(chunk)
+        stream.write("}")
+
+    def state_fields(self):
+        return {"config": ("value", self.config.to_dict()), "day": ("value", self.day),
+                "agents": ("array", self.agents), "queues": ("queues", self.queues),
+                "appeals": ("queues", self.appeals), "commits": ("array", self.commits),
+                "seen": ("value", sorted(self.seen)), "history": ("value", self.history),
+                "confirmation_delays": ("value", self.confirmation_delays),
+                "appeal_delays": ("value", self.appeal_delays),
+                "authority_changes": ("value", self.authority_changes),
+                "metrics": ("value", dict(self.metrics)),
+                "review_credit": ("value", self.review_credit), "appeal_credit": ("value", self.appeal_credit)}
+
     @classmethod
     def restore(cls, value: dict) -> Model:
-        obj = cls(Config.from_dict(value["config"]))
+        # Rebuild topology from the saved population, avoiding a second generated
+        # population and duplicated initialization/RNG work during recovery.
+        obj = cls.__new__(cls)
+        obj.config = Config.from_dict(value["config"])
+        obj.rng = WorldRandom(obj.config.seed, obj.config.world)
+        obj.members, obj.teams = defaultdict(list), defaultdict(list)
         obj.day = value["day"]
         if not 0 <= obj.day <= obj.config.days:
             raise ValueError("checkpoint day is invalid")
         obj.agents = [Agent(**a) for a in value["agents"]]
+        if len(obj.agents) != obj.config.n or [a.id for a in obj.agents] != list(range(obj.config.n)):
+            raise ValueError("checkpoint population/IDs differ from configuration")
+        for a in obj.agents:
+            obj.members[a.guild].append(a.id); obj.teams[a.team].append(a.id)
         for field in ("queues", "appeals"):
             queues = {int(g): [Claim(**c) for c in q] for g, q in value[field].items()}
             for q in queues.values():

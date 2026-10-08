@@ -2,15 +2,40 @@
 
 This repository makes the DAMS research model, synthetic experiment design, analysis and resource measurements inspectable. It studies contribution-contingent **formal** authority, bounded observation, guild coordination, procedural capacity and conditional evidence-substrate costs. Parameters and populations are design or stress assumptions. Synthetic work, concentration and completed-record delay do not establish field effectiveness, fairness, organizational efficiency or real consensus performance.
 
-## Reproduce the complete scientific study
+## Run a declared specification and population
 
-From this source repository, with Python 3.11 or newer and `uv` available:
+From a clean source checkout:
+
+```sh
+./run.sh --spec validation --scale 120
+```
+
+The entry verifies its pinned installer, prepares managed Python 3.14.2 and the
+locked analysis environment, executes the selected cases within declared
+resource limits, verifies the case inventory, and generates the compatible
+analysis and report. The default is small local validation. It exercises the
+end-to-end interfaces; its two primary worlds cannot replace formal-study
+precision. No public invocation authorizes cloud spending.
+
+The [versioned specification contract](docs/SPEC_V2.md) distinguishes full-study,
+governance-scale and scale-confirmation designs. Population reaches every
+dynamic stage in the selected design; days, policies, independent world counts
+and omitted factorials remain explicit. A resource stop retains an incomplete
+case rather than reducing its scientific design. See the [controlled execution
+protocol](docs/CLOUD_EXECUTION.md) for installation prerequisites, the private
+authorized cloud path, cumulative limits, recovery and complete closeout.
+Linux/GCP support requires its own actual execution evidence.
+
+## Reproduce the historical complete scientific study
+
+The immutable `paper-2026-10-08` snapshot contains the reported historical study.
+From that snapshot, with Python 3.11 or newer and `uv` available:
 
 ```sh
 uv run --locked --extra analysis python research_tools/reproduce_thesis.py --output runs/thesis-reproduction --workers 2
 ```
 
-The command runs tests and a bounded smoke world, establishes or verifies the pilot protocol, executes the fixed confirmation, mechanism, threat, sensitivity, context, scale and recovery designs, verifies retained output hashes, and generates the analysis and a self-contained HTML report. Existing compatible complete cases are verified and reused. Source or driver mismatches are refused; use a new output directory for a new version. `--workers` controls independent-world parallelism in the scale stage, not partitioning of a single world.
+The command runs tests and a bounded smoke world, establishes or verifies the pilot protocol, executes the fixed confirmation, mechanism, threat, sensitivity, context, scale and recovery designs, verifies retained output hashes, and generates the analysis and a self-contained HTML report. Existing compatible complete cases are verified and reused. Source or driver mismatches are refused; use a new output directory for a new version. `--workers` controls independent-world parallelism in the historical scale stage, not partitioning of a single world. The schema-2 pipeline uses its shared scheduler across stages; these are different declared execution contracts.
 
 Raw cases, stage logs and `pipeline_manifest.json` are saved under `runs/thesis-reproduction/`. The default analysis directory is `runs/thesis-reproduction/report/`, containing `report.html`, editable SVG/vector PDF figures, LaTeX fragments and machine-readable calculations. `--analysis-dir PATH` selects another report directory. A pipeline is complete only when its manifest records `status: complete`; a command being available or an individual stage passing does not establish full execution.
 
@@ -68,7 +93,7 @@ uv run dams-sim smoke
 uv build
 ```
 
-`uv.lock` pins the environment; the model runtime dependency list is empty, the optional analysis extra pins Matplotlib, and the build backend is pinned. Run research tools from the source checkout. The wheel exposes the core `dams-sim` CLI rather than bundling the entire research evidence tree.
+`uv.lock` pins the environment; the model runtime dependency list is empty, the optional analysis extra pins Matplotlib, and the build backend is pinned. Run the schema-2 pipeline and research tools from the source checkout or bootstrap installation: they depend on the checked source tree. The wheel supports the standalone core commands and does not bundle the research drivers or end-to-end pipeline assets.
 
 Use [CITATION.cff](CITATION.cff), cite the exact source commit and manifest, and retain the effective configuration and analysis version. The software is [MIT licensed](LICENSE) and has no assigned DOI. [Third-party notices](THIRD_PARTY_NOTICES.md) preserve the license for the unmodified Computer Modern font embedded in the report. The public repository and release URLs below are verified against the GitHub API.
 

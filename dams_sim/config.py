@@ -50,7 +50,7 @@ class Config:
     max_events: int = 2_000_000
 
     def validate(self) -> Config:
-        integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,100_000_000)}
+        integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
         for name, (low, high) in integers.items():
             value = getattr(self, name)
             if type(value) is not int or not low <= value <= high:
@@ -65,7 +65,7 @@ class Config:
             raise ValueError("hierarchy_basis must be performance or tenure")
         if self.behavior_rule not in {"linear_response", "satisficing", "reinforcement"}:
             raise ValueError("unknown behavior_rule")
-        bounded = {"alpha": (0.001, 0.999), "decay_per_day": (0, 1), "review_capacity_per_member_day": (0.001, 10), "appeal_capacity_per_member_day": (0, 2), "review_error_sd": (0, 5), "decision_noise_sd": (0, 5), "shared_signal_sd": (0,5), "cooperation_strength": (0, 2), "autonomy_response": (-2, 2), "learning_rate": (0, 1), "attack_budget_hours_per_day": (0, self.n), "max_wall_seconds": (0.1, 86400), "max_output_mb": (0.1, 10000), "max_rss_mb": (1,1_000_000)}
+        bounded = {"alpha": (0.001, 0.999), "decay_per_day": (0, 1), "review_capacity_per_member_day": (0.001, 10), "appeal_capacity_per_member_day": (0, 2), "review_error_sd": (0, 5), "decision_noise_sd": (0, 5), "shared_signal_sd": (0,5), "cooperation_strength": (0, 2), "autonomy_response": (-2, 2), "learning_rate": (0, 1), "attack_budget_hours_per_day": (0, self.n), "max_wall_seconds": (0.1, 86400), "max_output_mb": (0.1, 10_000_000), "max_rss_mb": (1,4_000_000)}
         for name, (low, high) in bounded.items():
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:

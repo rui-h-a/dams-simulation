@@ -2,7 +2,26 @@
 
 [README](../README.md) is the single command entry point. This guide explains its evidence and failure semantics. [ODD](ODD.md) defines the model; [INTERFACE](INTERFACE.md) defines parameters, units and raw fields; [INFRASTRUCTURE](INFRASTRUCTURE.md) owns measured capacity, operating tiers and cloud dry-run assumptions. These documents do not create competing model specifications.
 
-## Complete scientific pipeline
+## Current declared pipeline
+
+The current source entry is `./run.sh --spec validation --scale 120`. It prepares
+the locked environment and executes the schema-2 case inventory through the
+shared bounded scheduler. [SPEC_V2.md](SPEC_V2.md) defines its designs, horizons,
+paired worlds and precision limits; [CLOUD_EXECUTION.md](CLOUD_EXECUTION.md)
+defines installation, private cloud authorization, persistence and closeout.
+The small validation design exercises the complete interfaces and does not
+replace the full-study confirmation design. Completed outputs require the
+independent inventory, scientific-byte and publication checks; an interrupted
+case remains incomplete. A local run does not certify a GCP guest or a large
+population.
+
+## Historical complete scientific pipeline
+
+The following protocol and retained paper evidence belong to the immutable
+`paper-2026-10-08` snapshot, commit
+`5504d62ee59c043fb346edaebf722164c85c7fab`. Use a separate checkout of that
+snapshot to reproduce those executed source identities. The current schema-2
+pipeline and current core fingerprint are separately versioned.
 
 `research_tools/reproduce_thesis.py` runs from the repository root. Its required `--output` identifies the raw study directory; `--analysis-dir` defaults to `OUTPUT/report`; `--workers` accepts 1–4 and defaults to 2. The workers apply to the extended scale stage. Other stages retain their actual serial/matched-world design. No MPI or within-world GPU partition is implemented.
 
@@ -19,7 +38,7 @@
 | Recovery | Synthetic behavioral/rule/parameter recovery within the declared generating grid; not empirical identification |
 | Analysis/report | Verified raw cases, world-level calculations, vector figures, LaTeX fragments and self-contained HTML |
 
-Exact cases, seeds, parameters, policy/backend sets and stop bounds are defined in the current drivers and effective configuration records, not inferred from a plot label. The pilot protocol records the fixed confirmation design; no significance-based sequential stopping is introduced. Machine-readable output retains unfinished stocks, failed attempts and conditional completed-record measures.
+Exact cases, seeds, parameters, policy/backend sets and stop bounds are defined in the historical drivers and effective configuration records, not inferred from a plot label. The pilot protocol records the fixed confirmation design; no significance-based sequential stopping is introduced. Machine-readable output retains unfinished stocks, failed attempts and conditional completed-record measures.
 
 The driver checks at least 8,000,000,000 bytes free disk and 4,000,000,000 bytes installed RAM when the latter is measurable. These preflight thresholds do not certify the smallest machine or an overnight finish. Leave OS/RAM/disk headroom and profile the actual workload using the measured tiers. First `uv` use can require dependency/build-tool downloads; installed/cached runs make no external model/API calls. The analysis extra is locked, and no command starts paid infrastructure.
 

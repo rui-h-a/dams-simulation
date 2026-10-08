@@ -16,6 +16,11 @@
 !dams_sim/randomness.py
 !dams_sim/report.py
 !dams_sim/storage.py
+!dams_sim/design.py
+!dams_sim/pipeline.py
+!dams_sim/runtime.py
+!dams_sim/scheduler.py
+!dams_sim/spec.py
 !research_tools/
 !research_tools/analyze.py
 !research_tools/benchmark.py
@@ -28,11 +33,17 @@
 !research_tools/reproduce_thesis.py
 !research_tools/study.py
 !research_tools/unpack_evidence.py
+!research_tools/analysis_v2.py
+!research_tools/figure_style.py
+!research_tools/pipeline.py
+!research_tools/recovery_checks.py
+!research_tools/validate_pipeline.py
 !tests/
 !tests/test_authority.py
 !tests/test_cli.py
 !tests/test_model.py
 !tests/test_study.py
+!tests/test_pipeline.py
 !configs/
 !configs/reference.json
 !docs/
@@ -49,6 +60,9 @@
 !docs/references.bib
 !docs/third_party/
 !docs/third_party/BaKoMa-Fonts-LICENSE.txt
+!docs/SPEC_V2.md
+!docs/CLOUD_EXECUTION.md
+!docs/CLOUD_PRICE_SNAPSHOT.json
 # Defensive exclusions also apply if the allowlist is extended in the future.
 **/__pycache__/**
 **/*.pyc

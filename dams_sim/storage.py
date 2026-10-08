@@ -23,6 +23,41 @@ def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def file_digest(path: Path) -> str:
+    """Bounded-memory hashes also cover multi-gigabyte states/checkpoints."""
+    h = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024*1024), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def atomic_stream(path: Path, writer, *, max_bytes: int | None = None) -> None:
+    """Atomically replace a streamed JSON file without retaining its bytes in RAM."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle, temporary = tempfile.mkstemp(prefix=".tmp-", dir=path.parent)
+    class BoundedWriter:
+        def __init__(self, stream): self.stream, self.size = stream, 0
+        def write(self, data):
+            if isinstance(data, str): data = data.encode()
+            self.size += len(data)
+            if max_bytes is not None and self.size > max_bytes:
+                raise RuntimeError("streamed output resource limit exceeded")
+            return self.stream.write(data)
+    try:
+        with os.fdopen(handle, "wb") as stream:
+            writer(BoundedWriter(stream))
+            stream.flush(); os.fsync(stream.fileno())
+        os.replace(temporary, path)
+        if os.name == "posix":
+            descriptor = os.open(path.parent, os.O_RDONLY)
+            try: os.fsync(descriptor)
+            finally: os.close(descriptor)
+    finally:
+        if os.path.exists(temporary): os.unlink(temporary)
+
+
+
 def atomic_bytes(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix=".tmp-", dir=path.parent)
@@ -32,6 +67,10 @@ def atomic_bytes(path: Path, data: bytes) -> None:
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary, path)
+        if os.name == "posix":
+            descriptor = os.open(path.parent, os.O_RDONLY)
+            try: os.fsync(descriptor)
+            finally: os.close(descriptor)
     finally:
         if os.path.exists(temporary):
             os.unlink(temporary)
@@ -66,6 +105,24 @@ def provenance() -> dict:
         dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=root, text=True))
     except (OSError, subprocess.CalledProcessError):
         commit, dirty = None, True
+        packaged = os.environ.get("DAMS_PACKAGED_COMMIT")
+        manifest_path = os.environ.get("DAMS_SOURCE_MANIFEST")
+        if packaged or manifest_path:
+            if not packaged or len(packaged) != 40 or any(c not in "0123456789abcdef" for c in packaged) or not manifest_path:
+                raise ValueError("packaged source requires commit and a checked source manifest")
+            manifest_file = Path(manifest_path)
+            package = json.loads(manifest_file.read_text())
+            hashes = package.get("source_files_sha256")
+            if package.get("commit") != packaged or not isinstance(hashes, dict) or not hashes:
+                raise ValueError("packaged source manifest/commit mismatch")
+            for name, expected in hashes.items():
+                file = root/name
+                if not file.resolve().is_relative_to(root.resolve()) or not file.is_file() or file.is_symlink() or file_digest(file) != expected:
+                    raise ValueError("packaged source file integrity mismatch: "+name)
+            required = {str(p.relative_to(root)) for p in (root/"dams_sim").glob("*.py")}
+            if not required.issubset(hashes):
+                raise ValueError("packaged source manifest omits a core module")
+            commit, dirty = packaged, False
     return {"source_sha256": source_hash(), "git_commit": commit, "git_dirty": dirty,
             "python": sys.version, "platform": platform.platform(), "machine": platform.machine(),
             "dependencies": "Python standard library only", "container_image": None,
@@ -81,7 +138,7 @@ def unique_run(root: Path, kind: str) -> Path:
 
 
 def output_hashes(path: Path) -> dict[str, str]:
-    return {str(p.relative_to(path)): digest(p.read_bytes()) for p in sorted(path.rglob("*")) if p.is_file() and p.name != "manifest.json"}
+    return {str(p.relative_to(path)): file_digest(p) for p in sorted(path.rglob("*")) if p.is_file() and p.name != "manifest.json"}
 
 
 def verify_outputs(path: Path, manifest: dict, *, required: tuple[str, ...] = ()) -> None:
@@ -97,5 +154,5 @@ def verify_outputs(path: Path, manifest: dict, *, required: tuple[str, ...] = ()
         file = path/name
         if not file.resolve().is_relative_to(path.resolve()) or not file.is_file():
             raise ValueError("recorded output is missing or outside the run directory")
-        if digest(file.read_bytes()) != expected:
+        if file_digest(file) != expected:
             raise ValueError(f"output integrity mismatch: {name}")
