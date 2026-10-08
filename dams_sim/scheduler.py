@@ -16,7 +16,7 @@ from .spec import case_key, scientific_config, workload
 from .storage import atomic_json, canonical, digest, file_digest, source_hash, verify_outputs
 
 
-def restore_checkpoint(attempt: Path, config: Config):
+def restore_checkpoint(attempt: Path, config: Config, *, storage_dir=None):
     index_path = attempt/'checkpoint-index.json'
     if not index_path.is_file(): return None, None
     index = json.loads(index_path.read_text())
@@ -28,6 +28,16 @@ def restore_checkpoint(attempt: Path, config: Config):
     if not path.resolve().is_relative_to(attempt.resolve()) or file_digest(path) != item['sha256']:
         raise ValueError('checkpoint integrity mismatch')
     value = json.loads(path.read_text())
+    if config.longitudinal is not None:
+        for part in item.get('files',[]):
+            file=attempt/part['file']
+            if not file.resolve().is_relative_to(attempt.resolve()) or file_digest(file)!=part['sha256'] or file.stat().st_size!=part['bytes']:
+                raise ValueError('longitudinal checkpoint group integrity mismatch')
+        if len(item.get('files',[]))!=2:raise ValueError('longitudinal checkpoint sidecar inventory missing')
+        if {part['file'] for part in item['files']}!={item['file'],value['ledger']['file']}:raise ValueError('longitudinal checkpoint index group roster differs')
+        model=Model.restore_checkpoint(path,storage_dir=storage_dir,expected_config=config)
+        if model.day!=item['day']:raise ValueError('longitudinal checkpoint day differs from index')
+        return model,{'parent_attempt':attempt.name,'checkpoint_file':item['file'],'checkpoint_sha256':item['sha256'],'parent_index_sha256':file_digest(index_path)}
     if value['source_sha256'] != source_hash() or value['config_sha256'] != index['config_sha256'] or value['state']['config'] != json.loads(canonical(config.to_dict())):
         raise ValueError('checkpoint envelope/state mismatch')
     model = Model.restore(value['state'])
@@ -36,7 +46,14 @@ def restore_checkpoint(attempt: Path, config: Config):
                    'checkpoint_sha256':item['sha256'], 'parent_index_sha256':file_digest(index_path)}
 
 
-def _worker(config_value, attempt_value, previous_value, limits_value, driver_hash, remaining_seconds):
+def branch_identity(origin):
+    if origin is None:return None
+    required={'parent_checkpoint','parent_case_id','parent_source_sha256','parent_config_sha256','parent_day','parent_state_semantic_sha256'}
+    if set(origin)!=required:raise ValueError('branch origin descriptor fields differ')
+    return {k:v for k,v in origin.items() if k!='parent_checkpoint'}
+
+
+def _worker(config_value, attempt_value, previous_value, limits_value, driver_hash, remaining_seconds, branch_origin=None):
     # Fresh process per world, so another world's RSS high-water cannot reject it.
     for key in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS'):
         os.environ[key] = '1'
@@ -50,12 +67,25 @@ def _worker(config_value, attempt_value, previous_value, limits_value, driver_ha
     config = Config.from_dict(config_value)
     limits = RuntimeLimits.from_dict(limits_value)
     try:
-        model, origin = restore_checkpoint(Path(previous_value),config) if previous_value else (None,None)
+        model, origin = restore_checkpoint(Path(previous_value),config,storage_dir=attempt if config.longitudinal is not None else None) if previous_value else (None,None)
+        identity=branch_identity(branch_origin)
+        if identity is not None:
+            if config.longitudinal is None:raise ValueError('branch origin requires a longitudinal case')
+            if model is None:
+                import tempfile
+                with tempfile.TemporaryDirectory(prefix='parent-',dir=attempt) as working:
+                    parent=Model.restore_checkpoint(branch_origin['parent_checkpoint'],storage_dir=working)
+                    actual={'parent_case_id':case_key(parent.config),'parent_source_sha256':source_hash(),'parent_config_sha256':digest(canonical(parent.config.to_dict())),
+                            'parent_day':parent.day,'parent_state_semantic_sha256':parent._long.semantic_digest()}
+                    if any(identity[k]!=v for k,v in actual.items()):raise ValueError('branch origin full parent state differs')
+                    model=parent.fork(config,storage_dir=attempt);model.branch_origin.update(identity);parent.ledger.close()
+            if any(model.branch_origin.get(k)!=v for k,v in identity.items() if k!='parent_case_id'):raise ValueError('restored child branch identity differs')
         run_world(config,attempt,restored=model,restart_origin=origin,
                   checkpoint_interval_days=limits.checkpoint_interval_days,
                   checkpoint_interval_seconds=limits.checkpoint_interval_seconds,
                   stop_requested=lambda: requested or time.time()>=limits.deadline or time.monotonic()-worker_started>=remaining_seconds,
                   metadata_extra={'pipeline_driver_sha256':driver_hash,'scientific_case_id':case_key(config),
+                                  **({'branch_origin':identity} if identity is not None else {}),
                                   'execution_provenance':limits.provenance,'worker_pid':os.getpid()})
     except BaseException as error:
         if not (attempt/'manifest.json').exists():
@@ -89,13 +119,14 @@ class Scheduler:
         self.ctx = multiprocessing.get_context('spawn')
     def stop(self): self.stopped = True
 
-    def _inspect(self, config):
+    def _inspect(self, config, branch_origin=None):
         case = self.root/'cases'/case_key(config)
         attempts = sorted(p for p in case.glob('attempt-*') if p.is_dir())
         for attempt in attempts:
             mpath = attempt/'manifest.json'
             if not mpath.exists(): continue
             m = json.loads(mpath.read_text())
+            if m.get('branch_origin')!=branch_identity(branch_origin):raise ValueError('cached case shared-history branch identity differs')
             if m.get('source_sha256') != source_hash() or m.get('pipeline_driver_sha256') != self.driver_hash:
                 raise ValueError('case source/driver differs; use a new output directory')
             if m.get('config') != json.loads(canonical(config.to_dict())):
@@ -162,9 +193,11 @@ class Scheduler:
                     rows.append({'case_id':case.name,'attempt':attempt.name,'status':'interrupted-before-manifest'})
         atomic_json(self.root/'case_statuses.json',rows)
 
-    def run(self, configs):
+    def run(self, configs, branch_origins=None):
         """Results use input order; completed-order cannot change samples/reduction."""
         unique={case_key(c):c for c in configs}
+        branch_origins={} if branch_origins is None else branch_origins
+        if not set(branch_origins).issubset(unique):raise ValueError('branch descriptor has an unplanned case')
         if not self.limits.workers_auto and unique and self.worker_limit*max(c.max_rss_mb*1024*1024 for c in unique.values())>self.limits.memory_budget_bytes:
             raise MemoryError('explicit worker count exceeds aggregate memory budget')
         queue=sorted(unique)
@@ -182,7 +215,7 @@ class Scheduler:
                 if rss>l.memory_budget_bytes: raise MemoryError('one world exceeds batch RAM budget')
                 if c.max_output_mb*1_000_000>l.batch_max_output_bytes:
                     raise RuntimeError('one world output bound exceeds batch disk budget')
-                cached,_=self._inspect(c)
+                cached,_=self._inspect(c,branch_origins.get(ident))
                 if cached is not None: results[ident]=cached;queue.remove(ident)
             while queue or active:
                 expired=time.time()>=l.deadline
@@ -210,8 +243,13 @@ class Scheduler:
                     # before starting; no silent suppression of complete state.
                     required=int(c.max_output_mb*1_000_000)
                     if free<l.min_free_disk_bytes+required or used+required>l.batch_max_output_bytes:
+                        if active:
+                            # Current complete-output reservations can be released
+                            # after owned workers finish. Wait; never overbook or
+                            # abort those workers merely to fill CPU slots.
+                            break
                         raise RuntimeError('insufficient disk for the declared complete world outputs')
-                    _,attempts=self._inspect(c)
+                    _,attempts=self._inspect(c,branch_origins.get(ident))
                     if len(attempts)>l.max_retries:
                         raise RuntimeError('case exhausted finite attempt budget: '+ident)
                     elapsed[ident]=self._elapsed(attempts)
@@ -220,7 +258,7 @@ class Scheduler:
                     case=self.root/'cases'/ident;case.mkdir(parents=True,exist_ok=True)
                     attempt=case/f'attempt-{len(attempts):03d}';attempt.mkdir()
                     previous=next((a for a in reversed(attempts) if (a/'checkpoint-index.json').exists()),None)
-                    proc=self.ctx.Process(target=_worker,args=(c.to_dict(),str(attempt),str(previous) if previous else None,l.to_dict(),self.driver_hash,remaining))
+                    proc=self.ctx.Process(target=_worker,args=(c.to_dict(),str(attempt),str(previous) if previous else None,l.to_dict(),self.driver_hash,remaining,branch_origins.get(ident)))
                     proc.start();active[ident]=(proc,c,attempt,time.monotonic());reserved+=rss
                     queue.remove(ident);launched=True
                     self.peak_active=max(self.peak_active,len(active));free-=required;used+=required
@@ -232,7 +270,7 @@ class Scheduler:
                     finished=True
                     proc.join();reserved-=int(c.max_rss_mb*1024*1024);del active[ident]
                     self._record_exit(proc,c,attempt,start)
-                    cached,attempts=self._inspect(c)
+                    cached,attempts=self._inspect(c,branch_origins.get(ident))
                     if cached is not None: results[ident]=cached
                     elif len(attempts)<=l.max_retries: queue.append(ident);queue.sort()
                     else: raise RuntimeError('case failed after finite retries: '+ident)

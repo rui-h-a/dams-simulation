@@ -38,6 +38,33 @@ def validate_pipeline_output(output,spec=None,scale=None,*,expected_provenance=N
     binding. An unsigned retained manifest is integrity evidence, not proof
     against someone able to replace both manifests and data.
     """
+    manifest_path=Path(output)/'pipeline_manifest.json'
+    if manifest_path.is_symlink():raise ValueError('pipeline manifest is symlinked')
+    manifest=json.loads(manifest_path.read_text())
+    if manifest.get('schema_version')==3:
+        from research_tools.validate_longitudinal import CheckedLongitudinalStudy
+        study=CheckedLongitudinalStudy(output,expected_provenance=expected_provenance)
+        requested=resolve_spec(spec or study.spec.name,scale if scale is not None else study.spec.n)
+        if canonical(study.spec.to_dict())!=canonical(requested.to_dict()):
+            raise ValueError('completed longitudinal output differs from requested spec/scale')
+        result=study.result()
+        origins=[]
+        for ident,case in sorted(study.cases.items()):
+            child=case['attempt'];m=case['manifest'];config=case['config']
+            origins.append({'case_id':ident,'attempt':str(child.relative_to(study.root)),
+                            'world':config.world,'n':config.n,'days':config.days,
+                            'regime':config.regime,'backend':config.backend,
+                            'source_sha256':m['source_sha256'],'config_sha256':m['config_sha256'],
+                            'git_commit':m['git_commit'],'git_dirty':m['git_dirty'],
+                            'execution_provenance':m.get('execution_provenance',{}),
+                            'manifest_sha256':file_digest(child/'manifest.json')})
+        if len(origins)!=result['unique_complete_cases']:
+            raise ValueError('longitudinal case-origin roster differs')
+        return {**result,'validation':True,'pipeline_status':'complete',
+                'case_origins':origins,'case_origins_sha256':digest(canonical(origins)),
+                'independent_validator_sha256':file_digest(Path(__file__).with_name('validate_longitudinal.py')),
+                'validator_sha256':file_digest(Path(__file__)),
+                'publication_generation_manifest_sha256':file_digest(study.root/'publication/generated/analysis/generation_manifest.json')}
     study=CheckedStudy(output)
     out=study.root;pipeline=study.pipeline
     requested=resolve_spec(spec or study.spec.name,scale if scale is not None else study.spec.n)

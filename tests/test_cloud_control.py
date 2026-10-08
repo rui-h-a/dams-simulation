@@ -1,5 +1,6 @@
 """No test creates cloud resources; verify guards and real local CLI failures."""
 from datetime import datetime, timezone, timedelta
+import copy
 from decimal import Decimal
 import importlib.util
 import json
@@ -15,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "research_tools"))
 from cloud_control import (GuardError, Ledger, Gcloud, checked_config, create_command, stage_cost, stamp,
                            package_source, preflight_quotas, reconcile_stage, validate_instance,
-                           verify_boot_disk, preflight_environment, labels)
+                           verify_boot_disk, preflight_environment, labels, stage_capabilities)
 
 
 def fixture():
@@ -34,6 +35,37 @@ def fixture():
             "stages": [{"id": "test-stage", "machine_type": "c4d-highmem-96", "max_seconds": 1800,
                         "spec": "validation", "scale": 120, "runtime_limits": {"version": 1},
                         "max_result_gib": 1, "max_egress_gib": 1, "storage_operations_usd_upper": "0.01", "other_usd_upper": "0.01"}]}
+
+
+def standard_fixture(machine="m3-ultramem-128", disk="pd-balanced"):
+    c = fixture()
+    c["budget_cap_usd"] = "100"
+    c["reserve_usd"] = "20"
+    vcpus = int(machine.rsplit("-", 1)[-1])
+    memory = {32: 976, 64: 1952, 128: 3904}[vcpus]
+    c["price_snapshot"].update(
+        standard_vm_usd_per_hour={machine: str(Decimal(vcpus)*Decimal(".0348")+Decimal(memory)*Decimal(".0051"))},
+        disk_gib_hour={"pd-balanced": "0.000136987", "pd-ssd": "0.000232877", "hyperdisk-balanced": "0.000109590"},
+        standard_external_ip_hour=".005", machines={machine: {"vcpus": vcpus, "memory_gib": str(memory)}})
+    c["stages"][0].update(machine_type=machine, purchase_mode="STANDARD", disk_type=disk,
+        quota={"metric": "M3_CPUS", "info_id": "M3-CPUS-per-project-region", "dimensions": {"region": c["region"]}},
+        expected_guest={"architecture": "x86_64", "vcpus": vcpus,
+                        "memory_gib_min": str(Decimal(memory)*Decimal(".97")), "memory_gib_max": str(memory)})
+    return c
+
+
+def vm_fixture(c, s, e):
+    mode = s.get("purchase_mode", "SPOT")
+    return {"name": e["instance_name"], "labels": labels(c, s), "machineType": "x/"+s["machine_type"],
+        "scheduling": {"provisioningModel": mode, "instanceTerminationAction": "DELETE",
+                       "terminationTime": e["termination_utc"], "automaticRestart": False, "onHostMaintenance": "TERMINATE"},
+        "serviceAccounts": [{"email": c["service_account"], "scopes": ["https://www.googleapis.com/auth/devstorage.read_write"]}],
+        "networkInterfaces": [{"nicType": "GVNIC", "subnetwork": "x/"+c["subnet"]}],
+        "metadata": {"items": [{"key": k, "value": v} for k, v in {
+            "dams-source-commit": c["source_commit"], "dams-source-image-id": c["image_id"],
+            "enable-oslogin": "TRUE", "block-project-ssh-keys": "TRUE"}.items()]},
+        "disks": [{"boot": True, "autoDelete": True, "source": "x/dams-test", "interface": "NVME"}],
+        "zone": "x/"+c["zones"][0]}
 
 
 class CloudControlTests(unittest.TestCase):
@@ -106,6 +138,7 @@ class CloudControlTests(unittest.TestCase):
             def run(self,args):
                 self.calls.append(args)
                 if 'project-info' in args:return {'exit':0,'stdout':json.dumps({'quotas':[{'metric':'CPUS_ALL_REGIONS','limit':384,'usage':0}]})}
+                if 'regions' in args:return {'exit':0,'stdout':json.dumps({'name':c['region'],'quotas':[{'metric':'PREEMPTIBLE_CPUS','limit':self.spot,'usage':0}]})}
                 spot=any('PREEMPTIBLE' in a for a in args)
                 dimensions={'region':'us-central1'} if spot else {'region':'us-central1','vm_family':'C4D'}
                 return {'exit':0,'stdout':json.dumps({'reconciling':True,'preferredValue':384,'dimensionsInfos':[{'dimensions':dimensions,'details':{'value':self.spot if spot else 384}}]})}
@@ -117,6 +150,124 @@ class CloudControlTests(unittest.TestCase):
         # pool. Conversely, ample standard quota cannot replace empty Spot.
         approved=API(384);preflight_quotas(approved,c)
         self.assertFalse(any(any('CPUS-PER-VM-FAMILY' in x for x in a) for a in approved.calls))
+
+    def test_standard_m3_profiles_require_explicit_mode_rates_and_guest_expectations(self):
+        for machine in ("m3-ultramem-32", "m3-ultramem-64", "m3-ultramem-128"):
+            c = standard_fixture(machine)
+            self.assertIs(checked_config(c), c)
+            self.assertEqual(stage_capabilities(c, c["stages"][0])["purchase_mode"], "STANDARD")
+        for mutation in ("missing-mode", "missing-standard-rate", "spot-rate-only", "wrong-pool", "missing-disk", "missing-guest", "wrong-guest-cpu", "wrong-catalog-memory", "missing-guest-margin", "no-guest-margin", "multi-node", "m3-spot", "c4d-standard", "m3-megamem"):
+            c = standard_fixture();s = c["stages"][0]
+            if mutation == "missing-mode": del s["purchase_mode"]
+            elif mutation == "missing-standard-rate": del c["price_snapshot"]["standard_vm_usd_per_hour"]
+            elif mutation == "spot-rate-only":
+                c["price_snapshot"]["spot_vm_usd_per_hour"][s["machine_type"]] = ".01"
+                del c["price_snapshot"]["standard_vm_usd_per_hour"]
+            elif mutation == "wrong-pool": s["quota"]["metric"] = "PREEMPTIBLE_CPUS"
+            elif mutation == "missing-disk": del s["disk_type"]
+            elif mutation == "missing-guest": del s["expected_guest"]
+            elif mutation == "wrong-guest-cpu": s["expected_guest"]["vcpus"] = 64
+            elif mutation == "wrong-catalog-memory": c["price_snapshot"]["machines"][s["machine_type"]]["memory_gib"] = "1952"
+            elif mutation == "missing-guest-margin": del s["expected_guest"]["memory_gib_min"]
+            elif mutation == "no-guest-margin": s["expected_guest"]["memory_gib_min"] = s["expected_guest"]["memory_gib_max"]
+            elif mutation == "multi-node": s["node_count"] = 2
+            elif mutation == "m3-spot": s["purchase_mode"] = "SPOT"
+            elif mutation == "c4d-standard": s["machine_type"] = "c4d-highmem-384"
+            elif mutation == "m3-megamem": s["machine_type"] = "m3-megamem-128"
+            with self.subTest(mutation=mutation), self.assertRaises(GuardError): checked_config(c)
+
+    def test_standard_disk_command_and_cost_follow_frozen_type(self):
+        for disk in ("pd-balanced", "pd-ssd", "hyperdisk-balanced"):
+            c = standard_fixture(disk=disk);s=c["stages"][0]
+            checked_config(c)
+            cmd=create_command(c,s,{"instance_name":"dams-test","termination_utc":c["global_deadline_utc"]},c["zones"][0],"/tmp/startup")
+            self.assertIn("--provisioning-model=STANDARD",cmd)
+            self.assertIn("--boot-disk-type="+disk,cmd)
+            self.assertIn("--boot-disk-interface=NVME",cmd)
+            self.assertIn("--instance-termination-action=DELETE",cmd)
+            self.assertIn("--termination-time="+c["global_deadline_utc"],cmd)
+            self.assertFalse(any("local-ssd" in x or "max-run-duration" in x for x in cmd))
+            performance=[x for x in cmd if "boot-disk-provisioned" in x]
+            self.assertEqual(len(performance),2 if disk=="hyperdisk-balanced" else 0)
+            low=copy.deepcopy(c);low["price_snapshot"]["spot_vm_usd_per_hour"][s["machine_type"]]=".000001"
+            self.assertEqual(stage_cost(c,s),stage_cost(low,s))
+        c = standard_fixture();s = c["stages"][0]
+        expected=(Decimal("24.3648")/2 + Decimal(".000136987")*25 + Decimal(".0001")*Decimal("1.01")*168 + Decimal(".12")+Decimal(".01")+Decimal(".01"))*Decimal("1.2")
+        self.assertEqual(stage_cost(c,s),expected)
+        for field,value in (("disk_type","pd-standard"),("disk_iops",3000),("disk_throughput_mibps",140),("disk_gib",19),("disk_gib",True)):
+            invalid=copy.deepcopy(c);invalid["stages"][0][field]=value
+            with self.subTest(field=field,value=value),self.assertRaises(GuardError):checked_config(invalid)
+        del c["price_snapshot"]["disk_gib_hour"]["pd-balanced"]
+        with self.assertRaises(GuardError):checked_config(c)
+
+    def test_standard_ip_fee_never_uses_spot_rate(self):
+        c=standard_fixture();c["network_mode"]="iap-ephemeral-ip";c["restricted_firewall_verified"]=True
+        s=c["stages"][0];s["other_usd_upper"]=".00125";c["price_snapshot"]["spot_external_ip_hour"]=".0025"
+        with self.assertRaises(GuardError):checked_config(c)
+        s["other_usd_upper"]=".0025";checked_config(c)
+        del c["price_snapshot"]["standard_external_ip_hour"]
+        with self.assertRaises(GuardError):checked_config(c)
+
+    def test_standard_live_vm_refuses_mode_expiry_restart_and_extra_disk_drift(self):
+        c=standard_fixture();s=c["stages"][0];e={"instance_name":"dams-test","termination_utc":c["global_deadline_utc"]}
+        vm=vm_fixture(c,s,e);validate_instance(c,s,e,vm)
+        for field,value in (("provisioningModel","SPOT"),("instanceTerminationAction","STOP"),("terminationTime",stamp(datetime.now(timezone.utc)+timedelta(hours=5))),
+                            ("terminationTime",stamp(datetime.now(timezone.utc)+timedelta(hours=3))),("automaticRestart",True),("onHostMaintenance","MIGRATE"),("maxRunDuration",{"seconds":"3600"})):
+            wrong=copy.deepcopy(vm);wrong["scheduling"][field]=value
+            with self.subTest(field=field,value=value),self.assertRaises(GuardError):validate_instance(c,s,e,wrong)
+        for mutation in ("interface","extra-disk","image","zone","protection","machine"):
+            wrong=copy.deepcopy(vm)
+            if mutation=="interface":wrong["disks"][0]["interface"]="SCSI"
+            elif mutation=="extra-disk":wrong["disks"].append({"type":"SCRATCH"})
+            elif mutation=="image":wrong["metadata"]["items"][1]["value"]="54321"
+            elif mutation=="zone":wrong["zone"]="x/us-east1-a"
+            elif mutation=="protection":wrong["deletionProtection"]=True
+            elif mutation=="machine":wrong["machineType"]="x/m3-ultramem-64"
+            with self.subTest(mutation=mutation),self.assertRaises(GuardError):validate_instance(c,s,e,wrong)
+
+    def test_standard_boot_disk_exact_image_and_type_readback(self):
+        for disk in ("pd-balanced","pd-ssd","hyperdisk-balanced"):
+            c=standard_fixture(disk=disk);s=c["stages"][0]
+            e={"instance_name":"dams-test","termination_utc":c["global_deadline_utc"]};vm=vm_fixture(c,s,e)
+            response={"sourceImageId":c["image_id"],"sourceImage":c["image"],"type":"x/"+disk,"sizeGb":50}
+            if disk=="hyperdisk-balanced":response.update(provisionedIops=3000,provisionedThroughput=140)
+            class API:
+                def run(self,args):return {"exit":0,"stdout":json.dumps(response)}
+            verify_boot_disk(API(),c,s,vm)
+            for key,value in (("sourceImageId","wrong"),("type","x/pd-standard"),("sizeGb",51),("provisionedIops",6000)):
+                old=response.get(key);response[key]=value
+                with self.subTest(disk=disk,key=key),self.assertRaises(GuardError):verify_boot_disk(API(),c,s,vm)
+                if old is None:del response[key]
+                else:response[key]=old
+
+    def test_standard_m3_quota_uses_actual_grant_minus_usage_and_global_pool(self):
+        c=standard_fixture()
+        class API:
+            def __init__(self,grant=248,usage=0,global_limit=3840,dimension=None,metric="M3_CPUS"):
+                self.grant,self.usage,self.global_limit,self.dimension,self.metric=grant,usage,global_limit,dimension,metric;self.calls=[]
+            def run(self,args):
+                self.calls.append(args)
+                if "project-info" in args:d={"quotas":[{"metric":"CPUS_ALL_REGIONS","limit":self.global_limit,"usage":0}]}
+                elif "regions" in args:d={"name":c["region"],"quotas":[{"metric":self.metric,"limit":248,"usage":self.usage},{"metric":"CPUS","limit":9999,"usage":0},{"metric":"PREEMPTIBLE_CPUS","limit":4,"usage":0}]}
+                else:d={"quotaId":"M3-CPUS-per-project-region","metric":"compute.googleapis.com/m3_cpus","preferredValue":9999,"reconciling":True,
+                        "dimensionsInfos":[{"dimensions":self.dimension or {"region":c["region"]},"details":{"value":self.grant}}]}
+                return {"exit":0,"stdout":json.dumps(d)}
+        good=API();preflight_quotas(good,c)
+        self.assertTrue(any("M3-CPUS-per-project-region" in a for a in good.calls))
+        self.assertFalse(any(any("PREEMPTIBLE-CPUS" in x for x in a) for a in good.calls))
+        for kwargs in ({"grant":0},{"usage":121},{"global_limit":127},{"dimension":{"region":"us-east1"}},
+                       {"dimension":{"region":c["region"],"vm_family":"C4D"}},{"metric":"CPUS_PER_VM_FAMILY"}):
+            fake=API(**kwargs)
+            with self.subTest(kwargs=kwargs),self.assertRaises(GuardError):preflight_quotas(fake,c)
+            self.assertFalse(any("create" in a or "cp" in a for a in fake.calls))
+
+    def test_purchase_mode_disk_and_guest_bounds_are_frozen_on_resume(self):
+        c=standard_fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger=Ledger(Path(tmp)/"ledger.json",c);ledger.reserve(c["stages"][0])
+            for key,value in (("purchase_mode","SPOT"),("disk_type","pd-ssd"),("expected_guest",{**c["stages"][0]["expected_guest"],"memory_gib_min":"1"})):
+                changed=copy.deepcopy(c);changed["stages"][0][key]=value
+                with self.subTest(key=key),self.assertRaises(GuardError):Ledger(ledger.path,changed).reserve(changed["stages"][0])
 
     def test_ambiguous_creation_and_recovery_keep_expiry_and_attempts(self):
         c=fixture();s=c['stages'][0]
@@ -151,6 +302,7 @@ class CloudControlTests(unittest.TestCase):
 
     def test_actual_firewall_api_inventory_not_boolean(self):
         c=fixture();c['network_mode']='iap-ephemeral-ip';c['restricted_firewall_verified']=True
+        image_features=[]
         network='https://compute.googleapis.com/compute/v1/projects/fictional-research/global/networks/research'
         rules=[]
         for direction,allow,ranges,ports in [('INGRESS',True,['35.235.240.0/20'],['22']),('EGRESS',True,['0.0.0.0/0'],['443']),('INGRESS',False,['0.0.0.0/0'],None),('EGRESS',False,['0.0.0.0/0'],None)]:
@@ -164,13 +316,20 @@ class CloudControlTests(unittest.TestCase):
                     d={'bindings':[{'role':'roles/storage.objectUser','members':['serviceAccount:'+c['service_account']]}]} if 'buckets' in args else {'bindings':[]}
                 elif 'buckets' in args:d={'name':c['bucket'],'projectNumber':'1','location':'US-CENTRAL1','storageClass':'STANDARD','iamConfiguration':{'uniformBucketLevelAccess':{'enabled':True},'publicAccessPrevention':'enforced'},'softDeletePolicy':{'retentionDurationSeconds':'0'}}
                 elif 'projects' in args:d={'projectId':c['project'],'projectNumber':'1','labels':{'dams-task':labels(c,c['stages'][0])['dams-task']}}
-                elif 'images' in args:d={'id':c['image_id'],'selfLink':c['image'],'status':'READY','architecture':'X86_64'}
+                elif 'images' in args:d={'id':c['image_id'],'selfLink':c['image'],'status':'READY','architecture':'X86_64','guestOsFeatures':[{'type':x} for x in image_features]}
                 elif 'subnets' in args:d={'selfLink':'x/subnet','region':'x/us-central1','privateIpGoogleAccess':True,'network':network}
                 else:d=rules
                 return {'exit':0,'stdout':json.dumps(d)}
         self.assertEqual(preflight_environment(API(),c)['firewall_rules'],4)
         rules[0]['allowed'][0]['ports']=['22','3389']
         with self.assertRaises(GuardError):preflight_environment(API(),c)
+        rules[0]['allowed'][0]['ports']=['22']
+        c=standard_fixture();c['network_mode']='iap-ephemeral-ip';c['restricted_firewall_verified']=True
+        with self.assertRaises(GuardError):preflight_environment(API(),c)
+        image_features=['GVNIC','UEFI_COMPATIBLE'];preflight_environment(API(),c)
+        for missing in ('GVNIC','UEFI_COMPATIBLE'):
+            image_features=['GVNIC','UEFI_COMPATIBLE'];image_features.remove(missing)
+            with self.subTest(missing=missing),self.assertRaises(GuardError):preflight_environment(API(),c)
 
     def test_cost_and_all_stage_reserve(self):
         c = fixture()

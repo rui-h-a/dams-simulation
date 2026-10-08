@@ -156,4 +156,4 @@ jobs:
             runs/ci-validation/
           if-no-files-found: error
           retention-days: 7
-          include-hidden-files: false
+          include-hidden-files: true

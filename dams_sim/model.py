@@ -64,7 +64,11 @@ class Model:
     outcomes; submit observed claims; review prior claims; schedule appeals.
     Simultaneous updates use a common morning snapshot and stable event IDs.
     """
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, *, storage_dir=None):
+        if config.longitudinal is not None:
+            from .longitudinal_model import LongitudinalEngine
+            self._long = LongitudinalEngine(config, storage_dir=storage_dir)
+            return
         self.config = config.validate()
         self.rng = WorldRandom(config.seed, config.world)
         self.agents: list[Agent] = []
@@ -99,6 +103,12 @@ class Model:
         self.appeal_credit = {g: 0.0 for g in self.members}
         self._update_authority()
 
+    def __getattr__(self, name):
+        engine = self.__dict__.get('_long')
+        if engine is not None:
+            return getattr(engine, name)
+        raise AttributeError(name)
+
     def _update_authority(self) -> None:
         p = self.config
         for ids in self.members.values():
@@ -118,6 +128,8 @@ class Model:
         return p.attack != "none" and p.attack_budget_hours_per_day > 0 and p.attack_start_day <= day < p.attack_stop_day
 
     def check_resources(self) -> None:
+        if '_long' in self.__dict__:
+            self._long.check_disk()
         try:
             import resource
         except ImportError:
@@ -150,6 +162,8 @@ class Model:
                 self.appeal_delays.append(day-claim.created)
 
     def step(self, *, reverse_agents: bool = False) -> None:
+        if '_long' in self.__dict__:
+            return self._long.step(reverse_agents=reverse_agents)
         p, day = self.config, self.day
         if day >= p.days:
             raise ValueError("world has reached its specified horizon")
@@ -356,6 +370,8 @@ class Model:
         return self
 
     def summary(self) -> dict:
+        if '_long' in self.__dict__:
+            return self._long.summary()
         p = self.config
         out = dict(self.metrics)
         out.update({"model_version": "0.1.0", "world": p.world, "regime": p.regime, "backend": p.backend,
@@ -370,6 +386,8 @@ class Model:
         return out
 
     def state(self) -> dict:
+        if '_long' in self.__dict__:
+            return self._long.state()
         return {"config": self.config.to_dict(), "day": self.day, "agents": [dataclasses.asdict(a) for a in self.agents],
                 "queues": {g: [dataclasses.asdict(c) for c in q] for g, q in self.queues.items()},
                 "appeals": {g: [dataclasses.asdict(c) for c in q] for g, q in self.appeals.items()},
@@ -385,6 +403,8 @@ class Model:
         Seen IDs still require exact lexicographic sorting; resource estimates
         explicitly include that retained-event and sorting cost.
         """
+        if '_long' in self.__dict__:
+            raise ValueError('longitudinal raw state requires write_final_state(path), including its exact sidecar')
         from .storage import canonical
         fields = self.state_fields()
         stream.write("{")
@@ -425,7 +445,12 @@ class Model:
                 "review_credit": ("value", self.review_credit), "appeal_credit": ("value", self.appeal_credit)}
 
     @classmethod
-    def restore(cls, value: dict) -> Model:
+    def restore(cls, value: dict, *, storage_dir=None) -> Model:
+        if value.get('model_version') == 'longitudinal-1':
+            from .longitudinal_model import LongitudinalEngine
+            obj = cls.__new__(cls)
+            obj._long = LongitudinalEngine.restore(value, storage_dir=storage_dir)
+            return obj
         # Rebuild topology from the saved population, avoiding a second generated
         # population and duplicated initialization/RNG work during recovery.
         obj = cls.__new__(cls)
@@ -453,6 +478,31 @@ class Model:
         obj.metrics = defaultdict(float, value["metrics"])
         obj.review_credit = {int(g): v for g, v in value["review_credit"].items()}
         obj.appeal_credit = {int(g): v for g, v in value["appeal_credit"].items()}
+        return obj
+
+    def write_checkpoint(self, path):
+        if '_long' not in self.__dict__:
+            raise ValueError('grouped checkpoint API requires an opt-in longitudinal model')
+        return self._long.write_snapshot(path)
+
+    def write_final_state(self, path):
+        return self.write_checkpoint(path)
+
+    @classmethod
+    def restore_checkpoint(cls, path, *, storage_dir=None, expected_config=None):
+        from .longitudinal_model import LongitudinalEngine, verify_snapshot
+        value, database = verify_snapshot(path, expected_config=expected_config)
+        obj = cls.__new__(cls)
+        obj._long = LongitudinalEngine.restore(value['state'], storage_dir=storage_dir, ledger_snapshot=database)
+        if obj._long.semantic_digest() != value['state_semantic_sha256']:
+            raise ValueError('restored full longitudinal state differs')
+        return obj
+
+    def fork(self, new_config, *, storage_dir=None):
+        if '_long' not in self.__dict__:
+            raise ValueError('shared-history branch API requires a longitudinal parent')
+        obj = self.__class__.__new__(self.__class__)
+        obj._long = self._long.fork(new_config, storage_dir=storage_dir)
         return obj
 
 

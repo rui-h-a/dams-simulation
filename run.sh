@@ -6,7 +6,7 @@ cd "$task_root"
 case "$(uname -s)" in Darwin|Linux) ;; *) echo 'Use a POSIX Linux/macOS terminal or WSL2; native Windows is not verified.' >&2; exit 2;; esac
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   cat <<'HELP'
-Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation] [--scale PEOPLE]
+Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y] [--scale PEOPLE]
                 [--output DIRECTORY] [--runtime-limits JSON]
 Defaults: bounded local validation, 120 people, runs/validation-n120.
 Full research runs use the same versioned pipeline and automatic resource scheduler.
@@ -30,7 +30,7 @@ while (($#)); do
     *) echo "Unknown argument: $1" >&2; exit 2;;
   esac
 done
-case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
+case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
 case "$task_scale" in ''|*[!0-9]*) echo 'Scale must be an integer population.' >&2; exit 2;; esac
 if ((task_scale<2)); then echo 'Scale must be at least two people.' >&2; exit 2; fi
 if [[ -z "$task_output" ]]; then task_output="runs/${task_spec}-n${task_scale}"; fi
@@ -74,6 +74,18 @@ task_sync_args=(sync --locked --extra analysis --python 3.14.2)
 if [[ "${DAMS_OFFLINE_DEPENDENCIES:-0}" == 1 ]]; then task_sync_args+=(--offline); fi
 "$task_uv" "${task_sync_args[@]}"
 if [[ "$task_prepare" == true ]]; then
+  "$task_uv" run --no-sync python - "$task_spec" "$task_scale" <<'PY'
+import sys
+from dams_sim.spec import resolve_spec
+name, scale = sys.argv[1], int(sys.argv[2])
+if name == 'historical-full-study':
+    if scale != 120:
+        raise ValueError('historical design requires scale 120')
+    print('Prepared immutable historical design at population 120')
+else:
+    spec = resolve_spec(name, scale)
+    print(f'Prepared scientific specification: {spec.name}, N={spec.n}, days={spec.days}, SHA256={spec.sha256}')
+PY
   exec "$task_uv" run --no-sync python -m dams_sim doctor
 fi
 if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then

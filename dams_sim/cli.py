@@ -49,10 +49,31 @@ def load_config(args: argparse.Namespace) -> Config:
     return Config.from_dict(values)
 
 
+def _checkpoint_identity(path):
+    if path.is_symlink() or not path.is_file():
+        raise ValueError('same-day checkpoint group file is missing or not regular')
+    info=path.stat()
+    return (info.st_dev,info.st_ino,info.st_size,info.st_mtime_ns,info.st_ctime_ns)
+
+
+def _verify_owned_checkpoint_bytes(path,item,identities):
+    """An in-memory own-write receipt never replaces actual immutable-byte checks."""
+    for part in item['files']:
+        if Path(part['file']).name!=part['file']:
+            raise ValueError('same-day checkpoint group path differs')
+        file=path/part['file'];before=_checkpoint_identity(file)
+        if before!=identities[part['file']] or before[2]!=part['bytes']:
+            raise ValueError('same-day checkpoint group identity/size differs')
+        if file_digest(file)!=part['sha256'] or _checkpoint_identity(file)!=before:
+            raise ValueError('same-day checkpoint group bytes changed')
+
+
 def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, restored: Model | None = None, restart_origin: dict | None = None,
               checkpoint_interval_days: int | None = None, checkpoint_interval_seconds: float = 60,
               stop_requested=None, metadata_extra: dict | None = None) -> dict:
     wall, cpu = time.monotonic(), time.process_time()
+    if p.longitudinal is not None and checkpoint_interval_days is None:
+        checkpoint_interval_days = 30
     metadata = provenance()
     metadata.update({"run_id": path.name, "status": "running", "config_sha256": digest(canonical(p.to_dict())), "config": p.to_dict()})
     if metadata_extra:
@@ -63,35 +84,70 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
     model = restored
     last_checkpoint_day = model.day if model is not None else 0
     last_checkpoint_time = wall
+    owned_checkpoint = None
     def checkpoint():
-        nonlocal last_checkpoint_day, last_checkpoint_time
+        nonlocal last_checkpoint_day, last_checkpoint_time, owned_checkpoint
         name = f"checkpoint-day-{model.day:06d}.json"
-        def writer(stream):
-            stream.write('{"config_sha256":'); stream.write(canonical(metadata['config_sha256']))
-            stream.write(',"source_sha256":'); stream.write(canonical(metadata['source_sha256']))
-            stream.write(',"state":'); model.write_state(stream); stream.write('}\n')
-        atomic_stream(path/name, writer, max_bytes=int(p.max_output_mb*1_000_000))
+        freshly_written = False
+        if p.longitudinal is not None:
+            if (path/name).exists() or (owned_checkpoint is not None and owned_checkpoint['item']['file']==name):
+                if owned_checkpoint is not None and owned_checkpoint['item']['file']==name:
+                    item=owned_checkpoint['item']
+                    if model.failed_day or model.ledger.db.in_transaction:
+                        raise ValueError('same-day checkpoint requires a successfully completed day boundary')
+                    if (source_hash()!=metadata['source_sha256'] or item['source_sha256']!=metadata['source_sha256']
+                            or digest(canonical(p.to_dict()))!=metadata['config_sha256']
+                            or item['config_sha256']!=metadata['config_sha256']):
+                        raise ValueError('same-day checkpoint frozen source/config differs')
+                    _verify_owned_checkpoint_bytes(path,item,owned_checkpoint['identities'])
+                    if item['state_semantic_sha256']!=model.semantic_digest():
+                        raise ValueError('existing same-day checkpoint differs from current complete state')
+                else:
+                    from .longitudinal_model import verify_snapshot
+                    envelope, database = verify_snapshot(path/name,expected_config=p)
+                    if envelope['state_semantic_sha256'] != model.semantic_digest():
+                        raise ValueError('existing same-day checkpoint differs from current complete state')
+                    item={'file':name,'sha256':file_digest(path/name),'day':model.day,
+                          'state_semantic_sha256':envelope['state_semantic_sha256'],
+                          'files':[{'file':f.name,'sha256':file_digest(f),'bytes':f.stat().st_size} for f in (path/name,database)]}
+            else:
+                item=model.write_checkpoint(path/name)
+                freshly_written = True
+        else:
+            def writer(stream):
+                stream.write('{"config_sha256":'); stream.write(canonical(metadata['config_sha256']))
+                stream.write(',"source_sha256":'); stream.write(canonical(metadata['source_sha256']))
+                stream.write(',"state":'); model.write_state(stream); stream.write('}\n')
+            atomic_stream(path/name, writer, max_bytes=int(p.max_output_mb*1_000_000))
+            item={'file':name, 'sha256':file_digest(path/name), 'day':model.day}
         previous = []
         if (path/'checkpoint-index.json').exists():
             old = json.loads((path/'checkpoint-index.json').read_text())
             previous = [r for r in old['snapshots'] if r['file'] != name][:1]
         index = {'source_sha256': metadata['source_sha256'], 'config_sha256': metadata['config_sha256'],
-                 'snapshots': [{'file':name, 'sha256':file_digest(path/name), 'day':model.day}, *previous],
+                 'snapshots': [item, *previous],
                  'attempt_elapsed_wall_seconds':time.monotonic()-wall}
         atomic_json(path/'checkpoint-index.json',index)
-        keep = {r['file'] for r in index['snapshots']}
-        for old in path.glob('checkpoint-day-*.json'):
+        keep = {f['file'] for r in index['snapshots'] for f in r.get('files',[{'file':r['file']}])}
+        for old in path.glob('checkpoint-day-*'):
             if old.name not in keep: old.unlink()
+        if freshly_written:
+            owned_checkpoint={'item':json.loads(canonical(item)),
+                              'identities':{part['file']:_checkpoint_identity(path/part['file']) for part in item['files']}}
         last_checkpoint_day, last_checkpoint_time = model.day, time.monotonic()
     try:
         start_init = time.monotonic()
         if model is None:
-            model = Model(p)
+            model = Model(p,storage_dir=path) if p.longitudinal is not None else Model(p)
         init_wall = time.monotonic()-start_init
         start_sim = time.monotonic()
         if checkpoint_day is not None:
             model.run(checkpoint_day)
-            atomic_json(path/"checkpoint.json", {"source_sha256": source_hash(), "state": model.state()})
+            if p.longitudinal is not None:
+                model.write_checkpoint(path/"checkpoint.json")
+                checkpoint()
+            else:
+                atomic_json(path/"checkpoint.json", {"source_sha256": source_hash(), "state": model.state()})
         elif checkpoint_interval_days is not None:
             while model.day < p.days:
                 model.check_resources()
@@ -115,8 +171,11 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
         start_serialization = time.monotonic()
         atomic_json(path/"summary.json", summary)
         atomic_csv(path/"timeseries.csv", model.history)
-        atomic_stream(path/"final_state.json", lambda stream: (model.write_state(stream), stream.write("\n")),
-                      max_bytes=int(p.max_output_mb*1_000_000))
+        if p.longitudinal is not None:
+            metadata['final_state_descriptor']=model.write_final_state(path/"final_state.json")
+        else:
+            atomic_stream(path/"final_state.json", lambda stream: (model.write_state(stream), stream.write("\n")),
+                          max_bytes=int(p.max_output_mb*1_000_000))
         serialization_wall = time.monotonic()-start_serialization
         model.check_resources()
         plot_start = time.monotonic()
@@ -146,7 +205,7 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
                 # a disk/output error would mask the original failure.
                 if isinstance(error, (InterruptedError, TimeoutError)) and model.day != last_checkpoint_day:
                     checkpoint()
-            else:
+            elif p.longitudinal is None:
                 atomic_json(path/"checkpoint.json", {"source_sha256": source_hash(), "state": model.state()})
         metadata.update({"status": "failed", "exit_code": 1, "error_type": type(error).__name__, "error": str(error),
                          "days_completed": model.day if model is not None else 0, "total_wall_seconds": time.monotonic()-wall,
@@ -217,7 +276,9 @@ def main(argv: list[str] | None = None) -> int:
                 value = json.loads(args.checkpoint.read_text())
                 if value["source_sha256"] != source_hash():
                     raise ValueError("checkpoint source hash differs; migration is not supported")
-                restored = Model.restore(value["state"])
+                saved_config=Config.from_dict(value['state']['config'])
+                restored = (Model.restore_checkpoint(args.checkpoint,storage_dir=path,expected_config=saved_config)
+                            if saved_config.longitudinal is not None else Model.restore(value["state"]))
                 restart_origin = {"parent_run_id":origin["run_id"],
                     "parent_manifest_sha256":digest((args.checkpoint.parent/"manifest.json").read_bytes()),
                     "checkpoint_file":args.checkpoint.name,"checkpoint_sha256":digest(args.checkpoint.read_bytes()),

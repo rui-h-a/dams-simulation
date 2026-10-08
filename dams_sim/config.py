@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import dataclasses
 import math
+from .longitudinal import LongitudinalConfig
 
 
 @dataclasses.dataclass(frozen=True)
@@ -48,9 +49,16 @@ class Config:
     max_output_mb: float = 100.0
     max_rss_mb: float = 2048.0
     max_events: int = 2_000_000
+    longitudinal: LongitudinalConfig | None = None
 
     def validate(self) -> Config:
+        if self.longitudinal is not None and not isinstance(self.longitudinal, LongitudinalConfig):
+            raise ValueError('longitudinal must be a LongitudinalConfig; use Config.from_dict for JSON')
+        horizon_limit = 50_000 if self.longitudinal is not None else 3650
         integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
+        if self.longitudinal is not None:
+            for name in ('days','appeal_delay_days','attack_start_day','attack_stop_day','fault_start_day','fault_stop_day','quorum_unavailable_start_day','quorum_unavailable_stop_day','trace_every_days'):
+                integers[name] = (integers[name][0], horizon_limit)
         for name, (low, high) in integers.items():
             value = getattr(self, name)
             if type(value) is not int or not low <= value <= high:
@@ -88,14 +96,22 @@ class Config:
             raise ValueError("settlement delays must be integer days in [1,3650]")
         if 0.1*self.review_capacity_per_member_day + 0.15*self.appeal_capacity_per_member_day > 0.6:
             raise ValueError("review/appeal reservations exceed the daily time budget")
-        if self.n*self.days > self.max_events:
+        if self.longitudinal is not None:
+            self.longitudinal.validate(self.n, self.days, self.guilds)
+            from .longitudinal import estimate_longitudinal
+            if estimate_longitudinal(self)['work_events'] > self.max_events:
+                raise ValueError('declared longitudinal work-event capacity exceeds max_events; explicitly revise the resource limit')
+        if self.longitudinal is None and self.n*self.days > self.max_events:
             raise ValueError("declared work events exceed max_events; explicitly revise resource limit")
         from .authority import tier_authority
         tier_authority([0, 1], self.hierarchy_weights)
         return self
 
     def to_dict(self) -> dict:
-        return dataclasses.asdict(self)
+        value = dataclasses.asdict(self)
+        if self.longitudinal is None:
+            value.pop('longitudinal')
+        return value
 
     @classmethod
     def from_dict(cls, value: dict) -> Config:
@@ -103,6 +119,8 @@ class Config:
         if unknown:
             raise ValueError(f"unknown configuration keys: {sorted(unknown)}")
         value = dict(value)
+        if value.get('longitudinal') is not None:
+            value['longitudinal'] = LongitudinalConfig.from_dict(value['longitudinal'])
         for name in ("hierarchy_weights", "backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             if name in value:
                 value[name] = tuple(value[name])

@@ -204,13 +204,13 @@ def latex_tables(path: Path, scales: list[dict], parallel: list[dict], plan: dic
     lines = ["% Automatically generated from CPU benchmark CSVs; do not hand edit.",
              "% Source: " + plan["source_sha256"],
              r"\begin{table}[tbp]", r"\centering\small",
-             r"\caption{CPU resource tiers for DAMS evaluation. Native reference measurements and unexecuted cloud provisions are distinguished; catalog specifications do not certify a completed workload.}",
+             r"\caption{CPU resource tiers for DAMS evaluation. Historical native measurements, catalog provisions and workload admission serve different purposes; catalog specifications do not certify a completed workload.}",
              r"\label{tab:infrastructure-tiers}",
              r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{.16\textwidth}>{\raggedright\arraybackslash}p{.26\textwidth}>{\raggedright\arraybackslash}p{.50\textwidth}@{}}",
              r"\toprule Tier & Evidence and provision & Workload condition \\ \midrule",
              r"Minimum CPU & Estimated 2 cores/4--8 GiB; measured reference: M2 Pro, 12 cores/16 GiB & Small individual worlds and one worker. Only the named native reference was measured; the smaller provision requires its own preflight. Retain full state and traces. \\ \addlinespace",
-             r"Recommended cloud entry & Unexecuted C4D highmem-4: catalog 4 vCPUs/31 GiB; Hyperdisk Balanced & Execute the frozen 30-day specification after resource admission. Baseline disk service is 3,000 IOPS/140 MiB/s; capacity, workers and output limits must fit the actual case inventory. \\ \addlinespace",
-             r"Scale-up candidates & Unexecuted C4D highmem-96/192/384: catalog 756/1,512/3,024 GiB & Preserve the same full 30-day individual specification; measure memory, event growth and output before escalation. Independent-world batching does not imply within-world MPI or GPU speedup. \\ \addlinespace",
+             r"Cloud entry check & C4D highmem-4 catalog: 4 vCPUs/31 GiB; Hyperdisk Balanced & Admit the exact source, horizon and case inventory. Short deployment checks and formal five- or ten-year comparisons require separate measurements. Disk baseline: 3,000 IOPS/140 MiB/s. \\ \addlinespace",
+             r"Scale-up candidates & C4D highmem-96/192/384 catalog: 756/1,512/3,024 GiB & These larger tiers remain unexecuted. Preserve the complete frozen scientific workload; measure peak memory, event growth, storage and time. Lower-CPU alternatives require the same admission checks. \\ \addlinespace",
              r"Completion gate & Source/configuration hashes; durable checkpoints; verified archive & Confirm all prescribed worlds and output bytes before analysis. Interrupted stages remain visible. Resource cleanup and verified evidence are separate requirements. \\",
              r"\bottomrule\end{tabular}", r"\end{table}",
              r"\begin{table}[tbp]", r"\centering\small",
@@ -229,7 +229,7 @@ def latex_tables(path: Path, scales: list[dict], parallel: list[dict], plan: dic
     strong = grouped_parallel(parallel, "strong", "speedup")
     weak = grouped_parallel(parallel, "weak", "weak_scaling_efficiency")
     lines.append(f"The million-person, one-day attempt stopped after {stop['spawn_to_exit_wall_seconds']:.2f} s at sampled resident memory {stop['sampled_peak_rss_mb']:.1f} MiB under the 1 GiB watchdog; it produced no complete world. The ten-million-person request was refused by the default two-million-event bound before population allocation. For four matched independent worlds of 1,000 people over 30 days, median speedups were {strong[1]['median']:.2f} and {strong[2]['median']:.2f} with two and four workers; weak-scaling efficiencies were {weak[1]['median']:.3f} and {weak[2]['median']:.3f} with two worlds per worker. All eight world identifiers retained exactly one final-state hash across worker counts. These results support independent-world batching on this host, not single-world MPI or GPU claims.")
-    lines.append("The retained benchmark binds each batch to its executed archived source, with the exact full-core hash, rule-module hash and complete source snapshot available in the raw manifests. The current pipeline core differs: these native measurements do not certify its revised serializer or validation guard, or Linux execution. Statistics, SVG generation, serialization/hash/I/O residuals, CPU time and kernel-accounted disk bytes are recorded in the public benchmark CSVs; a separate population-generation subphase was not timed. Planning envelopes outside the measured range are conditional on the retained Python objects, queues and full-state serialization, not certified capacity.")
+    lines.append("The retained benchmark binds each batch to its executed archived source, with the exact full-core hash, rule-module hash and complete source snapshot available in the raw manifests. The newer pipeline core differs: these native measurements do not certify its revised serializer or validation guard. Linux deployment evidence requires its own source and workload record. Statistics, SVG generation, serialization/hash/I/O residuals, CPU time and kernel-accounted disk bytes are recorded in the public benchmark CSVs; a separate population-generation subphase was not timed. Planning envelopes outside the measured range are conditional on the retained Python objects, queues and full-state serialization, not certified capacity.")
     worst=max((d for d in projection["leave_one_workload_out_diagnostics"] if d["target"]=="rss_mb"),key=lambda d:abs(d["relative_error"]))
     lines.append(f"A leave-one-workload-out memory refit misses the withheld {worst['withheld_n']:,}-person/{worst['withheld_days']}-day cell by {abs(worst['relative_error'])*100:.1f}\\%, despite small full-fit residuals. This checks local cross-workload sensitivity; it neither validates the structural coefficients nor measures prediction error at million-person scales. The factor-two planning margins are declared allowances, not empirically established coverage or guaranteed upper bounds.")
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -264,11 +264,11 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
         ax.tick_params(which="major", length=0, width=.5, pad=5)
         ax.xaxis.labelpad=9
         ax.yaxis.labelpad=9
-    def finish(fig, *, bottom=.24):
+    def finish(fig, *, bottom=.34):
         # Keep legends in their own strip and leave a real gutter between axes.
         # Fixed margins are shared across all three retained-data figures.
         fig.subplots_adjust(left=.105, right=.99, bottom=bottom, top=.90, wspace=.32)
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 10.2/2.54))
+    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 9.2/2.54))
     for panel, (key, ylabel) in enumerate((("wrapper_wall_seconds", "Run wall time (s)"), ("peak_process_rss_mb", "Peak RSS (MiB)"))):
         ax = axes[panel]
         for temp, offset, marker, label, color in (("fresh_interpreter", -0.08, "o", "Process-cold", MEASURED), ("same_interpreter_fresh_model", 0.08, "s", "Fresh model, warm process", REFERENCE)):
@@ -276,9 +276,10 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
             med = [s[key + "_median"] for s in rows]
             lo, hi = [s[key + "_min"] for s in rows], [s[key + "_max"] for s in rows]
             ax.errorbar([i+offset for i in range(len(rows))], med, yerr=[[a-b for a,b in zip(med,lo)], [b-a for a,b in zip(med,hi)]],
-                        fmt=marker, color=color, markerfacecolor="white" if offset > 0 else color, markersize=5.8, capsize=2.5, linewidth=.9, label=label, zorder=3)
+                        fmt=marker, color=color, markerfacecolor="white" if offset > 0 else color, markersize=7, capsize=3.2, linewidth=1.2, label=label, zorder=3)
         cells=[s for s in scales if s["temperature"]=="fresh_interpreter"]
         ax.set_xticks(range(len(cells)), [f"{int(s['n']):,}\n{int(s['days'])} d" for s in cells])
+        ax.margins(x=.11)
         ax.set_xlabel("People N; horizon T (days)")
         ax.set_ylabel(ylabel)
         ax.set_yscale("log")
@@ -290,18 +291,18 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
                ncol=2, frameon=False, columnspacing=2, handletextpad=.7)
     finish(fig)
     save(fig, "benchmark_workloads")
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 10.6/2.54))
+    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 9.8/2.54))
     actual = [s for s in scales if s["temperature"] == "fresh_interpreter" and s["days"] == 30]
     for i, (key, lower, upper, ylabel, divisor) in enumerate((("wrapper_wall_seconds_median", "time_low_seconds", "time_high_seconds", "Run wall time (min)", 60),
                                                             ("complete_child_sampled_peak_rss_mb_median", "rss_low_mb", "rss_high_mb", "Peak RSS (GiB)", 1024))):
         ax = axes[i]
-        ax.plot([s["n"] for s in actual], [s[key]/divisor for s in actual], "o", color=MEASURED, markersize=5.8, label="Measured (30 d)", zorder=3)
+        ax.plot([s["n"] for s in actual], [s[key]/divisor for s in actual], "o", color=MEASURED, markersize=7, label="Measured (30 d)", zorder=3)
         rows = projection["projections"]
         n = [r["n"] for r in rows]
         low, high = [r[lower]/divisor for r in rows], [r[upper]/divisor for r in rows]
         center = [math.sqrt(a*b) for a,b in zip(low,high)]
         ax.fill_between(n, low, high, facecolor="#F3F0EA", edgecolor=PLANNED, linewidth=.55, label="Planning envelope", zorder=1)
-        ax.plot(n, center, "D--", color=PLANNED, markerfacecolor="white", markersize=5.2, linewidth=1.2, label="Unexecuted (30 d)", zorder=3)
+        ax.plot(n, center, "D--", color=PLANNED, markerfacecolor="white", markersize=6.5, linewidth=1.4, label="Unexecuted (30 d)", zorder=3)
         ax.set_xscale("log");ax.set_yscale("log")
         ax.xaxis.set_major_locator(FixedLocator([1000,10000,100000,1000000,10000000]))
         ax.xaxis.set_major_formatter(FuncFormatter(lambda x,_: f"{int(x/1000)}k" if x<1_000_000 else f"{int(x/1_000_000)}m"))
@@ -310,23 +311,23 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
         ax.set_ylabel(ylabel);ax.set_title("(a) Wall time" if i==0 else "(b) Resident memory", loc="left", pad=12)
         style(ax)
     stop = json.loads((path / "partial-n1000000-t1" / "watchdog.json").read_text())
-    axes[1].plot([1_000_000], [stop["sampled_peak_rss_mb"]/1024], "x", color=MEASURED, markersize=6.5, markeredgewidth=1.2, zorder=4)
+    axes[1].plot([1_000_000], [stop["sampled_peak_rss_mb"]/1024], "x", color=MEASURED, markersize=8, markeredgewidth=1.4, zorder=4)
     axes[1].axhline(16, color=REFERENCE, linestyle=":", linewidth=.85, zorder=2)
-    handles=[Line2D([],[],marker="o",linestyle="none",color=MEASURED,markersize=5.8),
-             Line2D([],[],marker="D",linestyle="--",color=PLANNED,markerfacecolor="white",markersize=5.2,linewidth=1.2),
+    handles=[Line2D([],[],marker="o",linestyle="none",color=MEASURED,markersize=7),
+             Line2D([],[],marker="D",linestyle="--",color=PLANNED,markerfacecolor="white",markersize=6.5,linewidth=1.4),
              Patch(facecolor="#F3F0EA",edgecolor=PLANNED,linewidth=.55),
-             Line2D([],[],marker="x",linestyle="none",color=MEASURED,markersize=6.5),
+             Line2D([],[],marker="x",linestyle="none",color=MEASURED,markersize=8),
              Line2D([],[],linestyle=":",color=REFERENCE,linewidth=.85)]
     fig.legend(handles,["Measured (30 d)","Unexecuted (30 d)","Planning envelope","Guard stop (1 d)","Local RAM (16 GiB)"],
                loc="lower center",bbox_to_anchor=(.55,.025),ncol=3,frameon=False,columnspacing=1.6,
                handletextpad=.65,labelspacing=.7)
-    finish(fig,bottom=.265)
+    finish(fig,bottom=.39)
     save(fig, "benchmark_projection")
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 10.2/2.54))
+    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 8.2/2.54))
     for panel, (kind, key, ylabel) in enumerate((("strong", "speedup", "Strong-scaling speedup"), ("weak", "weak_scaling_efficiency", "Weak-scaling efficiency"))):
         ax=axes[panel];rows=grouped_parallel(parallel, kind, key)
         xs,ys=[r["workers"] for r in rows],[r["median"] for r in rows]
-        ax.errorbar(xs,ys,yerr=[[r["median"]-r["min"] for r in rows],[r["max"]-r["median"] for r in rows]],fmt="o-",color=MEASURED,markersize=5.8,capsize=2.5,linewidth=1.3,label="Measured median and range",zorder=3)
+        ax.errorbar(xs,ys,yerr=[[r["median"]-r["min"] for r in rows],[r["max"]-r["median"] for r in rows]],fmt="o-",color=MEASURED,markersize=7,capsize=3.2,linewidth=1.5,label="Measured median and range",zorder=3)
         ax.plot(xs, xs if kind=="strong" else [1]*3, "--",color=REFERENCE,linewidth=.9,label="Ideal reference",zorder=2)
         ax.set_xticks(xs);ax.set_xlabel("Independent-world workers");ax.set_ylabel(ylabel)
         upper=max(4.3 if kind=="strong" else 1.15, max(r["max"] for r in rows)*1.1)
@@ -342,10 +343,15 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
               ("benchmark_projection","Conditional large-scale resource projections",f"Native-source {sha}, 30-day scenarios. Filled circles are completed measurements; hollow diamonds/dashes are unexecuted projections. Shaded bands are structural planning envelopes, not confidence intervals. The cross is the million-person, one-day memory stop, not a completed world; the dotted reference is 16 GiB physical RAM before OS headroom. Four measured workloads fit local coefficients and do not certify C4D guest performance or successful large-population execution."),
               ("benchmark_parallel","Independent-world CPU batching",f"Historical native source {sha}; N=1,000, T=30, full modules and outputs. Strong scaling fixes four matched worlds; weak scaling fixes two worlds per worker. Points are medians and bars min--max of three batches; dashed lines are ideal references. Batch wall time includes launch and monitoring. All eight world IDs retain one final-state hash across worker counts and repeats.")]
     for name,title,caption in captions:
-        fragments.extend([r"\begin{figure}[tbp]",r"\centering",rf"\includegraphics[width=\linewidth]{{figures/results/{name}.pdf}}",rf"\caption{{{caption}}}",rf"\label{{fig:{name.replace('_','-')}}}",r"\end{figure}"])
+        lines=[r"\begin{figure}[htbp]",r"\centering",rf"\includegraphics[width=\linewidth]{{figures/results/{name}.pdf}}",rf"\caption{{{caption}}}",rf"\label{{fig:{name.replace('_','-')}}}",r"\end{figure}"]
+        fragments.extend(lines)
+        standalone=fragment.with_name(fragment.stem+'_'+name.removeprefix('benchmark_')+'.tex')
+        standalone.parent.mkdir(parents=True,exist_ok=True)
+        standalone.write_text('\n'.join(lines)+'\n')
     fragment.parent.mkdir(parents=True,exist_ok=True);fragment.write_text("\n".join(fragments)+"\n")
     if starting_style!=style_metadata():raise RuntimeError("figure style changed during generation")
-    (path / "publication_artifacts.json").write_text(json.dumps({"figure_style":style_metadata(),"source_sha256":plan["source_sha256"],"generator_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),"matplotlib":matplotlib.__version__,"cloud_catalog_sha256":hashlib.sha256((Path(__file__).resolve().parents[1]/"docs/CLOUD_PRICE_SNAPSHOT.json").read_bytes()).hexdigest(),"files":{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}},sort_keys=True)+"\n")
+    latex_paths=[fragment,*[fragment.with_name(fragment.stem+'_'+name+'.tex') for name in ('workloads','projection','parallel')]]
+    (path / "publication_artifacts.json").write_text(json.dumps({"figure_style":style_metadata(),"source_sha256":plan["source_sha256"],"generator_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),"matplotlib":matplotlib.__version__,"cloud_catalog_sha256":hashlib.sha256((Path(__file__).resolve().parents[1]/"docs/CLOUD_PRICE_SNAPSHOT.json").read_bytes()).hexdigest(),"files":{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},"latex_fragment_sha256":{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in latex_paths}},sort_keys=True)+"\n")
 
 
 def main() -> None:
@@ -388,6 +394,12 @@ def main() -> None:
                  r"\\\bottomrule\end{tabular}\end{table}"+"\n")
         args.tables.write_text(pending)
         args.fragment.write_text(r"\SimulationPending{final-version-infrastructure-performance-figures}"+"\n")
+        for name in ('workloads','projection','parallel'):
+            standalone=args.fragment.with_name(args.fragment.stem+'_'+name+'.tex')
+            (args.batch/('preliminary-performanceplots_'+name+'.tex')).write_bytes(standalone.read_bytes())
+            standalone.write_text(r"\SimulationPending{final-version-infrastructure-performance-figures-"+name+"}"+'\n')
+    latex_paths=[args.fragment,*[args.fragment.with_name(args.fragment.stem+'_'+name+'.tex') for name in ('workloads','projection','parallel')]]
+    publication['latex_fragment_sha256']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in latex_paths}
     publication["files"].update({str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (args.tables,args.fragment)})
     (args.batch/"publication_artifacts.json").write_text(json.dumps(publication,indent=2,sort_keys=True)+"\n")
     print(json.dumps({"status":"generated","state":args.state,"batch":str(args.batch),"tables":str(args.tables),"figure_fragment":str(args.fragment)},indent=2))

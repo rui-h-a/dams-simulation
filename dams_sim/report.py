@@ -31,4 +31,12 @@ def report(path: Path, history: list[dict], summary: dict) -> None:
             f'Completed {summary["days_completed"]} daily steps for {summary["n"]} synthetic agents. Remaining records: {summary["unfinished_records"]}; remaining appeals: {summary["unfinished_appeals"]}.\n\n'
             'All population distributions, behavioural coefficients, backend costs and delays are design or stress assumptions. This run is theoretical mechanism exploration. Formal weights, normalized participating weights, contribution credit and output remain distinct. Conditional completed-case delay excludes unfinished cases; the count of unfinished records is reported separately.\n\n'
             'See summary.json for raw units, timeseries.csv for snapshots, manifest.json for source/config/output hashes, and final_state.json for the complete restart state. report.svg is a single-world diagnostic, not an ensemble result.\n')
+    if summary.get('longitudinal_schema_version') is not None or 'adoption_days' in summary:
+        text += ('\nThis opt-in run uses calendar days and a changing population. Initial population, retained identities and final active members are separate quantities. '
+                 f"Recorded member exposure: {summary.get('active_member_calendar_days',0)} active calendar member-days; "
+                 f"{summary.get('present_member_workdays',0)} present-member workdays. Closure day: {summary.get('closure_day')}; "
+                 f"suspension day: {summary.get('suspension_day')}; actual guild adoption dates: {summary.get('adoption_days')}. "
+                 'Exposure is recorded before training, governance and funding deductions. Rates cannot use initial population times calendar horizon. '
+                 'The complete restart state is a matching JSON and immutable SQLite sidecar group; both are required. '
+                 'Organization age and historical memory/credit are conditional synthetic inputs, not a generated history or empirical calibration.\n')
     atomic_bytes(path/"report.md", text.encode())

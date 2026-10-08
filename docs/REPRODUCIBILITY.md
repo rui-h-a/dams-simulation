@@ -90,12 +90,13 @@ Publication postprocessing is separate from the actual executing driver. It read
 | Same macOS/arm64 host, uv-managed CPython 3.14.2 | Clean public clone executed the complete scientific study; all 2,388 persisted world states, summaries and time series matched the reported 3.14.6 outputs byte for byte, with recovery patterns/fits checked separately | This is one measured cross-version reproduction on the same host; it does not certify Linux, Windows or arbitrary Python versions |
 | Optional Matplotlib 3.11.2 analysis | Locked environment actually produced grayscale vector PDF/SVG performance figures and generated LaTeX | Requires the `analysis` extra; scientific calculations, data provenance and figure generation remain separately versioned |
 | Other Python versions ≥3.11 | Declared portability target | Only the named 3.14.6/3.14.2 paths were exercised; rerun tests, source/hash checks and bounded timing |
-| Linux/WSL CPU | Portability target; `/proc` monitoring path exists | No current measured run certifies this environment or identical timing/bit patterns |
+| Ubuntu 24.04 GitHub runner, x86_64, uv-managed CPython 3.14.2 | Fixed-commit schema-2 validation at N120/T30 actually completed and passed the independent output gate; see the cross-platform evidence below | One small declared inventory; raw floating-point values differ from macOS, and timing is not a controlled platform comparison |
+| WSL CPU | Untested portability target; `/proc` monitoring path exists | The GitHub Linux run does not certify WSL or its numerical and process behavior |
 | Native Windows | Untested portability target | POSIX child/watchdog handling is not certified; unavailable resource measurements must remain null |
 | Docker/container, linux/amd64 and linux/arm64 targets | [Explicit allowlist recipe and fixed official Python/uv image-index digests](CONTAINER.md); local build/doctor/smoke attempts failed at the unavailable daemon socket | Upstream identities are verified metadata; no application image, container run or cross-platform numerical equality is asserted |
 | MPI/GPU | No implemented simulation path | Parallelism is across independent CPU worlds, not a distributed single-world benchmark |
 | Workstation/HPC allocation | Conditional resource plan | Profile the actual N, horizon, guild/site/link structure and retained outputs before raising limits |
-| GCP cloud burst | Price/planning dry run only | No VM was started; VM-hour reservations are assumptions, not measured E2 runtime |
+| GCP execution | Historical `4b331c8` validation completed at N=120, T=30, with 456 unique cases, 458 logical rows and two primary worlds; recovered scientific outputs passed an independent gate | Its automatic persistence/closeout chain was not certified successful. Current-source five- and ten-year studies, Standard guest hardware and complete cloud recovery still require actual execution evidence |
 | Solidity/local EVM | Separate research prototype and retained validation artifacts | Gas, storage and contract properties belong to that EVM experiment, not the Python model or a production network |
 
 ## Contract regressions and build
@@ -134,3 +135,53 @@ python3 research_tools/compare_reproduction.py --reference raw-evidence/runs/rev
 ```
 
 Supply the commits actually recorded by the fresh execution and current checkout. The defaults identify the original validated `a9f6d7` reproduction. This comparator is deliberately specific to the retained thesis protocol; it does not substitute a tolerance, treat missing matching stages as equality or certify unrelated design changes. It expects a complete fresh pipeline manifest and a clean public checkout. If only postprocessing has been refreshed, preserve the original full-execution manifest before overwriting it and retain the new wrapper evidence separately.
+
+## Fixed-commit Linux/macOS validation
+
+At commit `4b331c8af08934917a56be2ecdc3a45fa952f49c`,
+[GitHub Actions run 37747783714, attempt 1](https://github.com/rui-h-a/dams-simulation/actions/runs/37747783714)
+and an independent clean macOS arm64 checkout actually executed
+`./run.sh --spec validation --scale 120` with managed Python 3.14.2 and the locked
+analysis environment. Both completed the full 30-day horizon and passed
+`validate_pipeline_output`: 456 unique complete cases and 458 logical design
+rows. Case IDs, effective configurations, core/driver hashes and stage
+inventories matched. The primary estimate and all saved policy-contrast
+means, standard errors and interval endpoints were exactly equal; the primary
+mean was 0.004254226294566921 work units per member-day across two paired
+confirmation worlds.
+
+The raw scientific outputs were **not bitwise identical across operating
+systems**. Direct comparisons used no numerical tolerance or excluded raw
+fields:
+
+| Per-case output | Byte-identical cases | Cases with different bytes |
+|---|---:|---:|
+| `final_state.json` | 0 | 456 |
+| `summary.json` | 280 | 176 |
+| `timeseries.csv` | 1 | 455 |
+
+Those three outputs contained 43,757 floating-point value differences, with
+no integer, key, length, type or string differences. The largest observed
+absolute difference was 4.547473508864641e-13 in produced work of about 2057
+units. Near-zero signed Gini gaps changed sign between approximately
+−6.94e-18 and +6.94e-18. These observations do not establish a bound for other
+parameters, larger populations, longer horizons or threshold-sensitive
+branches. Fixed random-event keys preserve within-platform policy pairing;
+they do not provide a general cross-platform guarantee for floating arithmetic. The comparison
+did not isolate one math-library cause.
+
+Host facts, worker counts, clocks, runtime resource limits, Python build
+metadata, paths and their derived manifest hashes remained specific to each
+execution. Installed dependency versions matched; platform-specific wheel
+bytes were not compared. Both data directories remained unchanged during the
+read-only comparison. This validation is not a formal precision study, a GCP
+execution or a controlled hardware-speed comparison.
+
+The downloaded attempt-1 artifact matched the recorded size and SHA-256 of
+4,646 declared files. One additional declared file, the empty coordination
+lock `.pipeline.lock`, was omitted because that workflow excluded hidden
+files; it was not reconstructed or counted as verified. The updated workflow
+is configured to include hidden outputs while remaining restricted to
+`runs/ci-evidence/` and `runs/ci-validation/`. This change does not repair the
+historical artifact retroactively. Credentials, home directories and private
+revision material are outside those upload paths.

@@ -31,6 +31,78 @@ class GuardError(RuntimeError):
     pass
 
 
+def stage_capabilities(c, s):
+    """Resolve a frozen single-VM profile; never infer a purchase fallback.
+
+    Missing mode retains the historical C4D Spot contract. M3 Standard is an
+    explicit opt-in with catalog-bound guest expectations and quota dimensions.
+    The catalog is a planning input, not evidence of capacity or guest hardware.
+    """
+    mode = s.get("purchase_mode", "SPOT")
+    machine = s["machine_type"]
+    if mode == "SPOT" and machine in ("c4d-highmem-4", "c4d-highmem-96", "c4d-highmem-192", "c4d-highmem-384"):
+        allowed_disks = ("hyperdisk-balanced",)
+        quota = {"metric": "PREEMPTIBLE_CPUS", "info_id": "PREEMPTIBLE-CPUS-per-project-region",
+                 "dimensions": {"region": c["region"]}}
+    elif mode == "STANDARD" and machine in ("m3-ultramem-32", "m3-ultramem-64", "m3-ultramem-128"):
+        allowed_disks = ("pd-balanced", "pd-ssd", "hyperdisk-balanced")
+        quota = {"metric": "M3_CPUS", "info_id": "M3-CPUS-per-project-region",
+                 "dimensions": {"region": c["region"]}}
+        if "disk_type" not in s or s.get("quota") != quota:
+            raise GuardError("Standard M3 requires an explicit compatible disk and its exact regional quota profile")
+        catalog = c["price_snapshot"].get("machines", {}).get(machine, {})
+        catalog_memory = {"m3-ultramem-32": 976, "m3-ultramem-64": 1952, "m3-ultramem-128": 3904}[machine]
+        if money(catalog.get("memory_gib", 0)) != catalog_memory:
+            raise GuardError("Standard M3 ultramem catalog memory differs from the predefined shape")
+        expected = s.get("expected_guest", {})
+        if (set(expected) != {"architecture", "vcpus", "memory_gib_min", "memory_gib_max"}
+                or expected.get("architecture") != "x86_64"
+                or type(expected.get("vcpus")) is not int
+                or expected["vcpus"] != catalog.get("vcpus")
+                or expected["vcpus"] != int(machine.rsplit("-", 1)[-1])):
+            raise GuardError("Standard M3 requires catalog-bound, explicit guest CPU/architecture expectations")
+        minimum, maximum = money(expected["memory_gib_min"]), money(expected["memory_gib_max"])
+        if minimum <= 0 or minimum >= maximum or maximum != money(catalog.get("memory_gib", 0)):
+            raise GuardError("guest RAM range must specify a positive usable minimum, an OS margin and the exact catalog maximum")
+    else:
+        raise GuardError("unsupported machine/purchase profile; no implicit Standard or Spot fallback")
+    if s.get("quota", quota) != quota:
+        raise GuardError("frozen quota pool/dimensions differ from the selected purchase profile")
+    if type(s.get("node_count", 1)) is not int or s.get("node_count", 1) != 1 or s.get("nodes"):
+        raise GuardError("multi-node execution is not implemented or verified by this single-VM adapter")
+    disk = s.get("disk_type", "hyperdisk-balanced")
+    if disk not in allowed_disks:
+        raise GuardError("boot disk is incompatible with the selected machine profile")
+    if type(s.get("disk_gib", 50)) is not int or not 20 <= s.get("disk_gib", 50) <= 65536:
+        raise GuardError("boot disk size must be an explicit supported integer GiB capacity")
+    if disk == "hyperdisk-balanced":
+        if s.get("disk_iops", 3000) != 3000 or s.get("disk_throughput_mibps", 140) != 140:
+            raise GuardError("this controller prices only baseline Hyperdisk performance")
+    elif "disk_iops" in s or "disk_throughput_mibps" in s:
+        raise GuardError("Persistent Disk must not inherit Hyperdisk performance provisioning")
+    return {"purchase_mode": mode, "disk_type": disk, "disk_interface": "NVME", "quota": quota}
+
+
+def stage_vm_rate(c, s):
+    mode = stage_capabilities(c, s)["purchase_mode"]
+    rates = c["price_snapshot"].get("spot_vm_usd_per_hour" if mode == "SPOT" else "standard_vm_usd_per_hour", {})
+    if s["machine_type"] not in rates or money(rates[s["machine_type"]]) <= 0:
+        raise GuardError("machine lacks a positive checked rate for its frozen purchase mode")
+    return money(rates[s["machine_type"]])
+
+
+def stage_disk_rate(c, s):
+    caps = stage_capabilities(c, s)
+    p = c["price_snapshot"]
+    # Only the historical Spot profile can use its historical scalar rate.
+    rate = (p.get("disk_gib_hour", {}).get(caps["disk_type"])
+            if caps["purchase_mode"] == "STANDARD" or "disk_gib_hour" in p
+            else p.get("hyperdisk_gib_hour"))
+    if rate is None or money(rate) <= 0:
+        raise GuardError("selected disk type lacks a positive checked capacity rate")
+    return money(rate)
+
+
 def stamp(value=None):
     return (value or datetime.now(timezone.utc)).isoformat().replace("+00:00", "Z")
 
@@ -132,6 +204,8 @@ def checked_config(c, now=None):
         raise GuardError("prices require primary-source evidence checked within 24 hours")
     if not c["stages"] or len({s["id"] for s in c["stages"]}) != len(c["stages"]):
         raise GuardError("stages require unique immutable IDs")
+    if c.get("execution_topology", "single-vm") != "single-vm" or c.get("node_count", 1) != 1 or c.get("nodes"):
+        raise GuardError("multi-node scheduling/network/global-save/cost plan is not implemented in this adapter")
     ids = [s["id"] for s in c["stages"]]
     selected = c.get("execution_stage_ids", ids)
     if not selected or len(set(selected)) != len(selected) or [x for x in ids if x in selected] != selected:
@@ -141,15 +215,12 @@ def checked_config(c, now=None):
     for s in c["stages"]:
         if not NAME.fullmatch(s["id"]):
             raise GuardError("invalid stage ID")
-        if s["machine_type"] not in p["spot_vm_usd_per_hour"]:
-            raise GuardError("machine type lacks checked Spot upper rate")
-        if any(x in s["machine_type"] for x in ("-metal", "-lssd")):
-            raise GuardError("bare metal and local SSD are outside this control contract")
+        stage_capabilities(c, s)
+        stage_vm_rate(c, s)
+        stage_disk_rate(c, s)
         if not isinstance(s["max_seconds"], int) or s["max_seconds"] < 180:
             raise GuardError("stage time must include startup, compute, upload and shutdown")
-        if s.get("disk_gib", 50) < 20 or s.get("disk_iops", 3000) != 3000 or s.get("disk_throughput_mibps", 140) != 140:
-            raise GuardError("this bounded controller uses explicit baseline Hyperdisk performance")
-        if s["spec"] not in ("historical-full-study", "full-study", "validation", "governance-scale", "scale-confirmation") or not isinstance(s["scale"], int) or s["scale"] < 2:
+        if s["spec"] not in ("historical-full-study", "full-study", "validation", "governance-scale", "scale-confirmation", "longitudinal-adoption-5y", "longitudinal-adoption-10y") or not isinstance(s["scale"], int) or s["scale"] < 2:
             raise GuardError("invalid scientific specification/scale")
         if not s.get("runtime_limits") or s["runtime_limits"].get("version") != 1:
             raise GuardError("each stage requires explicit versioned scientific resource limits")
@@ -161,8 +232,6 @@ def checked_config(c, now=None):
         if money(s['max_result_gib'])<=0 or money(s['max_egress_gib'])<=0:
             raise GuardError('complete results require positive storage/download reservations')
         storage_request_allowance(c,s)
-        if money(p["spot_vm_usd_per_hour"][s["machine_type"]]) <= 0:
-            raise GuardError("a zero/unavailable Spot rate cannot authorize paid compute")
     if money(c.get("cost_margin", "1.2")) < 1:
         raise GuardError("cost margin cannot discount reserved fees")
     cap, reserve, prior = map(money, (c["budget_cap_usd"], c["reserve_usd"], c["prior_spend_usd"]))
@@ -180,15 +249,18 @@ def stage_cost(c, s):
     p = c["price_snapshot"]
     hours = Decimal(s["max_seconds"]) / 3600
     storage_h = money(s.get("storage_retention_hours", 168))
-    vm = money(p["spot_vm_usd_per_hour"][s["machine_type"]]) * hours
+    mode = stage_capabilities(c, s)["purchase_mode"]
+    vm = stage_vm_rate(c, s) * hours
     # Boot/work disk remains reserved to global cleanup even if CPU stops early.
-    disk = money(p["hyperdisk_gib_hour"]) * money(s.get("disk_gib", 50)) * money(s.get("disk_retention_hours", s["max_seconds"] / 3600))
+    disk = stage_disk_rate(c, s) * money(s.get("disk_gib", 50)) * money(s.get("disk_retention_hours", s["max_seconds"] / 3600))
     gcs = money(p["gcs_gib_hour"]) * (money(s["max_result_gib"])+money(s.get('source_package_gib_upper','0.01'))) * storage_h
     transfer = money(p["egress_gib"]) * money(s["max_egress_gib"])
     operations = money(s["storage_operations_usd_upper"])
     other = money(s["other_usd_upper"])  # includes IP/NAT/logging if introduced
-    if c.get("network_mode") == "iap-ephemeral-ip" and other < hours * money(p["spot_external_ip_hour"]):
-        raise GuardError("ephemeral Spot IPv4 fee is missing from the noncompute reservation")
+    if c.get("network_mode") == "iap-ephemeral-ip":
+        ip_rate = p.get("spot_external_ip_hour" if mode == "SPOT" else "standard_external_ip_hour")
+        if ip_rate is None or money(ip_rate) <= 0 or other < hours * money(ip_rate):
+            raise GuardError("mode-specific ephemeral IPv4 fee is missing from the noncompute reservation")
     return (vm + disk + gcs + transfer + operations + other) * money(c.get("cost_margin", "1.2"))
 
 
@@ -315,12 +387,17 @@ def labels(c, s):
 
 
 def create_command(c, s, e, zone, startup):
+    caps = stage_capabilities(c, s)
+    if zone not in c["zones"] or utc(e["termination_utc"]) > utc(c["global_deadline_utc"]):
+        raise GuardError("create zone/absolute expiry differs from the frozen plan")
+    performance = (["--boot-disk-provisioned-iops=3000", "--boot-disk-provisioned-throughput=140"]
+                   if caps["disk_type"] == "hyperdisk-balanced" else [])
     return ["gcloud", "compute", "instances", "create", e["instance_name"],
             "--project=" + c["project"], "--zone=" + zone, "--machine-type=" + s["machine_type"],
-            "--provisioning-model=SPOT", "--instance-termination-action=DELETE",
+            "--provisioning-model=" + caps["purchase_mode"], "--instance-termination-action=DELETE",
             "--termination-time=" + e["termination_utc"], "--maintenance-policy=TERMINATE", "--no-restart-on-failure",
-            "--image=" + c["image"], "--boot-disk-type=hyperdisk-balanced", "--boot-disk-size=" + str(s.get("disk_gib", 50)) + "GB",
-            "--boot-disk-provisioned-iops=3000", "--boot-disk-provisioned-throughput=140", "--boot-disk-auto-delete",
+            "--image=" + c["image"], "--boot-disk-type=" + caps["disk_type"], "--boot-disk-size=" + str(s.get("disk_gib", 50)) + "GB",
+            "--boot-disk-interface=" + caps["disk_interface"], *performance, "--boot-disk-auto-delete",
             "--service-account=" + c["service_account"], "--scopes=https://www.googleapis.com/auth/devstorage.read_write",
             "--network-interface=subnet=" + c["subnet"] + ",nic-type=GVNIC" + (",no-address" if c["network_mode"] == "internal-offline" else ",network-tier=PREMIUM"),
             "--metadata=enable-oslogin=TRUE,block-project-ssh-keys=TRUE,dams-source-commit=" + c["source_commit"] + ",dams-source-image-id=" + str(c["image_id"]),
@@ -364,14 +441,22 @@ class Gcloud:
 
 
 def validate_instance(c, s, e, vm):
+    caps = stage_capabilities(c, s)
     expected = labels(c, s)
     if vm.get("name") != e["instance_name"] or any(vm.get("labels", {}).get(k) != v for k, v in expected.items()):
         raise GuardError("existing VM does not match this frozen task/stage")
     scheduling = vm.get("scheduling", {})
-    if vm["machineType"].split("/")[-1] != s["machine_type"] or scheduling.get("provisioningModel") != "SPOT":
-        raise GuardError("existing VM differs from requested machine/Spot")
-    if scheduling.get("instanceTerminationAction") != "DELETE" or utc(scheduling["terminationTime"]) > utc(e["termination_utc"]):
+    if vm["machineType"].split("/")[-1] != s["machine_type"] or scheduling.get("provisioningModel") != caps["purchase_mode"]:
+        raise GuardError("existing VM differs from the frozen machine/purchase mode")
+    if (scheduling.get("instanceTerminationAction") != "DELETE" or not scheduling.get("terminationTime")
+            or utc(scheduling["terminationTime"]) != utc(e["termination_utc"]) or scheduling.get("maxRunDuration")):
         raise GuardError("existing VM lacks bounded absolute deletion")
+    if caps["purchase_mode"] == "STANDARD" and (scheduling.get("automaticRestart") is not False or scheduling.get("onHostMaintenance") != "TERMINATE"):
+        raise GuardError("Standard VM restart/maintenance policy differs from the bounded frozen plan")
+    if vm.get("deletionProtection"):
+        raise GuardError("deletion protection would block provider/explicit cleanup")
+    if vm.get("zone", "").split("/")[-1] not in c["zones"]:
+        raise GuardError("existing VM zone differs from the frozen candidate zones")
     accounts = vm.get("serviceAccounts", [])
     if len(accounts) != 1 or accounts[0].get("email") != c["service_account"] or accounts[0].get("scopes") != ["https://www.googleapis.com/auth/devstorage.read_write"]:
         raise GuardError("existing VM has different/overbroad attached credentials")
@@ -391,26 +476,31 @@ def validate_instance(c, s, e, vm):
         raise GuardError("existing VM source/image/controlled access metadata differs")
     if len(vm.get("disks", [])) != 1 or not vm["disks"][0].get("boot") or not vm["disks"][0].get("autoDelete"):
         raise GuardError("unexpected unmanaged/retained extra disk")
+    if caps["purchase_mode"] == "STANDARD" and vm["disks"][0].get("interface") != caps["disk_interface"]:
+        raise GuardError("Standard M3 boot disk must use the frozen NVMe interface")
     return vm
 
 
 def verify_boot_disk(g, c, s, vm):
+    caps = stage_capabilities(c, s)
     name = vm["disks"][0]["source"].split("/")[-1]
     r = g.run(["gcloud", "compute", "disks", "describe", name, "--project=" + c["project"],
                "--zone=" + vm["zone"].split("/")[-1], "--format=json"])
     if r["exit"] != 0:
         raise GuardError("boot disk image/configuration unverified")
     d = json.loads(r["stdout"])
-    if str(d.get("sourceImageId")) != str(c["image_id"]) or d.get("sourceImage") != c["image"] or d.get("type", "").split("/")[-1] != "hyperdisk-balanced" or int(d.get("sizeGb", 0)) != s.get("disk_gib", 50):
-        raise GuardError("boot disk is not the fixed planned image/Hyperdisk provision")
-    if int(d.get("provisionedIops", 0)) != 3000 or int(d.get("provisionedThroughput", 0)) != 140:
+    if str(d.get("sourceImageId")) != str(c["image_id"]) or d.get("sourceImage") != c["image"] or d.get("type", "").split("/")[-1] != caps["disk_type"] or int(d.get("sizeGb", 0)) != s.get("disk_gib", 50):
+        raise GuardError("boot disk is not the fixed planned image/type/capacity")
+    if caps["disk_type"] == "hyperdisk-balanced" and (int(d.get("provisionedIops", 0)) != 3000 or int(d.get("provisionedThroughput", 0)) != 140):
         raise GuardError("unexpected billable Hyperdisk performance provision")
+    if caps["disk_type"] != "hyperdisk-balanced" and (d.get("provisionedIops") or d.get("provisionedThroughput")):
+        raise GuardError("unexpected performance provision on the frozen Persistent Disk")
 
 
 def quota_value(info, wanted):
     # Empty details are zero, not an approval; reconciling preferences are not grants.
     values = [money(x.get("details", {}).get("value", 0)) for x in info.get("dimensionsInfos", [])
-              if all(x.get("dimensions", {}).get(k) == v for k, v in wanted.items())]
+              if x.get("dimensions", {}) == wanted]
     if len(values) != 1:
         raise GuardError("current quota dimension grant unavailable/ambiguous")
     return values[0]
@@ -420,20 +510,54 @@ def preflight_quotas(g, c, stage=None):
     # All-stage costs are reserved up front; quota is checked again before EACH
     # stage, allowing the bounded Linux trial while higher grants are pending.
     planned = [stage] if stage else c["stages"]
-    target = max(c["price_snapshot"]["machines"][s["machine_type"]]["vcpus"] for s in planned)
+    targets = {}
+    for s in planned:
+        caps = stage_capabilities(c, s)
+        key = caps["purchase_mode"]
+        target = c["price_snapshot"]["machines"][s["machine_type"]]["vcpus"]
+        if type(target) is not int or target < 1:
+            raise GuardError("actual machine catalog CPU count is missing/invalid")
+        targets[key] = max(targets.get(key, 0), target)
     # This profile requires an explicitly granted preemptible pool. Official
     # allocation rules say that after requesting it, applicable Spot resources
     # consume ONLY that pool. Standard C4D family quota is not an additional AND
     # requirement and cannot serve as an exhausted-Spot fallback.
-    r = g.run(["gcloud", "beta", "quotas", "info", "describe", "PREEMPTIBLE-CPUS-per-project-region",
-               "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
-    if r["exit"] != 0 or quota_value(json.loads(r["stdout"]), {"region": c["region"]}) < target:
-        raise GuardError("requested stage lacks granted Spot CPU pool; no standard-quota fallback")
+    if "SPOT" in targets:
+        r = g.run(["gcloud", "beta", "quotas", "info", "describe", "PREEMPTIBLE-CPUS-per-project-region",
+                   "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
+        if r["exit"] != 0 or quota_value(json.loads(r["stdout"]), {"region": c["region"]}) < targets["SPOT"]:
+            raise GuardError("requested stage lacks granted Spot CPU pool; no standard-quota fallback")
+        r = g.run(["gcloud", "compute", "regions", "describe", c["region"],
+                   "--project=" + c["project"], "--format=json"])
+        if r["exit"] != 0:
+            raise GuardError("Spot regional quota usage is unverified")
+        info = json.loads(r["stdout"])
+        q = [x for x in info.get("quotas", []) if x.get("metric") == "PREEMPTIBLE_CPUS"]
+        if (info.get("name") != c["region"] or len(q) != 1
+                or money(q[0]["limit"]) - money(q[0]["usage"]) < targets["SPOT"]):
+            raise GuardError("requested Spot stage lacks unused preemptible CPU headroom")
+    if "STANDARD" in targets:
+        r = g.run(["gcloud", "beta", "quotas", "info", "describe", "M3-CPUS-per-project-region",
+                   "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
+        info = json.loads(r["stdout"]) if r["exit"] == 0 else {}
+        if (r["exit"] != 0 or info.get("quotaId") != "M3-CPUS-per-project-region"
+                or info.get("metric") != "compute.googleapis.com/m3_cpus"
+                or quota_value(info, {"region": c["region"]}) < targets["STANDARD"]):
+            raise GuardError("requested Standard M3 stage lacks an effective regional M3 CPU grant")
+        r = g.run(["gcloud", "compute", "regions", "describe", c["region"],
+                   "--project=" + c["project"], "--format=json"])
+        if r["exit"] != 0:
+            raise GuardError("Standard M3 regional usage is unverified")
+        info = json.loads(r["stdout"])
+        q = [x for x in info.get("quotas", []) if x.get("metric") == "M3_CPUS"]
+        if (info.get("name") != c["region"] or len(q) != 1
+                or money(q[0]["limit"]) - money(q[0]["usage"]) < targets["STANDARD"]):
+            raise GuardError("requested Standard M3 stage lacks unused M3 CPU quota; other pools cannot substitute")
     r = g.run(["gcloud", "compute", "project-info", "describe", "--project=" + c["project"], "--format=json"])
     if r["exit"] != 0:
         raise GuardError("global CPU quota unverified")
     q = [x for x in json.loads(r["stdout"]).get("quotas", []) if x["metric"] == "CPUS_ALL_REGIONS"]
-    if len(q) != 1 or money(q[0]["limit"]) - money(q[0]["usage"]) < target:
+    if len(q) != 1 or money(q[0]["limit"]) - money(q[0]["usage"]) < max(targets.values()):
         raise GuardError("requested stage lacks global CPU headroom")
 
 
@@ -470,6 +594,10 @@ def preflight_environment(g, c):
     im = json.loads(image["stdout"])
     if str(im.get("id")) != str(c["image_id"]) or im.get("selfLink") != c["image"] or im.get("status") != "READY" or im.get("architecture") != "X86_64":
         raise GuardError("fixed image ID/architecture/status differs from the frozen plan")
+    if any(stage_capabilities(c, s)["purchase_mode"] == "STANDARD" for s in c["stages"]):
+        features = {row.get("type") for row in im.get("guestOsFeatures", [])}
+        if not {"GVNIC", "UEFI_COMPATIBLE"}.issubset(features):
+            raise GuardError("fixed M3 image lacks required gVNIC/UEFI features; guest NVMe/driver trial remains necessary")
     subnet = g.run(["gcloud", "compute", "networks", "subnets", "describe", c["subnet"].split("/")[-1],
                     "--region=" + c["region"], "--project=" + c["project"], "--format=json"])
     if subnet["exit"] != 0:
@@ -620,6 +748,9 @@ def execute(c, folder):
                        "upload_interval_seconds": s.get("upload_interval_seconds", 60),
                        "max_storage_requests":storage_request_allowance(c,s),
                        "max_upload_bytes": int(money(s["max_result_gib"]) * 1024**3), "runtime_limits": s["runtime_limits"]}
+            if "purchase_mode" in s:
+                runtime.update(purchase_mode=stage_capabilities(c, s)["purchase_mode"], machine_type=s["machine_type"],
+                               expected_guest=s.get("expected_guest", {}))
             runtime["runtime_limits"] = {**runtime["runtime_limits"], "deadline_utc": stamp(utc(e["termination_utc"]) - timedelta(seconds=runtime["shutdown_margin_seconds"] + 60)),
                                          "provenance": cloud_origin(c,s)}
             base = "gs://" + c["bucket"] + "/packages/" + c["source_commit"]

@@ -17,6 +17,8 @@ analysis and report. The default is small local validation. It exercises the
 end-to-end interfaces; its two primary worlds cannot replace formal-study
 precision. No public invocation authorizes cloud spending.
 
+The calendar-linked [longitudinal specification and evidence boundaries](docs/LONGITUDINAL.md) add five-year post-adoption comparisons and a representative ten-year specification through the same entry. Their implementation and bounded probes do not establish completed formal longitudinal results.
+
 The [versioned specification contract](docs/SPEC_V2.md) distinguishes full-study,
 governance-scale and scale-confirmation designs. Population reaches every
 dynamic stage in the selected design; days, policies, independent world counts

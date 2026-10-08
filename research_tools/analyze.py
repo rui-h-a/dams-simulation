@@ -16,6 +16,8 @@ from research_tools.study import interval,POLICIES,LABELS,DRIVER_SHA
 from research_tools.inventory import verify_inventory,validate_protocol
 from research_tools.figure_style import FACTOR_LABELS, POLICY_STYLE, apply_style, style_metadata, dynamics_figure, attack_figure, grid
 
+IMPORTED_MODULE_SHA256 = __import__('hashlib').sha256(Path(__file__).read_bytes()).hexdigest()
+
 SHORT={'equal':'Equal','linear':'Linear','sublinear':'DAMS','hierarchy':'Performance tiers','hierarchy_tenure':'Tenure tiers'}
 STYLE=POLICY_STYLE
 plt=None
@@ -115,7 +117,8 @@ def savefig(fig,name,figdir):
     plt.close(fig)
 
 def figtex(name,label,caption):
-    return '\\begin{figure}[htbp]\n\\centering\n\\includegraphics[width=\\textwidth]{figures/results/'+name+'.pdf}\n\\caption{'+caption+'}\n\\label{fig:'+label+'}\n\\end{figure}\n'
+    placement='H' if name in ('governance-dynamics','outcome-tradeoffs') else 'htbp'
+    return '\\begin{figure}['+placement+']\n\\centering\n\\includegraphics[width=\\textwidth]{figures/results/'+name+'.pdf}\n\\caption{'+caption+'}\n\\label{fig:'+label+'}\n\\end{figure}\n'
 
 def table(label,caption,head,body,notes):
     cols='l'+'r'*(len(head)-1)
@@ -125,9 +128,17 @@ def main():
     global plt
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--runs',type=Path,required=True)
     ap.add_argument('--thesis-dir',type=Path,required=True)
-    ap.add_argument('--pipeline-in-progress',action='store_true',help='Internal spec-v2 postprocessing after every scientific stage has completed; whole-pipeline completion remains separately gated')
+    ap.add_argument('--pipeline-in-progress',action='store_true',help='Internal versioned postprocessing after every scientific stage has completed; whole-pipeline completion remains separately gated')
     args=ap.parse_args()
     if (args.runs/'spec_manifest.json').exists():
+        version=json.loads((args.runs/'spec_manifest.json').read_text()).get('schema_version')
+        if version==3:
+            from research_tools.longitudinal_analysis import analyze
+            claims=analyze(args.runs,args.thesis_dir,pipeline_in_progress=args.pipeline_in_progress)
+            print(json.dumps({'schema_version':3,'primary':claims['primary'],'worlds':claims['confirmation_worlds'],'spec':claims['spec']['name'],'mc_precision_met':claims['mc_precision_met']},indent=2))
+            return
+        if version!=2:
+            raise ValueError('unknown scientific specification schema')
         from research_tools.analysis_v2 import generate
         claims=generate(args.runs,args.thesis_dir,pipeline_in_progress=args.pipeline_in_progress)
         print(json.dumps({'schema_version':2,'primary':claims['primary'],'worlds':claims['worlds'],'spec':claims['spec']['name']},indent=2))
@@ -183,11 +194,11 @@ def main():
       ['Policy','Work/member-day','Regret/guild-day','Mean days','P95 days','Unfinished'],basebody,
       f'Synthetic DAMS-ABM 0.1.0, source \\texttt{{{source_hash()[:12]}}}; {worlds} independent worlds, 120 members, four guilds, 60 days. Work and regret are model units. Delay is conditional on completed confirmations; unfinished records are the horizon stock. Entries are world means, not member-level independent samples.')
     effects=[]
-    fig,ax=plt.subplots(figsize=(6.4,2.7));y=list(range(5))
+    fig,ax=plt.subplots(figsize=(6.4,3.1));y=list(range(5))
     for i,pol in enumerate(POLICIES):
       v=paired(select(center,regime=pol),linear,work);effects.append(dict(policy=pol,outcome='work_per_member_day',**v))
       color,line,marker=STYLE[pol]
-      ax.errorbar(v['mean'],i,xerr=1.96*v['se'] if v['se'] is not None else 0,fmt=marker,color=color,capsize=3,markersize=6)
+      ax.errorbar(v['mean'],i,xerr=1.96*v['se'] if v['se'] is not None else 0,fmt=marker,color=color,capsize=3.5,markersize=7.5)
     ax.axvline(0,color='.6',linewidth=.6);ax.set_yticks(y,[SHORT[k] for k in POLICIES]);ax.invert_yaxis();ax.spines['left'].set_visible(False);grid(ax,'x')
     ax.set_xlabel('Work difference from linear (units/member-day)');fig.tight_layout();savefig(fig,'allocation-effects',figdir)
     tex+=figtex('allocation-effects','allocation-effects',f'Policy work differences from linear credit in {worlds} matched synthetic worlds. Symbols identify policies; bars are conditional 95\\% normal Monte Carlo intervals. The zero linear contrast is retained. Daily updates, central record, 120 members and 60 days; source \\texttt{{{source_hash()[:12]}}}.')
@@ -219,7 +230,7 @@ def main():
         gs.append([0]+[math.fsum(a[:j])/total for j in range(1,len(a)+1)])
        worlds_l.append([statistics.fmean(g[j] for g in gs) for j in range(31)])
       xs=[j/30 for j in range(31)];vs=[interval([g[j] for g in worlds_l]) for j in range(31)]
-      color,line,marker=STYLE[pol];ax.plot(xs,[v['mean'] for v in vs],color=color,linestyle=line,marker=marker,markevery=(list(POLICIES).index(pol),5),markersize=4,label=SHORT[pol])
+      color,line,marker=STYLE[pol];ax.plot(xs,[v['mean'] for v in vs],color=color,linestyle=line,marker=marker,markevery=(list(POLICIES).index(pol),5),markersize=5.8,label=SHORT[pol])
       lorenz.extend(dict(policy=pol,member_fraction=x,**v) for x,v in zip(xs,vs))
     ax.plot([0,1],[0,1],color='.7',linewidth=.5);ax.set_xlim(0,1);ax.set_ylim(0,1)
     ax.set_xlabel('Member fraction within a guild');ax.set_ylabel('Cumulative formal share');ax.set_xticks([0,.25,.5,.75,1]);ax.set_yticks([0,.25,.5,.75,1]);grid(ax);ax.legend(frameon=False,loc='upper left');fig.tight_layout();savefig(fig,'formal-authority-distribution',figdir)
@@ -284,9 +295,9 @@ def main():
        a=select(alternatives,behavior_rule=rule,autonomy_response=response,regime='sublinear')
        b=select(alternatives,behavior_rule=rule,autonomy_response=response,regime='linear')
        v=paired(a,b,work);vs.append(v);boundary.append(dict(behavior_rule=rule,response=response,**v))
-      ax.errorbar([-.25,0,.25],[v['mean'] for v in vs],yerr=[1.96*v['se'] for v in vs],color='.1',marker='o',markersize=4.5,capsize=2.5)
+      ax.errorbar([-.25,0,.25],[v['mean'] for v in vs],yerr=[1.96*v['se'] for v in vs],color='.1',marker='o',markersize=6,capsize=3)
       ax.axhline(0,color='.6',linewidth=.6);ax.set_title({'linear_response':'Baseline effort','satisficing':'Satisficing','reinforcement':'Reinforcement'}[rule]);ax.set_xticks([-.25,0,.25],['-0.25','0','0.25']);grid(ax)
-    axs[0].set_ylabel('Work difference from linear\n(units/member-day)');fig.supxlabel('Share-response coefficient',fontsize=10.5,y=.02);fig.subplots_adjust(left=.135,right=.975,bottom=.19,top=.88,wspace=.19);savefig(fig,'response-boundaries',figdir)
+    axs[0].set_ylabel('Work difference from linear\n(units/member-day)');fig.supxlabel('Share-response coefficient',fontsize=12,y=.015);fig.subplots_adjust(left=.135,right=.975,bottom=.19,top=.88,wspace=.19);savefig(fig,'response-boundaries',figdir)
     tex+=figtex('response-boundaries','response-boundaries',f'DAMS--linear work contrasts under three effort rules and response coefficients. Eight synthetic world pairs per point; bars are descriptive 95\\% normal Monte Carlo intervals. Lines connect observed settings without fitting. Zero response is a mechanism null; coefficients are unestimated assumptions. 120 members, 60 days; source \\texttt{{{source_hash()[:12]}}}.')
     # Morris-style elementary effects: explicitly not fitted/independent real input distributions.
     ees=read_csv(p/'sensitivity/elementary_effects.csv');factors=list(dict.fromkeys(r['factor'] for r in ees))
@@ -294,8 +305,15 @@ def main():
     for i,k in enumerate(factors):
       values=[r['effect_per_full_design_range'] for r in ees if r['factor']==k]
       mu=statistics.fmean(abs(x) for x in values);sigma=statistics.stdev(values);screen.append(dict(factor=k,mu_star=mu,sigma=sigma,paths=len(values)))
-      ax.scatter(mu,sigma,color='.15',marker='o',s=30);ax.annotate(FACTOR_LABELS[k],(mu,sigma),xytext=(9,-16 if k in ('alpha','review_error_sd') else 9),textcoords='offset points',fontsize=10)
-    ax.set_xlabel('Mean absolute elementary effect (work/member-day)');ax.set_ylabel('Elementary-effect dispersion\n(work/member-day)');grid(ax);ax.xaxis.set_major_locator(plt.MaxNLocator(4));ax.yaxis.set_major_locator(plt.MaxNLocator(4));ax.set_xlim(0,max(r['mu_star'] for r in screen)*1.5);ax.set_ylim(0,max(r['sigma'] for r in screen)*1.4);fig.tight_layout();savefig(fig,'sensitivity-screen',figdir)
+      ax.scatter(mu,sigma,color='.15',marker='o',s=50)
+      # Leaders separate closely spaced factors without moving observations.
+      label_positions={'alpha':(.03,.05),'update_interval_days':(.03,.40),
+        'review_error_sd':(.33,.17),'review_capacity_per_member_day':(.20,.90),
+        'autonomy_response':(.48,.64),'cooperation_strength':(.69,.05)}
+      ax.annotate(FACTOR_LABELS[k],(mu,sigma),xytext=label_positions[k],textcoords='axes fraction',
+        fontsize=12,ha='left',va='center',arrowprops={'arrowstyle':'-','color':'.45','linewidth':.65},
+        bbox={'boxstyle':'square,pad=.15','facecolor':'white','edgecolor':'none'})
+    ax.set_xlabel('Mean absolute effect\n(work/member-day)');ax.set_ylabel('Effect dispersion\n(work/member-day)');grid(ax);ax.xaxis.set_major_locator(plt.MaxNLocator(4));ax.yaxis.set_major_locator(plt.MaxNLocator(4));ax.set_xlim(0,max(r['mu_star'] for r in screen)*1.5);ax.set_ylim(0,max(r['sigma'] for r in screen)*1.4);fig.tight_layout();savefig(fig,'sensitivity-screen',figdir)
     tex+=figtex('sensitivity-screen','sensitivity-screen',f'Structural screening across six design factors: eight randomized paths, three paired worlds per step and four levels. Coordinates show mean absolute full-range elementary effect and its path dispersion, in work/member-day. This is not a Sobol index or population variance decomposition. Full input ranges and paths are retained; source \\texttt{{{source_hash()[:12]}}}.')
     stress_tex=tex;tex=''
     # Population effects use full individual worlds, not benchmark extrapolation.
@@ -305,8 +323,8 @@ def main():
       for n in ns:
        r=select(scales,n=n,regime=pol);base=select(scales,n=n,regime='linear');v=paired(r,base,work);vs.append(v)
        cost.append(interval([(x['review_hours']+x['appeal_hours'])/(n*x['days_completed']) for x in r]));scale_effects.append(dict(population_n=n,policy=pol,**v))
-      axs[0].errorbar(ns,[v['mean'] for v in vs],yerr=[1.96*v['se'] for v in vs],color=color,linestyle=line,marker=marker,markersize=4.2,capsize=2,label=SHORT[pol])
-      axs[1].plot(ns,[v['mean'] for v in cost],color=color,linestyle=line,marker=marker,markersize=4.2)
+      axs[0].errorbar(ns,[v['mean'] for v in vs],yerr=[1.96*v['se'] for v in vs],color=color,linestyle=line,marker=marker,markersize=5.8,capsize=2,label=SHORT[pol])
+      axs[1].plot(ns,[v['mean'] for v in cost],color=color,linestyle=line,marker=marker,markersize=5.8)
     for ax in axs:ax.set_xscale('log');ax.set_xlabel('Members');ax.set_xticks([500,1000,5000,10000],['500','1k','5k','10k']);ax.yaxis.set_major_locator(plt.MaxNLocator(4));grid(ax)
     axs[0].set_ylabel('Work difference from linear\n(units/member-day)');axs[0].axhline(0,color='.6',linewidth=.6)
     axs[1].set_ylabel('Review and appeal service\n(hours/member-day)');axs[1].ticklabel_format(axis='y',style='plain',useOffset=False)
@@ -330,10 +348,10 @@ def main():
          tau=t-30;break
        recovery_times.append(dict(policy=pol,world=w,recovery_days=tau,unrecovered=tau is None))
       vs=[interval([r[j] for r in differences]) for j in range(60)]
-      color,line,marker=STYLE[pol];ax.plot(range(60),[v['mean'] for v in vs],color=color,linestyle=line,marker=marker,markevery=10,markersize=4.2)
+      color,line,marker=STYLE[pol];ax.plot(range(60),[v['mean'] for v in vs],color=color,linestyle=line,marker=marker,markevery=10,markersize=5.8)
       ax.fill_between(range(60),[v['low'] for v in vs],[v['high'] for v in vs],color=color,alpha=.05,linewidth=0)
-      ax.axvspan(25,30,color='#F0F1F2',zorder=-2);ax.axhline(0,color='.6',linewidth=.6);ax.text(.99,.12,SHORT[pol],transform=ax.transAxes,ha='right',va='bottom',fontsize=10.5);ax.set_yticks([-.05,0]);grid(ax);ax.spines['bottom'].set_visible(pol==POLICIES[-1]);ax.tick_params(axis='x',bottom=pol==POLICIES[-1])
-    axs[-1].set_xlabel('Day');axs[-1].set_xticks([0,15,30,45,60]);fig.supylabel('Work difference from own control (units/member-day)',fontsize=10.5);fig.tight_layout(rect=(.025,0,1,1),h_pad=1.2);savefig(fig,'shock-recovery',figdir)
+      ax.axvspan(25,30,color='#F0F1F2',zorder=-2);ax.axhline(0,color='.6',linewidth=.6);ax.text(.99,.12,SHORT[pol],transform=ax.transAxes,ha='right',va='bottom',fontsize=12);ax.set_yticks([-.05,0]);grid(ax);ax.spines['bottom'].set_visible(pol==POLICIES[-1]);ax.tick_params(axis='x',bottom=pol==POLICIES[-1])
+    axs[-1].set_xlabel('Day');axs[-1].set_xticks([0,15,30,45,60]);fig.supylabel('Work difference from own control (units/member-day)',fontsize=12);fig.tight_layout(rect=(.025,0,1,1),h_pad=1.2);savefig(fig,'shock-recovery',figdir)
     tex+=figtex('shock-recovery','shock-recovery',f"Work differences from each policy's matched no-shock control: eight synthetic world pairs, 120 members and 60 days. Rows share a scale; bands are pointwise 95\\% normal Monte Carlo intervals. Shading marks site 0's 0.7 output multiplier on days 25--29. Zero denotes the matched control, not a forecast. Recovery criteria and unrecovered worlds are reported separately; source \\texttt{{{source_hash()[:12]}}}.")
     scale_tex=tex;tex='' 
     # Recovery reports failed identification as evidence, not a forced success.
@@ -354,14 +372,14 @@ def main():
       'Eight paired worlds per context, 120 members and 60 days. Intervals are descriptive 95\\% normal Monte Carlo intervals; they do not include parameter or model uncertainty. Contexts change information, interdependence, site shocks, observation error, review resources, record assumptions, cadence or response. They are not calibrated industry, legal, demographic or sustainability cases.')
     context_tex=tex;tex=''
     # Outcome means: aligned policy rows and record facets preserve both units.
-    fig,axs=plt.subplots(3,2,figsize=(6.4,5.2),sharex='col',sharey=True);tradeoffs=[]
+    fig,axs=plt.subplots(3,2,figsize=(6.4,5.5),sharex='col',sharey=True);tradeoffs=[]
     for i,pol in enumerate(POLICIES):
       color,line,marker=STYLE[pol]
       for row,backend in enumerate(('central','witness','consensus')):
        r=select(confirmation,regime=pol,backend=backend,update_interval_days=1)
        x=statistics.fmean(work(a) for a in r);y=statistics.fmean(regret(a) for a in r)
-       axs[row,0].scatter(x,i,color=color,marker=marker,s=36)
-       axs[row,1].scatter(y,i,color=color,marker=marker,s=36)
+       axs[row,0].scatter(x,i,color=color,marker=marker,s=56)
+       axs[row,1].scatter(y,i,color=color,marker=marker,s=56)
        tradeoffs.append(dict(policy=pol,backend=backend,work_per_member_day=x,regret_per_guild_day=y))
     for row,backend in enumerate(('central','witness','consensus')):
       for col in range(2):

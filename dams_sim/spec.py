@@ -44,6 +44,9 @@ class ScientificSpec:
 
 
 def resolve_spec(name: str, scale: int | None = None) -> ScientificSpec:
+    if name in ('longitudinal-adoption-5y', 'longitudinal-adoption-10y'):
+        from .longitudinal_design import resolve_longitudinal_spec
+        return resolve_longitudinal_spec(name, scale)
     all_stages = ('pilot', 'confirmation', 'mechanisms', 'stress', 'sensitivity', 'scenarios', 'extended', 'recovery')
     if name == 'full-study':
         spec = ScientificSpec(name, 120, 60, 4, 32, 64, 8, 8, 3, 8, 4,
@@ -91,6 +94,9 @@ def workload(config: Config) -> dict:
     RAM includes population/topology, intra-day snapshots/heaps, retained IDs,
     delay lists, JSON restore, and serialization sorting; measured RSS follows.
     """
+    if config.longitudinal is not None:
+        from .longitudinal import estimate_longitudinal
+        return estimate_longitudinal(config)
     n, d = config.n, config.days
     return {'work_events': n*d, 'operation_upper_bound': (12*n+4*config.guilds)*d,
             'estimated_peak_rss_bytes': 64_000_000+n*(12_000+400*d),

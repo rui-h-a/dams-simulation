@@ -35,7 +35,8 @@ def make_base(spec, limits):
     rss=limits.per_world_rss_bytes or plan['estimated_peak_rss_bytes']
     if rss<plan['estimated_peak_rss_bytes']:
         raise MemoryError('declared world RAM below conservative preflight bound; measure/revise bounds explicitly')
-    if plan['estimated_output_bytes']*4>limits.max_output_bytes:
+    copies=1 if getattr(spec,'schema_version',2)==3 else 4
+    if plan['estimated_output_bytes']*copies>limits.max_output_bytes:
         raise RuntimeError('declared world output below checkpoint/final-state preflight bound')
     return spec.base(max_wall_seconds=limits.world_timeout_seconds,max_output_mb=limits.max_output_bytes/1_000_000,
                      max_rss_mb=rss/(1024*1024),max_events=limits.max_events)
@@ -189,6 +190,9 @@ def publication_analysis(out,spec,limits,scheduler,metadata):
 
 
 def run_pipeline(name,scale,output,runtime_path=None):
+    if name in ('longitudinal-adoption-5y','longitudinal-adoption-10y'):
+        from .longitudinal_pipeline import run_longitudinal_pipeline
+        return run_longitudinal_pipeline(name,scale,output,runtime_path)
     if name=='historical-full-study':
         if scale not in (None,120):raise ValueError('historical design requires scale 120')
         # The published historical release is immutable. This entry retains the
