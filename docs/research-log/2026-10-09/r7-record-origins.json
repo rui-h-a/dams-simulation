@@ -36,32 +36,19 @@
       "source_sha256": "28612fc53e6633de309e2e9991ffbf859131ac44146a3f04a5f08a2907609fa0",
       "source_bytes": 3125,
       "exact_source_bytes": true
-    },
-    {
-      "record": "ssd-internal-prune-refusal-r1/partial-refusal-summary.json",
-      "source_sha256": "62419ef6b2fd7d4f750d026d8a9f60c41daed90cb1eafbfc3e2ed55842a6d1b1",
-      "source_bytes": 9450536,
-      "exact_source_bytes": false
-    },
-    {
-      "record": "ssd-internal-prune-refusal-r1/root-runner-refusal.json",
-      "source_sha256": "472efda852f1e899d44a6b24883055c3440857a870d5502cb981b156b35fbda9",
-      "source_bytes": 168,
-      "exact_source_bytes": true
-    },
-    {
-      "record": "ssd-internal-prune-refusal-r1/native-unlink-fixture-summary.json",
-      "source_sha256": "68fb6083fe9fe828b9aff14ce5abcdff068181551a72019bb889c9fcc074d86b",
-      "source_bytes": 42104,
-      "exact_source_bytes": false
-    },
-    {
-      "record": "ssd-internal-prune-refusal-r1/actual-two-copy-readback-summary.json",
-      "source_sha256": "94b20e2f1ff2f4762fdd8acf06400563b3f5058dadc2e03a417f5eaa578b220a",
-      "source_bytes": 8445,
-      "exact_source_bytes": false
     }
   ],
   "original_private_records_preserved": true,
-  "whole_goal_complete": false
+  "whole_goal_complete": false,
+  "publication_derivation": {
+    "original_published_sha256": "58ab49b8deb473f1393cbc029216d4eef4dc52025dff548a1af96c2c38f2e4ff",
+    "private_operation_fields_omitted": 4,
+    "omitted_value_sha256": [
+      "b953e57aa4c671628ec3d04719780980d4c6686e7eb58292cecdda32e20ced08",
+      "3195efc44cad549b0bf9137d08d7c7b7c65ee5d2ed9236107cfd5f72c894b19d",
+      "11c61ebd4d00be691fc0a53eb371d60f805acbba09081f78b4f7cd1a9c0f426b",
+      "4677d050f8b6ca597e987451911043e4b380787ffdb31ac24cf21f306a6ba516"
+    ],
+    "original_preserved_privately": true
+  }
 }

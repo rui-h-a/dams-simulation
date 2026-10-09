@@ -2,18 +2,6 @@
   "schema": "dams-explicit-record-origin-map-v1",
   "records": [
     {
-      "record": "ssd-internal-prune-r2/root-native-unlink-recheck.json",
-      "source_sha256": "6e9774924272101285beaa0691801671b583ff59c652dff4abda705e6f8c9f9c",
-      "source_bytes": 748,
-      "exact_source_bytes": true
-    },
-    {
-      "record": "ssd-internal-prune-r2/two-leaf-reconstruction-summary.json",
-      "source_sha256": "5f4cde99d9264a25358eace56dbe90b71ce33e030d0e9e333f2797dcfd81fa08",
-      "source_bytes": 13307,
-      "exact_source_bytes": false
-    },
-    {
       "record": "paper-layout-isolated-integration-r1/build-and-render-receipt.json",
       "source_sha256": "2b746c87d04250a3e46acdee5c23e65eee1eccc4993dd39378077c8c1d2d6749",
       "source_bytes": 1656,
@@ -33,5 +21,14 @@
     }
   ],
   "original_private_records_preserved": true,
-  "whole_goal_complete": false
+  "whole_goal_complete": false,
+  "publication_derivation": {
+    "original_published_sha256": "76d852513d9967071307fdeefdaa907da0574bfbfa64408d732aeb9702b284ca",
+    "private_operation_fields_omitted": 2,
+    "omitted_value_sha256": [
+      "1db7cb9904fab8e53bf23a2152eb7ac2f7d06c517cf9f622b2a20b0187c35535",
+      "4c2f4c8457bb78c06f14a696413f7f4bf2d1a452601b48c8286294f16f24123a"
+    ],
+    "original_preserved_privately": true
+  }
 }

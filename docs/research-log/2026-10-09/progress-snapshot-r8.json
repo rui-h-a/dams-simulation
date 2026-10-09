@@ -1,9 +1,5 @@
 {
-  "schema": "dams-root-authorized-progress-snapshot-r8-v1",
-  "root_actual_status_messages_received": true,
-  "snapshot_basis": "Root actual receipts and finite delegated filesystem actors; later cloud attempts are outside this first-attempt snapshot.",
-  "root_publication_explicitly_authorized_after_downloads_storage_close": true,
-  "whole_goal_complete": false,
+  "observed_utc": "2026-10-09T10:50:25.338503+00:00",
   "accepted_paired_worlds": 0,
   "completed_main_groups": 0,
   "accepted_formal_strategy_worlds": 0,
@@ -15,24 +11,6 @@
   "full_manifest_record_days": 3743,
   "precision_pilot_entries": 144,
   "ten_million_agent_maximum_scale_completed": false,
-  "original_cumulative_budget_usd": 100,
-  "original_absolute_deadline_utc": "2026-10-15T08:54:46.960873Z",
-  "original_allocation_and_reservation_usd_not_invoice_spend": {
-    "initial_validation": 5,
-    "prior_compute_envelope": 39,
-    "preservation_engineering_envelope": 20,
-    "current_compute_master_reservation": 34
-  },
-  "remaining_unencumbered_usd": 2,
-  "budget_or_deadline_reset": false,
-  "compute_quote_and_capacity_are_conditional": true,
-  "first_actual_launch_exit_code": 2,
-  "first_actual_launch_returned_utc": "2026-10-09T10:40:03.020169+00:00",
-  "first_actual_launch_new_VM_created_claim": false,
-  "first_launch_failure_reason_root_observed": "Required no-service-account IAP and HTTPS allow/deny security preflight rules were missing. Root restoration was pending in the authorized publication status message.",
-  "no_new_cloud_success_inferred_from_first_preflight_receipt": true,
-  "original_node_deadline_root_reported_UTC_time": "16:24:49; unchanged",
-  "no_human_cloud_contact_authorized_or_performed_by_this_actor": true,
   "actual_main_pdf_sha256": "9eeba6e7f9fc448e982773dbd3ae3522b0ea757130f5bc0e94eb06fcef4d5a69",
   "actual_main_pdf_pages": 75,
   "actual_75_page_finite_visual_coverage": true,
@@ -42,75 +20,9 @@
     34
   ],
   "formal_paper_complete": false,
-  "actual_reclaimed_internal_allocated_bytes_delegated_actor": 2754330624,
-  "actual_reclaimed_internal_logical_bytes_delegated_actor": 2738834699,
-  "actual_legacy_regular_files_and_inactive_sessions_and_PDFs_reclaimed": 5917,
-  "actual_final_old_path_SSD_aliases_verified": 72,
-  "actual_two_legacy_projects_and_68_inactive_DAMS_sessions_and_two_Downloads_PDFs_closed": true,
-  "all_DAMS_assets_anywhere_100_percent_completeness_claimed": false,
-  "raw_private_sessions_native_values_or_private_Git_history_published": false,
-  "existing_engineering_release_complete_readbacks_retained": true,
-  "new_publishing_actor_paid_calls": 0,
-  "canonical_source_main_Git_or_budget_mutated_by_this_publishing_actor": false,
-  "formal_running_strategy_digest": "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
-  "formal_completed_strategy_digest_prefix": "481aea",
-  "formal_status_reporting_basis": "Root direct status messages and preserved timestamped observations; the publishing actor did not rerun or directly validate live scientific outputs.",
-  "root_status_message_evidence_sha256": "1c7138d8e35e7ca62ed015f5c5f296ca1e2350260027f840cfafe360cfb2b7cd",
-  "new_evidence_records": [
-    {
-      "record": "ssd-internal-prune-r2/actual-prune-and-close-summary.json",
-      "source_bytes": 151576,
-      "source_sha256": "2efd21a0dc81d665ca230b26e4219fd7a18bf57c9c808eb9d39f7f7c0eb5826c",
-      "mode": "narrow"
-    },
-    {
-      "record": "ssd-legacy-reclaim-r1/actual-legacy-and-inactive-session-reclaim-summary.json",
-      "source_bytes": 65601,
-      "source_sha256": "937ea4ff150ff0be2c13bcae5d823a44e09d1e94412c5ddb3de7ea9f5a0ff69e",
-      "mode": "narrow"
-    },
-    {
-      "record": "ssd-legacy-reclaim-r1/actual-downloads-two-pdf-reclaim-summary.json",
-      "source_bytes": 2944,
-      "source_sha256": "30df236316db46a095d89199c5718977a8545188b0aea4ae36879b12a75d3596",
-      "mode": "narrow"
-    },
-    {
-      "record": "ssd-legacy-reclaim-r1/post-reclaim-bounded-name-search-summary.json",
-      "source_bytes": 2242,
-      "source_sha256": "8980108b0ce42640815f63aa2e4dd08b38b44e2e3027482120976a9ebe9b4d5d",
-      "mode": "narrow"
-    },
-    {
-      "record": "paper-layout-actual-integration-r1/original-75page-review-summary.json",
-      "source_bytes": 11374,
-      "source_sha256": "3e19e4c9c6de2be91a258aa541eed93401e10009e39654b533a2aa09132ebb2c",
-      "mode": "narrow"
-    },
-    {
-      "record": "paper-layout-actual-integration-r1/actual-main-75page-coverage-receipt.json",
-      "source_bytes": 3963,
-      "source_sha256": "84ebfedaa7b6068be97ff034dd9f3f041322804eebed142400a7b89e14824542",
-      "mode": "exact"
-    },
-    {
-      "record": "paper-layout-actual-integration-r1/frozen-postprocessing-manifest-summary.json",
-      "source_bytes": 30944,
-      "source_sha256": "b74f75c982b08746cf93b604136f888d05fc9a2e27c1158329902c3cbb7cbc75",
-      "mode": "narrow"
-    },
-    {
-      "record": "compute-phase-preparation-r1/root-budget-reservation-receipt.json",
-      "source_bytes": 612,
-      "source_sha256": "a1ace5c3139c51fa26830f82d8bf7585725e7f34e8191430c196b38b81b424c6",
-      "mode": "exact"
-    },
-    {
-      "record": "compute-phase-preparation-r1/first-actual-preflight-return-receipt.json",
-      "source_bytes": 232,
-      "source_sha256": "3e9ee2539b439441e86422afac26b1a36e02819c5bddbb2bcdff1120652e74a3",
-      "mode": "exact"
-    }
-  ],
-  "observed_utc": "2026-10-09T10:50:25.338503+00:00"
+  "whole_goal_complete": false,
+  "record_is_historical_snapshot": true,
+  "original_record_sha256": "622cb46349c70ff25787047c36577d2e0be8a9590f1d967412758255479f2bbe",
+  "original_record_preserved_privately": true,
+  "private_operation_fields_omitted": true
 }

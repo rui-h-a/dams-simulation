@@ -92,7 +92,6 @@
       },
       {
         "VM_retained_before_original_expiry": true,
-        "error": "owned synthetic SSD I/O failure",
         "native_ACKs_precede_failure": true,
         "original_deadline_expiry_hold_unchanged": true,
         "provider_delete_commands": [],
@@ -282,5 +281,13 @@
     "source_files_verified": 2123,
     "status": "ORIGINAL_THREE_SCENARIOS_REPAIRED_NATIVE_TINY_CLOSURE_VERIFIED",
     "whole_lifecycle_accepted": false
+  },
+  "publication_derivation": {
+    "original_published_sha256": "5a0b416acb651541785dcc564b1a644c2fa149d17c48c1bb8edac8f2ea56e320",
+    "private_operation_fields_omitted": 1,
+    "omitted_value_sha256": [
+      "a6cbcfd2c68d66d950d2b53dde629e5389f184320f8627cadac38389ab5f3867"
+    ],
+    "original_preserved_privately": true
   }
 }

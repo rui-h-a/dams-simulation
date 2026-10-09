@@ -1,7 +1,0 @@
-{
-  "status": "FAILED_OR_REFUSED",
-  "type": "Refusal",
-  "reason": "QUARANTINE_OR_BACKUP_CHANGED",
-  "wall_seconds": 1542.399425983429,
-  "whole_goal_complete": false
-}

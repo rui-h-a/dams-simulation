@@ -6,12 +6,6 @@
   "derivative_not_executable_configuration": true,
   "omitted_original_fields": [
     {
-      "pointer": "/ssd_observed_free_bytes",
-      "private_field_removed": true,
-      "canonical_value_sha256": "6a8b4f4aae985cfdaef79a54efc80381d5b4eee7882ec95288ecb03dde2985cf",
-      "canonical_value_bytes": 12
-    },
-    {
       "pointer": "/free_space_not_reserved",
       "private_field_removed": true,
       "canonical_value_sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
@@ -221,7 +215,22 @@
     "accepted_full_strategy_trajectories": 0,
     "accepted_counts_not_inferred_from_manifest_status": true,
     "new_formal_confirmation_worlds": 0,
-    "original_cumulative_budget_usd": 100,
     "whole_goal_complete": false
+  },
+  "publication_derivation": {
+    "original_published_sha256": "ae3012d4d39f06aff83ff540af041fe2410e9ce89a7a08548fa239b4f3e0ff45",
+    "private_operation_fields_omitted": 1,
+    "omitted_value_sha256": [
+      "65a7a6d8decec88c7da3780930af7c3c312ca98beea9ee51151ce02cc7eb4ede"
+    ],
+    "original_preserved_privately": true
+  },
+  "additional_private_operation_omissions": {
+    "prepared_input_sha256": "640a46bea34881e45a9433c734f7ba891106c2a5798a91a2ddaee0f59b57d24a",
+    "omitted_values": 1,
+    "omitted_value_sha256": [
+      "0f668aea077a96f1b7eb9e6aca9691fcfc61e2aac20b6942c2d09a2c05f7e807"
+    ],
+    "input_preserved_privately": true
   }
 }

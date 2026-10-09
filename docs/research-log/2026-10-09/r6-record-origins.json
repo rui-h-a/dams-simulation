@@ -44,12 +44,6 @@
       "exact_source_bytes": false
     },
     {
-      "record": "ssd-root-cutover-r3/actual-cutover-and-close.json",
-      "source_sha256": "731b79f994c634ccae20d75e352d2d537971351dcecc50d6f6a4710ece315d0c",
-      "source_bytes": 52060,
-      "exact_source_bytes": false
-    },
-    {
       "record": "scaling-layout-candidate-r1/parallel_panel_layout.py",
       "source_sha256": "28612fc53e6633de309e2e9991ffbf859131ac44146a3f04a5f08a2907609fa0",
       "source_bytes": 3125,
@@ -99,5 +93,13 @@
     }
   ],
   "original_private_records_preserved": true,
-  "whole_goal_complete": false
+  "whole_goal_complete": false,
+  "publication_derivation": {
+    "original_published_sha256": "e0203182bad397d836c343f67b6095c8e707a4e65e49d19d5f5ad8289fba6d5b",
+    "private_operation_fields_omitted": 1,
+    "omitted_value_sha256": [
+      "aec6394443ff6852695a44ff7c0150c281d8b8a2f73e8c681f36ef4b4c5b0a45"
+    ],
+    "original_preserved_privately": true
+  }
 }

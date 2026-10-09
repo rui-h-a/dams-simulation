@@ -147,12 +147,19 @@
   ],
   "calendar_day_completion_is_not_individual_raw_gate_acceptance": true,
   "original_absolute_deadline_utc": "2026-10-15T08:54:46.960873Z",
-  "original_cumulative_budget_usd": 100,
   "new_paid_resources": 0,
   "science_complete": false,
   "whole_goal_complete": false,
   "reported_complete_case_manifests": 8,
   "reported_running_case_manifests": 1,
   "reported_complete_full_strategy_manifests": 1,
-  "accepted_counts_not_inferred_from_manifest_status_or_next_case_execution": true
+  "accepted_counts_not_inferred_from_manifest_status_or_next_case_execution": true,
+  "publication_derivation": {
+    "original_published_sha256": "d2a1d5fbfc6c5b6838c84a405a150f39272dc7529c9a4eb6393beb4129bc4911",
+    "private_operation_fields_omitted": 1,
+    "omitted_value_sha256": [
+      "65a7a6d8decec88c7da3780930af7c3c312ca98beea9ee51151ce02cc7eb4ede"
+    ],
+    "original_preserved_privately": true
+  }
 }

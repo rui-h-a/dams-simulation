@@ -102,20 +102,17 @@
       "source_sha256": "5396e6b2c7e0e10e5439caf9c018d7f0f1e3907c103bc85a31829af65b2f35a0",
       "source_bytes": 2420,
       "exact_source_bytes": false
-    },
-    {
-      "record": "ssd-cutover-r1/actual-cutover-refusal.json",
-      "source_sha256": "239e16152e60fa5f6b9611e1218f9536e911247ecaea32b63b4731b70c448f59",
-      "source_bytes": 170,
-      "exact_source_bytes": true
-    },
-    {
-      "record": "ssd-cutover-r1/metadata-only-diagnosis.json",
-      "source_sha256": "2f80503597a21ecd5237f8380d9ffe0c5f5e641860ebb41a4f178375230f7a34",
-      "source_bytes": 2221,
-      "exact_source_bytes": false
     }
   ],
   "original_private_records_preserved": true,
-  "whole_goal_complete": false
+  "whole_goal_complete": false,
+  "publication_derivation": {
+    "original_published_sha256": "aa4f34f8c8c605bc8c2e1d279a834d8db359cc4e848d82396e980f01c253449e",
+    "private_operation_fields_omitted": 2,
+    "omitted_value_sha256": [
+      "0fb9707dc03a3acb24b70ed96873472cd34861f60678dd7829f02f4b5685071b",
+      "57162fc5a3c262a2cb6883d5bf99be68caf863e1ee380468fe2646301bdf8ca4"
+    ],
+    "original_preserved_privately": true
+  }
 }

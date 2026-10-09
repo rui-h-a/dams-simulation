@@ -2,30 +2,6 @@
   "schema": "dams-explicit-record-origin-map-v1",
   "records": [
     {
-      "record": "ssd-internal-prune-r2/actual-prune-and-close-summary.json",
-      "source_sha256": "2efd21a0dc81d665ca230b26e4219fd7a18bf57c9c808eb9d39f7f7c0eb5826c",
-      "source_bytes": 151576,
-      "exact_source_bytes": false
-    },
-    {
-      "record": "ssd-legacy-reclaim-r1/actual-legacy-and-inactive-session-reclaim-summary.json",
-      "source_sha256": "937ea4ff150ff0be2c13bcae5d823a44e09d1e94412c5ddb3de7ea9f5a0ff69e",
-      "source_bytes": 65601,
-      "exact_source_bytes": false
-    },
-    {
-      "record": "ssd-legacy-reclaim-r1/actual-downloads-two-pdf-reclaim-summary.json",
-      "source_sha256": "30df236316db46a095d89199c5718977a8545188b0aea4ae36879b12a75d3596",
-      "source_bytes": 2944,
-      "exact_source_bytes": false
-    },
-    {
-      "record": "ssd-legacy-reclaim-r1/post-reclaim-bounded-name-search-summary.json",
-      "source_sha256": "8980108b0ce42640815f63aa2e4dd08b38b44e2e3027482120976a9ebe9b4d5d",
-      "source_bytes": 2242,
-      "exact_source_bytes": false
-    },
-    {
       "record": "paper-layout-actual-integration-r1/original-75page-review-summary.json",
       "source_sha256": "3e19e4c9c6de2be91a258aa541eed93401e10009e39654b533a2aa09132ebb2c",
       "source_bytes": 11374,
@@ -44,12 +20,6 @@
       "exact_source_bytes": false
     },
     {
-      "record": "compute-phase-preparation-r1/root-budget-reservation-receipt.json",
-      "source_sha256": "a1ace5c3139c51fa26830f82d8bf7585725e7f34e8191430c196b38b81b424c6",
-      "source_bytes": 612,
-      "exact_source_bytes": true
-    },
-    {
       "record": "compute-phase-preparation-r1/first-actual-preflight-return-receipt.json",
       "source_sha256": "3e9ee2539b439441e86422afac26b1a36e02819c5bddbb2bcdff1120652e74a3",
       "source_bytes": 232,
@@ -57,5 +27,17 @@
     }
   ],
   "original_private_records_preserved": true,
-  "whole_goal_complete": false
+  "whole_goal_complete": false,
+  "publication_derivation": {
+    "original_published_sha256": "02aace90d87b1d585839777cdf5220722bcd2da696dbdc958595e7a22b6d0a85",
+    "private_operation_fields_omitted": 5,
+    "omitted_value_sha256": [
+      "7cb17d615447cc076ae9358ec5c0025dc39ed78fd4e184c788de43b98bb7d143",
+      "ce0e2cfc80875fda7fae93a8fe8e45b4bd86c35f325779288a8ac76518e78c28",
+      "b00d24d1eb349cb250101e186e8bc05581fc4fca710037b0a832c532fd07e365",
+      "b798b9332c780e517b78b0104bd9f9754175c31b37c2d2477ffe7142457f7be8",
+      "c07778c3a8e0a0b70cc4046e49126b23f260e61a9068c9c6a7b4f432b3447cb3"
+    ],
+    "original_preserved_privately": true
+  }
 }
