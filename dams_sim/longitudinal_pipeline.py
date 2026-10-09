@@ -9,6 +9,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import signal
 import time
@@ -46,6 +47,210 @@ def _origin(out,row,known):
     return {'parent_checkpoint':str(path/desc['file']),'parent_case_id':parent_id,
             'parent_source_sha256':m['source_sha256'],'parent_config_sha256':m['config_sha256'],
             'parent_day':desc['day'],'parent_state_semantic_sha256':desc['state_semantic_sha256']}
+
+
+def stopped_case_census(out, inventory, identity, *, expected_provenance=None):
+    """Rebuild partial completion from actual raw after scheduler reaping.
+
+    No Model is constructed and no older checkpoint substitutes for an invalid
+    latest generation. A case count is not a complete-stage or study gate.
+    """
+    from .config import Config
+    from .longitudinal_model import verify_snapshot
+    from research_tools.validate_longitudinal import CheckedLongitudinalCases
+    out = Path(out).absolute()
+    if identity.get('schema_version') != 3:
+        raise ValueError('partial census requires schema three identity')
+    reader = CheckedLongitudinalCases(out, {k: identity[k] for k in
+        ('source_sha256', 'pipeline_driver_sha256', 'spec_sha256')})
+    by_id = {r['case_id']: r for r in inventory}
+    if len(by_id) != len(inventory):
+        raise ValueError('partial census inventory duplicates')
+    configs = {key: Config.from_dict(row['config']) for key, row in by_id.items()}
+    if any(case_key(configs[key]) != key for key in by_id):
+        raise ValueError('partial census case identity differs')
+    def history(row):
+        values = []; seen = {row['case_id']}; parent = row['tags']['parent_case_id']
+        while parent is not None:
+            if parent in seen or parent not in by_id:
+                raise ValueError('partial census parent graph is cyclic/incomplete')
+            seen.add(parent); config = configs[parent]
+            values.append((config.days, config)); parent = by_id[parent]['tags']['parent_case_id']
+        return tuple(sorted(values, key=lambda v: v[0]))
+    histories = {key: history(row) for key, row in by_id.items()}
+    complete = {}; records = {}; checkpoints = {}
+    import hashlib
+    def trajectory_hash(rows):
+        value = hashlib.sha256()
+        for row in rows:
+            value.update(canonical(row)); value.update(b'\n')
+        return value.hexdigest()
+    for key, row in by_id.items():
+        record = {'case_id': key, 'classification': 'unstarted'}
+        case = out/'cases'/key
+        try:
+            if case.is_symlink():
+                raise ValueError('case directory is a symlink')
+            if not case.exists():
+                records[key] = record; continue
+            if not case.is_dir() or (out/'cases').is_symlink():
+                raise ValueError('case directory is unsafe')
+            attempts = sorted(p for p in case.iterdir() if p.name.startswith('attempt-')
+                              and not p.name.endswith('-exit.json'))
+            if any(p.is_symlink() or not p.is_dir() or re.fullmatch(r'attempt-[0-9]{3,}', p.name) is None
+                   for p in attempts):
+                raise ValueError('case attempt namespace is unsafe')
+            if not attempts:
+                records[key] = record; continue
+            attempt = attempts[-1]
+            record['attempt'] = str(attempt.relative_to(out))
+            marker = attempt/'manifest.json'
+            if marker.is_symlink():
+                raise ValueError('attempt manifest is a symlink')
+            manifest = json.loads(marker.read_text()) if marker.exists() else None
+            if manifest is None:
+                raise ValueError('started attempt has no source/driver manifest')
+            if manifest is not None:
+                if (manifest.get('source_sha256') != identity['source_sha256']
+                        or manifest.get('pipeline_driver_sha256') != identity['pipeline_driver_sha256']
+                        or canonical(manifest.get('config')) != canonical(configs[key].to_dict())
+                        or manifest.get('config_sha256') != digest(canonical(configs[key].to_dict()))):
+                    raise ValueError('attempt source/driver/config differs')
+                record['manifest_sha256'] = file_digest(marker)
+                for field, value in (expected_provenance or {}).items():
+                    if manifest.get('execution_provenance', {}).get(field) != value:
+                        raise ValueError('attempt execution provenance differs: '+field)
+                if manifest.get('status') == 'complete':
+                    complete[key] = reader.validate_case(row, attempt,
+                        expected_provenance=expected_provenance, config_history=histories[key])
+                    record['classification'] = 'complete'
+                    records[key] = record; continue
+            index_path = attempt/'checkpoint-index.json'
+            if not index_path.exists():
+                record['classification'] = 'failed'
+                record['reason'] = 'started attempt has no valid latest checkpoint'
+                records[key] = record; continue
+            if index_path.is_symlink():
+                raise ValueError('checkpoint index is a symlink')
+            index = json.loads(index_path.read_text())
+            snapshots = index.get('snapshots')
+            if (index.get('source_sha256') != identity['source_sha256']
+                    or index.get('config_sha256') != digest(canonical(configs[key].to_dict()))
+                    or not isinstance(snapshots, list) or not 1 <= len(snapshots) <= 2):
+                raise ValueError('latest checkpoint index identity/retention differs')
+            latest = snapshots[0]
+            parts = latest.get('files', [])
+            name = latest['file']
+            if (Path(name).name != name or len(parts) != 2
+                    or {v['file'] for v in parts} != {name, str(Path(name).with_suffix('.sqlite'))}):
+                raise ValueError('latest checkpoint group roster differs')
+            for part in parts:
+                path = attempt/part['file']
+                if (path.is_symlink() or not path.is_file() or path.stat().st_size != part['bytes']
+                        or file_digest(path) != part['sha256']):
+                    raise ValueError('latest checkpoint group bytes differ')
+            if file_digest(attempt/name) != latest['sha256']:
+                raise ValueError('latest checkpoint pointer differs')
+            envelope, database = verify_snapshot(attempt/name, expected_config=configs[key])
+            if (envelope['state']['day'] != latest['day']
+                    or envelope['state_semantic_sha256'] != latest['state_semantic_sha256']):
+                raise ValueError('latest checkpoint state/day differs')
+            parent_id = row['tags']['parent_case_id']
+            checkpoints[key] = {'state_origin': envelope['state']['branch_origin'],
+                                'manifest_origin': manifest.get('branch_origin'),
+                                'ledger_path': database,
+                                'past_trajectory_sha256': trajectory_hash(
+                                    envelope['state']['history'][:configs[parent_id].days])
+                                    if parent_id is not None else None}
+            record.update(classification='valid-latest-checkpoint', checkpoint_file=name,
+                          checkpoint_index_sha256=file_digest(index_path),
+                          checkpoint_sha256=latest['sha256'], checkpoint_day=latest['day'],
+                          state_semantic_sha256=latest['state_semantic_sha256'])
+        except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
+            record.update(classification='failed', reason=str(error), error_type=type(error).__name__)
+        records[key] = record
+    # A child's complete raw cannot certify its assigned parent or shared past.
+    from itertools import islice, zip_longest
+    from .longitudinal_outputs import iter_timeseries
+    pending = set(complete)
+    while pending:
+        ready = [key for key in pending if by_id[key]['tags']['parent_case_id'] not in pending]
+        if not ready:
+            raise ValueError('partial census complete-case parent graph is cyclic')
+        for key in ready:
+            child = complete[key]; parent_id = by_id[key]['tags']['parent_case_id']
+            try:
+                if parent_id is None:
+                    if child['manifest'].get('branch_origin') is not None:
+                        raise ValueError('root case has an unexpected branch origin')
+                else:
+                    if parent_id not in complete or records[parent_id]['classification'] != 'complete':
+                        raise ValueError('assigned complete parent is unavailable')
+                    parent = complete[parent_id]
+                    origin = {'parent_case_id': parent_id, 'parent_source_sha256': identity['source_sha256'],
+                              'parent_config_sha256': parent['manifest']['config_sha256'],
+                              'parent_day': parent['config'].days,
+                              'parent_state_semantic_sha256': parent['state_semantic_sha256']}
+                    if child['manifest'].get('branch_origin') != origin or child['branch_origin'] != origin:
+                        raise ValueError('shared parent complete-state identity differs')
+                    parent_series = iter_timeseries(parent['attempt']/'timeseries.csv')
+                    child_series = islice(iter_timeseries(child['attempt']/'timeseries.csv'), parent['config'].days)
+                    if any(a != b for a, b in zip_longest(parent_series, child_series)):
+                        raise ValueError('child rewrites shared pre-adoption trajectory')
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                records[key].update(classification='failed', reason=str(error), error_type=type(error).__name__)
+            pending.remove(key)
+    # A full-state checkpoint must also belong to its assigned shared parent.
+    # Preserve only the small ancestry/prefix receipt, not every agent envelope.
+    import sqlite3
+    for key, checkpoint in checkpoints.items():
+        if records[key]['classification'] != 'valid-latest-checkpoint':
+            continue
+        parent_id = by_id[key]['tags']['parent_case_id']
+        try:
+            if parent_id is None:
+                if checkpoint['state_origin'] is not None or checkpoint['manifest_origin'] is not None:
+                    raise ValueError('root checkpoint has an unexpected branch origin')
+                continue
+            if parent_id not in complete or records[parent_id]['classification'] != 'complete':
+                raise ValueError('checkpoint assigned complete parent is unavailable')
+            parent = complete[parent_id]
+            origin = {'parent_case_id': parent_id, 'parent_source_sha256': identity['source_sha256'],
+                      'parent_config_sha256': parent['manifest']['config_sha256'],
+                      'parent_day': parent['config'].days,
+                      'parent_state_semantic_sha256': parent['state_semantic_sha256']}
+            if checkpoint['state_origin'] != origin or checkpoint['manifest_origin'] != origin:
+                raise ValueError('checkpoint assigned parent complete-state identity differs')
+            if records[key]['checkpoint_day'] < parent['config'].days:
+                raise ValueError('checkpoint precedes its assigned parent boundary')
+            if checkpoint['past_trajectory_sha256'] != trajectory_hash(
+                    iter_timeseries(parent['attempt']/'timeseries.csv')):
+                raise ValueError('checkpoint rewrites shared pre-adoption trajectory')
+            left = sqlite3.connect(Path(parent['ledger_path']).as_uri()+'?mode=ro', uri=True)
+            right = None
+            try:
+                right = sqlite3.connect(Path(checkpoint['ledger_path']).as_uri()+'?mode=ro', uri=True)
+                query = 'SELECT seq,day,kind,event,payload FROM journal WHERE day < ? ORDER BY seq'
+                parent_rows = left.execute(query, (parent['config'].days,))
+                child_rows = right.execute(query, (parent['config'].days,))
+                if any(a != b for a, b in zip_longest(parent_rows, child_rows)):
+                    raise ValueError('checkpoint rewrites shared pre-adoption journal')
+            finally:
+                left.close()
+                if right is not None:
+                    right.close()
+        except (OSError, ValueError, KeyError, TypeError, sqlite3.DatabaseError) as error:
+            records[key].update(classification='failed', reason=str(error), error_type=type(error).__name__)
+    groups = {name: sorted(key for key, r in records.items() if r['classification'] == name)
+              for name in ('complete', 'valid-latest-checkpoint', 'failed', 'unstarted')}
+    if sum(map(len, groups.values())) != len(inventory) or set().union(*map(set, groups.values())) != set(by_id):
+        raise ValueError('partial census is not an exact disjoint inventory partition')
+    unexpected = sorted(p.name for p in (out/'cases').iterdir() if p.name not in by_id) if (out/'cases').is_dir() else []
+    return {'schema': 'DAMS-stopped-case-census-1', 'identity': identity,
+            'inventory_sha256': digest(canonical(inventory)), 'expected_cases': len(inventory),
+            'full_study_gate': False, 'groups': groups,
+            'remaining_case_ids': sorted(set(by_id)-set(groups['complete'])),
+            'unexpected_case_ids': unexpected, 'records': [records[key] for key in sorted(records)]}
 
 
 def execute_stage(out,name,spec,base,world_ids,scheduler,identity):
@@ -94,9 +299,25 @@ def execute_stage(out,name,spec,base,world_ids,scheduler,identity):
         atomic_json(stage/'manifest.json',meta)
         return effects,meta
     except BaseException as error:
-        atomic_json(stage/'manifest.json',meta|{'status':'censored' if isinstance(error,InterruptedError) else 'failed',
-                    'exit_code':1,'error_type':type(error).__name__,'error':str(error),'completed_rows':len(known),
-                    'remaining_case_ids':[r['case_id'] for r in pending]})
+        failure = meta|{'status':'censored' if isinstance(error,InterruptedError) else 'failed',
+                       'exit_code':1,'error_type':type(error).__name__,'error':str(error)}
+        try:
+            if getattr(scheduler, 'owned_workers_absent', False) is not True:
+                raise RuntimeError('owned workers are not verified absent; stopped census refused')
+            census = stopped_case_census(out, inventory, identity,
+                                        expected_provenance=scheduler.limits.provenance)
+            atomic_json(stage/'case_census.json', census)
+            failure.update(completed_rows=len(census['groups']['complete']),
+                           remaining_case_ids=census['remaining_case_ids'],
+                           case_census_sha256=file_digest(stage/'case_census.json'),
+                           partial_census_exact=True)
+        except Exception as census_error:
+            # Preserve the primary failure; unresolved raw is never counted zero
+            # or promoted from in-memory results to exact completion.
+            failure.update(completed_rows=None, remaining_case_ids=sorted(by['case_id'] for by in inventory),
+                           partial_census_exact=False, census_error_type=type(census_error).__name__,
+                           census_error=str(census_error))
+        atomic_json(stage/'manifest.json',failure)
         raise
 
 

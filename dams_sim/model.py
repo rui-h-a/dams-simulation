@@ -64,11 +64,13 @@ class Model:
     outcomes; submit observed claims; review prior claims; schedule appeals.
     Simultaneous updates use a common morning snapshot and stable event IDs.
     """
-    def __init__(self, config: Config, *, storage_dir=None):
+    def __init__(self, config: Config, *, storage_dir=None, page_options=None,native_owner_dir=None,known_latest_floor=None):
         if config.longitudinal is not None:
             from .longitudinal_model import LongitudinalEngine
-            self._long = LongitudinalEngine(config, storage_dir=storage_dir)
+            self._long = LongitudinalEngine(config, storage_dir=storage_dir,page_options=page_options,native_owner_dir=native_owner_dir,known_latest_floor=known_latest_floor)
             return
+        if page_options is not None or native_owner_dir is not None or known_latest_floor is not None:
+            raise ValueError('native page checkpoints require an opt-in longitudinal model')
         self.config = config.validate()
         self.rng = WorldRandom(config.seed, config.world)
         self.agents: list[Agent] = []
@@ -486,11 +488,38 @@ class Model:
         return self._long.write_snapshot(path)
 
     def write_final_state(self, path):
-        return self.write_checkpoint(path)
+        if '_long' not in self.__dict__:return self.write_checkpoint(path)
+        return self._long.write_snapshot(path,final=True)
 
     @classmethod
-    def restore_checkpoint(cls, path, *, storage_dir=None, expected_config=None):
-        from .longitudinal_model import LongitudinalEngine, verify_snapshot
+    def restore_checkpoint(cls, path, *, storage_dir=None, expected_config=None,page_options=None,known_latest_floor=None,native_owner_dir=None):
+        from .longitudinal_model import LongitudinalEngine, verify_snapshot,load_snapshot_envelope,verify_native_image
+        if page_options is not None:
+            from .longitudinal_storage import ExactLedger
+            from .native_checkpoint_owner import CheckpointOwner,default_owner_directory
+            from .storage import canonical,digest
+            value,original=load_snapshot_envelope(path,expected_config=expected_config)
+            descriptor=value.get('native_checkpoint')
+            if descriptor is None or storage_dir is None or known_latest_floor is None:
+                raise ValueError('native restore requires native descriptor, fresh directory and external latest floor')
+            owner=CheckpointOwner(native_owner_dir or default_owner_directory(page_options,value['config_sha256']),
+                source_sha256=value['source_sha256'],config_sha256=value['config_sha256'])
+            try:
+                owned=owner.for_checkpoint(path,minimum_floor=known_latest_floor)
+                if owned['checkpoint']!=original:raise ValueError('native checkpoint parsed bytes differ from owner pin')
+                def verify(database,desc,receipt):
+                    verify_native_image(value['state'],database,desc,expected_state_sha256=value['state_semantic_sha256'])
+                    if owner.for_checkpoint(path)['checkpoint']!=original:raise ValueError('native checkpoint changed before restore')
+                ledger=ExactLedger.from_pages(storage_dir,descriptor,page_options=page_options,known_latest_floor=owned['floor'],verify_export=verify)
+                obj=cls.__new__(cls)
+                obj._long=LongitudinalEngine.restore(value['state'],storage_dir=storage_dir,ledger_instance=ledger,native_owner=owner)
+                if obj._long.semantic_digest()!=value['state_semantic_sha256']:
+                    raise ValueError('restored full longitudinal state differs')
+                return obj
+            except BaseException:
+                owner.close()
+                if 'ledger' in locals():ledger.close()
+                raise
         value, database = verify_snapshot(path, expected_config=expected_config)
         obj = cls.__new__(cls)
         obj._long = LongitudinalEngine.restore(value['state'], storage_dir=storage_dir, ledger_snapshot=database)
@@ -498,11 +527,11 @@ class Model:
             raise ValueError('restored full longitudinal state differs')
         return obj
 
-    def fork(self, new_config, *, storage_dir=None):
+    def fork(self, new_config, *, storage_dir=None,page_options=None,native_owner_dir=None):
         if '_long' not in self.__dict__:
             raise ValueError('shared-history branch API requires a longitudinal parent')
         obj = self.__class__.__new__(self.__class__)
-        obj._long = self._long.fork(new_config, storage_dir=storage_dir)
+        obj._long = self._long.fork(new_config, storage_dir=storage_dir,page_options=page_options,native_owner_dir=native_owner_dir)
         return obj
 
 

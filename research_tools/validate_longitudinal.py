@@ -474,9 +474,10 @@ def verify_summary_evidence(summary,config,state,database):
 
 
 class CheckedLongitudinalStudy:
-    def __init__(self,root,*,publication_required=True,producer_in_progress=False,expected_provenance=None):
+    def __init__(self,root,*,publication_required=True,producer_in_progress=False,expected_provenance=None,page_options=None,known_latest_floor=None):
         _require_current_validator()
         self.root=Path(root).resolve();self.inputs={};self.cases={};self.observations=[];self.endpoints=[]
+        self.page_options=page_options;self.known_latest_floor=known_latest_floor
         self.pipeline=self.read_json('pipeline_manifest.json')
         if self.pipeline.get('schema_version')!=3:raise ValueError('not a longitudinal scientific version')
         if self.pipeline.get('status')!='complete' and not (producer_in_progress and self.pipeline.get('status')=='running' and self.pipeline.get('scientific_status')=='complete'):
@@ -539,6 +540,31 @@ class CheckedLongitudinalStudy:
         self.read_hash(name)
         if self.file(name).read_bytes()!=_csv_bytes(rows):raise ValueError('CSV differs from rebuilt raw table: '+str(name))
 
+    def _verify_snapshot(self,path,config):
+        from dams_sim.longitudinal_model import load_snapshot_envelope
+        envelope,_=load_snapshot_envelope(path,expected_config=config)
+        if envelope.get('native_checkpoint') is None:return verify_snapshot(path,expected_config=config)
+        options=getattr(self,'page_options',None)
+        if options is None:raise ValueError('native raw gate requires explicit storage options and external owner floor')
+        from dams_sim.native_checkpoint_owner import CheckpointOwner,default_owner_directory
+        import tempfile
+        owner=CheckpointOwner(default_owner_directory(options,envelope['config_sha256']),source_sha256=envelope['source_sha256'],config_sha256=envelope['config_sha256'])
+        try:
+            latest=owner.latest(minimum_floor=getattr(self,'known_latest_floor',None))
+            if latest is None:raise ValueError('native raw gate latest external owner missing')
+            def retain_floor(floor):
+                # Observation proofs append CAS records. Preserve their new floor
+                # externally while retaining the exact latest CP/source bytes.
+                current=owner.latest(minimum_floor=latest['floor'])
+                owner.publish(current['checkpoint']['path'],current['descriptor'],floor)
+            # Export only into an owned temporary sibling. Original raw roster
+            # remains untouched; final-state callers receive its original flat DB.
+            with tempfile.TemporaryDirectory(prefix='native-raw-verify-',dir=Path(options.store_root).parent) as exported:
+                result=verify_snapshot(path,expected_config=config,page_options=options,known_latest_floor=latest['floor'],export_dir=exported,native_floor_observer=retain_floor)
+                if envelope['ledger'].get('backend')=='native-committed-pages-v1':return result[0],None
+                return result
+        finally:owner.close()
+
     def _case(self,row,reference,expected_provenance,config_history=()):
         config=Config.from_dict(row['config']);ident=row['case_id']
         if case_key(config)!=ident:raise ValueError('scientific case ID differs')
@@ -561,14 +587,18 @@ class CheckedLongitudinalStudy:
         allowed=set(required);days=[];final_envelope=None
         for descriptor in [m['final_state_descriptor'],*index['snapshots']]:
             parts=descriptor.get('files')
-            if not isinstance(parts,list) or len(parts)!=2 or {p['file'] for p in parts}!={descriptor['file'],str(Path(descriptor['file']).with_suffix('.sqlite'))}:
+            native_periodic=descriptor is not m['final_state_descriptor'] and descriptor.get('native_checkpoint') is not None
+            expected={descriptor['file']} if native_periodic else {descriptor['file'],str(Path(descriptor['file']).with_suffix('.sqlite'))}
+            if not isinstance(parts,list) or len(parts)!=len(expected) or {p['file'] for p in parts}!=expected:
                 raise ValueError('snapshot group descriptor differs')
             for part in parts:
                 path=attempt/part['file'];allowed.add(part['file'])
                 if path.parent!=attempt or self.read_hash(str(path.relative_to(self.root)))!=part['sha256'] or path.stat().st_size!=part['bytes']:
                     raise ValueError('snapshot group bytes differ')
             if file_digest(attempt/descriptor['file'])!=descriptor['sha256']:raise ValueError('descriptor pointer digest differs')
-            envelope,_=verify_snapshot(attempt/descriptor['file'],expected_config=config)
+            envelope,_=self._verify_snapshot(attempt/descriptor['file'],config)
+            if descriptor.get('native_checkpoint')!=envelope.get('native_checkpoint'):
+                raise ValueError('native raw descriptor/envelope handle differs')
             if envelope['state']['day']!=descriptor['day'] or envelope['state_semantic_sha256']!=descriptor['state_semantic_sha256']:
                 raise ValueError('snapshot complete-state digest/day differs')
             if descriptor is m['final_state_descriptor']:final_envelope=envelope
@@ -736,7 +766,7 @@ class CheckedLongitudinalStudy:
     def read_snapshot(self,case_id):
         """Read one verified full state at a time; never retain all populations."""
         case=self.cases[case_id]
-        return verify_snapshot(case['attempt']/'final_state.json',expected_config=case['config'])
+        return self._verify_snapshot(case['attempt']/'final_state.json',case['config'])
 
     def iter_journal(self,case_id):
         import sqlite3
@@ -759,8 +789,58 @@ class CheckedLongitudinalStudy:
                 'validator_import_sha256':VALIDATOR_IMPORT_SHA256,'source_import_sha256':SOURCE_IMPORT_SHA256}
 
 
-def validate_longitudinal_output(output,spec=None,scale=None,*,publication_required=True,producer_in_progress=False,expected_provenance=None):
-    checked=CheckedLongitudinalStudy(output,publication_required=publication_required,producer_in_progress=producer_in_progress,expected_provenance=expected_provenance)
+class CheckedLongitudinalCases(CheckedLongitudinalStudy):
+    """The existing whole-case raw gate for a stopped, possibly partial task.
+
+    This reader never promotes individual cases to a complete study. Parent
+    branch and inventory closure are checked by the census caller, separately
+    from the full Gregorian/state/ledger checks reused by ``_case``.
+    """
+    def __init__(self, root, identity):
+        _require_current_validator()
+        self.root = Path(root).absolute()
+        for path in (self.root, *self.root.parents):
+            if path.is_symlink():
+                raise ValueError('partial case root has a symlink ancestor')
+        if not self.root.is_dir():
+            raise ValueError('partial case root is absent')
+        required = {'source_sha256', 'pipeline_driver_sha256', 'spec_sha256'}
+        if set(identity) != required:
+            raise ValueError('partial case identity is incomplete')
+        if (identity['source_sha256'] != source_hash()
+                or identity['pipeline_driver_sha256'] != driver_hash()):
+            raise ValueError('partial case source/driver differs')
+        self.identity = dict(identity)
+        self.inputs = {}
+        self.cases = {}
+        self.page_options = None
+        self.known_latest_floor = None
+
+    def validate_case(self, row, attempt, *, expected_provenance=None, config_history=()):
+        attempt = Path(attempt).absolute()
+        for path in (attempt, *attempt.parents):
+            if path.is_symlink():
+                raise ValueError('partial case attempt has a symlink ancestor')
+            if path == self.root:
+                break
+        if not attempt.is_relative_to(self.root):
+            raise ValueError('partial case attempt outside its root')
+        reference = {'attempt': str(attempt.relative_to(self.root)),
+                     'manifest_sha256': file_digest(attempt/'manifest.json')}
+        result = self._case(row, reference, expected_provenance, config_history)
+        _require_current_validator()
+        self.cases[row['case_id']] = result
+        return result
+
+    def result(self):
+        return {'status': 'individual-case-raw-validation',
+                'unique_complete_cases': len(self.cases),
+                'full_study_gate': False, 'identity': self.identity}
+
+
+def validate_longitudinal_output(output,spec=None,scale=None,*,publication_required=True,producer_in_progress=False,expected_provenance=None,page_options=None,known_latest_floor=None):
+    checked=CheckedLongitudinalStudy(output,publication_required=publication_required,producer_in_progress=producer_in_progress,expected_provenance=expected_provenance,
+        **({'page_options':page_options,'known_latest_floor':known_latest_floor} if page_options is not None else {}))
     if spec is not None and checked.spec.name!=spec or scale is not None and checked.spec.n!=scale:raise ValueError('requested longitudinal spec/scale differs')
     return checked.result()
 

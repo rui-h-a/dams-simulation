@@ -16,7 +16,7 @@ from .spec import case_key, scientific_config, workload
 from .storage import atomic_json, canonical, digest, file_digest, source_hash, verify_outputs
 
 
-def restore_checkpoint(attempt: Path, config: Config, *, storage_dir=None):
+def restore_checkpoint(attempt: Path, config: Config, *, storage_dir=None,page_options=None,known_latest_floor=None,native_owner_dir=None):
     index_path = attempt/'checkpoint-index.json'
     if not index_path.is_file(): return None, None
     index = json.loads(index_path.read_text())
@@ -29,6 +29,23 @@ def restore_checkpoint(attempt: Path, config: Config, *, storage_dir=None):
         raise ValueError('checkpoint integrity mismatch')
     value = json.loads(path.read_text())
     if config.longitudinal is not None:
+        native=value.get('native_checkpoint')
+        if native is not None:
+            if page_options is None:raise ValueError('native checkpoint options and external owner record required')
+            from .native_checkpoint_owner import CheckpointOwner,default_owner_directory
+            owner=CheckpointOwner(native_owner_dir or default_owner_directory(page_options,index['config_sha256']),
+                source_sha256=index['source_sha256'],config_sha256=index['config_sha256'])
+            try:
+                latest=owner.latest(minimum_floor=known_latest_floor)
+                if latest is None:raise ValueError('native checkpoint external latest owner is missing')
+                # The latest index must bind the separately published latest CP;
+                # an incomplete generation never becomes an older recovery.
+                if latest['descriptor']!=item:raise ValueError('native checkpoint index differs from latest external owner')
+                model=Model.restore_checkpoint(path,storage_dir=storage_dir,expected_config=config,page_options=page_options,
+                    known_latest_floor=latest['floor'],native_owner_dir=owner.path)
+                if model.day!=item['day']:raise ValueError('longitudinal checkpoint day differs from index')
+                return model,{'parent_attempt':attempt.name,'checkpoint_file':item['file'],'checkpoint_sha256':item['sha256'],'parent_index_sha256':file_digest(index_path)}
+            finally:owner.close()
         for part in item.get('files',[]):
             file=attempt/part['file']
             if not file.resolve().is_relative_to(attempt.resolve()) or file_digest(file)!=part['sha256'] or file.stat().st_size!=part['bytes']:
@@ -53,7 +70,7 @@ def branch_identity(origin):
     return {k:v for k,v in origin.items() if k!='parent_checkpoint'}
 
 
-def _worker(config_value, attempt_value, previous_value, limits_value, driver_hash, remaining_seconds, branch_origin=None):
+def _worker(config_value, attempt_value, previous_value, limits_value, driver_hash, remaining_seconds, branch_origin=None,page_options=None,known_latest_floor=None):
     # Fresh process per world, so another world's RSS high-water cannot reject it.
     for key in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS'):
         os.environ[key] = '1'
@@ -66,23 +83,47 @@ def _worker(config_value, attempt_value, previous_value, limits_value, driver_ha
     attempt = Path(attempt_value)
     config = Config.from_dict(config_value)
     limits = RuntimeLimits.from_dict(limits_value)
+    if page_options is not None:
+        from .native_checkpoint_owner import CheckpointOwner,default_owner_directory
+        from .native_page_backend import handle
+        owner=CheckpointOwner(default_owner_directory(page_options,digest(canonical(config.to_dict()))),source_sha256=source_hash(),config_sha256=digest(canonical(config.to_dict())))
+        try:
+            latest=owner.latest(minimum_floor=known_latest_floor)
+            if latest is not None:known_latest_floor=latest['floor']
+        finally:owner.close()
+        # Runtime branch names distinguish attempt recovery from a scientific
+        # fork. They never alter Config, context, world identity or branch_origin.
+        page_options=dataclasses.replace(page_options,branch='run-'+digest(canonical(str(attempt.absolute())))[:32])
     try:
-        model, origin = restore_checkpoint(Path(previous_value),config,storage_dir=attempt if config.longitudinal is not None else None) if previous_value else (None,None)
+        model, origin = restore_checkpoint(Path(previous_value),config,storage_dir=attempt if config.longitudinal is not None else None,
+            **({'page_options':page_options,'known_latest_floor':known_latest_floor} if page_options is not None else {})) if previous_value else (None,None)
         identity=branch_identity(branch_origin)
         if identity is not None:
             if config.longitudinal is None:raise ValueError('branch origin requires a longitudinal case')
             if model is None:
                 import tempfile
                 with tempfile.TemporaryDirectory(prefix='parent-',dir=attempt) as working:
-                    parent=Model.restore_checkpoint(branch_origin['parent_checkpoint'],storage_dir=working)
+                    parent_options=None
+                    parent_floor=None
+                    if page_options is not None:
+                        from .longitudinal_model import load_snapshot_envelope
+                        envelope,_=load_snapshot_envelope(branch_origin['parent_checkpoint'])
+                        parent_options=dataclasses.replace(page_options,branch='par-'+digest(canonical(str(attempt.absolute())))[:32])
+                        owner=CheckpointOwner(default_owner_directory(parent_options,envelope['config_sha256']),source_sha256=source_hash(),config_sha256=envelope['config_sha256'])
+                        try:parent_floor=owner.for_checkpoint(branch_origin['parent_checkpoint'],minimum_floor=known_latest_floor)['floor']
+                        finally:owner.close()
+                    parent=Model.restore_checkpoint(branch_origin['parent_checkpoint'],storage_dir=working,
+                        **({'page_options':parent_options,'known_latest_floor':parent_floor} if parent_options is not None else {}))
                     actual={'parent_case_id':case_key(parent.config),'parent_source_sha256':source_hash(),'parent_config_sha256':digest(canonical(parent.config.to_dict())),
                             'parent_day':parent.day,'parent_state_semantic_sha256':parent._long.semantic_digest()}
                     if any(identity[k]!=v for k,v in actual.items()):raise ValueError('branch origin full parent state differs')
-                    model=parent.fork(config,storage_dir=attempt);model.branch_origin.update(identity);parent.ledger.close()
+                    model=parent.fork(config,storage_dir=attempt,**({'page_options':page_options} if page_options is not None else {}));model.branch_origin.update(identity);parent.ledger.close()
+                    if page_options is not None:parent._long._native_owner.close()
             if any(model.branch_origin.get(k)!=v for k,v in identity.items() if k!='parent_case_id'):raise ValueError('restored child branch identity differs')
         run_world(config,attempt,restored=model,restart_origin=origin,
                   checkpoint_interval_days=limits.checkpoint_interval_days,
                   checkpoint_interval_seconds=limits.checkpoint_interval_seconds,
+                  **({'page_options':page_options,'known_latest_floor':known_latest_floor} if page_options is not None else {}),
                   stop_requested=lambda: requested or time.time()>=limits.deadline or time.monotonic()-worker_started>=remaining_seconds,
                   metadata_extra={'pipeline_driver_sha256':driver_hash,'scientific_case_id':case_key(config),
                                   **({'branch_origin':identity} if identity is not None else {}),
@@ -123,14 +164,20 @@ def output_files(path):
 
 
 class Scheduler:
-    def __init__(self, root: Path, limits: RuntimeLimits, driver_hash: str):
+    def __init__(self, root: Path, limits: RuntimeLimits, driver_hash: str,*,page_options=None,known_latest_floor=None):
         if limits.memory_budget_bytes>available_memory():
             raise MemoryError('declared batch memory exceeds available host/cgroup RAM')
         self.root, self.limits, self.driver_hash = root, limits, driver_hash
         self.worker_limit = min(limits.max_workers,limits.cpu_budget)
         self.stopped = False
+        self.owned_workers_absent = True
         self.peak_active = 0
         self.ctx = multiprocessing.get_context('spawn')
+        self.page_options=page_options;self.known_latest_floor=known_latest_floor
+        if page_options is not None:
+            page_options.validate()
+            if self.worker_limit!=1:
+                raise ValueError('native shared CAS requires explicit single-worker engineering admission; concurrent world scheduling is not admitted')
     def stop(self): self.stopped = True
 
     def _reap_cooperatively(self,processes):
@@ -177,6 +224,23 @@ class Scheduler:
                 summary = json.loads((attempt/'summary.json').read_text())
                 if summary['days_completed']!=config.days or summary['n']!=config.n:
                     raise ValueError('complete case has wrong population/horizon')
+                if self.page_options is not None:
+                    from .native_checkpoint_owner import CheckpointOwner,default_owner_directory,handle_dict
+                    from .longitudinal_model import verify_snapshot
+                    import tempfile
+                    owner=CheckpointOwner(default_owner_directory(self.page_options,m['config_sha256']),source_sha256=source_hash(),config_sha256=m['config_sha256'])
+                    try:
+                        latest=owner.for_checkpoint(attempt/'final_state.json')
+                        floor=latest['floor']
+                        if self.known_latest_floor is not None and handle_dict(self.known_latest_floor)['closure_count']>floor['closure_count']:
+                            floor=self.known_latest_floor
+                        def retain_floor(observed):
+                            owner.publish(attempt/'final_state.json',latest['descriptor'],observed)
+                            self.known_latest_floor=observed
+                        with tempfile.TemporaryDirectory(prefix='native-scheduler-verify-',dir=Path(self.page_options.store_root).parent) as exported:
+                            verify_snapshot(attempt/'final_state.json',expected_config=config,page_options=self.page_options,
+                                known_latest_floor=floor,export_dir=exported,native_floor_observer=retain_floor)
+                    finally:owner.close()
                 return {'summary':summary,'attempt':str(attempt.relative_to(self.root)),
                         'manifest_sha256':file_digest(mpath)}, attempts
         return None, attempts
@@ -224,6 +288,7 @@ class Scheduler:
 
     def run(self, configs, branch_origins=None):
         """Results use input order; completed-order cannot change samples/reduction."""
+        self.owned_workers_absent = False
         unique={case_key(c):c for c in configs}
         branch_origins={} if branch_origins is None else branch_origins
         if not set(branch_origins).issubset(unique):raise ValueError('branch descriptor has an unplanned case')
@@ -294,7 +359,9 @@ class Scheduler:
                     case=self.root/'cases'/ident;case.mkdir(parents=True,exist_ok=True)
                     attempt=case/f'attempt-{len(attempts):03d}';attempt.mkdir()
                     previous=next((a for a in reversed(attempts) if (a/'checkpoint-index.json').exists()),None)
-                    proc=self.ctx.Process(target=_worker,args=(c.to_dict(),str(attempt),str(previous) if previous else None,l.to_dict(),self.driver_hash,remaining,branch_origins.get(ident)))
+                    args=(c.to_dict(),str(attempt),str(previous) if previous else None,l.to_dict(),self.driver_hash,remaining,branch_origins.get(ident))
+                    if self.page_options is not None:args+=self.page_options,self.known_latest_floor
+                    proc=self.ctx.Process(target=_worker,args=args)
                     proc.start();active[ident]=(proc,c,attempt,time.monotonic());reserved+=rss
                     queue.remove(ident);launched=True
                     self.peak_active=max(self.peak_active,len(active));free-=required;used+=required
@@ -317,6 +384,10 @@ class Scheduler:
             return [results[case_key(c)] for c in configs]
         finally:
             self._reap_cooperatively(proc for proc,*_ in active.values())
+            # Completed workers were already joined before removal from active.
+            # If cooperative reaping raises, this remains false and no stopped
+            # raw census may read a still-running worker's output.
+            self.owned_workers_absent = True
             for proc,c,attempt,start in active.values():self._record_exit(proc,c,attempt,start)
             self._write_status()
             for sig,handler in old_handlers.items():signal.signal(sig,handler)

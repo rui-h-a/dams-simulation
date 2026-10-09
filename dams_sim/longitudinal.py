@@ -55,6 +55,7 @@ def birth_for_age(current: date, age_years: float) -> date:
 @dataclass(frozen=True)
 class LongitudinalConfig:
     schema_version: int = 1
+    world_context: str | None = None
     calendar_start: str = '2020-01-01'
     work_weekdays: tuple[int,...] = (0,1,2,3,4)
     holidays: tuple[str,...] = ()
@@ -124,6 +125,9 @@ class LongitudinalConfig:
 
     def validate(self,initial_n:int,horizon:int,guilds:int):
         if self.schema_version!=1 or type(self.schema_version) is not int:raise ValueError('unknown longitudinal schema')
+        if self.world_context is not None and (not isinstance(self.world_context,str)
+                or not self.world_context or len(self.world_context)>256):
+            raise ValueError('world_context must be a nonempty string of at most 256 characters')
         if not isinstance(self.calendar_start,str):raise ValueError('calendar_start must be an ISO date string')
         start=date.fromisoformat(self.calendar_start)
         if start+timedelta(days=horizon)>date(9998,12,31):raise ValueError('calendar horizon overflows')
