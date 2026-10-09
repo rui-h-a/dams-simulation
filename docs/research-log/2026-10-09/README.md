@@ -1,3 +1,20 @@
+## r15 — Original formal entry resumed, observed 2026-10-09 16:49:50 UTC
+
+The original `run.sh` entry was actually launched once at 16:48:40 UTC with the frozen 144-case inventory, original scientific source, driver, Config, seeds, case identities and deadlines retained. At the observation time, the pipeline and pilot were running, performing complete-integrity readback of cached inputs before admitting a new worker. The earlier r14 capacity refusal remains historical evidence; this is a later explicit continuation, with no automatic restart.
+
+The last complete original-raw census remains **22 accepted cases out of 144**: 20 prefix cases and two individual-strategy cases. One case failed its working-ledger hash check and 121 cases had not started, leaving **122 original cases including recovery**. These are census counts, not current producer-attempt statuses. Fully accepted paired worlds, completed pilot worlds, confirmation worlds and completed formal groups remain zero in this snapshot. The pilot requires four worlds; confirmation remains governed by the frozen precision rule, with 16–128 worlds pending. No percentage for the whole study or higher-population requirements is inferred from this partial inventory.
+
+For the hash-failing case, the latest original checkpoint at day 1096 passed full-file SHA verification, complete state and ledger invariants, all 1096 journal days, and the final-state binding. The actual pure-I/O verifier exited successfully in 54.50 supervised seconds, with 60,719,104 bytes of measured verifier peak RSS. The original mismatch and producer hash expectations remain preserved. Only the new copy-on-write manifest was explicitly invalidated; the existing Scheduler reconstructs the same case from the latest verified checkpoint, rather than creating a new sample or restarting at day zero.
+
+Operational caps changed from 128 to 192 GiB of batch output and from one to two workers. Scientific inputs and deadlines did not change. Two actual owned-process lifecycle controls passed; they do not replace scientific data acceptance. A lossless codec control bound all 13 original files totaling 14,755,822,222 bytes. It newly fully encoded, hashed, decoded and byte-compared 12 unique raw files totaling 11,074,308,750 bytes; the identical `final_state.sqlite` alias used the prior accepted full hash and a current stat check, without a new full read. Its complete descriptors reference 999 unique encoded chunks totaling 1,030,388,263 bytes plus 743,469 descriptor bytes, assuming each distinct content hash is stored once. Encoded copies were not retained, and no production archive was created or tested. This is pure I/O evidence and does not establish the production bridge, two-copy archive retention, all-generation coverage, or full-study completion.
+
+- [Scientific observation and honest completion counts](research-observation-r15.json)
+- [Checkpoint hashes, recovery disposition and engineering controls](engineering-preservation-r15.json)
+
+The records below are retained in full, including r12–r14 failures, scope limits and completed controls.
+
+---
+
 # Dated research observation r14
 
 Observed on 2026-10-09T16:04:50.231508+00:00. The original N=1,000, 3,743-day individual precision-pilot strategy raw acceptance from r13 is retained below. Accepted paired worlds and added confirmation samples remain zero.

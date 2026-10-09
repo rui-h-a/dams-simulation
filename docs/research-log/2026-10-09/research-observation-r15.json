@@ -1,0 +1,66 @@
+{
+  "accepted_scientific_completion": {
+    "confirmation_worlds_completed": 0,
+    "confirmation_worlds_required_pending_fixed_precision_rule": [
+      16,
+      128
+    ],
+    "formal_groups_complete": 0,
+    "fully_accepted_paired_worlds": 0,
+    "fully_complete_pilot_worlds": 0,
+    "pilot_worlds_required": 4
+  },
+  "copied_cases_add_independent_samples": false,
+  "execution_source": {
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "frozen_case_inventory": {
+    "cases": 144,
+    "unchanged": true
+  },
+  "higher_population_groups_completed_by_this_observation": false,
+  "last_complete_original_raw_census": {
+    "accepted_cases": 22,
+    "accepted_individual_strategy_cases": 2,
+    "accepted_prefix_cases": 20,
+    "failed_working_hash_cases": 1,
+    "not_a_new_full_raw_census_of_current_attempts": true,
+    "remaining_original_cases_including_same_case_recovery": 122,
+    "total_original_cases": 144,
+    "unstarted_cases": 121
+  },
+  "observed_utc": "2026-10-09T16:49:50.193143+00:00",
+  "original_entry_continuation": {
+    "actual_pilot_status_as_observed": "running",
+    "actual_pipeline_status_as_observed": "running",
+    "automatic_restarts": 0,
+    "entry_is_running_does_not_mean_a_formal_group_has_completed": true,
+    "invocations": 1,
+    "scale": 1000,
+    "spec": "longitudinal-adoption-5y",
+    "started_utc": "2026-10-09T16:48:40.357212+00:00"
+  },
+  "overall_goal_completion_percentage_not_inferred_from_22_of_144": true,
+  "producer_attempt_counts_are_not_accepted_scientific_cases": true,
+  "producer_attempt_status_counts_as_observed": {
+    "complete": 22,
+    "invalidated-output-integrity": 1,
+    "running": 1
+  },
+  "same_case_recovery": {
+    "case_id": "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+    "day_0_restart": false,
+    "existing_scheduler_attempt_001": true,
+    "full_integrity_readback_precedes_new_worker_admission": true,
+    "new_independent_sample": false,
+    "old_complete_cache_not_accepted": true,
+    "verified_latest_checkpoint_day": 1096
+  },
+  "schema": "DAMS-dated-scientific-observation-r15-1",
+  "scientific_source_config_seeds_case_ids_and_deadlines_unchanged": true,
+  "scope": "One continuation of the original frozen formal entry; timestamped execution status and the last complete original-raw census are separate observations.",
+  "source_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+  "whole_goal_complete": false
+}

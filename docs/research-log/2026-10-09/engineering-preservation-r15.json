@@ -1,0 +1,278 @@
+{
+  "actual_entry_launch": {
+    "automatic_restarts": 0,
+    "entry": "original run.sh",
+    "invocations": 1,
+    "phase_at_snapshot": "Full-integrity readback of cached inputs before admitting a new worker.",
+    "scale": 1000,
+    "snapshot_pilot_status": "running",
+    "snapshot_pipeline_status": "running",
+    "spec": "longitudinal-adoption-5y",
+    "started_utc": "2026-10-09T16:48:40.357212+00:00"
+  },
+  "actual_latest_checkpoint_pure_io_verification": {
+    "actual_full_file_hashes": {
+      ".longitudinal-working.sqlite": {
+        "actual_full_sha256": "17c837f9e6d0dc3244d4d35f591f12183dd136d97d417d46d485bebb3c7cc03a",
+        "bytes": 807825408,
+        "expected_producer_sha256": "f23a649ca864fc6f1a96c881a4111ecd4a37ca9be0aafbc6d17e5230870d2820",
+        "matches_producer": false
+      },
+      "checkpoint-day-001096.json": {
+        "actual_full_sha256": "eedfc5a6e27f9cfe8f234114f92f1af2a65b2d9d22b0aaa9b5f2206ce95996a2",
+        "bytes": 3762349,
+        "expected_producer_sha256": "eedfc5a6e27f9cfe8f234114f92f1af2a65b2d9d22b0aaa9b5f2206ce95996a2",
+        "matches_producer": true
+      },
+      "checkpoint-day-001096.sqlite": {
+        "actual_full_sha256": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+        "bytes": 807825408,
+        "expected_producer_sha256": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+        "matches_producer": true
+      },
+      "final_state.json": {
+        "actual_full_sha256": "a0655e3e838985371ed48421333eeb35603e6d62ff666e3fccf0eabea791c86a",
+        "bytes": 3762339,
+        "expected_producer_sha256": "a0655e3e838985371ed48421333eeb35603e6d62ff666e3fccf0eabea791c86a",
+        "matches_producer": true
+      },
+      "final_state.sqlite": {
+        "actual_full_sha256": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+        "bytes": 807825408,
+        "expected_producer_sha256": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+        "matches_producer": true
+      }
+    },
+    "case_id": "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+    "checkpoint_day": 1096,
+    "checkpoint_fallback": false,
+    "checkpoint_format_version": 2,
+    "complete_latest_and_final_envelope_state_equal": true,
+    "config_sha256": "5c7b3ba8fc9966b4c357ccd9eb415d46a7ec604021d580c362378e588de09f0d",
+    "exit_code": 0,
+    "files": [
+      {
+        "bytes": 3762349,
+        "file": "checkpoint-day-001096.json",
+        "sha256": "eedfc5a6e27f9cfe8f234114f92f1af2a65b2d9d22b0aaa9b5f2206ce95996a2"
+      },
+      {
+        "bytes": 807825408,
+        "file": "checkpoint-day-001096.sqlite",
+        "sha256": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849"
+      }
+    ],
+    "finished_utc": "2026-10-09T16:37:25.357610+00:00",
+    "full_latest_ledger_semantics_state_invariants_and_journal_days_verified": true,
+    "journal_days_verified": 1096,
+    "latest_day_equals_declared_config_horizon": true,
+    "ledger_row_counts": {
+      "credits": 1158,
+      "delays": 231,
+      "journal": 2914863,
+      "pending": 78950,
+      "seen": 663573
+    },
+    "ledger_schema_version": 1,
+    "ledger_semantic_sha256": "339412d42f9d5d83bb680b1a3716c38420934302b52da78825ff2b419d8ed07a",
+    "model_constructions": 0,
+    "model_version": "longitudinal-1",
+    "new_scientific_samples": 0,
+    "old_complete_cache_accepted": false,
+    "original_frozen_source_full_sha_before_and_after_equal": true,
+    "originals_written": false,
+    "recovery_is_same_case_output_reconstruction_not_day_0_or_new_sample": true,
+    "restoration_executed_by_this_pure_io_verifier": false,
+    "resume_requires_original_execution_source": true,
+    "state_hash_codec": "json-string-keys-v2",
+    "state_schema_version": 1,
+    "state_semantic_sha256": "fe984038b7323617bc62e7159c395a43faba830a0d3c8f95c46f12594d887857",
+    "supervised_wall_seconds": 54.50339591599186,
+    "verifier_elapsed_seconds": 54.06521916600468,
+    "verifier_peak_rss_bytes": 60719104
+  },
+  "admission_limits": {
+    "byte_only_archive_prototypes_do_not_replace_existing_collector_ack": true,
+    "full_native_census_all_generations_two_copy_bridge_and_production_lifecycle_closure_not_claimed": true,
+    "large_population_and_full_study_completion_not_claimed": true,
+    "one_entry_running_not_full_pilot_confirmation_or_group_completion": true
+  },
+  "execution_source": {
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "full_original_case_lossless_codec_control": {
+    "all_logical_file_chunk_count_before_content_dedup": 3527,
+    "all_logical_file_encoded_bytes_before_content_dedup": 3661987742,
+    "all_new_encoded_chunks_completely_sha_checked_bounded_decoded_and_byte_compared": true,
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "chunk_count_after_whole_file_prior_sha_alias_dedup": 2649,
+    "codec_elapsed_seconds": 102.14206525000918,
+    "codec_peak_rss_bytes": 61112320,
+    "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+    "content_addressed_store_assumption": "Each unique encoded SHA object is stored once; complete per-file descriptors retain all offsets/lengths/raw and encoded SHA references. No remote store was created or tested here.",
+    "deduplication_scope": "Only identical complete raw SHA+byte-count entries verified by the prior original gate share a descriptor. Current measurement does not claim to newly full-hash skipped aliases. All newly encoded chunks are completely read, SHA checked, bounded-decoded and byte-compared to a second read of their original chunk.",
+    "descriptor_bytes": 743469,
+    "does_not_prove_all_generations_all_cases_two_archive_copies_or_production_archive_closure": true,
+    "encoded_bytes_after_whole_file_prior_sha_alias_dedup": 2747885035,
+    "encoded_copies_retained": false,
+    "execution_source": {
+      "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+    },
+    "exit_code": 0,
+    "finished_utc": "2026-10-09T16:21:23.303504+00:00",
+    "full_original_bytes_retained_at_existing_source": true,
+    "max_single_encoded_scratch_file_bytes": 1158259,
+    "metadata_descriptor_log_and_catalog_recomputed": true,
+    "metadata_verified_utc": "2026-10-09T16:29:31.917902+00:00",
+    "model_constructions": 0,
+    "new_scientific_samples": 0,
+    "newly_fully_encoded_hashed_decoded_and_original_compared_raw_bytes": 11074308750,
+    "newly_fully_encoded_hashed_decoded_and_original_compared_unique_raw_files": 12,
+    "original_file_bindings": [
+      {
+        "bytes": 3681513472,
+        "file": ".longitudinal-working.sqlite",
+        "original_stat_unchanged": true,
+        "raw_sha256": "1b50be2c9a59e72ad82c915278cc00f47a9fa7412a5cbccb757f9a7f455288d6"
+      },
+      {
+        "bytes": 12787884,
+        "file": "checkpoint-day-003690.json",
+        "original_stat_unchanged": true,
+        "raw_sha256": "c824ffaded104786cd155c30abf976c7068a2c1db8b52790a4c6040c32c30f9f"
+      },
+      {
+        "bytes": 3669495808,
+        "file": "checkpoint-day-003690.sqlite",
+        "original_stat_unchanged": true,
+        "raw_sha256": "83cfbcbe00e71fb73c3bcc684cf87997a96e0c4daa4d3259ac696d39abd6490d"
+      },
+      {
+        "bytes": 12951108,
+        "file": "checkpoint-day-003743.json",
+        "original_stat_unchanged": true,
+        "raw_sha256": "601b9a4b1f5739429a5f1d21aee475369e4102a7ed71140bb92e5606fca4fdbf"
+      },
+      {
+        "bytes": 3681513472,
+        "file": "checkpoint-day-003743.sqlite",
+        "original_stat_unchanged": true,
+        "raw_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43"
+      },
+      {
+        "bytes": 1690,
+        "file": "checkpoint-index.json",
+        "original_stat_unchanged": true,
+        "raw_sha256": "e0c882ae18f8a085bc02589b519fa8a7053a25b0b6a2cc9a0c042db9717a3cfc"
+      },
+      {
+        "bytes": 12951098,
+        "file": "final_state.json",
+        "original_stat_unchanged": true,
+        "raw_sha256": "095d1bef8b0ba2775b74fa82fb06918bf2bc4c76c4c7b8e7d66a7cec591f65fc"
+      },
+      {
+        "bytes": 3681513472,
+        "file": "final_state.sqlite",
+        "original_stat_unchanged": true,
+        "raw_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43"
+      },
+      {
+        "bytes": 6851,
+        "file": "manifest.json",
+        "original_stat_unchanged": true,
+        "raw_sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9"
+      },
+      {
+        "bytes": 1555,
+        "file": "report.md",
+        "original_stat_unchanged": true,
+        "raw_sha256": "4f4472b0e5b1afd89d7ce4b4dc48188ad4efd8557161945b7d6500a1007bba22"
+      },
+      {
+        "bytes": 119869,
+        "file": "report.svg",
+        "original_stat_unchanged": true,
+        "raw_sha256": "8b81956b8396f9e27c8e334c2fa4024026ae6204132e3d08fc171e9d5014ed75"
+      },
+      {
+        "bytes": 2509,
+        "file": "summary.json",
+        "original_stat_unchanged": true,
+        "raw_sha256": "e533692b5946e5622bc76f199427d0c8981c791765e26fbce014c360c4a15805"
+      },
+      {
+        "bytes": 2963434,
+        "file": "timeseries.csv",
+        "original_stat_unchanged": true,
+        "raw_sha256": "689723c878cb350b86c871791162feaa3abbd5ed8a108f3c05dbdc9314df4449"
+      }
+    ],
+    "original_hash_bindings_inherited_from_pinned_passed_raw_gate": true,
+    "original_native_bytes": 14755822222,
+    "original_native_files": 13,
+    "original_scientific_outputs_replaced": false,
+    "originals_written": false,
+    "production_archive_created_or_tested": false,
+    "pure_io_only": true,
+    "skipped_alias_new_full_read_or_sha_claim": false,
+    "skipped_aliases_prior_passed_full_hash_and_current_stat_only": [
+      "final_state.sqlite"
+    ],
+    "state_semantic_sha256": "867cd1eb3720251dcc92d775cd9ac77a4552142dd6fe2a8ec6a94b429b9294b6",
+    "supervised_wall_seconds": 102.64510241700918,
+    "unique_encoded_chunk_bytes": 1030388263,
+    "unique_encoded_chunks": 999
+  },
+  "observed_utc": "2026-10-09T16:49:50.193143+00:00",
+  "operational_limits_only": {
+    "batch_max_output_bytes_after": 206158430208,
+    "batch_max_output_bytes_before": 137438953472,
+    "limits_are_caps_not_measured_usage_or_completion": true,
+    "max_workers_after": 2,
+    "max_workers_before": 1,
+    "science_config_seeds_and_deadlines_changed": false
+  },
+  "original_cache_mismatch_preserved": {
+    "case_id": "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+    "invalid_original_cache_not_counted_complete": true,
+    "only_new_copy_on_write_manifest_explicitly_invalidated": true,
+    "original_exit_code_preserved": 0,
+    "original_files_and_anomaly_evidence_preserved": true,
+    "producer_hash_expectations_not_rewritten": true,
+    "working_ledger_actual_full_sha256": "17c837f9e6d0dc3244d4d35f591f12183dd136d97d417d46d485bebb3c7cc03a",
+    "working_ledger_expected_producer_sha256": "f23a649ca864fc6f1a96c881a4111ecd4a37ca9be0aafbc6d17e5230870d2820"
+  },
+  "owned_lifecycle_controls": {
+    "controls": [
+      {
+        "control": "exited_leader_live_term_ignoring_grandchild",
+        "owned_group_members_remaining": 0,
+        "passed": true
+      },
+      {
+        "control": "actual_receipt_write_failure_after_popen",
+        "owned_group_members_remaining": 0,
+        "passed": true
+      }
+    ],
+    "controls_do_not_replace_raw_scientific_or_full_archive_gates": true,
+    "observed_utc": "2026-10-09T16:46:23.981202+00:00",
+    "scientific_models_started": 0,
+    "static_supervisor_review_found_no_launch_blocker": true
+  },
+  "schema": "DAMS-dated-engineering-preservation-r15-1",
+  "scientific_inputs_preserved": {
+    "exact_inventory_canonical_match": true,
+    "frozen_original_case_count": 144,
+    "no_replacement_model_or_new_monte_carlo_sample": true,
+    "scientific_deadline_and_stop_cutoff_unchanged": true,
+    "source_config_seeds_case_ids_unchanged": true
+  },
+  "scope": "Verified original-checkpoint recovery, bounded owned-process controls, and one original formal-entry continuation. I/O evidence is separate from scientific completion and production archive admission.",
+  "whole_goal_complete": false
+}
