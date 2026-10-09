@@ -1,0 +1,55 @@
+{
+  "Git_actions": false,
+  "bug_inapplicable_to_current_formal_source": true,
+  "claude_called": false,
+  "formal_scientific_acceptance": false,
+  "formal_source_has_no_enterprise_runtime": true,
+  "independent_candidate_tests": {
+    "count": 29,
+    "passed": true,
+    "wall_seconds": 2.732
+  },
+  "independent_controls": {
+    "caller_borrowed_ledger_remains_open": true,
+    "fd_counts_not_measured": true,
+    "gates_per_case": 6,
+    "negative_cases": 3,
+    "owned_rejection_closed": true,
+    "positive_lifecycle_cases": 6,
+    "wall_seconds": 2.483507416996872
+  },
+  "not_tested": [
+    "native storage",
+    "whole pipeline/driver",
+    "large population or five/ten-year enterprise workload",
+    "empirical calibration/holdout",
+    "full-scale replay cost admission"
+  ],
+  "old_reproduction": {
+    "error": "enterprise day-zero state differs from canonical fresh initialization",
+    "exit_code": 1,
+    "first_bad_restore_rejected": true,
+    "old_negative_results_not_overwritten": true,
+    "script_byte_identical": true,
+    "script_sha256": "4478d00722ae9a39f1a5700c866698827d917b663bd986fe2b7ec4d25236b865"
+  },
+  "paid_cloud_called": false,
+  "paired_full_semantic_sha256": {
+    "equal": {
+      "final_semantic_sha256": "198207ad38fc90911db52cd8379c03dcab9b30455dc1bd17e6fc2b00d55ee8b1",
+      "recovery_exact": true
+    },
+    "sublinear": {
+      "final_semantic_sha256": "0fc0a43c961d029b2ef5d219074ac89dab92b90110f2fbb4f0d9e1c453ad847e",
+      "recovery_exact": true
+    }
+  },
+  "python": "3.14.6",
+  "rejected_source_sha256": "d003d0116c8d68975c25611cccb4113618c0f52add5806bc44abdbfba09632a9",
+  "remaining_concrete_blockers_in_this_finite_repair": [],
+  "repaired_source_sha256": "8418edf254f2fffb89adcad063ae7db83122b7645a34e592a82b9c91693cefd2",
+  "source_files_matched_before_and_after": 32,
+  "status": "PASS_FINITE_INDEPENDENT_CAUSAL_REPAIR_RECHECK",
+  "unchanged_formal_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "whole_goal_complete": false
+}

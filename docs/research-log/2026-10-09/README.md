@@ -1,11 +1,7 @@
-# Research progress and adverse evidence
+Actual declared longitudinal study execution has started through the existing single entry. The group is currently in its precision-pilot stage, at initial N=1,000 and full strategy horizon 3,743 days. Completed prehistory prefixes do not certify a full five-year post-adoption strategy, a complete paired world, confirmation or a complete research group.
 
-This record includes engineering runs and failed reviews. It is not a formal-result release. The status snapshot identifies the source versions, partial workload, completed checks, counterexamples and remaining formal entry conditions. The four formal main groups remain incomplete. Repeated restoration or resuming one case does not add an independent world.
+See formal-execution-status.json for actual case identities, states, hashes and the observation time. The complete pilot inventory and original scientific specification are included; they are not substitutes for outputs. Frozen executable source is published on research/longitudinal-4daf690d-20261009. Historical engineering attempts retain their original classification.
 
-- `status.json`: current acceptance status and unresolved work.
-- `workload-admission-current.json`: exact case/source/config/checkpoint measurements at the stated timestamp.
-- `fullsize-checkpoint-transport.json`: actual complete checkpoint restoration evidence; no actual IAP throughput claim.
-- `iap-batch-transport.md`: producer-local tests, failed development history and limitations.
-- `enterprise-abm-independent-review.md`: counterexample that prevents accepting the candidate.
+The independently rejected enterprise restore defect has passed a finite independent repair recheck in the separate opt-in candidate. That introduced state does not exist in the frozen formal core; no frozen scientific population, calendar, comparison, precision rule or behavior mechanism was reduced to start this group. Enterprise growth/native integration and empirical validation remain unaccepted.
 
-The machine-readable snapshots retain failed and partial outcomes. Published files redact private operational paths; their original and published hashes are distinguished. Heavy raw-artifact publication is still incomplete and is explicitly tracked.
+Whole-group completion, the largest population, all historical and heavy assets, final paper integration, and final provider/account closure remain incomplete. Paid-resource operations and private financial records remain private.

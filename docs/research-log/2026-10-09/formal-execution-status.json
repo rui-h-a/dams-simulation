@@ -1,0 +1,261 @@
+{
+  "observed_utc": "2026-10-09T07:03:20.120932+00:00",
+  "formal_group": {
+    "name": "longitudinal-adoption-5y",
+    "initial_n": 1000,
+    "post_adoption_years": 5,
+    "complete_strategy_calendar_days": 3743,
+    "phase": "precision-pilot",
+    "pipeline_status": "running",
+    "predeclared_pilot_independent_world_ids": [
+      20000,
+      20001,
+      20002,
+      20003
+    ],
+    "predeclared_pilot_logical_cases": 144,
+    "confirmation_policy": "Original disjoint pilot precision rule; fixed confirmation worlds30000 upward, min16/max128; no stopping at significance",
+    "complete_prefix_cases": 3,
+    "complete_strategy_cases": 0,
+    "complete_entire_paired_worlds": 0,
+    "completed_main_groups": 0,
+    "total_main_groups": 4,
+    "cases": [
+      {
+        "case_id": "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+        "world": 20000,
+        "role": "prehistory-prefix",
+        "context": "traditional",
+        "arm_id": null,
+        "initial_n": 1000,
+        "required_days": 1096,
+        "status": "complete",
+        "manifest_sha256": "98ce27c84cf8a669dd3ee1e3e08ae36ae392877042d55694aa5ea0c953548357",
+        "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+        "complete_days": 1096,
+        "final_state_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "30c62763eb8ffeaf56ffcc42118f7873212cb33f2d47ffc66910cfa356513b43",
+          "day": 1096,
+          "file": "final_state.json",
+          "files": [
+            {
+              "bytes": 3748298,
+              "file": "final_state.json",
+              "sha256": "8b6615b27c95504f48687d91f6282bb14b03f90b7ba80dca8e38eefa36f6fc2f"
+            },
+            {
+              "bytes": 808206336,
+              "file": "final_state.sqlite",
+              "sha256": "46d7e00e002e113c049d1e183ddfda60c835d6399034e281e7688572f8e11538"
+            }
+          ],
+          "sha256": "8b6615b27c95504f48687d91f6282bb14b03f90b7ba80dca8e38eefa36f6fc2f",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "e1a82ca67b10338c2baaac498aa3ec18ae56d7c8a364cceec361e70235a18992"
+        },
+        "raw_bytes": 3233347171,
+        "latest_checkpoint_day": 1096,
+        "latest_checkpoint_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "30c62763eb8ffeaf56ffcc42118f7873212cb33f2d47ffc66910cfa356513b43",
+          "day": 1096,
+          "file": "checkpoint-day-001096.json",
+          "files": [
+            {
+              "bytes": 3748308,
+              "file": "checkpoint-day-001096.json",
+              "sha256": "8f35e8ad4506e2fa68834de177f4bf7603ec33a5555e6453f8b3ba3434e27f56"
+            },
+            {
+              "bytes": 808206336,
+              "file": "checkpoint-day-001096.sqlite",
+              "sha256": "46d7e00e002e113c049d1e183ddfda60c835d6399034e281e7688572f8e11538"
+            }
+          ],
+          "sha256": "8f35e8ad4506e2fa68834de177f4bf7603ec33a5555e6453f8b3ba3434e27f56",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "e1a82ca67b10338c2baaac498aa3ec18ae56d7c8a364cceec361e70235a18992"
+        }
+      },
+      {
+        "case_id": "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+        "world": 20002,
+        "role": "prehistory-prefix",
+        "context": "financing",
+        "arm_id": null,
+        "initial_n": 1000,
+        "required_days": 366,
+        "status": "complete",
+        "manifest_sha256": "1c7e206f88ca28092c48aca91ca2b6af9161676c584470989185eb68699e5de1",
+        "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+        "complete_days": 366,
+        "final_state_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "2958dfdded4eec6d1a41230d7afd3ce9e10a2412b0aea2b7db475f1a066334d2",
+          "day": 366,
+          "file": "final_state.json",
+          "files": [
+            {
+              "bytes": 1781777,
+              "file": "final_state.json",
+              "sha256": "6248c4bd05ec5c539d2f5561a44dac995032305d7046fed4dd05c00aeeae43d0"
+            },
+            {
+              "bytes": 260820992,
+              "file": "final_state.sqlite",
+              "sha256": "4e764be58056c9fc41536d69195cb901a59a85f7a1e548339d832c1ef33eeec4"
+            }
+          ],
+          "sha256": "6248c4bd05ec5c539d2f5561a44dac995032305d7046fed4dd05c00aeeae43d0",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "6e6d5caa5f36af15a36cb4b9120376a9f1ee0e7cc1d90942d26f711ee774b5a5"
+        },
+        "raw_bytes": 1045034518,
+        "latest_checkpoint_day": 366,
+        "latest_checkpoint_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "2958dfdded4eec6d1a41230d7afd3ce9e10a2412b0aea2b7db475f1a066334d2",
+          "day": 366,
+          "file": "checkpoint-day-000366.json",
+          "files": [
+            {
+              "bytes": 1781787,
+              "file": "checkpoint-day-000366.json",
+              "sha256": "d4b873deeba4f3f9364dfd81cb1355bf6b6fd3e4e1621d04a173e736164a662f"
+            },
+            {
+              "bytes": 260820992,
+              "file": "checkpoint-day-000366.sqlite",
+              "sha256": "4e764be58056c9fc41536d69195cb901a59a85f7a1e548339d832c1ef33eeec4"
+            }
+          ],
+          "sha256": "d4b873deeba4f3f9364dfd81cb1355bf6b6fd3e4e1621d04a173e736164a662f",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "6e6d5caa5f36af15a36cb4b9120376a9f1ee0e7cc1d90942d26f711ee774b5a5"
+        }
+      },
+      {
+        "case_id": "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+        "world": 20001,
+        "role": "prehistory-prefix",
+        "context": "startup",
+        "arm_id": null,
+        "initial_n": 1000,
+        "required_days": 366,
+        "status": "complete",
+        "manifest_sha256": "e99cd6bf14e78ad111e981be1eb3ae1140c9ad24289dd96735aa8ce2a5abb2ad",
+        "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+        "complete_days": 366,
+        "final_state_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "c336c8db43c641fc69a8c9d1b2ae44d5405361b8a7ddabf249149bac94d840a8",
+          "day": 366,
+          "file": "final_state.json",
+          "files": [
+            {
+              "bytes": 1773898,
+              "file": "final_state.json",
+              "sha256": "e61d362ec48aa4960aeda20c4d51ef72bac0b75cfe0b8131bd86607be4f23201"
+            },
+            {
+              "bytes": 260386816,
+              "file": "final_state.sqlite",
+              "sha256": "8d55464ecec9c4bdd83e634c145e9fa349c8eb6559466f9d138afd4a1db87f86"
+            }
+          ],
+          "sha256": "e61d362ec48aa4960aeda20c4d51ef72bac0b75cfe0b8131bd86607be4f23201",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "5096bd7a440cf93db563ad64ed1729d24f6b895115d23ef1399f24255f1fb656"
+        },
+        "raw_bytes": 1043215550,
+        "latest_checkpoint_day": 366,
+        "latest_checkpoint_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "c336c8db43c641fc69a8c9d1b2ae44d5405361b8a7ddabf249149bac94d840a8",
+          "day": 366,
+          "file": "checkpoint-day-000366.json",
+          "files": [
+            {
+              "bytes": 1773908,
+              "file": "checkpoint-day-000366.json",
+              "sha256": "809bdb7bfc1575e8fa96afbb984b8682f1003f504010006c626db8bf4383f3d9"
+            },
+            {
+              "bytes": 260386816,
+              "file": "checkpoint-day-000366.sqlite",
+              "sha256": "8d55464ecec9c4bdd83e634c145e9fa349c8eb6559466f9d138afd4a1db87f86"
+            }
+          ],
+          "sha256": "809bdb7bfc1575e8fa96afbb984b8682f1003f504010006c626db8bf4383f3d9",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "5096bd7a440cf93db563ad64ed1729d24f6b895115d23ef1399f24255f1fb656"
+        }
+      },
+      {
+        "case_id": "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+        "world": 20001,
+        "role": "prehistory-prefix",
+        "context": "federation",
+        "arm_id": null,
+        "initial_n": 1000,
+        "required_days": 1096,
+        "status": "running",
+        "manifest_sha256": "7c2395a9e0cd6c701fb6513d8e193b3f01b47e2eb73043ab1ca04242f65d1008",
+        "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+        "complete_days": null,
+        "final_state_descriptor": null,
+        "raw_bytes": null,
+        "latest_checkpoint_day": 450,
+        "latest_checkpoint_descriptor": {
+          "checkpoint_format_version": 2,
+          "config_sha256": "eacae057f0ad4e0a85463c97a871d1387982b3972c90c86dd84bff06e3bd29c7",
+          "day": 450,
+          "file": "checkpoint-day-000450.json",
+          "files": [
+            {
+              "bytes": 2007304,
+              "file": "checkpoint-day-000450.json",
+              "sha256": "686562eae81119f3094983dce6c2015348803a6a2c23825293ab0f41ef112658"
+            },
+            {
+              "bytes": 329428992,
+              "file": "checkpoint-day-000450.sqlite",
+              "sha256": "d0650bf78265124d40db1bb787a091cf7328f27d6577dbde92b195f026f08b38"
+            }
+          ],
+          "sha256": "686562eae81119f3094983dce6c2015348803a6a2c23825293ab0f41ef112658",
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "state_hash_codec": "json-string-keys-v2",
+          "state_semantic_sha256": "c1a4e8f323e5324ee663d7f269cffc5ca9cff2d6860bf9d0b04f53d3ce3348f8"
+        }
+      }
+    ]
+  },
+  "source": {
+    "core_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "original_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "remote_frozen_source_commit": "0902037cb41320b09f86873fbb4da30e5ae12c68",
+    "remote_source_url": "https://github.com/rui-h-a/dams-simulation/tree/research/longitudinal-4daf690d-20261009"
+  },
+  "known_enterprise_defect": {
+    "rejected_source": "d003d0116c8d68975c25611cccb4113618c0f52add5806bc44abdbfba09632a9",
+    "repaired_source": "8418edf254f2fffb89adcad063ae7db83122b7645a34e592a82b9c91693cefd2",
+    "independent_repair_status": "PASS_FINITE_INDEPENDENT_CAUSAL_REPAIR_RECHECK",
+    "not_in_frozen_formal_core": true,
+    "large_horizon_enterprise_acceptance": false
+  },
+  "highest_population_completed": false,
+  "new_paid_cloud_started": false,
+  "whole_goal_complete": false,
+  "all_historical_records_and_heavy_assets_published": false,
+  "necessary_offdevice_raw_restore_copy": "GitHub partial release preparation and complete remote readback in progress; not yet PASS",
+  "execution_priority": "Actual declared long-term group is now running; nonblocking migration, visual and optional platform work runs in parallel"
+}
