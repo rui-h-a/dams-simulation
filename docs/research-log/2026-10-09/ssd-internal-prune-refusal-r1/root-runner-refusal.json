@@ -1,0 +1,7 @@
+{
+  "status": "FAILED_OR_REFUSED",
+  "type": "Refusal",
+  "reason": "UNLINK_SOURCE_INODE_DRIFT",
+  "wall_seconds": 429.02354407310486,
+  "whole_goal_complete": false
+}

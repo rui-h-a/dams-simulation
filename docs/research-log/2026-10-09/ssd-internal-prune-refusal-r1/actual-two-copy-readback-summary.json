@@ -1,0 +1,52 @@
+{
+  "schema": "dams-explicit-narrow-record-derivative-v1",
+  "original_record_sha256": "94b20e2f1ff2f4762fdd8acf06400563b3f5058dadc2e03a417f5eaa578b220a",
+  "original_record_bytes": 8445,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "omitted_original_fields": [
+    {
+      "pointer": "/confirmed_unlinked",
+      "private_field_removed": true,
+      "canonical_value_sha256": "6777e67083607dd812ed7c93dd41ddc192ecca3f6f48f87970dfe1f6983301cb",
+      "canonical_value_bytes": 43
+    },
+    {
+      "pointer": "/current_attempt",
+      "private_field_removed": true,
+      "canonical_value_sha256": "fa95b6fbd76bca5c5adccdd082cc867fbb8cffc3792dc2ad80c142fda1d49150",
+      "canonical_value_bytes": 176
+    },
+    {
+      "pointer": "/original_partial_failure_ref",
+      "private_field_removed": true,
+      "canonical_value_sha256": "8380f4af2f8765890466c9f0472030a0480bb6d23386e5943fd6db2332253ef0",
+      "canonical_value_bytes": 212
+    },
+    {
+      "pointer": "/parents",
+      "private_field_removed": true,
+      "canonical_value_sha256": "c74af3793eaf25dcb896b2b06049753540505939fdd11d8ff495105b3ce539e9",
+      "canonical_value_bytes": 1253
+    },
+    {
+      "pointer": "/records",
+      "private_field_removed": true,
+      "canonical_value_sha256": "815223f858d455829927da9efa52ef707d971db1ea6d13aebb4fdd275e53d426",
+      "canonical_value_bytes": 3193
+    }
+  ],
+  "record": {
+    "status": "PASS_READ_ONLY_TWO_SMALL_LEAF_COPIES_AND_KNOWN_PARENT_METADATA",
+    "actual_quarantine_mutations": false,
+    "all_other_quarantine_entries_not_rescanned": true,
+    "verified_leaf_unlinks": 2,
+    "remaining_count": 76333,
+    "confirmed_unlinked_count": 2,
+    "two_distinct_full_raw_metadata_copies_pass_for_confirmed_leaves": true,
+    "quarantine_paths_absent_for_confirmed_leaves": true,
+    "original_partial_failure_sha256": "62419ef6b2fd7d4f750d026d8a9f60c41daed90cb1eafbfc3e2ed55842a6d1b1",
+    "duplicate_pruning_complete": false,
+    "actual_successful_prune_retry": false
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "schema": "dams-explicit-narrow-record-derivative-v1",
+  "original_record_sha256": "68fb6083fe9fe828b9aff14ce5abcdff068181551a72019bb889c9fcc074d86b",
+  "original_record_bytes": 42104,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "omitted_original_fields": [
+    {
+      "pointer": "/internal_apfs_device",
+      "private_field_removed": true,
+      "canonical_value_sha256": "5e1e2c07ec588f25889ac9d1416a35ad84b91d86abb531466084ffe691ea18b5",
+      "canonical_value_bytes": 8
+    },
+    {
+      "pointer": "/ssd_apfs_device",
+      "private_field_removed": true,
+      "canonical_value_sha256": "89d36de40f531534db4f0ac094010c35e6cb802f53228193ed0efb78ae15a607",
+      "canonical_value_bytes": 8
+    }
+  ],
+  "record": {
+    "schema": "native-unlink-flags-full-finite-fixture-r1",
+    "actual_original_source_mutations": false,
+    "fixture_content_bytes_max_per_source": 6,
+    "internal_fixture_cleanup_verified": true,
+    "ssd_fixture_cleanup_verified": true,
+    "not_actual_quarantine_unlinks": true,
+    "original_actor_sha256": "14e86c7610ca1ea02301e3768c4f9d3f74fec261271cbcf6f614312427640108",
+    "original_core_sha256": "4206613f568301cf620928a0de3005bf869b4167a020aa35ca70899561c3dce8",
+    "fixture_count": 16,
+    "records": [
+      {
+        "fixture_index": 0,
+        "kind": "file",
+        "flags_requested": 0,
+        "nlinks_requested": 1,
+        "flags_before": 0,
+        "flags_after": 0,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 1,
+        "kind": "file",
+        "flags_requested": 64,
+        "nlinks_requested": 1,
+        "flags_before": 64,
+        "flags_after": 0,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": false
+      },
+      {
+        "fixture_index": 2,
+        "kind": "file",
+        "flags_requested": 32768,
+        "nlinks_requested": 1,
+        "flags_before": 32768,
+        "flags_after": 32768,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 3,
+        "kind": "file",
+        "flags_requested": 32832,
+        "nlinks_requested": 1,
+        "flags_before": 32832,
+        "flags_after": 32768,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": false
+      },
+      {
+        "fixture_index": 4,
+        "kind": "file",
+        "flags_requested": 0,
+        "nlinks_requested": 2,
+        "flags_before": 0,
+        "flags_after": 0,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 5,
+        "kind": "file",
+        "flags_requested": 64,
+        "nlinks_requested": 2,
+        "flags_before": 64,
+        "flags_after": 64,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 6,
+        "kind": "file",
+        "flags_requested": 32768,
+        "nlinks_requested": 2,
+        "flags_before": 32768,
+        "flags_after": 32768,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 7,
+        "kind": "file",
+        "flags_requested": 32832,
+        "nlinks_requested": 2,
+        "flags_before": 32832,
+        "flags_after": 32832,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 8,
+        "kind": "link",
+        "flags_requested": 0,
+        "nlinks_requested": 1,
+        "flags_before": 0,
+        "flags_after": 0,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 9,
+        "kind": "link",
+        "flags_requested": 64,
+        "nlinks_requested": 1,
+        "flags_before": 64,
+        "flags_after": 0,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": false
+      },
+      {
+        "fixture_index": 10,
+        "kind": "link",
+        "flags_requested": 32768,
+        "nlinks_requested": 1,
+        "flags_before": 32768,
+        "flags_after": 32768,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 11,
+        "kind": "link",
+        "flags_requested": 32832,
+        "nlinks_requested": 1,
+        "flags_before": 32832,
+        "flags_after": 32768,
+        "link_count_before": 1,
+        "link_count_after": 0,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": false
+      },
+      {
+        "fixture_index": 12,
+        "kind": "link",
+        "flags_requested": 0,
+        "nlinks_requested": 2,
+        "flags_before": 0,
+        "flags_after": 0,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 13,
+        "kind": "link",
+        "flags_requested": 64,
+        "nlinks_requested": 2,
+        "flags_before": 64,
+        "flags_after": 64,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 14,
+        "kind": "link",
+        "flags_requested": 32768,
+        "nlinks_requested": 2,
+        "flags_before": 32768,
+        "flags_after": 32768,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      },
+      {
+        "fixture_index": 15,
+        "kind": "link",
+        "flags_requested": 32832,
+        "nlinks_requested": 2,
+        "flags_before": 32832,
+        "flags_after": 32832,
+        "link_count_before": 2,
+        "link_count_after": 1,
+        "same_inode_bytes_after": true,
+        "source_path_absent_after": true,
+        "old_post_unlink_guard_pass": true
+      }
+    ],
+    "bounded_native_explanation": "For last-link regular-file unlink, the observed UF_TRACKED bit (64) clears; other flags remain. Non-last-link unlink retains flags. These finite fixtures do not establish a successful actual quarantine retry.",
+    "actual_successful_prune_retry": false,
+    "candidate_repair_not_accepted_or_executed_by_this_record": true
+  },
+  "transformed_original_fields": [
+    {
+      "pointer": "/records",
+      "original_canonical_value_sha256": "06cfdcb6ea86766c8e245b6736a5eef7a10a94cd34a2f336089b7a5ecec2d9ea",
+      "original_canonical_value_bytes": 25441,
+      "transformation": "Only fixture index, type, requested flags/link count, actual flags/link counts and finite payload/guard observations retained. Native device, inode, owner, timestamps and metadata identities omitted; full original retained privately."
+    }
+  ]
+}

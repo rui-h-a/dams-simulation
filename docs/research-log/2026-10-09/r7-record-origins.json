@@ -1,0 +1,67 @@
+{
+  "schema": "dams-explicit-record-origin-map-v1",
+  "records": [
+    {
+      "record": "complete-engineering-offdevice-r1/complete-readback-receipt.json",
+      "source_sha256": "7f305bc4d9ed011c429d980cefcc1ee941dfe7c61e61d76445462e7bcf668126",
+      "source_bytes": 6159,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "complete-engineering-offdevice-r1/final-proof-refs.json",
+      "source_sha256": "f5f49ae5005bdee4ded93acc9aabea6d687ddc695369432e6cc638bfd2456532",
+      "source_bytes": 7241,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "complete-engineering-offdevice-r1/REPORT.md",
+      "source_sha256": "bdeff453aa9837ea9d9b0dc8d06859278d05c66887a78f20b6d7072199d61198",
+      "source_bytes": 3852,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "paper-layout-isolated-integration-r1/reading-review-receipt.json",
+      "source_sha256": "215a8c6a717719d3db2bdf3d06dd94e3345e8e92191bd78b62fd383ccfc9de4d",
+      "source_bytes": 2007,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "paper-layout-isolated-integration-r1/performance-generator.patch",
+      "source_sha256": "3dabdb74373242f14a60173862850dab369295b16259572cecb8f257b71dfc8c",
+      "source_bytes": 4552,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "paper-layout-isolated-integration-r1/parallel_panel_layout.py",
+      "source_sha256": "28612fc53e6633de309e2e9991ffbf859131ac44146a3f04a5f08a2907609fa0",
+      "source_bytes": 3125,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "ssd-internal-prune-refusal-r1/partial-refusal-summary.json",
+      "source_sha256": "62419ef6b2fd7d4f750d026d8a9f60c41daed90cb1eafbfc3e2ed55842a6d1b1",
+      "source_bytes": 9450536,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "ssd-internal-prune-refusal-r1/root-runner-refusal.json",
+      "source_sha256": "472efda852f1e899d44a6b24883055c3440857a870d5502cb981b156b35fbda9",
+      "source_bytes": 168,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "ssd-internal-prune-refusal-r1/native-unlink-fixture-summary.json",
+      "source_sha256": "68fb6083fe9fe828b9aff14ce5abcdff068181551a72019bb889c9fcc074d86b",
+      "source_bytes": 42104,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "ssd-internal-prune-refusal-r1/actual-two-copy-readback-summary.json",
+      "source_sha256": "94b20e2f1ff2f4762fdd8acf06400563b3f5058dadc2e03a417f5eaa578b220a",
+      "source_bytes": 8445,
+      "exact_source_bytes": false
+    }
+  ],
+  "original_private_records_preserved": true,
+  "whole_goal_complete": false
+}
