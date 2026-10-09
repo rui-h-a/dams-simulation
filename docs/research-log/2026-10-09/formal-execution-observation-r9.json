@@ -222,9 +222,14 @@
     "resume_driver_sha256": "f7ca340c301d9c398df05017bbf682b8c3f9d7f9c2ceefb8dc0461eb4cf83317",
     "original_launch_receipt_sha256": "9179d9c120a1d2a6d567e2e15148cd20fd2d32f16337956980ebe35df16ebbd6",
     "original_launch_receipt_bytes": 833,
-    "new_tick_verified": false,
+    "new_tick_verified": true,
     "new_independent_worlds": 0,
-    "accepted_complete_world": false
+    "accepted_complete_world": false,
+    "latest_status_observed": "OBSERVED_ORIGINAL_CASE_ACTIVE_WITH_PUBLISHED_CHECKPOINT",
+    "new_tick_verification_record": "formal-execution-first-new-days-r9.json",
+    "latest_published_checkpoint_day": 2880,
+    "latest_checkpoint_independent_raw_verification_complete": false,
+    "previously_verified_recovery_checkpoint_day": 2520
   },
   "raw_gate_relaunch": {
     "status": "ACTUAL_ORIGINAL_PURE_IO_RAW_GATE_STARTED",
@@ -240,5 +245,19 @@
   "classification_source_receipt_sha256": "96cfcc90e0e1513ce87e1a7e5f17d7be644d7c895881c1c38f1add03fed42206",
   "confirmation_not_run": true,
   "complete_strategy_is_not_complete_paired_world": true,
-  "restart_does_not_promote_study_classification": true
+  "restart_does_not_promote_study_classification": true,
+  "latest_execution_observation_utc": "2026-10-09T12:20:54.661221+00:00",
+  "latest_execution_observation_record": "formal-execution-published-checkpoint-r9.json",
+  "latest_published_checkpoint_day": 2880,
+  "latest_checkpoint_independent_raw_verification_complete": false,
+  "coordinator_original_144_case_entry_actually_started": true,
+  "coordinator_waiting_for_this_case_durable_exit_zero": true,
+  "storage_status": {
+    "writer_published_checkpoint_pair": true,
+    "writer_declared_checkpoint_hashes_are_not_independent_raw_validation": true,
+    "checkpoint_pair_independently_raw_verified": false,
+    "active_full_case_results_complete": false,
+    "active_full_case_raw_publication_complete": false,
+    "previously_verified_recovery_checkpoint_day": 2520
+  }
 }
