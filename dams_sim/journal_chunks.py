@@ -33,7 +33,10 @@ def checked_target(value):
 
 
 def read_config(db):
-    values = list(db.execute('SELECT * FROM journal_chunk_config'))
+    # Reject malformed types and multiple rows before Python materializes
+    # attacker-controlled TEXT/BLOB values or an unbounded catalog roster.
+    columns=', '.join(f"CASE WHEN typeof({name})='integer' THEN {name} ELSE NULL END" for name in CONFIG_COLUMNS)
+    values = list(db.execute('SELECT '+columns+' FROM journal_chunk_config LIMIT 2'))
     if len(values) != 1 or values[0][0] != 1:
         raise ValueError('journal chunk configuration differs')
     value = values[0]
@@ -110,7 +113,13 @@ def iter_rows(db, target):
     completed_seq = 0
     previous_chunk = 0
     total_rows = 0
-    for item in db.execute('SELECT * FROM journal_chunks ORDER BY chunk'):
+    integer_columns=', '.join(f"CASE WHEN typeof({name})='integer' THEN {name} ELSE NULL END" for name in CHUNK_COLUMNS[:6])
+    hash_columns=', '.join(f"CASE WHEN typeof({name})='text' AND length(CAST({name} AS BLOB))=64 THEN {name} ELSE NULL END" for name in CHUNK_COLUMNS[6:8])
+    # SQLite checks length/type before crossing the Python allocation boundary.
+    # decode_chunk still checks the encoded bytes and all metadata independently.
+    query=('SELECT '+integer_columns+', '+hash_columns+
+           ", CASE WHEN typeof(payload)='blob' AND length(payload)<=? THEN payload ELSE NULL END FROM journal_chunks ORDER BY chunk")
+    for item in db.execute(query,(encoded_limit(target),)):
         raw = decode_chunk(item, target)
         chunk, first, last, expected_count = item[:4]
         if chunk != previous_chunk + 1:
@@ -176,7 +185,7 @@ def pack(db, target):
     config = read_config(db)
     if config[1] != target:
         raise ValueError('journal chunk target differs from persisted catalog')
-    latest = db.execute('SELECT chunk,last_seq FROM journal_chunks ORDER BY chunk DESC LIMIT 1').fetchone()
+    latest = db.execute("SELECT CASE WHEN typeof(chunk)='integer' THEN chunk ELSE NULL END, CASE WHEN typeof(last_seq)='integer' THEN last_seq ELSE NULL END FROM journal_chunks ORDER BY chunk DESC LIMIT 1").fetchone()
     ordinal, archived_last = latest if latest is not None else (0, 0)
     if (ordinal, archived_last) != (config[2], config[4]):
         raise ValueError('journal chunk catalog tail differs')
