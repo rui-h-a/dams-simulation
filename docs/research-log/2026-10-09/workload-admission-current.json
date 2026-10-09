@@ -1,0 +1,61 @@
+{
+  "classification": "engineering workload admission; not a formal study or independent new world",
+  "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+  "attempt": 2,
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "config_sha256": "a8958a36786d62a485ed10cd13b2ceca6478aeb15c51d32bd555a7b503525ecc",
+  "initial_population": 1000,
+  "configured_total_model_days": 3743,
+  "retained_checkpoints": [
+    {
+      "checkpoint_format_version": 2,
+      "config_sha256": "a8958a36786d62a485ed10cd13b2ceca6478aeb15c51d32bd555a7b503525ecc",
+      "day": 3450,
+      "file": "checkpoint-day-003450.json",
+      "files": [
+        {
+          "bytes": 12025735,
+          "file": "checkpoint-day-003450.json",
+          "sha256": "1fcd71f3a3f67f8488ffb7ac1625b2facff1bada009b657fe659e02aee3ade30"
+        },
+        {
+          "bytes": 3440599040,
+          "file": "checkpoint-day-003450.sqlite",
+          "sha256": "feb414d8d911ce4f58bbeaf3e382d7cad7391f383996e406e6994cc9ce68847f"
+        }
+      ],
+      "sha256": "1fcd71f3a3f67f8488ffb7ac1625b2facff1bada009b657fe659e02aee3ade30",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "state_hash_codec": "json-string-keys-v2",
+      "state_semantic_sha256": "ad13bf3f39483f32f4c31d56d074840e8cef831c7da794be19f749c7e7364ce9"
+    },
+    {
+      "checkpoint_format_version": 2,
+      "config_sha256": "a8958a36786d62a485ed10cd13b2ceca6478aeb15c51d32bd555a7b503525ecc",
+      "day": 3420,
+      "file": "checkpoint-day-003420.json",
+      "files": [
+        {
+          "bytes": 11923758,
+          "file": "checkpoint-day-003420.json",
+          "sha256": "43b29a7d1525afa331d49544f62fe450d49c0625acefbaa63e1a67ec864ced9b"
+        },
+        {
+          "bytes": 3408797696,
+          "file": "checkpoint-day-003420.sqlite",
+          "sha256": "8bf6bb47a732d54d45582b20b2a922dadf29e571aa4737d84d7cf1b85f3ff269"
+        }
+      ],
+      "sha256": "43b29a7d1525afa331d49544f62fe450d49c0625acefbaa63e1a67ec864ced9b",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "state_hash_codec": "json-string-keys-v2",
+      "state_semantic_sha256": "1e4a1f6aa426bfb1e5afc8e9e8becc7de45bd13021dad36dbf9bbe57ddd1384d"
+    }
+  ],
+  "attempt_elapsed_wall_seconds_at_snapshot": 2438.766361999995,
+  "observed_utc": "2026-10-09T06:16:10.942984+00:00",
+  "status_at_snapshot": "running",
+  "same_case_continuation": true,
+  "formal_group_completed": false,
+  "input_sampling_changed": false
+}
