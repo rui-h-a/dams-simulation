@@ -1,0 +1,53 @@
+{
+  "current_storage_work": {
+    "capacity_or_whole_formal_workload_admission": false,
+    "finite_Linux_journal_controls": "isolated validation kit under review; actual Linux run not yet observed",
+    "generation_pinned_archive_adapter": "isolated offline prototype under independent validation; no deployment certification",
+    "preservation_goal": "complete exact original bytes, all required generations/dependencies, source/version/hash bindings and retained failures; no silent truncation"
+  },
+  "existing_full_case_pure_IO_transform": {
+    "final_transform_acceptance": false,
+    "last_saved_stage": "writing-self-contained-snapshot",
+    "new_Model_or_independent_sample": false,
+    "original_case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "original_files_modified": false,
+    "status": "IN_PROGRESS",
+    "streamed_counts": {
+      "credits": 3595,
+      "delays": 721,
+      "journal": 13228569,
+      "pending": 270866,
+      "seen": 3001911
+    }
+  },
+  "observed_utc": "2026-10-09T15:31:45.900326+00:00",
+  "original_individual_raw_gate": {
+    "accepted_strategy_trajectories": 1,
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "completed_main_groups": 0,
+    "completed_paired_worlds": 0,
+    "confirmation_samples_added": 0,
+    "status": "PASS_ACTUAL_FORMAL_STRATEGY_ORIGINAL_INDIVIDUAL_RAW_GATE"
+  },
+  "research_units": {
+    "confirmation_worlds_separate_from_pilot": [
+      16,
+      128
+    ],
+    "historical_four_partial_milestones_not_whole_goal_denominator": true,
+    "large_population_formally_accepted_worlds": 0,
+    "pilot_world_ids": [
+      20000,
+      20001,
+      20002,
+      20003
+    ],
+    "required_larger_scales": [
+      100000,
+      1000000,
+      10000000
+    ]
+  },
+  "schema": "DAMS-research-observation-r13",
+  "whole_research_or_manuscript_complete": false
+}

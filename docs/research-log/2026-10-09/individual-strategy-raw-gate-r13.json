@@ -1,0 +1,520 @@
+{
+  "accepted_formal_strategy_trajectories_in_this_receipt": 1,
+  "calendar_days": 3743,
+  "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+  "classification": "one declared precision-pilot strategy trajectory; not a complete paired world, pilot, confirmation ensemble or group",
+  "completed_main_groups": 0,
+  "completed_paired_worlds": 0,
+  "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+  "durable_process_exit_code": 0,
+  "frozen_public_code_reference": "https://github.com/rui-h-a/dams-simulation/tree/research/longitudinal-4daf690d-20261009",
+  "identity": {
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "manifest_sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9",
+  "model_constructions": 0,
+  "not_an_additional_independent_world_or_confirmation_sample": true,
+  "not_an_empirically_calibrated_company_model": true,
+  "observed_utc": "2026-10-09T15:31:45.900326+00:00",
+  "original_files": [
+    {
+      "bytes": 3681513472,
+      "file": ".longitudinal-working.sqlite",
+      "sha256": "1b50be2c9a59e72ad82c915278cc00f47a9fa7412a5cbccb757f9a7f455288d6"
+    },
+    {
+      "bytes": 12787884,
+      "file": "checkpoint-day-003690.json",
+      "sha256": "c824ffaded104786cd155c30abf976c7068a2c1db8b52790a4c6040c32c30f9f"
+    },
+    {
+      "bytes": 3669495808,
+      "file": "checkpoint-day-003690.sqlite",
+      "sha256": "83cfbcbe00e71fb73c3bcc684cf87997a96e0c4daa4d3259ac696d39abd6490d"
+    },
+    {
+      "bytes": 12951108,
+      "file": "checkpoint-day-003743.json",
+      "sha256": "601b9a4b1f5739429a5f1d21aee475369e4102a7ed71140bb92e5606fca4fdbf"
+    },
+    {
+      "bytes": 3681513472,
+      "file": "checkpoint-day-003743.sqlite",
+      "sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43"
+    },
+    {
+      "bytes": 1690,
+      "file": "checkpoint-index.json",
+      "sha256": "e0c882ae18f8a085bc02589b519fa8a7053a25b0b6a2cc9a0c042db9717a3cfc"
+    },
+    {
+      "bytes": 12951098,
+      "file": "final_state.json",
+      "sha256": "095d1bef8b0ba2775b74fa82fb06918bf2bc4c76c4c7b8e7d66a7cec591f65fc"
+    },
+    {
+      "bytes": 3681513472,
+      "file": "final_state.sqlite",
+      "sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43"
+    },
+    {
+      "bytes": 6851,
+      "file": "manifest.json",
+      "sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9"
+    },
+    {
+      "bytes": 1555,
+      "file": "report.md",
+      "sha256": "4f4472b0e5b1afd89d7ce4b4dc48188ad4efd8557161945b7d6500a1007bba22"
+    },
+    {
+      "bytes": 119869,
+      "file": "report.svg",
+      "sha256": "8b81956b8396f9e27c8e334c2fa4024026ae6204132e3d08fc171e9d5014ed75"
+    },
+    {
+      "bytes": 2509,
+      "file": "summary.json",
+      "sha256": "e533692b5946e5622bc76f199427d0c8981c791765e26fbce014c360c4a15805"
+    },
+    {
+      "bytes": 2963434,
+      "file": "timeseries.csv",
+      "sha256": "689723c878cb350b86c871791162feaa3abbd5ed8a108f3c05dbdc9314df4449"
+    }
+  ],
+  "original_gate_input_hashes_sha256": "eba78accc8679194b92e3d32b0609d6215882d98babfd22a1c7b45fe10bd3752",
+  "original_raw_bulk_publication_complete": false,
+  "original_total_bytes": 14755822222,
+  "output_bytes_reported": 14755819885,
+  "paid_cloud_calls": 0,
+  "raw_or_config_or_scientific_source_mutated": false,
+  "returned_utc": "2026-10-09T15:26:26.485670+00:00",
+  "schema": "DAMS-individual-strategy-original-raw-gate-r13",
+  "scientific_config": {
+    "administrative_censorship_exposure": [
+      1.0,
+      0.5,
+      0.0
+    ],
+    "alpha": 0.8,
+    "appeal_capacity_per_member_day": 0.1,
+    "appeal_delay_days": 3,
+    "attack": "none",
+    "attack_budget_hours_per_day": 2.0,
+    "attack_cohort_fraction": 0.5,
+    "attack_start_day": 15,
+    "attack_stop_day": 25,
+    "autonomy_response": 0.25,
+    "backend": "central",
+    "backend_review_multipliers": [
+      1.0,
+      1.2,
+      1.5
+    ],
+    "backend_settlement_days": [
+      1,
+      2,
+      3
+    ],
+    "behavior_rule": "linear_response",
+    "cooperation_strength": 0.3,
+    "days": 3743,
+    "decay_per_day": 0.01,
+    "decision_noise_sd": 0.8,
+    "fault_start_day": 25,
+    "fault_stop_day": 30,
+    "guilds": 4,
+    "hierarchy_basis": "performance",
+    "hierarchy_weights": [
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "learning_rate": 0.01,
+    "longitudinal": {
+      "adoption_day": 0,
+      "adoption_mode": "fixed",
+      "annual_exit_probability": 0.16,
+      "annual_leave_workdays": 0.0,
+      "annual_vacancy_fill_probability": 0.99,
+      "calendar_start": "2020-01-01",
+      "closure_after_unfunded_workdays": 20,
+      "closure_day": null,
+      "credit_half_life_days": 730.0,
+      "demand_schedule": [
+        [
+          0,
+          1.0
+        ],
+        [
+          91,
+          0.9
+        ],
+        [
+          182,
+          1.1
+        ],
+        [
+          274,
+          1.0
+        ],
+        [
+          366,
+          1.0
+        ],
+        [
+          456,
+          0.9
+        ],
+        [
+          547,
+          1.1
+        ],
+        [
+          639,
+          1.0
+        ],
+        [
+          731,
+          1.0
+        ],
+        [
+          821,
+          0.9
+        ],
+        [
+          912,
+          1.1
+        ],
+        [
+          1004,
+          1.0
+        ],
+        [
+          1096,
+          1.0
+        ],
+        [
+          1186,
+          0.9
+        ],
+        [
+          1277,
+          1.1
+        ],
+        [
+          1369,
+          1.0
+        ],
+        [
+          1461,
+          1.0
+        ],
+        [
+          1552,
+          0.9
+        ],
+        [
+          1643,
+          1.1
+        ],
+        [
+          1735,
+          1.0
+        ],
+        [
+          1827,
+          1.0
+        ],
+        [
+          1917,
+          0.9
+        ],
+        [
+          2008,
+          1.1
+        ],
+        [
+          2100,
+          1.0
+        ],
+        [
+          2192,
+          1.0
+        ],
+        [
+          2282,
+          0.9
+        ],
+        [
+          2373,
+          1.1
+        ],
+        [
+          2465,
+          1.0
+        ],
+        [
+          2557,
+          1.0
+        ],
+        [
+          2647,
+          0.9
+        ],
+        [
+          2738,
+          1.1
+        ],
+        [
+          2830,
+          1.0
+        ],
+        [
+          2922,
+          1.0
+        ],
+        [
+          3013,
+          0.9
+        ],
+        [
+          3104,
+          1.1
+        ],
+        [
+          3196,
+          1.0
+        ],
+        [
+          3288,
+          1.0
+        ],
+        [
+          3378,
+          0.9
+        ],
+        [
+          3469,
+          1.1
+        ],
+        [
+          3561,
+          1.0
+        ],
+        [
+          3653,
+          1.0
+        ]
+      ],
+      "dual_run_resource_units_per_member_workday": 0.05,
+      "entrant_age_years": 25.0,
+      "exit_schedule": [],
+      "fiscal_year_start_month": 1,
+      "guild_adoption_days": [],
+      "guild_mergers": [],
+      "guild_moves": [],
+      "historical_verified_credit_per_member": 0.0,
+      "history_mode": "conditional-synthetic-state",
+      "holidays": [
+        "2020-01-01",
+        "2020-12-25",
+        "2021-01-01",
+        "2021-12-25",
+        "2022-01-01",
+        "2022-12-25",
+        "2023-01-01",
+        "2023-12-25",
+        "2024-01-01",
+        "2024-12-25",
+        "2025-01-01",
+        "2025-12-25",
+        "2026-01-01",
+        "2026-12-25",
+        "2027-01-01",
+        "2027-12-25",
+        "2028-01-01",
+        "2028-12-25",
+        "2029-01-01",
+        "2029-12-25",
+        "2030-01-01",
+        "2030-12-25"
+      ],
+      "initial_age_max_years": 60.0,
+      "initial_age_min_years": 25.0,
+      "initial_cash_per_member": 200.0,
+      "initial_memory": 0.1,
+      "initial_routine_strength": 0.1,
+      "maintenance_resource_units_per_member_workday": 0.01,
+      "max_active_members": 2000,
+      "max_people_ever": 8000,
+      "memory_half_life_days": 3650.0,
+      "memory_learning_per_work_year": 0.2,
+      "memory_transfer_fraction": 0.4,
+      "migration_resource_units_per_member": 2.0,
+      "observable_trigger": "active_members",
+      "organization_initial_age_years": 0,
+      "payroll_resource_units_per_member_workday": 0.5,
+      "pre_adoption_backend": "central",
+      "pre_adoption_regime": "hierarchy",
+      "recruitment_resource_units_per_person": 1.0,
+      "retirement_age_years": 65.0,
+      "revenue_resource_units_per_work_unit": 1.0,
+      "routine_adjustment_half_life_days": 180.0,
+      "schema_version": 1,
+      "skill_forgetting_half_life_days": 730.0,
+      "skill_learning_per_work_year": 1.0,
+      "suspension_day": null,
+      "training_hours_per_workday": 0.1,
+      "transition_days": 90,
+      "trigger_not_before_day": 0,
+      "trigger_threshold": 1400.0,
+      "work_creation_stop_day": 3653,
+      "work_weekdays": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "workforce_targets": [
+        [
+          0,
+          1000
+        ],
+        [
+          366,
+          1250
+        ],
+        [
+          1096,
+          1500
+        ],
+        [
+          1827,
+          1500
+        ]
+      ],
+      "world_context": "longitudinal-context-v1:longitudinal-adoption-5y:n=1000:startup"
+    },
+    "max_events": 1000000000,
+    "max_output_mb": 50299.409408,
+    "max_rss_mb": 2048.0,
+    "max_wall_seconds": 86400.0,
+    "n": 1000,
+    "quorum_unavailable_start_day": 0,
+    "quorum_unavailable_stop_day": 0,
+    "regime": "sublinear",
+    "review_capacity_per_member_day": 0.9,
+    "review_error_sd": 0.2,
+    "seed": 20261008,
+    "shared_signal_sd": 0.2,
+    "sites": 2,
+    "team_size": 5,
+    "trace_every_days": 1,
+    "update_interval_days": 1,
+    "world": 20000
+  },
+  "scientific_tags": {
+    "arm_id": "startup-founding",
+    "branch_day": 0,
+    "context": "startup",
+    "counts_as_additional_mc_sample": false,
+    "independent_mc_unit": 20000,
+    "intervention": "dams",
+    "parent_case_id": null,
+    "role": "strategy",
+    "strategy": "founding",
+    "world": 20000
+  },
+  "state_semantic_sha256": "867cd1eb3720251dcc92d775cd9ac77a4552142dd6fe2a8ec6a94b429b9294b6",
+  "status": "PASS_ACTUAL_FORMAL_STRATEGY_ORIGINAL_INDIVIDUAL_RAW_GATE",
+  "validator_source_sha256": "55300a9b6850080c902d025abfa4b673794b9aac70d7aa214afab6a10b4f2214",
+  "verified_case_record_sha256": "1b4b4f5d1d905231f60cc784aa8ead94f742f2a05c688ff96481a025241a4faf",
+  "verified_summary": {
+    "active_member_calendar_days": 5019275.0,
+    "active_member_workdays": 3564049.0,
+    "active_members_final": 1447,
+    "adoption_days": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "appeal_hours": 8874.449999990164,
+    "appeal_mean_days": 184.97733831992758,
+    "appeals_denied": 606.0,
+    "assumptions_status": "synthetic design/stress assumptions; not calibrated",
+    "attack": "none",
+    "attack_budget_hours": 0.0,
+    "attack_hours_consumed": 0.0,
+    "available_member_work_hours": 3028932.9505457403,
+    "backend": "central",
+    "backlog_peak_records": 354217,
+    "branch_origin": null,
+    "calendar_days_observed": 3743.0,
+    "calendar_end_exclusive": "2030-04-01",
+    "calendar_start": "2020-01-01",
+    "calendar_workdays_observed": 2658.0,
+    "cash_resource_units": 3020188.5325956983,
+    "closure_day": null,
+    "confirmation_mean_days": 182.11082107364277,
+    "confirmation_p95_days": 337.0,
+    "confirmed_records": 3001911.0,
+    "cooperation_units": 1425046.4654472228,
+    "corrections": 58557.0,
+    "days_completed": 3743,
+    "decision_errors": 661.0,
+    "decision_regret_per_available_member_hour": 2.7481229067654253e-05,
+    "decision_regret_units": 83.23880024451336,
+    "decisions_completed": 10380.0,
+    "dual_run_resource_units": 3095.7500000000014,
+    "effort_hours": 2036625.5279662244,
+    "entrants": 2859.0,
+    "ever_people": 3859,
+    "exits": 2377.0,
+    "fraudulent_records_accepted": 0.0,
+    "fraudulent_records_detected": 0.0,
+    "governance_hours": 178202.44999441202,
+    "history_mode": "conditional-synthetic-state",
+    "honest_records_rejected": 258466.0,
+    "last_authority_contribution_tv": 0.04899618005460025,
+    "last_signed_gini_gap": -0.05005415480238662,
+    "maintenance_resource_units": 35640.49000000011,
+    "max_individual_time_booked_hours": 1.0,
+    "memory_loss_units": 3.924329552444814,
+    "migration_resource_units": 1998.0,
+    "model_version": "longitudinal-1",
+    "n": 1000,
+    "observation_available_member_work_hours": 2951046.877370534,
+    "operating_resource_units": 1820760.7399999823,
+    "operating_unfunded_resource_units": 0.0,
+    "payroll_resource_units": 1782024.5,
+    "post_adoption_available_member_work_hours": 3028932.9505457403,
+    "present_member_work_hours": 3028932.9505457403,
+    "present_member_workdays": 3564049.0,
+    "produced_work_per_available_member_hour": 1.5338095456218752,
+    "produced_work_units": 4645806.272595688,
+    "recruitment_resource_units": 2859.0,
+    "regime": "sublinear",
+    "retirements": 35.0,
+    "revenue_resource_units": 4645806.272595688,
+    "review_hours": 320181.99999725784,
+    "reviews_rejected": 258466.0,
+    "suspension_day": null,
+    "tail_available_member_work_hours": 77886.07317503868,
+    "training_hours": 6191.500000004993,
+    "unfinished_appeals": 70,
+    "unfinished_records": 270796,
+    "verification_resource_units": 0.0,
+    "work_events": 3472616.0,
+    "world": 20000
+  },
+  "wall_seconds": 13450.807931290998,
+  "whole_goal_complete": false,
+  "world": 20000
+}
