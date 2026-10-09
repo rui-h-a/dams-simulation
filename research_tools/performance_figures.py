@@ -310,6 +310,10 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
         ax.set_xlabel("People N")
         ax.set_ylabel(ylabel);ax.set_title("(a) Wall time" if i==0 else "(b) Resident memory", loc="left", pad=12)
         style(ax)
+        ax.tick_params(labelsize=12)
+        ax.xaxis.label.set_size(12.5)
+        ax.yaxis.label.set_size(12.5)
+        ax.xaxis.labelpad=7
     stop = json.loads((path / "partial-n1000000-t1" / "watchdog.json").read_text())
     axes[1].plot([1_000_000], [stop["sampled_peak_rss_mb"]/1024], "x", color=MEASURED, markersize=8, markeredgewidth=1.4, zorder=4)
     axes[1].axhline(16, color=REFERENCE, linestyle=":", linewidth=.85, zorder=2)
@@ -319,29 +323,22 @@ def figures(path: Path, scales: list[dict], parallel: list[dict], plan: dict, pr
              Line2D([],[],marker="x",linestyle="none",color=MEASURED,markersize=8),
              Line2D([],[],linestyle=":",color=REFERENCE,linewidth=.85)]
     fig.legend(handles,["Measured (30 d)","Unexecuted (30 d)","Planning envelope","Guard stop (1 d)","Local RAM (16 GiB)"],
-               loc="lower center",bbox_to_anchor=(.55,.025),ncol=3,frameon=False,columnspacing=1.6,
-               handletextpad=.65,labelspacing=.7)
-    finish(fig,bottom=.39)
+               loc="lower center",bbox_to_anchor=(.50,.025),ncol=3,frameon=False,columnspacing=1.8,fontsize=11.5,
+               handletextpad=.7,labelspacing=.7)
+    finish(fig,bottom=.34)
+    fig.subplots_adjust(top=.875)
     save(fig, "benchmark_projection")
-    fig, axes = plt.subplots(1, 2, figsize=(17/2.54, 8.2/2.54))
-    for panel, (kind, key, ylabel) in enumerate((("strong", "speedup", "Strong-scaling speedup"), ("weak", "weak_scaling_efficiency", "Weak-scaling efficiency"))):
-        ax=axes[panel];rows=grouped_parallel(parallel, kind, key)
-        xs,ys=[r["workers"] for r in rows],[r["median"] for r in rows]
-        ax.errorbar(xs,ys,yerr=[[r["median"]-r["min"] for r in rows],[r["max"]-r["median"] for r in rows]],fmt="o-",color=MEASURED,markersize=7,capsize=3.2,linewidth=1.5,label="Measured median and range",zorder=3)
-        ax.plot(xs, xs if kind=="strong" else [1]*3, "--",color=REFERENCE,linewidth=.9,label="Ideal reference",zorder=2)
-        ax.set_xticks(xs);ax.set_xlabel("Independent-world workers");ax.set_ylabel(ylabel)
-        upper=max(4.3 if kind=="strong" else 1.15, max(r["max"] for r in rows)*1.1)
-        ax.set_ylim(0,upper);ax.set_yticks([0,1,2,3,4] if kind=="strong" else [0,.5,1]);style(ax)
-        ax.set_title("(a) Strong scaling" if kind=="strong" else "(b) Weak scaling",loc="left",pad=12)
-    handles,legend_labels=axes[0].get_legend_handles_labels()
-    fig.legend(handles,legend_labels,loc="lower center",bbox_to_anchor=(.55,.025),ncol=2,
-               frameon=False,columnspacing=2,handletextpad=.7)
-    finish(fig);save(fig,"benchmark_parallel")
+    from research_tools.parallel_panel_layout import parallel_panel_layout
+    fig = parallel_panel_layout(plt, grouped_parallel(parallel,"strong","speedup"),
+                                grouped_parallel(parallel,"weak","weak_scaling_efficiency"),
+                                measured=MEASURED, reference=REFERENCE)
+    with plt.rc_context({"svg.fonttype":"path"}):
+        save(fig,"benchmark_parallel")
     sha=plan["source_sha256"][:12]
     fragments=[]
     captions=[("benchmark_workloads","Measured CPU reference workloads",f"Historical sublinear/central reference runs on Apple M2 Pro/macOS 26.6/Python 3.14.6, source {sha}. Points are medians and bars min--max of three fresh child-process repeats; warm repeats initialize fresh models. Horizons are labelled for each workload. Complete-run wall time includes hashes and manifests, excluding process launch. RSS is OS high-water before final output hashes; warm runs inherit earlier allocation and high-water."),
               ("benchmark_projection","Conditional large-scale resource projections",f"Native-source {sha}, 30-day scenarios. Filled circles are completed measurements; hollow diamonds/dashes are unexecuted projections. Shaded bands are structural planning envelopes, not confidence intervals. The cross is the million-person, one-day memory stop, not a completed world; the dotted reference is 16 GiB physical RAM before OS headroom. Four measured workloads fit local coefficients and do not certify C4D guest performance or successful large-population execution."),
-              ("benchmark_parallel","Independent-world CPU batching",f"Historical native source {sha}; N=1,000, T=30, full modules and outputs. Strong scaling fixes four matched worlds; weak scaling fixes two worlds per worker. Points are medians and bars min--max of three batches; dashed lines are ideal references. Batch wall time includes launch and monitoring. All eight world IDs retain one final-state hash across worker counts and repeats.")]
+              ("benchmark_parallel","Independent-world CPU batching",f"Historical native source {sha}; N=1,000, T=30, full modules and outputs. Strong scaling fixes four matched worlds; weak scaling fixes two worlds per worker. Left: measured median speedups and min--max ranges, with numerical ranges below the plot (three decimal places); the dashed line is ideal speedup. Right: median efficiencies and min--max ranges in percent (two decimal places); ideal efficiency is 100.00 percent. All ranges are from three batches, not confidence intervals. Batch wall time includes launch and monitoring. All eight world IDs retain one final-state hash across worker counts and repeats.")]
     for name,title,caption in captions:
         lines=[r"\begin{figure}[htbp]",r"\centering",rf"\includegraphics[width=\linewidth]{{figures/results/{name}.pdf}}",rf"\caption{{{caption}}}",rf"\label{{fig:{name.replace('_','-')}}}",r"\end{figure}"]
         fragments.extend(lines)
