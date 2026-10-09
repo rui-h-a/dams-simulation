@@ -1,0 +1,127 @@
+{
+  "code_remote_publication": {
+    "actual_linux_full_case_or_large_population_admission": false,
+    "full_fetched_remote_content_readbacks": 65,
+    "full_remote_commit_object_readbacks": [
+      {
+        "byte_exact": true,
+        "commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+        "commit_object_bytes": 298,
+        "commit_object_sha256": "f9d27f5643e3316d2c006c048f1af9acfb1cb8fe6fd417c3fc73b75f625d5764",
+        "parents": [
+          "db8e6d3b95f6e22741838156931ac3a3a7311cde"
+        ]
+      },
+      {
+        "byte_exact": true,
+        "commit": "db8e6d3b95f6e22741838156931ac3a3a7311cde",
+        "commit_object_bytes": 293,
+        "commit_object_sha256": "39f54c10fd4c33e20fa55e1c3c3b3ffc35b53951db6d8ad04dba541d0e16c5c9",
+        "parents": [
+          "2a78a7dc95710a0e697a03cfd475bba1effb5d9d"
+        ]
+      },
+      {
+        "byte_exact": true,
+        "commit": "2a78a7dc95710a0e697a03cfd475bba1effb5d9d",
+        "commit_object_bytes": 239,
+        "commit_object_sha256": "85ff4b1e10ac273b16b8e1797ec81c51ed5e894ceb8e183eaa1cb5220ea3babd",
+        "parents": []
+      }
+    ],
+    "observed_utc": "2026-10-09T14:58:26.886758+00:00",
+    "old_scientific_results_or_checkpoints_relabelled": false,
+    "orphan_history_root_verified": true,
+    "public_branch": "research/journal-chunks-20261009",
+    "public_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+    "public_repository": "rui-h-a/dams-simulation",
+    "public_tree_oid": "137659c498c342d1fef33afdbaed8709ed5d9475",
+    "reachable_published_commit_count": 3,
+    "receipt_sha256": "3b8853994a87b3fd7ccfec074933d5dd8c335ca37609e84e35e7a9dbeca3499f",
+    "remote_core_driver_hashes_recomputed_from_blob_bytes": true,
+    "runtime_files": 65,
+    "scope": "only the isolated65-file runtime branch; no whole-repository completion claim"
+  },
+  "engineering_source": {
+    "genuine_new_git_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+    "git_and_tar_each_file_full_readback": true,
+    "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "source_archive_bytes": 1617920,
+    "source_archive_sha256": "7057e729793264c33a7fb3bd6a786f195ab8640aa981ede6fd439519c6fc97ba",
+    "source_files": 65,
+    "source_manifest_sha256": "75a55e2707e226f70c8e56567a652ab90d11aa197f397f21d60fab497e5e52d5",
+    "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "syntax_compile_files": 59,
+    "two_code_byte_stability_observations": true
+  },
+  "evidence_kind": "timestamped engineering observation; no new scientific population result",
+  "observed_utc": "2026-10-09T15:01:43Z",
+  "pure_IO_existing_case_transcode": {
+    "full_transcode_acceptance": "pending",
+    "independent_scientific_samples_added": 0,
+    "last_saved_stage": "validating-original-ledger",
+    "new_Model_or_world_execution": false,
+    "old_source_relabelled": false,
+    "original_SQLite_declared_bytes": 3681513472,
+    "original_completed_case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "original_days": 3743,
+    "original_fullstate_semantic_sha256": "867cd1eb3720251dcc92d775cd9ac77a4552142dd6fe2a8ec6a94b429b9294b6",
+    "original_ledger_semantic_sha256": "5aeb47187a87251dfb99d7b1b55d46349e8ec8576d37eec2046d7ba164b60fe0",
+    "original_research_envelope_replaced": false,
+    "original_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "purpose": "lossless storage IO verification of one already-existing case",
+    "status": "started; no terminal result observed"
+  },
+  "remaining": {
+    "complete_generation_retention_and_capacity_admission": true,
+    "complete_research_reproducibility_release": true,
+    "external_validity_calibration_validation_and_generalization": true,
+    "full_original_raw_acceptance": true,
+    "large_population_formal_execution_and_independent_acceptance": true,
+    "manuscript_final_results_and_visual_verification": true
+  },
+  "research_units": {
+    "complete_formal_research_group_acceptance": "not established by r12",
+    "confirmation_complete": false,
+    "confirmation_distinct_from_pilot": true,
+    "confirmation_world_range": [
+      16,
+      128
+    ],
+    "engineering_Model_controls_added_accepted_worlds": 0,
+    "four_partial_milestones_do_not_cover_whole_goal": true,
+    "historical_partial_milestones": [
+      {
+        "population": 1000,
+        "post_adoption_years": 5
+      },
+      {
+        "population": 1000,
+        "post_adoption_years": 10
+      },
+      {
+        "population": 10000,
+        "post_adoption_years": 5
+      },
+      {
+        "population": 10000,
+        "post_adoption_years": 10
+      }
+    ],
+    "large_population_formally_accepted_worlds": 0,
+    "pilot_world_count": 4,
+    "precision_pilot_world_ids": [
+      20000,
+      20001,
+      20002,
+      20003
+    ],
+    "required_larger_population_scales": [
+      100000,
+      1000000,
+      10000000
+    ]
+  },
+  "schema": "DAMS-dated-research-observation-r12",
+  "whole_research_or_manuscript_complete": false
+}
