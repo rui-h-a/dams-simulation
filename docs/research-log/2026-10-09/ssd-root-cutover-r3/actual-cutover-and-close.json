@@ -1,0 +1,380 @@
+{
+  "schema": "dams-explicit-portable-record-derivative-v1",
+  "original_record_sha256": "731b79f994c634ccae20d75e352d2d537971351dcecc50d6f6a4710ece315d0c",
+  "original_record_bytes": 52060,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "removed_private_values": [
+    {
+      "pointer": "/epochs",
+      "private_field_removed": true,
+      "canonical_value_sha256": "8a7e8136c44485e0b5f371d9c8322094273b90bd6b0f754fd311583f1e974367",
+      "canonical_value_bytes": 905
+    },
+    {
+      "pointer": "/current_root_operational_proof",
+      "private_field_removed": true,
+      "canonical_value_sha256": "a2c660afddfddcbb919b5a626f8a26a0c70a1545494e3692e9fb969bf976dd93",
+      "canonical_value_bytes": 33626
+    },
+    {
+      "pointer": "/result/source_root_identity",
+      "private_field_removed": true,
+      "canonical_value_sha256": "a422bec294a9407e05a64906159d23f8d661703221f57dabf466faf62d4f20b0",
+      "canonical_value_bytes": 20
+    },
+    {
+      "pointer": "/result/root_alias_identity",
+      "private_field_removed": true,
+      "canonical_value_sha256": "bfd4d03de5bcdc3a8139f523dc0152b62fd6274eb17aa65fa715f6fa723139d6",
+      "canonical_value_bytes": 80
+    },
+    {
+      "pointer": "/result/source_alias",
+      "value_sha256": "6cd54d1c6845fb480acfd131c7242efb2cbec422f6624224482755f0dcf00a36",
+      "utf8_bytes": 19
+    },
+    {
+      "pointer": "/result/primary",
+      "value_sha256": "ccd173134385c000f9085218f958e8d3ccc7fa30c8409e4103cc5cd7ce306ff6",
+      "utf8_bytes": 39
+    },
+    {
+      "pointer": "/result/quarantine",
+      "value_sha256": "2701bf77c75d741e050fb5ee60f6c37dd108cf340713f66e473aceb233e0d8a2",
+      "utf8_bytes": 59
+    },
+    {
+      "pointer": "/result/core_backup",
+      "value_sha256": "31dd04e5c52077b3d1d6df9fec09f397abf09399b8318d1f8dcfb51618e8e34f",
+      "utf8_bytes": 110
+    },
+    {
+      "pointer": "/result/root_operation_profile/path",
+      "value_sha256": "730ef6d413fd07ae03e0d7157b2cd4e0d8b59463cb52de5e303fd899d5a43b24",
+      "utf8_bytes": 108
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/before/identity",
+      "private_field_removed": true,
+      "canonical_value_sha256": "7248fcd13e013f5a917db5e6f574c76e78e3e552a861b89b9e5cc266c3046ed7",
+      "canonical_value_bytes": 83
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/before/entry/meta/uid",
+      "private_field_removed": true,
+      "canonical_value_sha256": "1158e7e12c5e7362318e5e3c2e1f2f1ab49578ab1d1691e9818a7c3f6b30b528",
+      "canonical_value_bytes": 3
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/before/entry/meta/gid",
+      "private_field_removed": true,
+      "canonical_value_sha256": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b",
+      "canonical_value_bytes": 2
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/after/identity",
+      "private_field_removed": true,
+      "canonical_value_sha256": "fc6d13fb0424e062ce768ebcad90466d467a6ad31fa22f7234e0022d10661355",
+      "canonical_value_bytes": 83
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/after/entry/meta/uid",
+      "private_field_removed": true,
+      "canonical_value_sha256": "1158e7e12c5e7362318e5e3c2e1f2f1ab49578ab1d1691e9818a7c3f6b30b528",
+      "canonical_value_bytes": 3
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/after/entry/meta/gid",
+      "private_field_removed": true,
+      "canonical_value_sha256": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b",
+      "canonical_value_bytes": 2
+    },
+    {
+      "pointer": "/result/root_own_transitions/0/root_operation_profile/path",
+      "value_sha256": "730ef6d413fd07ae03e0d7157b2cd4e0d8b59463cb52de5e303fd899d5a43b24",
+      "utf8_bytes": 108
+    },
+    {
+      "pointer": "/result/source_full_value_readback/root_operation_profile/path",
+      "value_sha256": "730ef6d413fd07ae03e0d7157b2cd4e0d8b59463cb52de5e303fd899d5a43b24",
+      "utf8_bytes": 108
+    },
+    {
+      "pointer": "/result/source_before/path",
+      "value_sha256": "b3606404fff6a56a11ba087491b51fa71650602088540cb5160dcff46883aa39",
+      "utf8_bytes": 117
+    },
+    {
+      "pointer": "/result/finder_version_profile/path",
+      "value_sha256": "fe196e2096316530b4157de5bc507e19aa7bf69ded77def1b563896d27cda776",
+      "utf8_bytes": 111
+    },
+    {
+      "pointer": "/result/metadata_portability/path",
+      "value_sha256": "097f37fcb94b276f9db8b508836d67b26c7edca44a82777170960ff33576b2de",
+      "utf8_bytes": 156
+    },
+    {
+      "pointer": "/result/original_alias_value_envelopes/backup/path",
+      "value_sha256": "40d7ab3cdfd62434c7258d6af44a07ba1a3382da8771640b4c41b672059737a7",
+      "utf8_bytes": 132
+    },
+    {
+      "pointer": "/result/original_alias_value_envelopes/primary/path",
+      "value_sha256": "693d5260d7c6ef1b9d874d83a6f6bb135c18c5f6da039144cc5b15a075e962da",
+      "utf8_bytes": 133
+    },
+    {
+      "pointer": "/result/original_provenance_value_envelopes/backup/path",
+      "value_sha256": "8ec5de23676dbb8d2b3d878472382bad0c3701414b0512a9aba73920f1abceaa",
+      "utf8_bytes": 137
+    },
+    {
+      "pointer": "/result/original_provenance_value_envelopes/primary/path",
+      "value_sha256": "b05b2d2828d581d930851e9792a9e826db307700508d41c782d5f7fe2269e178",
+      "utf8_bytes": 138
+    },
+    {
+      "pointer": "/cutover_receipt/path",
+      "value_sha256": "f0857b3eac8253ec034d5246fd772586773e8f595c86ee9a602ea7ba8c2c61df",
+      "utf8_bytes": 120
+    }
+  ],
+  "record": {
+    "status": "PASS_ACTUAL_GUARDED_ROOT_CUTOVER_AND_CLOSE",
+    "result": {
+      "schema": "dams-thesis-root-cutover-v1",
+      "source_alias": {
+        "private_value_redacted": true,
+        "original_value_sha256": "6cd54d1c6845fb480acfd131c7242efb2cbec422f6624224482755f0dcf00a36"
+      },
+      "primary": {
+        "private_value_redacted": true,
+        "original_value_sha256": "ccd173134385c000f9085218f958e8d3ccc7fa30c8409e4103cc5cd7ce306ff6"
+      },
+      "quarantine": {
+        "private_value_redacted": true,
+        "original_value_sha256": "2701bf77c75d741e050fb5ee60f6c37dd108cf340713f66e473aceb233e0d8a2"
+      },
+      "core_backup": {
+        "private_value_redacted": true,
+        "original_value_sha256": "31dd04e5c52077b3d1d6df9fec09f397abf09399b8318d1f8dcfb51618e8e34f"
+      },
+      "internal_duplicates_deleted": false,
+      "old_native_actor_retired": true,
+      "old_native_paths_must_not_execute": true,
+      "budget_or_counter_reset": false,
+      "science_complete": false,
+      "helper_sha256": "4206613f568301cf620928a0de3005bf869b4167a020aa35ca70899561c3dce8",
+      "wrapper_sha256": "14e86c7610ca1ea02301e3768c4f9d3f74fec261271cbcf6f614312427640108",
+      "effective_source_image_sha256": "15a04dd32a9854dacf421c29a18b1dd4e816ccc644c79ac0a2adabf84d1a2823",
+      "source_root_identity": {
+        "private_field_redacted": true,
+        "original_canonical_value_sha256": "a422bec294a9407e05a64906159d23f8d661703221f57dabf466faf62d4f20b0"
+      },
+      "actual_operational_core_sha256": "f3f83ebf25381b0e81bd573998e42d54060e1f45805bf5c58f100834d28c9084",
+      "root_operation_profile": {
+        "path": {
+          "private_value_redacted": true,
+          "original_value_sha256": "730ef6d413fd07ae03e0d7157b2cd4e0d8b59463cb52de5e303fd899d5a43b24"
+        },
+        "sha256": "cf58f2451a1264737f9310dc5e04565541fd6e60723070bcedbfa6f70dc06c1d"
+      },
+      "root_operation_exception": [
+        {
+          "logical_path": "",
+          "original_attribute_explicitly_absent": false,
+          "original_present_value_record_verified": true,
+          "requires_verified_two_value_envelopes": true,
+          "substituted_attribute": "com.apple.provenance",
+          "original_attribute": {
+            "bytes": 11,
+            "sha256": "281de72ab2d1d45e058d0e268758cbaa3a23d5eaeecda8426a172604a8e5034b"
+          },
+          "actual_substituted_value": {
+            "bytes": 11,
+            "sha256": "73ccb01fc9ce25bad18f6692cdb87f7c8c95419ef6ccf151f99615046ca140f9"
+          },
+          "original_metadata_sha256": "63e6cb358cdbe68c6a9189f0f9206296134ee53f311c711a80513d488140a222",
+          "actual_target_metadata_sha256": "3e6ae08ea1478b61b769990988e074a2eb609e6b636c12a52dd6bd38a03eb527"
+        }
+      ],
+      "root_own_transitions": [
+        {
+          "phase": "owned_source_to_quarantine",
+          "before": {
+            "identity": {
+              "private_field_redacted": true,
+              "original_canonical_value_sha256": "7248fcd13e013f5a917db5e6f574c76e78e3e552a861b89b9e5cc266c3046ed7"
+            },
+            "entry": {
+              "kind": "dir",
+              "meta": {
+                "mode": 493,
+                "uid": {
+                  "private_field_redacted": true,
+                  "original_canonical_value_sha256": "1158e7e12c5e7362318e5e3c2e1f2f1ab49578ab1d1691e9818a7c3f6b30b528"
+                },
+                "gid": {
+                  "private_field_redacted": true,
+                  "original_canonical_value_sha256": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b"
+                },
+                "mtime_ns": 1791485809205400167,
+                "flags": 0,
+                "xattrs": {
+                  "com.apple.macl": {
+                    "bytes": 72,
+                    "sha256": "784711acfaee31ec5d389ab0391f70003e1544042709e9642fe1ccd884a4d5db"
+                  },
+                  "com.apple.provenance": {
+                    "bytes": 11,
+                    "sha256": "73ccb01fc9ce25bad18f6692cdb87f7c8c95419ef6ccf151f99615046ca140f9"
+                  }
+                },
+                "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "acl_bytes": 0
+              }
+            }
+          },
+          "after": {
+            "identity": {
+              "private_field_redacted": true,
+              "original_canonical_value_sha256": "fc6d13fb0424e062ce768ebcad90466d467a6ad31fa22f7234e0022d10661355"
+            },
+            "entry": {
+              "kind": "dir",
+              "meta": {
+                "mode": 493,
+                "uid": {
+                  "private_field_redacted": true,
+                  "original_canonical_value_sha256": "1158e7e12c5e7362318e5e3c2e1f2f1ab49578ab1d1691e9818a7c3f6b30b528"
+                },
+                "gid": {
+                  "private_field_redacted": true,
+                  "original_canonical_value_sha256": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b"
+                },
+                "mtime_ns": 1791485809205400167,
+                "flags": 0,
+                "xattrs": {
+                  "com.apple.macl": {
+                    "bytes": 72,
+                    "sha256": "784711acfaee31ec5d389ab0391f70003e1544042709e9642fe1ccd884a4d5db"
+                  },
+                  "com.apple.provenance": {
+                    "bytes": 11,
+                    "sha256": "73ccb01fc9ce25bad18f6692cdb87f7c8c95419ef6ccf151f99615046ca140f9"
+                  }
+                },
+                "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "acl_bytes": 0
+              }
+            }
+          },
+          "held_same_inode_verified": true,
+          "root_operation_profile": {
+            "path": {
+              "private_value_redacted": true,
+              "original_value_sha256": "730ef6d413fd07ae03e0d7157b2cd4e0d8b59463cb52de5e303fd899d5a43b24"
+            },
+            "sha256": "cf58f2451a1264737f9310dc5e04565541fd6e60723070bcedbfa6f70dc06c1d"
+          }
+        }
+      ],
+      "source_full_value_readback": {
+        "root_operation_profile": {
+          "path": {
+            "private_value_redacted": true,
+            "original_value_sha256": "730ef6d413fd07ae03e0d7157b2cd4e0d8b59463cb52de5e303fd899d5a43b24"
+          },
+          "sha256": "cf58f2451a1264737f9310dc5e04565541fd6e60723070bcedbfa6f70dc06c1d"
+        },
+        "all_non_root_original_present_values_physical_full_readback_verified": true,
+        "root_original_value_physical_readback_verified": false,
+        "root_original_value_two_preserved_full_envelopes_verified": true,
+        "root_operational_full_value_physical_readback_verified": true,
+        "root_original_value_readback_scope": "two distinct preserved original envelopes",
+        "physical_metadata_equality_claimed": false
+      },
+      "root_alias_identity": {
+        "private_field_redacted": true,
+        "original_canonical_value_sha256": "bfd4d03de5bcdc3a8139f523dc0152b62fd6274eb17aa65fa715f6fa723139d6"
+      },
+      "source_before": {
+        "path": {
+          "private_value_redacted": true,
+          "original_value_sha256": "b3606404fff6a56a11ba087491b51fa71650602088540cb5160dcff46883aa39"
+        },
+        "sha256": "f137b8db79cf3ddcaf64a8803209abf701ac5cb6b06d21da714ae14ecb12e86d"
+      },
+      "finder_version_profile": {
+        "path": {
+          "private_value_redacted": true,
+          "original_value_sha256": "fe196e2096316530b4157de5bc507e19aa7bf69ded77def1b563896d27cda776"
+        },
+        "sha256": "29611c9acfe2b0edee0bd3a62986bb2edd9e338ee526b339aa9c4a3b44189fa5"
+      },
+      "metadata_portability": {
+        "path": {
+          "private_value_redacted": true,
+          "original_value_sha256": "097f37fcb94b276f9db8b508836d67b26c7edca44a82777170960ff33576b2de"
+        },
+        "sha256": "412473ca1792478c125e173ae99a21c08d2584e21549f016fec6f1c6100037a3"
+      },
+      "original_alias_value_envelopes": {
+        "backup": {
+          "path": {
+            "private_value_redacted": true,
+            "original_value_sha256": "40d7ab3cdfd62434c7258d6af44a07ba1a3382da8771640b4c41b672059737a7"
+          },
+          "sha256": "e5809b1372e5fd6889cfd78332e8d17273c962c0b7824c746b5c640a9e73db15"
+        },
+        "primary": {
+          "path": {
+            "private_value_redacted": true,
+            "original_value_sha256": "693d5260d7c6ef1b9d874d83a6f6bb135c18c5f6da039144cc5b15a075e962da"
+          },
+          "sha256": "e5809b1372e5fd6889cfd78332e8d17273c962c0b7824c746b5c640a9e73db15"
+        }
+      },
+      "original_provenance_value_envelopes": {
+        "backup": {
+          "path": {
+            "private_value_redacted": true,
+            "original_value_sha256": "8ec5de23676dbb8d2b3d878472382bad0c3701414b0512a9aba73920f1abceaa"
+          },
+          "sha256": "d4d1144f17174e802cf97ce39e01ad7554d5538661eb1b65f6285ed1b80557ca"
+        },
+        "primary": {
+          "path": {
+            "private_value_redacted": true,
+            "original_value_sha256": "b05b2d2828d581d930851e9792a9e826db307700508d41c782d5f7fe2269e178"
+          },
+          "sha256": "d4d1144f17174e802cf97ce39e01ad7554d5538661eb1b65f6285ed1b80557ca"
+        }
+      },
+      "physical_metadata_equality_claimed": false
+    },
+    "wall_seconds": 1487.1455118656158,
+    "cutover_receipt": {
+      "path": {
+        "private_value_redacted": true,
+        "original_value_sha256": "f0857b3eac8253ec034d5246fd772586773e8f595c86ee9a602ea7ba8c2c61df"
+      },
+      "sha256": "0f4a3e9cab9825ffd250c021725d93c626f403c9c7829dc55ae936d13cb9a44f"
+    },
+    "epochs": {
+      "private_field_redacted": true,
+      "original_canonical_value_sha256": "8a7e8136c44485e0b5f371d9c8322094273b90bd6b0f754fd311583f1e974367"
+    },
+    "current_root_operational_proof": {
+      "private_field_redacted": true,
+      "original_canonical_value_sha256": "a2c660afddfddcbb919b5a626f8a26a0c70a1545494e3692e9fb969bf976dd93"
+    },
+    "original_pretransaction_proof_not_overwritten": true,
+    "close_verified": true,
+    "internal_duplicates_deleted": false,
+    "paid_operations_performed": false,
+    "whole_goal_complete": false
+  }
+}
