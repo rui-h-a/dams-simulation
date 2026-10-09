@@ -1,0 +1,121 @@
+{
+  "schema": "dams-explicit-record-origin-map-v1",
+  "records": [
+    {
+      "record": "cloud-preservation-r1/original-three-counterexamples.json",
+      "source_sha256": "95619c0a10456298fe228f45ec21da58aa6fa66682b5dec74e7f147b6d20f7b0",
+      "source_bytes": 3012,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/HANDOFF.md",
+      "source_sha256": "adc073c2ee7649c87c0a8ded1ef099ffa8d55f3f970f9eba69a7b1bb654b92fe",
+      "source_bytes": 3950,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/REPORT.md",
+      "source_sha256": "3c51a72c97281f4f59854ec6389917e4d41df0f863b0b8b529885018b617a58c",
+      "source_bytes": 1954,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/SCHEMA.md",
+      "source_sha256": "475e4e00bf0c0920d86757e07483aaa31b37daa25cbfdc24e156154346bf8e52",
+      "source_bytes": 4062,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/preservation.patch",
+      "source_sha256": "fb5dc1e25b92497586fcaf8a828d895c79ca9e89f2f2bb9b65536aef49052dd8",
+      "source_bytes": 38456,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/source/research_tools/compute_only_lifecycle.py",
+      "source_sha256": "7955e48019d6e20766eb4f1c6382e97ffe40e98fd94528e6af7fecae63e8feda",
+      "source_bytes": 53909,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/source/research_tools/compute_only_remote.py",
+      "source_sha256": "e3ab0ac521a69a59336b641ad06d5a33250862a4342fb9e807767a5978358cb7",
+      "source_bytes": 21927,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/source/tests/test_compute_only_preservation_repair.py",
+      "source_sha256": "d78263ccc3483313ea8aa1372c3250b451aee22c54d9e9ca76264d9ce4edb7be",
+      "source_bytes": 12057,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "cloud-preservation-r1/independent-recheck.json",
+      "source_sha256": "f33dee3b5e1c18c42d6e069ba6aa32e1d62a02f3e1301aec0df89facdb59a0a1",
+      "source_bytes": 10680,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "complete-generation-pack-r1/measurement-result.json",
+      "source_sha256": "6b2fdeb58b544d8c89a5b9ded8f1eb184c46dc5fdfef4bec4ff7d14f8d4ae537",
+      "source_bytes": 4548,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "complete-generation-pack-r1/read-only-audit-result.json",
+      "source_sha256": "5cf532d7bb19d65097f6aff4faf6db510d1d6b182ed92f66339199b8b7f70ecc",
+      "source_bytes": 1015,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "complete-generation-pack-r1/cold-cache-unique-cid-plan.json",
+      "source_sha256": "8a952dd6e895bc70254fa94b7e6fd657c72acb6b6f1b7f32112bc6fd9831fa69",
+      "source_bytes": 181459,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "complete-generation-pack-r1/proof-references.json",
+      "source_sha256": "08634e2ab86ba650609e922dc0151c7db6d548e96b48a82f1586b2878f998273",
+      "source_bytes": 11291,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "scaling-layout-candidate-r1/parallel_panel_layout.py",
+      "source_sha256": "28612fc53e6633de309e2e9991ffbf859131ac44146a3f04a5f08a2907609fa0",
+      "source_bytes": 3125,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "scaling-layout-candidate-r1/benchmark_parallel.svg",
+      "source_sha256": "625be588bfe5f238af33d4eee1ad523f2affe5d54f834efc5a5682efbf24b203",
+      "source_bytes": 72661,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "scaling-layout-candidate-r1/caption.txt",
+      "source_sha256": "61bb129157abd0080abdf111990cec3490f92007b1407581cefdb0e94f53adc4",
+      "source_bytes": 618,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "scaling-layout-candidate-r1/receipt.json",
+      "source_sha256": "5396e6b2c7e0e10e5439caf9c018d7f0f1e3907c103bc85a31829af65b2f35a0",
+      "source_bytes": 2420,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "ssd-cutover-r1/actual-cutover-refusal.json",
+      "source_sha256": "239e16152e60fa5f6b9611e1218f9536e911247ecaea32b63b4731b70c448f59",
+      "source_bytes": 170,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "ssd-cutover-r1/metadata-only-diagnosis.json",
+      "source_sha256": "2f80503597a21ecd5237f8380d9ffe0c5f5e641860ebb41a4f178375230f7a34",
+      "source_bytes": 2221,
+      "exact_source_bytes": false
+    }
+  ],
+  "original_private_records_preserved": true,
+  "whole_goal_complete": false
+}

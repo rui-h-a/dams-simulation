@@ -1,0 +1,286 @@
+{
+  "schema": "dams-explicit-portable-record-derivative-v1",
+  "original_record_sha256": "f33dee3b5e1c18c42d6e069ba6aa32e1d62a02f3e1301aec0df89facdb59a0a1",
+  "original_record_bytes": 10680,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "removed_private_values": [],
+  "record": {
+    "AST": {
+      "research_tools/compute_only_lifecycle.py": true,
+      "research_tools/compute_only_remote.py": true,
+      "tests/test_compute_only_preservation_repair.py": true
+    },
+    "Model_network_provider_auth_paid_Git_source_real_ledger_raw": false,
+    "changed_helper_SHA256": {
+      "research_tools/compute_only_lifecycle.py": "7955e48019d6e20766eb4f1c6382e97ffe40e98fd94528e6af7fecae63e8feda",
+      "research_tools/compute_only_remote.py": "e3ab0ac521a69a59336b641ad06d5a33250862a4342fb9e807767a5978358cb7",
+      "tests/test_compute_only_preservation_repair.py": "d78263ccc3483313ea8aa1372c3250b451aee22c54d9e9ca76264d9ce4edb7be"
+    },
+    "fixture_differences_explicit": "opaque science bytes retained; new real TransferSpool reservation/binding and external synthetic current source manifest replace detached historical mock group/manifest",
+    "freeze_sha256": "23ae0fee4db698396e4616b542946936fcb5241ea0ae983c686fc2ba4f0919e2",
+    "historical_literal_test12": {
+      "errors": 0,
+      "failures": 1,
+      "not_counted_as_PASS": true,
+      "old_source_test_bytes_unchanged": true,
+      "rejected_historical_expectation_not_new_regression": true,
+      "tests": 1
+    },
+    "observations": [
+      {
+        "generation": "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a",
+        "poll": {
+          "reservation_generations": [
+            "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a"
+          ],
+          "runtime_sha256": "bd5c88be087cf5c5430194e542b74e5b97d0b0e47901570e5afb384c465e7254",
+          "schema": "dams-compute-live-poll-v1",
+          "science_complete": false,
+          "sealed_generations": [
+            {
+              "ack_present": false,
+              "ack_sha256": null,
+              "attempt": "attempt-000",
+              "case_id": "edeafe444f913dfb1b54c5b9f808330efb10b93408f62591a6ba14b60e20b1ee",
+              "config_sha256": "7c86ead5ea9f683311ff5849ae8c20fd5abd764febd59bff5b08c582de02630a",
+              "day": 2,
+              "generation": "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a",
+              "group_sha256": "c70d423914130d4cf034540616154b5f9293065140295a0dc3546d59cb0ac26a",
+              "kind": "checkpoint",
+              "manifest_bytes": 3419,
+              "manifest_sha256": "845e340d25f79589ff0277052fd2947296b9b368cd8b94b971b6782edb9cd258",
+              "seal_bytes": 332,
+              "seal_sha256": "acdde1d084a4c537cb7f5450f99e9ccf099016e51013bf053b071edd02ae6a3b"
+            }
+          ],
+          "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+          "spool_high_water": {
+            "history_sha256": "cd1f09b8ea1b8a2da7d15a1a2e319eda6e661e1592a07864c86db863282e394f",
+            "previous_sha256": "580f88b518be313586b149225ceb8edb3b8ab8ac819e40ce94bd7add59a4b4e7",
+            "reserved_bytes": 45619,
+            "schema": "dams-compute-only-transfer-v1",
+            "sequence": 1
+          },
+          "terminal_present": true,
+          "unsealed_generations": []
+        },
+        "provider_delete_commands": [],
+        "scenario": "original_3_actual_producer_dict_poll",
+        "science_gate_mocked": false,
+        "spool_high_water": {
+          "history_sha256": "cd1f09b8ea1b8a2da7d15a1a2e319eda6e661e1592a07864c86db863282e394f",
+          "previous_sha256": "580f88b518be313586b149225ceb8edb3b8ab8ac819e40ce94bd7add59a4b4e7",
+          "reserved_bytes": 45619,
+          "schema": "dams-compute-only-transfer-v1",
+          "sequence": 1
+        },
+        "status": "CORRECT_NATIVE_DICT_ACCEPTED"
+      },
+      {
+        "VM_retained_before_original_expiry": true,
+        "collector_ACK_count": 0,
+        "encoded_parts_retained": 3,
+        "error": "closeout original Collector ACK coverage incomplete or guest history rolled back",
+        "generation": "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a",
+        "guest_ACK_count": 0,
+        "original_deadline_expiry_hold_unchanged": true,
+        "provider_delete_commands": [],
+        "scenario": "original_2_unacknowledged_sealed_generation",
+        "science_gate_mocked": false,
+        "status": "NORMAL_DELETE_BLOCKED"
+      },
+      {
+        "VM_retained_before_original_expiry": true,
+        "error": "owned synthetic SSD I/O failure",
+        "native_ACKs_precede_failure": true,
+        "original_deadline_expiry_hold_unchanged": true,
+        "provider_delete_commands": [],
+        "scenario": "original_1_preservation_failure",
+        "science_gate_mocked_only_for_opaque_checkpoint": true,
+        "status": "NORMAL_DELETE_BLOCKED"
+      },
+      {
+        "ACK_sha256": "7dc0926c647ebe7f8241792db7a7e4b2b2d0c63ac945ee763da07b13726f9dee",
+        "actual_full_scientific_restore_or_cloud_acceptance": false,
+        "generation": "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a",
+        "native_two_receipts": [
+          {
+            "counter_high_water": {
+              "bytes": 4112,
+              "requests": 5,
+              "sequence": 5,
+              "sha256": "c82c12a4e2cad64263c4415dbcabf3579f194a981fbc827e155b8681faaa3fad"
+            },
+            "files": {
+              "checkpoint-day-000002.json": {
+                "bytes": 2,
+                "identity": [
+                  16777244,
+                  2140883,
+                  2,
+                  1791533949083367512,
+                  1791533949083367512
+                ],
+                "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+              },
+              "checkpoint-day-000002.sqlite": {
+                "bytes": 304,
+                "identity": [
+                  16777244,
+                  2140884,
+                  304,
+                  1791533949084686505,
+                  1791533949084686505
+                ],
+                "sha256": "a9eecfa84c11579b9017634c80577c5d4590c19dfcd5d455aa6ea28d5ac1e808"
+              },
+              "checkpoint-index.json": {
+                "bytes": 657,
+                "identity": [
+                  16777244,
+                  2140885,
+                  657,
+                  1791533949086233080,
+                  1791533949086233080
+                ],
+                "sha256": "7867f7f6a2eebafe0af7653a7f7c325e6c54c51f90a791a4c3650c710b226188"
+              }
+            },
+            "gate": "checkpoint-full-state",
+            "receipt_sha256": "381687a9649ee9473a7283869ede62d21b26b2ba4ebcf9350acee64cbf50eeb4",
+            "restoration_id": "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a-copy-1"
+          },
+          {
+            "counter_high_water": {
+              "bytes": 4112,
+              "requests": 5,
+              "sequence": 5,
+              "sha256": "c82c12a4e2cad64263c4415dbcabf3579f194a981fbc827e155b8681faaa3fad"
+            },
+            "files": {
+              "checkpoint-day-000002.json": {
+                "bytes": 2,
+                "identity": [
+                  16777244,
+                  2140893,
+                  2,
+                  1791533949098030187,
+                  1791533949098030187
+                ],
+                "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+              },
+              "checkpoint-day-000002.sqlite": {
+                "bytes": 304,
+                "identity": [
+                  16777244,
+                  2140894,
+                  304,
+                  1791533949099748095,
+                  1791533949099748095
+                ],
+                "sha256": "a9eecfa84c11579b9017634c80577c5d4590c19dfcd5d455aa6ea28d5ac1e808"
+              },
+              "checkpoint-index.json": {
+                "bytes": 657,
+                "identity": [
+                  16777244,
+                  2140895,
+                  657,
+                  1791533949101140379,
+                  1791533949101140379
+                ],
+                "sha256": "7867f7f6a2eebafe0af7653a7f7c325e6c54c51f90a791a4c3650c710b226188"
+              }
+            },
+            "gate": "checkpoint-full-state",
+            "receipt_sha256": "d54ce3d957265982218eaa51ede564ee339c9fc988018489de89a752bfa5156f",
+            "restoration_id": "e9ae57b5ee1e849d54c945e2e64824f1e362e61a394524fdce19e9f6f04d407a-copy-2"
+          }
+        ],
+        "original_deadline_expiry_hold_unchanged": true,
+        "provider_delete_commands": [
+          [
+            "gcloud",
+            "compute",
+            "instances",
+            "delete",
+            "dams-55d2b532dfcd2920a4234745",
+            "--project=fictional-research",
+            "--zone=us-central1-a",
+            "--quiet"
+          ]
+        ],
+        "restored_file_inodes": [
+          {
+            "checkpoint-day-000002.json": [
+              16777244,
+              2140883
+            ],
+            "checkpoint-day-000002.sqlite": [
+              16777244,
+              2140884
+            ],
+            "checkpoint-index.json": [
+              16777244,
+              2140885
+            ]
+          },
+          {
+            "checkpoint-day-000002.json": [
+              16777244,
+              2140893
+            ],
+            "checkpoint-day-000002.sqlite": [
+              16777244,
+              2140894
+            ],
+            "checkpoint-index.json": [
+              16777244,
+              2140895
+            ]
+          }
+        ],
+        "result": {
+          "census": {
+            "assigned_cases": 1,
+            "classifications": {
+              "edeafe444f913dfb1b54c5b9f808330efb10b93408f62591a6ba14b60e20b1ee": "valid-latest-checkpoint"
+            },
+            "full_study_gate": false
+          },
+          "cleanup": {
+            "boot_disk_id": "43",
+            "compute_and_disk_absence_verified": true,
+            "holds_released": false,
+            "project_closed": false,
+            "science_complete": false,
+            "vm_id": "42"
+          },
+          "science_complete": false,
+          "terminal": {
+            "case_census_present": true,
+            "case_payloads_separately_require_original_collector": true,
+            "full_study_gate": false,
+            "roster_sha256": "af2e1baa25742981291637faa74e2db8dbdce63597bcfaa1c5db5fdb66ae127e",
+            "science_complete": false,
+            "two_physical_copies_verified": true
+          }
+        },
+        "scenario": "native_tiny_spool_collector_two_receipts_positive",
+        "science_gate_mocked_only_for_opaque_checkpoint": true,
+        "status": "EXACT_CLOSURE_NORMAL_DELETE_ALLOWED",
+        "terminal_roster_sha256": "af2e1baa25742981291637faa74e2db8dbdce63597bcfaa1c5db5fdb66ae127e"
+      }
+    ],
+    "production_largepack_window_or_throughput_measured": false,
+    "schema": "dams-cloud-preservation-finite-independent-recheck-v1",
+    "science_complete": false,
+    "scope": "original three closeout/poll counterexamples and opaque native two-copy receipt closure only",
+    "seconds": 1.2753232499962905,
+    "source_exact_before_after": true,
+    "source_files_verified": 2123,
+    "status": "ORIGINAL_THREE_SCENARIOS_REPAIRED_NATIVE_TINY_CLOSURE_VERIFIED",
+    "whole_lifecycle_accepted": false
+  }
+}

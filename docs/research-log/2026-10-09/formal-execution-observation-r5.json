@@ -1,0 +1,122 @@
+{
+  "schema": "dams-actual-formal-execution-observation-v1",
+  "observed_utc": "2026-10-09T08:32:35.384106+00:00",
+  "execution": "actual frozen single-entry longitudinal precision-pilot; not an engineering trajectory relabeled formal",
+  "group": "longitudinal-adoption-5y-n1000",
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "fixed_pilot_world_ids": [
+    20000,
+    20001,
+    20002,
+    20003
+  ],
+  "fixed_confirmation_world_ids_start": 30000,
+  "completed_main_groups": 0,
+  "required_initial_main_groups": 4,
+  "completed_paired_worlds": 0,
+  "completed_full_strategy_trajectories": 0,
+  "completed_prehistory_prefixes": 7,
+  "case_observations": [
+    {
+      "case_id": "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "98ce27c84cf8a669dd3ee1e3e08ae36ae392877042d55694aa5ea0c953548357",
+      "manifest_raw_bytes": 6339,
+      "reported_status": "complete",
+      "calendar_days": 1096,
+      "output_bytes_reported": 3233347171,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "c1259575b152d67d66361e53ffb8759043964a9570afab658f6d4fcc455bd43e",
+      "latest_persisted_checkpoint_day": 1096
+    },
+    {
+      "case_id": "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "1c7e206f88ca28092c48aca91ca2b6af9161676c584470989185eb68699e5de1",
+      "manifest_raw_bytes": 6188,
+      "reported_status": "complete",
+      "calendar_days": 366,
+      "output_bytes_reported": 1045034518,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "5edb5e4eb70dfa25a22ef008e4b525e4e227ef85905a6eaf07eaae49c57952c0",
+      "latest_persisted_checkpoint_day": 366
+    },
+    {
+      "case_id": "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "e99cd6bf14e78ad111e981be1eb3ae1140c9ad24289dd96735aa8ce2a5abb2ad",
+      "manifest_raw_bytes": 6177,
+      "reported_status": "complete",
+      "calendar_days": 366,
+      "output_bytes_reported": 1043215550,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "426066d9b9d01a1ddbd2c0fcd67f977e4ea9c1a2aa0b134a5db6d74dc228d4e0",
+      "latest_persisted_checkpoint_day": 366
+    },
+    {
+      "case_id": "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "a991e9dee50af38b9bcb04c90acfb69b1f47cc9b83f40764f0688e85db977a16",
+      "manifest_raw_bytes": 6326,
+      "reported_status": "complete",
+      "calendar_days": 1096,
+      "output_bytes_reported": 3403316070,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "6b684f448eee07579cdd2fba7fe067beaa4fa30c6af8c2c9f6c5ae47b876993e",
+      "latest_persisted_checkpoint_day": 1096
+    },
+    {
+      "case_id": "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "e521e543975666b67609b57f4fb735a811d11498f8d57658022285153e401866",
+      "manifest_raw_bytes": 6327,
+      "reported_status": "complete",
+      "calendar_days": 1096,
+      "output_bytes_reported": 3218915758,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "be22c8f718aac3672c0870ef2e2c0e9206c68f530c68b024e1c64d6f1377f829",
+      "latest_persisted_checkpoint_day": 1096
+    },
+    {
+      "case_id": "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "95773837a10390ba451d62664ab09aa0f804bde1461aca0fb93f4653a4182276",
+      "manifest_raw_bytes": 6326,
+      "reported_status": "complete",
+      "calendar_days": 1096,
+      "output_bytes_reported": 3220306736,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "1883a43b5190ec6a00228f08d5a21c9f06a76870edb6f6150a2034e10d9674c0",
+      "latest_persisted_checkpoint_day": 1096
+    },
+    {
+      "case_id": "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "a0b4e5907d419caeb9f4d88b8975eb8868ac5b6ba5112c8ec8f2dac138220703",
+      "manifest_raw_bytes": 6321,
+      "reported_status": "complete",
+      "calendar_days": 1096,
+      "output_bytes_reported": 3247003022,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "68ad78bc34fdcb5f5158e48a7c7076fdbc93e983a5807bd45281ac50e312975a",
+      "latest_persisted_checkpoint_day": 1096
+    },
+    {
+      "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "attempt": "attempt-000",
+      "manifest_raw_sha256": "d603054ae9aa44084ad7c3d3ca47aa454b206b3469a71331024c6344e2aaa3d5",
+      "manifest_raw_bytes": 4514,
+      "reported_status": "running",
+      "calendar_days": 3743,
+      "output_bytes_reported": null,
+      "full_raw_validation_not_inferred_from_manifest": true,
+      "checkpoint_index_raw_sha256": "f989110b6ec0e0c6f8164851bb615412b032b641254f297aef5a08e517ce529e",
+      "latest_persisted_checkpoint_day": 2700
+    }
+  ],
+  "original_absolute_deadline_utc": "2026-10-15T08:54:46.960873Z",
+  "new_paid_resources": 0,
+  "science_complete": false,
+  "whole_goal_complete": false
+}

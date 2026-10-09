@@ -1,0 +1,274 @@
+{
+  "schema": "dams-explicit-portable-record-derivative-v1",
+  "original_record_sha256": "08634e2ab86ba650609e922dc0151c7db6d548e96b48a82f1586b2878f998273",
+  "original_record_bytes": 11291,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "removed_private_values": [],
+  "record": {
+    "actual_counts": {
+      "all_encoded_bytes": 3662917227,
+      "cold_unique_frames": 972,
+      "cold_unique_payload_bytes": 1001219385,
+      "duplicate_encoded_bytes": 2661697842,
+      "duplicate_occurrences": 2557,
+      "encoded_chunk_occurrences": 3529,
+      "metadata_payload_bytes": 822240,
+      "original_files": 13,
+      "raw_bytes": 14762990552
+    },
+    "actual_current_batch_source_sha256": "57ac56be085bb9966b42affb50987d55871c23267cfdb11f959854814c7c26dd",
+    "attempt": "attempt-003",
+    "capacity": {
+      "fits": true,
+      "frame_cap": 1024,
+      "frame_margin": 52,
+      "payload_byte_margin": 72522439,
+      "payload_cap_bytes": 1073741824
+    },
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "cold_cache_empty": true,
+    "config_sha256": "a8958a36786d62a485ed10cd13b2ceca6478aeb15c51d32bd555a7b503525ecc",
+    "created_utc": "2026-10-09T08:20:04.088659+00:00",
+    "current_batch_plan_semantics": "first encounter of each encoded SHA-256, matching size; absent from empty cold cache; chunks with same encoded CID are skipped",
+    "driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "engineering_days": 3743,
+    "generation": "8f7ef5d1977a0a79f07771de98353b47b5bb5be7f45ec94ee93368f48b491c23",
+    "guard": {
+      "final_owned_pack_bytes": 3663971589,
+      "free_floor_sampling_seconds": 1,
+      "maximum_observed_owned_pack_bytes": 3663971589,
+      "minimum_observed_free_bytes": 273453322240,
+      "no_network_fee_or_provider_actions": true,
+      "observations": 1206,
+      "original_data_and_other_processes_untouched": true,
+      "original_global_deadline_unchanged": true,
+      "owned_files": 3550,
+      "pack_total_sampling_seconds": 10,
+      "reason": null,
+      "returncode": 0,
+      "status": "PASS_FINITE_OWNED_PROCESS_GUARDS",
+      "wall_seconds": 1218.0447967910004
+    },
+    "original_manifest_sha256": "86e90d8092923594444df61b66c26cb14d3065cfc67f54bb68b4461b41d2968a",
+    "original_source_case_config_raw_identity_unchanged": true,
+    "physical_original_roster": [
+      {
+        "file": ".longitudinal-working.sqlite",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 3681513472,
+        "raw_sha256": "f466ce13af4b0bd08ffb3be137a0de03eda7b971743d0e46147da8ed4dd5b267"
+      },
+      {
+        "file": "checkpoint-day-003720.json",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 12882130,
+        "raw_sha256": "a208e904f9544b5f108a48305c2f83a17a0fcb041a9bfe914b682f86188c0508"
+      },
+      {
+        "file": "checkpoint-day-003720.sqlite",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 3676569600,
+        "raw_sha256": "d3cf42df15791eee4002244d3543b58dd426ebd5584706b7239ea17e64e517ef"
+      },
+      {
+        "file": "checkpoint-day-003743.json",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 12951107,
+        "raw_sha256": "33e37afba54204d96fcbc421b3831cbaaaeb908bf226edae97de1bd2a95041b1"
+      },
+      {
+        "file": "checkpoint-day-003743.sqlite",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 3681513472,
+        "raw_sha256": "624cffd02cb803bc89655c166abdc21ff550ab67552cde0d742f51b73b55935e"
+      },
+      {
+        "file": "checkpoint-index.json",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 1689,
+        "raw_sha256": "eb6c0eeb434bdf7f4edc93d0016486d3d5dfa55c9db1d5174582ef817d3b4a78"
+      },
+      {
+        "file": "final_state.json",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 12951097,
+        "raw_sha256": "41c82a83a8ab1df3c60ba81560415d40fd1a3a7dc7a90dc5f9eb43d2e60c1023"
+      },
+      {
+        "file": "final_state.sqlite",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 3681513472,
+        "raw_sha256": "624cffd02cb803bc89655c166abdc21ff550ab67552cde0d742f51b73b55935e"
+      },
+      {
+        "file": "report.md",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 1555,
+        "raw_sha256": "4f4472b0e5b1afd89d7ce4b4dc48188ad4efd8557161945b7d6500a1007bba22"
+      },
+      {
+        "file": "report.svg",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 119869,
+        "raw_sha256": "8b81956b8396f9e27c8e334c2fa4024026ae6204132e3d08fc171e9d5014ed75"
+      },
+      {
+        "file": "summary.json",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 2509,
+        "raw_sha256": "e533692b5946e5622bc76f199427d0c8981c791765e26fbce014c360c4a15805"
+      },
+      {
+        "file": "timeseries.csv",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 2963434,
+        "raw_sha256": "1fb107ece4a2ff79b263733e9026600a3309f041a2e3baff6dd1ebbb748963e3"
+      },
+      {
+        "file": "manifest.json",
+        "physical_anchor_matches_preflight": true,
+        "producer_complete_raw_decode_sha_gate": "PASS_UNMODIFIED_PRODUCTION_VALIDATE_PARTS_BEFORE_SEAL",
+        "raw_bytes": 7146,
+        "raw_sha256": "86e90d8092923594444df61b66c26cb14d3065cfc67f54bb68b4461b41d2968a"
+      }
+    ],
+    "producer_byte_gate": "Unmodified TransferSpool.publish_final returned a committed seal only after _validate_parts decoded every chunk and checked each complete original raw byte length/SHA-256. Codec decode_chunk verifies encoded and raw chunk bytes/hashes. This is not Model semantic acceptance.",
+    "proof_refs": {
+      "REPORT.md": {
+        "bytes": 3047,
+        "sha256": "92731054f79641e46444c33f7a02adb43aa2cf4d2cac0230fd8a6932226afdb4"
+      },
+      "TASK_MANIFEST.json": {
+        "bytes": 629,
+        "sha256": "f6c6f1af3a2d036177a2443abc1517106f5d7aa1d154387c9e3772fccdcaa067"
+      },
+      "admission.json": {
+        "bytes": 7663,
+        "sha256": "504d96c2614e319c584d3161094147bd8388eb78d88501a456574fc1803a00a7"
+      },
+      "artifact-sha256.json": {
+        "bytes": 1473,
+        "sha256": "d23dfb8bc5183efec4d02602c428007a6496a93e63abf0ed8a42e0d5a5bfc5f6"
+      },
+      "cold-cache-unique-cid-plan.json": {
+        "bytes": 181459,
+        "sha256": "8a952dd6e895bc70254fa94b7e6fd657c72acb6b6f1b7f32112bc6fd9831fa69"
+      },
+      "measurement-result.json": {
+        "bytes": 4548,
+        "sha256": "6b2fdeb58b544d8c89a5b9ded8f1eb184c46dc5fdfef4bec4ff7d14f8d4ae537"
+      },
+      "original-complete-manifest.json": {
+        "bytes": 7146,
+        "sha256": "86e90d8092923594444df61b66c26cb14d3065cfc67f54bb68b4461b41d2968a"
+      },
+      "owned-producer.json": {
+        "bytes": 168,
+        "sha256": "d0f454eb6e37075974be7dca78996336a976128a47cb9f533a19a79765123885"
+      },
+      "preparation-observations.json": {
+        "bytes": 360,
+        "sha256": "989e0af9fe7a7246e22b2fc9025cdb0419dd63d78ee6bb4d109427636e665766"
+      },
+      "producer.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "producer.stdout.log": {
+        "bytes": 347,
+        "sha256": "81a89301209ca3f816eea9565ce66e8bd096dfea20ee268b2d7f0146e3319950"
+      },
+      "read-only-audit-result.json": {
+        "bytes": 1015,
+        "sha256": "5cf532d7bb19d65097f6aff4faf6db510d1d6b182ed92f66339199b8b7f70ecc"
+      },
+      "spool/accounting.json": {
+        "bytes": 170,
+        "sha256": "ca97cb2a32c80d8516dae233c42d7d9a5ed581c2df79d86a44838e2d1c3269ab"
+      },
+      "spool/binding.json": {
+        "bytes": 898,
+        "sha256": "943d27361d79821c65ae6a69e804de3d518f8bd0c498fa85d20b9a97245665ed"
+      },
+      "spool/groups/8f7ef5d1977a0a79f07771de98353b47b5bb5be7f45ec94ee93368f48b491c23/manifest.json": {
+        "bytes": 821899,
+        "sha256": "2a6d1f48d9d1370d6dac5e3346c2de6e421135d335ebb27d99db17d3ea1334e4"
+      },
+      "spool/groups/8f7ef5d1977a0a79f07771de98353b47b5bb5be7f45ec94ee93368f48b491c23/seal.json": {
+        "bytes": 341,
+        "sha256": "adee0545213462b0f275886e7319221f8332835452582c92de1b8f3bdd2c1d64"
+      },
+      "supervisor-admission.json": {
+        "bytes": 473,
+        "sha256": "29125869a2ef7a329ce8497826b0dedb17c3512d07c018db8c76976fa70124f6"
+      },
+      "supervisor-result.json": {
+        "bytes": 531,
+        "sha256": "cc6541ba005de45b57d7769806fc5b36ffc728e57d42772b608eb1d38dabe8a8"
+      },
+      "transfer-config.json": {
+        "bytes": 479,
+        "sha256": "3f3e5849e07ebc6a0e27294b1c54e3060497fc40620330b204827afa1dbccebd"
+      }
+    },
+    "schema": "dams-finite-complete-pack-final-proof-refs-v1",
+    "scope": {
+      "actual_IAP_or_provider_network": false,
+      "cloud_spend": false,
+      "measurement_production_attempts": 1,
+      "new_pack_retained": true,
+      "new_simulation": false,
+      "original_deadline_unchanged": "2026-10-15T08:54:46.960873Z",
+      "original_sources_and_ledgers_readonly": true,
+      "raw_world_scientific_acceptance": false,
+      "semantic_gates_reexecuted": false,
+      "whole_formal_group_complete": false
+    },
+    "source_module_sha256_roster": {
+      "dams_sim/__init__.py": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44",
+      "dams_sim/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "dams_sim/_committed_pages.py": "6e6f3cc05678e89910dbc9f1c518ae2642be65962b501b58cf4cc64c2353e9e6",
+      "dams_sim/authority.py": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+      "dams_sim/cli.py": "8f4033155f543a6d0f92413224666f99302ae8692ddeb3c37c08afe26d3dc462",
+      "dams_sim/config.py": "ab69e75cf2fd43e2dcef629f6031dfeaf0d39db7958e5e6656b7a742dfe32114",
+      "dams_sim/design.py": "93eb321819c39ea4e4e3844ef8dd507f9edf90a01e30813d439767778c7944eb",
+      "dams_sim/longitudinal.py": "494ebb7cdbf5a8d99593d29ae0edb45ef6a87d4a233a588f5225f5cdad7f18b8",
+      "dams_sim/longitudinal_design.py": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2",
+      "dams_sim/longitudinal_model.py": "4ffa4dc683fc740d25d0b2cb4e5b3f5be2ae24b0b1bb26f6b29abdc03a19ed7a",
+      "dams_sim/longitudinal_outputs.py": "7b2437afa00ef7c987f4b31d10c8e164d06b5255c230aa9e1a53d431ae2b1300",
+      "dams_sim/longitudinal_pipeline.py": "b24d7df0eb2f22eeee6de17af450b6a03a0c58c755629c871a8c953592d9d65a",
+      "dams_sim/longitudinal_statistics.py": "0eb080ea1890f5cfe7087ddf6afd073a5e89356da87e427582c43961e42f442f",
+      "dams_sim/longitudinal_storage.py": "89e7e25da46d14bb2ba2af418a03d6a447ba35e25d4f6b83a4fcc037967a27ac",
+      "dams_sim/model.py": "b2f51a094088fbf49fec8673c64b121ac9d21c73cad810d8ae515e802d9cf990",
+      "dams_sim/native_checkpoint_owner.py": "425b7bd8bea6aa582389743c6c13a8fb9cc41301a42bed813b10a1e6f826b79d",
+      "dams_sim/native_page_backend.py": "a7f5581e8156a876219c97e8cee6fba56b9b1a075ee0654f5c3406147a127faa",
+      "dams_sim/pipeline.py": "fe4b3323e6cf352e815a552120412741afca7050903ac5041d2117c2efa64057",
+      "dams_sim/randomness.py": "94c69aeb3dbfcab213ab92b5c271ee38ea4c946ade214d31867c5ab693644e7e",
+      "dams_sim/report.py": "004596067efd0e90876fef1f6a77a536f71d6c16cff95b8474df3f309840fe14",
+      "dams_sim/runtime.py": "a658e57904a72a25e0713eaeb88a5059836027c8e516eb8eaa9d4eb3239f61e6",
+      "dams_sim/scheduler.py": "5f8c4606de59f039b42fe99a8c6ea9bc868f6ce439ff5d1885a725941f97d9bc",
+      "dams_sim/spec.py": "c54615aa41d7a9132adc4b9af9b7e1314ec35551f19ae090b3794ed057e2e02d",
+      "dams_sim/storage.py": "ce3dba71799e61230d7ec67c05262e8c6cb7cda9509011900e6d5350f23d3226",
+      "dams_sim/transfer_spool.py": "74db5223da09cff39cd0777d7657386e39783fc12587dc7b1e979a33c5a2f236",
+      "research_tools/cloud_archive.py": "114b122e8bdee99ce320eb40221cf0f16dc03cf77eed17fd2f9fe890902488c9",
+      "research_tools/cloud_control.py": "ff680fd3213359fbb2da0cc4e80b46179e2ab03e6dc8a969e95c468a8dd13bc4",
+      "research_tools/compute_only_control.py": "63e7af5e69ce315d0ecf8d0b5f3da209fae74a1043741ee9cde76c82997f2636",
+      "research_tools/compute_only_transport.py": "2549d964285f9a0b18cb151d06f7c7ce0f268f9a597983c8d01e82ca871a7378"
+    },
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "status": "PASS_FROZEN_COMPLETE_LOCAL_GENERATION_AND_CURRENT_BATCH_CAPACITY"
+  }
+}

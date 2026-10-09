@@ -1,0 +1,81 @@
+{
+  "schema": "dams-explicit-portable-record-derivative-v1",
+  "original_record_sha256": "2f80503597a21ecd5237f8380d9ffe0c5f5e641860ebb41a4f178375230f7a34",
+  "original_record_bytes": 2221,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "removed_private_values": [],
+  "record": {
+    "status": "READ_ONLY_FULL_CORE_METADATA_AND_ROSTER_OBSERVATION",
+    "payload_bytes_hashed": 0,
+    "entry_count": 76336,
+    "expected_entry_count": 76336,
+    "missing_paths": [],
+    "hardlink_groups_equal": true,
+    "metadata_or_size_or_target_differences": [
+      {
+        "logical_path": "",
+        "differing_fields": {
+          "meta": {
+            "expected": {
+              "acl_bytes": 0,
+              "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "flags": 0,
+              "gid": 20,
+              "mode": 493,
+              "mtime_ns": 1791485809205400167,
+              "uid": 501,
+              "xattrs": {
+                "com.apple.macl": {
+                  "bytes": 72,
+                  "sha256": "784711acfaee31ec5d389ab0391f70003e1544042709e9642fe1ccd884a4d5db"
+                },
+                "com.apple.provenance": {
+                  "bytes": 11,
+                  "sha256": "281de72ab2d1d45e058d0e268758cbaa3a23d5eaeecda8426a172604a8e5034b"
+                }
+              }
+            },
+            "observed": {
+              "mode": 493,
+              "uid": 501,
+              "gid": 20,
+              "mtime_ns": 1791485809205400167,
+              "flags": 0,
+              "xattrs": {
+                "com.apple.macl": {
+                  "bytes": 72,
+                  "sha256": "784711acfaee31ec5d389ab0391f70003e1544042709e9642fe1ccd884a4d5db"
+                },
+                "com.apple.provenance": {
+                  "bytes": 11,
+                  "sha256": "73ccb01fc9ce25bad18f6692cdb87f7c8c95419ef6ccf151f99615046ca140f9"
+                }
+              },
+              "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "acl_bytes": 0
+            }
+          }
+        }
+      }
+    ],
+    "observations_stable_at_completion": true,
+    "wall_seconds": 11.756519709000713,
+    "actual_source_is_physical_directory": true,
+    "root_identity": [
+      16777233,
+      154358818,
+      1056,
+      16877,
+      501,
+      20,
+      1791485809205400167,
+      1791533109751540933,
+      33,
+      0
+    ],
+    "source_before_sha256": "f137b8db79cf3ddcaf64a8803209abf701ac5cb6b06d21da714ae14ecb12e86d",
+    "does_not_verify_payload_bytes": true,
+    "does_not_reconstruct_lost_postrename_snapshot": true
+  }
+}
