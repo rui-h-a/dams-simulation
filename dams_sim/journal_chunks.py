@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sqlite3
 import zlib
 
 from .storage import canonical
@@ -32,7 +33,21 @@ def checked_target(value):
     return value
 
 
+def require_chunk_sqlite(db):
+    """Schema2 requires metadata-only byte lengths, available since SQLite 3.43.
+
+    A CAST-based fallback would first allocate arbitrary corrupted TEXT values
+    inside SQLite. Default schema1 does not require this optional capability.
+    """
+    try:
+        if db.execute("SELECT octet_length(''),octet_length(X'00')").fetchone()!=(0,1):
+            raise ValueError('compressed journal SQLite byte-length capability differs')
+    except sqlite3.DatabaseError as error:
+        raise ValueError('compressed journal requires SQLite octet_length capability') from error
+
+
 def read_config(db):
+    require_chunk_sqlite(db)
     # Reject malformed types and multiple rows before Python materializes
     # attacker-controlled TEXT/BLOB values or an unbounded catalog roster.
     columns=', '.join(f"CASE WHEN typeof({name})='integer' THEN {name} ELSE NULL END" for name in CONFIG_COLUMNS)
@@ -114,7 +129,7 @@ def iter_rows(db, target):
     previous_chunk = 0
     total_rows = 0
     integer_columns=', '.join(f"CASE WHEN typeof({name})='integer' THEN {name} ELSE NULL END" for name in CHUNK_COLUMNS[:6])
-    hash_columns=', '.join(f"CASE WHEN typeof({name})='text' AND length(CAST({name} AS BLOB))=64 THEN {name} ELSE NULL END" for name in CHUNK_COLUMNS[6:8])
+    hash_columns=', '.join(f"CASE WHEN typeof({name})='text' AND octet_length({name})=64 THEN {name} ELSE NULL END" for name in CHUNK_COLUMNS[6:8])
     # SQLite checks length/type before crossing the Python allocation boundary.
     # decode_chunk still checks the encoded bytes and all metadata independently.
     query=('SELECT '+integer_columns+', '+hash_columns+

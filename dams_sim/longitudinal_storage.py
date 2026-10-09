@@ -182,6 +182,12 @@ class ExactLedger:
         else:
             from .native_page_backend import configure
             configure(self.db)
+        if journal_chunk_bytes is not None:
+            from .journal_chunks import require_chunk_sqlite
+            try:require_chunk_sqlite(self.db)
+            except BaseException:
+                self.db.close()
+                raise
         if snapshot is not None:
             source=sqlite3.connect(f'file:{Path(snapshot).resolve()}?mode=ro',uri=True)
             try:source.backup(self.db)
