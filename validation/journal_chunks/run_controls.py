@@ -1,5 +1,6 @@
 """One finite, sequential Linux engineering validation invocation; no retry."""
 from __future__ import annotations
+import argparse
 import hashlib
 import json
 import os
@@ -12,9 +13,10 @@ import subprocess
 import sys
 import time
 
-from capabilities import ROOT, KIT, observe, verify_pins
+from capabilities import ROOT, KIT, verify_pins
 
 STAGES = (
+    ('supervisor-routing', ['-m', 'unittest', 'discover', '-s', 'validation/journal_chunks', '-p', 'test_supervisor_routing.py', '-v'], 4),
     ('process-ownership', ['-m', 'unittest', 'discover', '-s', 'validation/journal_chunks', '-p', 'test_process_ownership.py', '-v'], 6),
     ('ledger', ['-m', 'unittest', 'discover', '-s', 'validation/journal_chunks', '-p', 'test_journal_chunks.py', '-v'], 9),
     ('legacy-model', ['-m', 'unittest', 'discover', '-s', 'validation/journal_chunks/legacy_tests', '-p', 'test_longitudinal_model.py', '-v'], 16),
@@ -127,16 +129,60 @@ def child_limits():
     resource.setrlimit(resource.RLIMIT_CPU, (180, 180))
 
 
-def main():
+def supervisor_preflight():
+    """Refuse unavailable identity supervision before launching any child."""
     if sys.platform != 'linux':
         raise ValueError('this guarded runner requires actual Linux /proc evidence')
-    capability = observe('uv-managed', required=True)
+    if not callable(getattr(os, 'pidfd_open', None)) or not callable(getattr(signal, 'pidfd_send_signal', None)):
+        raise ValueError('supervisor requires callable PIDfd open and signal APIs before Popen')
+    if not Path('/proc').is_dir() or read_process(os.getpid()) is None:
+        raise ValueError('supervisor requires actual readable /proc identity before Popen')
+    descriptor = os.pidfd_open(os.getpid())
+    os.close(descriptor)  # actual kernel capability, without sending a signal
+    return {'runtime_label': 'system-supervisor', 'python_version': sys.version.split()[0],
+            'platform': sys.platform, 'pidfd_open_available': True,
+            'pidfd_send_signal_available': True, 'proc_identity_readable': True,
+            'actual_pidfd_self_open': True, 'scientific_controls_executed_by_supervisor': False}
+
+
+def control_executable(value):
+    path = Path(value)
+    if not path.is_absolute():
+        raise ValueError('control Python must be an explicit absolute executable path')
+    resolved = path.resolve(strict=True)
+    if not resolved.is_file() or not os.access(resolved, os.X_OK):
+        raise ValueError('control Python must be an executable file')
+    return str(resolved)
+
+
+def control_command(executable, arguments):
+    return [executable, *arguments]
+
+
+def managed_capability(executable):
+    completed = subprocess.run(control_command(executable, [str(KIT / 'capabilities.py'),
+        '--label', 'uv-managed', '--required-managed']), cwd=ROOT,
+        env=dict(os.environ, PYTHONDONTWRITEBYTECODE='1'), capture_output=True, text=True, timeout=30)
+    if completed.returncode != 0:
+        raise ValueError('explicit managed control interpreter capability failed: ' + completed.stderr[-2000:])
+    value = json.loads(completed.stdout)
+    if value['python_version'] != '3.14.2' or value['schema2_actual_control'] != 'PASS':
+        raise ValueError('control interpreter must actually be Python3.14.2 with schema2 capability')
+    return value
+
+
+def main(control_python):
+    supervisor = supervisor_preflight()
+    executable = control_executable(control_python)
+    capability = managed_capability(executable)
+    print(json.dumps({'supervisor_capabilities': supervisor, 'managed_control_capabilities': capability}, sort_keys=True), flush=True)
     out = ROOT / 'runs' / 'journal-chunks' / 'linux-validation'
     out.mkdir(parents=True, exist_ok=False)
     temporary = out / 'temporary'; temporary.mkdir()
     env = dict(os.environ, PYTHONPATH=str(ROOT), TMPDIR=str(temporary), PYTHONDONTWRITEBYTECODE='1')
     records = []; started = time.monotonic()
-    result = {'status': 'RUNNING', 'capabilities': capability, 'engineering_controls_only': True,
+    result = {'status': 'RUNNING', 'capabilities': capability, 'supervisor_capabilities': supervisor,
+              'all_stage_control_interpreters': 'explicit-managed-Python3.14.2', 'engineering_controls_only': True,
               'accepted_scientific_worlds_added': 0, 'GCP_called': False,
               'large_population_or_full_pipeline_admission': False,
               'bounds': {'stage_wall_seconds': WALL_PER_STAGE, 'tree_rss_bytes': RSS_LIMIT,
@@ -147,7 +193,7 @@ def main():
             verify_pins()
             log = out / (name + '.log'); begin = time.monotonic(); seen = {}; peak_rss = 0
             with log.open('xb') as output:
-                process = subprocess.Popen([sys.executable, *arguments], cwd=ROOT, env=env,
+                process = subprocess.Popen(control_command(executable, arguments), cwd=ROOT, env=env,
                     stdout=output, stderr=subprocess.STDOUT, preexec_fn=child_limits)
                 root_descriptor = os.pidfd_open(process.pid)
                 root_birth = None
@@ -206,4 +252,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--control-python', required=True)
+    options = parser.parse_args()
+    main(options.control_python)

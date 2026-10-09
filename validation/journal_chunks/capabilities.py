@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
+import signal
 import sqlite3
 import stat
 import sys
@@ -40,6 +42,9 @@ def observe(label, required=False):
     result = {'runtime_label': label, 'python_version': sys.version.split()[0],
               'python_executable_basename': Path(sys.executable).name, 'platform': sys.platform,
               'sqlite_version': sqlite3.sqlite_version, 'engineering_controls_only': True,
+              'pidfd_open_available': callable(getattr(os, 'pidfd_open', None)),
+              'pidfd_send_signal_available': callable(getattr(signal, 'pidfd_send_signal', None)),
+              'proc_available': Path('/proc').is_dir(),
               'GCP_guest_verified': False, 'accepted_scientific_worlds_added': 0,
               'identity': verify_pins()}
     db = sqlite3.connect(':memory:')
