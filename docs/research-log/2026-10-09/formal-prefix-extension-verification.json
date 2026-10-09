@@ -1,0 +1,34 @@
+{
+  "all_12_output_sha256_files_exact_original_public": true,
+  "all_13_logical_files_accounted": true,
+  "created_utc": "2026-10-09T07:32:42.508511+00:00",
+  "default_main_mutated": false,
+  "formal_group_complete": false,
+  "full_output_result_status": "PASS_ALL_12_ORIGINAL_OUTPUT_FILES_EXACT_REMOTE_READBACK_WITH_PRIVATE_MANIFEST_DERIVATIVE",
+  "old_raw_backup_and_two_semantic_gates_preserved": true,
+  "original_files_mutated": false,
+  "original_manifest_public_raw": false,
+  "original_manifest_public_sanitized_derivative": true,
+  "paid_cloud_actions": false,
+  "public_readback_receipt": {
+    "bytes": 12568,
+    "sha256": "2dbec2067fe080565cb863ee1c2b81e6572be04dc34ec54be0460d31a159e68f"
+  },
+  "receipt_remote_asset": {
+    "apiUrl": "https://api.github.com/repos/rui-h-a/dams-simulation/releases/assets/624244631",
+    "contentType": "application/json",
+    "createdAt": "2026-10-09T07:32:40Z",
+    "digest": "sha256:2dbec2067fe080565cb863ee1c2b81e6572be04dc34ec54be0460d31a159e68f",
+    "downloadCount": 0,
+    "id": "RA_kwDOU_sxzM4lNTeX",
+    "label": "",
+    "name": "all-original-readback-receipt-r1.json",
+    "size": 12568,
+    "state": "uploaded",
+    "updatedAt": "2026-10-09T07:32:40Z",
+    "url": "https://github.com/rui-h-a/dams-simulation/releases/download/longitudinal-partial-20261009-r1/all-original-readback-receipt-r1.json"
+  },
+  "release_url": "https://github.com/rui-h-a/dams-simulation/releases/tag/longitudinal-partial-20261009-r1",
+  "status": "PASS_ENTIRE_ORIGINAL_OUTPUT_ROSTER_AND_PUBLISHED_READBACK_RECEIPT",
+  "whole_world_complete": false
+}

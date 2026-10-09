@@ -1,0 +1,255 @@
+{
+  "full_original_raw_case_acceptance": "NOT_CLAIMED_BY_THIS_METADATA_AND_SMALL_FILE_OBSERVER",
+  "is_original_byte_identical": false,
+  "manifest": {
+    "compiled_kernel_seconds": 0,
+    "config": {
+      "administrative_censorship_exposure": [
+        1.0,
+        0.5,
+        0.0
+      ],
+      "alpha": 0.8,
+      "appeal_capacity_per_member_day": 0.1,
+      "appeal_delay_days": 3,
+      "attack": "none",
+      "attack_budget_hours_per_day": 2.0,
+      "attack_cohort_fraction": 0.5,
+      "attack_start_day": 15,
+      "attack_stop_day": 25,
+      "autonomy_response": 0.25,
+      "backend": "central",
+      "backend_review_multipliers": [
+        1.0,
+        1.2,
+        1.5
+      ],
+      "backend_settlement_days": [
+        1,
+        2,
+        3
+      ],
+      "behavior_rule": "linear_response",
+      "cooperation_strength": 0.3,
+      "days": 366,
+      "decay_per_day": 0.01,
+      "decision_noise_sd": 0.8,
+      "fault_start_day": 25,
+      "fault_stop_day": 30,
+      "guilds": 4,
+      "hierarchy_basis": "performance",
+      "hierarchy_weights": [
+        1.0,
+        2.0,
+        4.0,
+        8.0
+      ],
+      "learning_rate": 0.01,
+      "longitudinal": {
+        "adoption_day": 0,
+        "adoption_mode": "never",
+        "annual_exit_probability": 0.18,
+        "annual_leave_workdays": 0.0,
+        "annual_vacancy_fill_probability": 0.99,
+        "calendar_start": "2020-01-01",
+        "closure_after_unfunded_workdays": 20,
+        "closure_day": null,
+        "credit_half_life_days": 730.0,
+        "demand_schedule": [
+          [
+            0,
+            1.0
+          ],
+          [
+            91,
+            0.9
+          ],
+          [
+            182,
+            1.1
+          ],
+          [
+            274,
+            1.0
+          ]
+        ],
+        "dual_run_resource_units_per_member_workday": 0.05,
+        "entrant_age_years": 25.0,
+        "exit_schedule": [],
+        "fiscal_year_start_month": 1,
+        "guild_adoption_days": [],
+        "guild_mergers": [],
+        "guild_moves": [],
+        "historical_verified_credit_per_member": 3.0,
+        "history_mode": "conditional-synthetic-state",
+        "holidays": [
+          "2020-01-01",
+          "2020-12-25",
+          "2021-01-01",
+          "2021-12-25"
+        ],
+        "initial_age_max_years": 60.0,
+        "initial_age_min_years": 25.0,
+        "initial_cash_per_member": 100.0,
+        "initial_memory": 0.3,
+        "initial_routine_strength": 0.35,
+        "maintenance_resource_units_per_member_workday": 0.01,
+        "max_active_members": 2000,
+        "max_people_ever": 8000,
+        "memory_half_life_days": 3650.0,
+        "memory_learning_per_work_year": 0.2,
+        "memory_transfer_fraction": 0.4,
+        "migration_resource_units_per_member": 2.0,
+        "observable_trigger": "active_members",
+        "organization_initial_age_years": 4,
+        "payroll_resource_units_per_member_workday": 0.5,
+        "pre_adoption_backend": "central",
+        "pre_adoption_regime": "hierarchy",
+        "recruitment_resource_units_per_person": 1.0,
+        "retirement_age_years": 65.0,
+        "revenue_resource_units_per_work_unit": 1.0,
+        "routine_adjustment_half_life_days": 180.0,
+        "schema_version": 1,
+        "skill_forgetting_half_life_days": 730.0,
+        "skill_learning_per_work_year": 1.0,
+        "suspension_day": null,
+        "training_hours_per_workday": 0.1,
+        "transition_days": 90,
+        "trigger_not_before_day": 0,
+        "trigger_threshold": 1400.0,
+        "work_creation_stop_day": null,
+        "work_weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "workforce_targets": [
+          [
+            0,
+            1000
+          ]
+        ],
+        "world_context": "longitudinal-context-v1:longitudinal-adoption-5y:n=1000:financing"
+      },
+      "max_events": 1000000000,
+      "max_output_mb": 50299.409408,
+      "max_rss_mb": 2048.0,
+      "max_wall_seconds": 86400.0,
+      "n": 1000,
+      "quorum_unavailable_start_day": 0,
+      "quorum_unavailable_stop_day": 0,
+      "regime": "hierarchy",
+      "review_capacity_per_member_day": 0.9,
+      "review_error_sd": 0.2,
+      "seed": 20261008,
+      "shared_signal_sd": 0.2,
+      "sites": 2,
+      "team_size": 5,
+      "trace_every_days": 1,
+      "update_interval_days": 1,
+      "world": 20002
+    },
+    "config_sha256": "2958dfdded4eec6d1a41230d7afd3ce9e10a2412b0aea2b7db475f1a066334d2",
+    "container_image": null,
+    "cpu_seconds": 49.279745999999996,
+    "created_utc": "2026-10-09T06:58:34.731745+00:00",
+    "dependencies": "Python standard library only",
+    "execution_provenance": {
+      "packaged_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f"
+    },
+    "exit_code": 0,
+    "final_state_descriptor": {
+      "checkpoint_format_version": 2,
+      "config_sha256": "2958dfdded4eec6d1a41230d7afd3ce9e10a2412b0aea2b7db475f1a066334d2",
+      "day": 366,
+      "file": "final_state.json",
+      "files": [
+        {
+          "bytes": 1781777,
+          "file": "final_state.json",
+          "sha256": "6248c4bd05ec5c539d2f5561a44dac995032305d7046fed4dd05c00aeeae43d0"
+        },
+        {
+          "bytes": 260820992,
+          "file": "final_state.sqlite",
+          "sha256": "4e764be58056c9fc41536d69195cb901a59a85f7a1e548339d832c1ef33eeec4"
+        }
+      ],
+      "sha256": "6248c4bd05ec5c539d2f5561a44dac995032305d7046fed4dd05c00aeeae43d0",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "state_hash_codec": "json-string-keys-v2",
+      "state_semantic_sha256": "6e6d5caa5f36af15a36cb4b9120376a9f1ee0e7cc1d90942d26f711ee774b5a5"
+    },
+    "git_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "git_dirty": false,
+    "hashing_wall_seconds": 0.6950116660009371,
+    "initialization_wall_seconds": 0.050832292006816715,
+    "network_io_bytes": 0,
+    "output_bytes": 1045034518,
+    "output_limit_unit": "decimal MB",
+    "output_sha256": {
+      ".longitudinal-working.sqlite": "0fcb70dde56d5dec0ae39a6fef64f882b46def1cd896f73dcad130a720858ce4",
+      "checkpoint-day-000360.json": "db22b4874e02a85bb9b5fa0ea174e83a579b7622fd6c30775f70f61e42b3c932",
+      "checkpoint-day-000360.sqlite": "4d89a2b2677f8de3725d58b2ef2cbea23fc6a14b1ba0adad79d2c32c2e6402cb",
+      "checkpoint-day-000366.json": "d4b873deeba4f3f9364dfd81cb1355bf6b6fd3e4e1621d04a173e736164a662f",
+      "checkpoint-day-000366.sqlite": "4e764be58056c9fc41536d69195cb901a59a85f7a1e548339d832c1ef33eeec4",
+      "checkpoint-index.json": "5edb5e4eb70dfa25a22ef008e4b525e4e227ef85905a6eaf07eaae49c57952c0",
+      "final_state.json": "6248c4bd05ec5c539d2f5561a44dac995032305d7046fed4dd05c00aeeae43d0",
+      "final_state.sqlite": "4e764be58056c9fc41536d69195cb901a59a85f7a1e548339d832c1ef33eeec4",
+      "report.md": "301b30764b505b43ee5a3e2a507a0d88e41cf54fa430eeaa624c417388e6dafb",
+      "report.svg": "4517e277962a0e6c607128e5844372f725fed3dcc87b13e66719f07849b28299",
+      "summary.json": "fd034c2da5e3b73bb519a82a80f1fde228d8d75c0c03bd7634fb7c67dbaacae0",
+      "timeseries.csv": "67aeae013c20702a6102db9b280e3a7772bf3b0ce11119b424e4dc7ac8881aae"
+    },
+    "peak_process_rss_mb": 49.1875,
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "plotting_seconds": 0.006338334002066404,
+    "random_stream": "SHA256(seed,world,[optional versioned world_context frame],process,event,entity)/53-bit uniform; Box-Muller normal; absent context preserves legacy key bytes",
+    "rss_measurement_unit": "MiB",
+    "run_id": "attempt-000",
+    "scientific_case_id": "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+    "serialization_wall_seconds": 4.895306833990617,
+    "simulation_wall_seconds": 61.16936954099219,
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "statistics_wall_seconds": 0.0010022500064224005,
+    "status": "complete",
+    "total_wall_seconds": 66.98408295899571
+  },
+  "original_manifest_bytes": 6188,
+  "original_manifest_sha256": "1c7e206f88ca28092c48aca91ca2b6af9161676c584470989185eb68699e5de1",
+  "removed_fields": [
+    {
+      "json_pointer": "/execution_provenance/environment",
+      "reason": "local execution environment/device detail",
+      "removed_value_canonical_bytes": 34,
+      "removed_value_canonical_sha256": "30a69642403276cfb251afc36190319506bea6de0f8f76c850500b8b29ef9652"
+    },
+    {
+      "json_pointer": "/machine",
+      "reason": "execution device architecture",
+      "removed_value_canonical_bytes": 8,
+      "removed_value_canonical_sha256": "417bed052138953fa8c23c3401c6f066595a873c14d596a31254db7e88ffdaaf"
+    },
+    {
+      "json_pointer": "/platform",
+      "reason": "execution device platform",
+      "removed_value_canonical_bytes": 36,
+      "removed_value_canonical_sha256": "48313fd2f3110ec39a79e5f1bce6e1b335cbebe9dd31258614c35a452b9ce0bb"
+    },
+    {
+      "json_pointer": "/python",
+      "reason": "local runtime build/platform details",
+      "removed_value_canonical_bytes": 55,
+      "removed_value_canonical_sha256": "7281f3aa7af0952ccaf48a3936d525e9e89dc5d87bdedec98d28c227fa539849"
+    },
+    {
+      "json_pointer": "/worker_pid",
+      "reason": "transient local process identifier",
+      "removed_value_canonical_bytes": 6,
+      "removed_value_canonical_sha256": "c7a14bf1b0c8956ad7f41dc64908f2a618874bedbcae9f0023a52621c2cd6b8f"
+    }
+  ],
+  "schema": "dams-portable-original-manifest-derivative-v1"
+}

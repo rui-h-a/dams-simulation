@@ -1,0 +1,295 @@
+{
+  "full_original_raw_case_acceptance": "NOT_CLAIMED_BY_THIS_METADATA_AND_SMALL_FILE_OBSERVER",
+  "is_original_byte_identical": false,
+  "manifest": {
+    "compiled_kernel_seconds": 0,
+    "config": {
+      "administrative_censorship_exposure": [
+        1.0,
+        0.5,
+        0.0
+      ],
+      "alpha": 0.8,
+      "appeal_capacity_per_member_day": 0.1,
+      "appeal_delay_days": 3,
+      "attack": "none",
+      "attack_budget_hours_per_day": 2.0,
+      "attack_cohort_fraction": 0.5,
+      "attack_start_day": 15,
+      "attack_stop_day": 25,
+      "autonomy_response": 0.25,
+      "backend": "central",
+      "backend_review_multipliers": [
+        1.0,
+        1.2,
+        1.5
+      ],
+      "backend_settlement_days": [
+        1,
+        2,
+        3
+      ],
+      "behavior_rule": "linear_response",
+      "cooperation_strength": 0.3,
+      "days": 1096,
+      "decay_per_day": 0.01,
+      "decision_noise_sd": 0.8,
+      "fault_start_day": 25,
+      "fault_stop_day": 30,
+      "guilds": 4,
+      "hierarchy_basis": "performance",
+      "hierarchy_weights": [
+        1.0,
+        2.0,
+        4.0,
+        8.0
+      ],
+      "learning_rate": 0.01,
+      "longitudinal": {
+        "adoption_day": 0,
+        "adoption_mode": "never",
+        "annual_exit_probability": 0.05,
+        "annual_leave_workdays": 0.0,
+        "annual_vacancy_fill_probability": 0.99,
+        "calendar_start": "2020-01-01",
+        "closure_after_unfunded_workdays": 20,
+        "closure_day": null,
+        "credit_half_life_days": 730.0,
+        "demand_schedule": [
+          [
+            0,
+            1.0
+          ],
+          [
+            91,
+            0.9
+          ],
+          [
+            182,
+            1.1
+          ],
+          [
+            274,
+            1.0
+          ],
+          [
+            366,
+            1.0
+          ],
+          [
+            456,
+            0.9
+          ],
+          [
+            547,
+            1.1
+          ],
+          [
+            639,
+            1.0
+          ],
+          [
+            731,
+            1.0
+          ],
+          [
+            821,
+            0.9
+          ],
+          [
+            912,
+            1.1
+          ],
+          [
+            1004,
+            1.0
+          ]
+        ],
+        "dual_run_resource_units_per_member_workday": 0.05,
+        "entrant_age_years": 25.0,
+        "exit_schedule": [],
+        "fiscal_year_start_month": 1,
+        "guild_adoption_days": [],
+        "guild_mergers": [],
+        "guild_moves": [],
+        "historical_verified_credit_per_member": 15.0,
+        "history_mode": "conditional-synthetic-state",
+        "holidays": [
+          "2020-01-01",
+          "2020-12-25",
+          "2021-01-01",
+          "2021-12-25",
+          "2022-01-01",
+          "2022-12-25",
+          "2023-01-01",
+          "2023-12-25"
+        ],
+        "initial_age_max_years": 60.0,
+        "initial_age_min_years": 25.0,
+        "initial_cash_per_member": 250.0,
+        "initial_memory": 0.9,
+        "initial_routine_strength": 0.9,
+        "maintenance_resource_units_per_member_workday": 0.01,
+        "max_active_members": 2000,
+        "max_people_ever": 8000,
+        "memory_half_life_days": 3650.0,
+        "memory_learning_per_work_year": 0.2,
+        "memory_transfer_fraction": 0.4,
+        "migration_resource_units_per_member": 2.0,
+        "observable_trigger": "active_members",
+        "organization_initial_age_years": 100,
+        "payroll_resource_units_per_member_workday": 0.5,
+        "pre_adoption_backend": "central",
+        "pre_adoption_regime": "hierarchy",
+        "recruitment_resource_units_per_person": 1.0,
+        "retirement_age_years": 65.0,
+        "revenue_resource_units_per_work_unit": 1.0,
+        "routine_adjustment_half_life_days": 180.0,
+        "schema_version": 1,
+        "skill_forgetting_half_life_days": 730.0,
+        "skill_learning_per_work_year": 1.0,
+        "suspension_day": null,
+        "training_hours_per_workday": 0.1,
+        "transition_days": 90,
+        "trigger_not_before_day": 0,
+        "trigger_threshold": 1400.0,
+        "work_creation_stop_day": null,
+        "work_weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "workforce_targets": [
+          [
+            0,
+            1000
+          ],
+          [
+            366,
+            1000
+          ]
+        ],
+        "world_context": "longitudinal-context-v1:longitudinal-adoption-5y:n=1000:century"
+      },
+      "max_events": 1000000000,
+      "max_output_mb": 50299.409408,
+      "max_rss_mb": 2048.0,
+      "max_wall_seconds": 86400.0,
+      "n": 1000,
+      "quorum_unavailable_start_day": 0,
+      "quorum_unavailable_stop_day": 0,
+      "regime": "hierarchy",
+      "review_capacity_per_member_day": 0.9,
+      "review_error_sd": 0.2,
+      "seed": 20261008,
+      "shared_signal_sd": 0.2,
+      "sites": 2,
+      "team_size": 5,
+      "trace_every_days": 1,
+      "update_interval_days": 1,
+      "world": 20000
+    },
+    "config_sha256": "92ede29eefaa5e99ec0d1dec64e70807973320956f108920ffcef08d379f51ee",
+    "container_image": null,
+    "cpu_seconds": 198.68901,
+    "created_utc": "2026-10-09T07:26:18.643643+00:00",
+    "dependencies": "Python standard library only",
+    "execution_provenance": {
+      "packaged_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f"
+    },
+    "exit_code": 0,
+    "final_state_descriptor": {
+      "checkpoint_format_version": 2,
+      "config_sha256": "92ede29eefaa5e99ec0d1dec64e70807973320956f108920ffcef08d379f51ee",
+      "day": 1096,
+      "file": "final_state.json",
+      "files": [
+        {
+          "bytes": 3735105,
+          "file": "final_state.json",
+          "sha256": "8876a910cc40d646421246bfdee869f942cc2500b8c3d83179f2aac4bea72e7f"
+        },
+        {
+          "bytes": 811646976,
+          "file": "final_state.sqlite",
+          "sha256": "41722e7840304ee541f050a9938f13633c669f68d822c3538d5f5b09e50b1945"
+        }
+      ],
+      "sha256": "8876a910cc40d646421246bfdee869f942cc2500b8c3d83179f2aac4bea72e7f",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "state_hash_codec": "json-string-keys-v2",
+      "state_semantic_sha256": "130be0d90fc8782295a6df03a6a2bc35cc7c22c778e8028f08f33a3b9770b6b0"
+    },
+    "git_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "git_dirty": false,
+    "hashing_wall_seconds": 10.184508457998163,
+    "initialization_wall_seconds": 0.12219591699249577,
+    "network_io_bytes": 0,
+    "output_bytes": 3247003022,
+    "output_limit_unit": "decimal MB",
+    "output_sha256": {
+      ".longitudinal-working.sqlite": "7001aff20778ce20834af2bb40a44483e8ccda890d1173fe93589b9f8b98aff2",
+      "checkpoint-day-001080.json": "5e3783df000bedd0510025ea0fbc7744e017516f9d087d1e41b14430a0d5ee34",
+      "checkpoint-day-001080.sqlite": "add2ad82997bc510f039c421bc5ae3b9318c7054fc55c6d3d168df15822fe3e8",
+      "checkpoint-day-001096.json": "30bf761ff7cb470712e7edfef3a3a0b07d873d689c0445c130f096160e9c378c",
+      "checkpoint-day-001096.sqlite": "41722e7840304ee541f050a9938f13633c669f68d822c3538d5f5b09e50b1945",
+      "checkpoint-index.json": "68ad78bc34fdcb5f5158e48a7c7076fdbc93e983a5807bd45281ac50e312975a",
+      "final_state.json": "8876a910cc40d646421246bfdee869f942cc2500b8c3d83179f2aac4bea72e7f",
+      "final_state.sqlite": "41722e7840304ee541f050a9938f13633c669f68d822c3538d5f5b09e50b1945",
+      "report.md": "de8ce4e58cd563a25acda0ffe3c9c4f001e4752adff8d70baed134d14b8440e1",
+      "report.svg": "43e997b8b9115028730389033d4c565eae6109c85b83cd032e201920daa98e93",
+      "summary.json": "18d63393cc67ac308902687b7ec1152308109cbad4dd8cc712d3cd54c8123154",
+      "timeseries.csv": "ece35e3f71cb550f3cdbf40b875a1525a70af26ed572bfe66a5fd6f71cbe01fb"
+    },
+    "peak_process_rss_mb": 48.28125,
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "plotting_seconds": 0.08261408399266656,
+    "random_stream": "SHA256(seed,world,[optional versioned world_context frame],process,event,entity)/53-bit uniform; Box-Muller normal; absent context preserves legacy key bytes",
+    "rss_measurement_unit": "MiB",
+    "run_id": "attempt-000",
+    "scientific_case_id": "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+    "serialization_wall_seconds": 39.686065375004546,
+    "simulation_wall_seconds": 521.166321458004,
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "statistics_wall_seconds": 0.3721944999997504,
+    "status": "complete",
+    "total_wall_seconds": 572.2888397499919
+  },
+  "original_manifest_bytes": 6321,
+  "original_manifest_sha256": "a0b4e5907d419caeb9f4d88b8975eb8868ac5b6ba5112c8ec8f2dac138220703",
+  "removed_fields": [
+    {
+      "json_pointer": "/execution_provenance/environment",
+      "reason": "local execution environment/device detail",
+      "removed_value_canonical_bytes": 34,
+      "removed_value_canonical_sha256": "30a69642403276cfb251afc36190319506bea6de0f8f76c850500b8b29ef9652"
+    },
+    {
+      "json_pointer": "/machine",
+      "reason": "execution device architecture",
+      "removed_value_canonical_bytes": 8,
+      "removed_value_canonical_sha256": "417bed052138953fa8c23c3401c6f066595a873c14d596a31254db7e88ffdaaf"
+    },
+    {
+      "json_pointer": "/platform",
+      "reason": "execution device platform",
+      "removed_value_canonical_bytes": 36,
+      "removed_value_canonical_sha256": "48313fd2f3110ec39a79e5f1bce6e1b335cbebe9dd31258614c35a452b9ce0bb"
+    },
+    {
+      "json_pointer": "/python",
+      "reason": "local runtime build/platform details",
+      "removed_value_canonical_bytes": 55,
+      "removed_value_canonical_sha256": "7281f3aa7af0952ccaf48a3936d525e9e89dc5d87bdedec98d28c227fa539849"
+    },
+    {
+      "json_pointer": "/worker_pid",
+      "reason": "transient local process identifier",
+      "removed_value_canonical_bytes": 6,
+      "removed_value_canonical_sha256": "6128d3a38c2dafeff96e99f85dd3673680ad4fca11227256acf813262056183e"
+    }
+  ],
+  "schema": "dams-portable-original-manifest-derivative-v1"
+}

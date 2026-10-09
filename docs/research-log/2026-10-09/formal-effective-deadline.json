@@ -1,0 +1,9 @@
+{
+  "independent_watchdog_hard_cutoff_utc": "2026-10-15T08:54:46.960873+00:00",
+  "independent_watchdog_scientific_stop_utc": "2026-10-15T08:44:46.960873+00:00",
+  "observed_watchdog_status": "ARMED_ORIGINAL_ABSOLUTE_DEADLINE",
+  "original_absolute_deadline_utc": "2026-10-15T08:54:46.960873+00:00",
+  "original_runtime_and_watchdog_files_preserved_privately": true,
+  "runtime_grace_cannot_extend_absolute_deadline": true,
+  "runtime_limits_scientific_spec_unchanged": true
+}
