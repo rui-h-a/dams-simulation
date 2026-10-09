@@ -70,7 +70,7 @@ def _verify_owned_checkpoint_bytes(path,item,identities):
 
 def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, restored: Model | None = None, restart_origin: dict | None = None,
               checkpoint_interval_days: int | None = None, checkpoint_interval_seconds: float = 60,
-              stop_requested=None, metadata_extra: dict | None = None) -> dict:
+              stop_requested=None, metadata_extra: dict | None = None,page_options=None,native_owner_dir=None,known_latest_floor=None) -> dict:
     wall, cpu = time.monotonic(), time.process_time()
     if p.longitudinal is not None and checkpoint_interval_days is None:
         checkpoint_interval_days = 30
@@ -80,6 +80,14 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
         metadata.update(metadata_extra)
     if restart_origin is not None:
         metadata["restart_origin"] = restart_origin
+    transfer = None
+    if os.environ.get('DAMS_TRANSFER_CONFIG') is not None:
+        if page_options is not None or (restored is not None and getattr(restored.ledger,'native_pages_active',False)):
+            raise ValueError('compute-only transfer does not support native CAS checkpoints')
+        if p.longitudinal is None:
+            raise ValueError('compute-only transfer requires full longitudinal JSON/SQLite checkpoints')
+        from .transfer_spool import TransferSpool
+        transfer = TransferSpool.from_environment(expected_source_sha256=metadata['source_sha256'],deadline_monotonic=wall+p.max_wall_seconds)
     atomic_json(path/"manifest.json", metadata)
     model = restored
     last_checkpoint_day = model.day if model is not None else 0
@@ -104,12 +112,23 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
                         raise ValueError('existing same-day checkpoint differs from current complete state')
                 else:
                     from .longitudinal_model import verify_snapshot
-                    envelope, database = verify_snapshot(path/name,expected_config=p)
+                    native=getattr(model.ledger,'native_pages_active',False)
+                    if native:
+                        # An unknown same-day native CP needs its separate owner
+                        # version, not a fresh baseline from that CP's own JSON.
+                        owned=model._long._native_owner.for_checkpoint(path/name)
+                        item=owned['descriptor']
+                        from .longitudinal_model import load_snapshot_envelope
+                        envelope,_=load_snapshot_envelope(path/name,expected_config=p)
+                        model.ledger._pages._floor(owned['floor'])
+                    else:
+                        envelope, database = verify_snapshot(path/name,expected_config=p)
                     if envelope['state_semantic_sha256'] != model.semantic_digest():
                         raise ValueError('existing same-day checkpoint differs from current complete state')
-                    item={'file':name,'sha256':file_digest(path/name),'day':model.day,
-                          'state_semantic_sha256':envelope['state_semantic_sha256'],
-                          'files':[{'file':f.name,'sha256':file_digest(f),'bytes':f.stat().st_size} for f in (path/name,database)]}
+                    if not native:
+                        item={'file':name,'sha256':file_digest(path/name),'day':model.day,
+                              'state_semantic_sha256':envelope['state_semantic_sha256'],
+                              'files':[{'file':f.name,'sha256':file_digest(f),'bytes':f.stat().st_size} for f in (path/name,database)]}
             else:
                 item=model.write_checkpoint(path/name)
                 freshly_written = True
@@ -128,6 +147,8 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
                  'snapshots': [item, *previous],
                  'attempt_elapsed_wall_seconds':time.monotonic()-wall}
         atomic_json(path/'checkpoint-index.json',index)
+        if transfer is not None:
+            transfer.publish_checkpoint(path,item,index,metadata,deadline_monotonic=wall+p.max_wall_seconds)
         keep = {f['file'] for r in index['snapshots'] for f in r.get('files',[{'file':r['file']}])}
         for old in path.glob('checkpoint-day-*'):
             if old.name not in keep: old.unlink()
@@ -138,7 +159,7 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
     try:
         start_init = time.monotonic()
         if model is None:
-            model = Model(p,storage_dir=path) if p.longitudinal is not None else Model(p)
+            model = Model(p,storage_dir=path,page_options=page_options,native_owner_dir=native_owner_dir,known_latest_floor=known_latest_floor) if p.longitudinal is not None else Model(p,page_options=page_options)
         init_wall = time.monotonic()-start_init
         start_sim = time.monotonic()
         if checkpoint_day is not None:
@@ -181,6 +202,10 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
         plot_start = time.monotonic()
         report(path, model.history, summary)
         plotting_wall = time.monotonic()-plot_start
+        if p.longitudinal is not None and getattr(model.ledger,'native_pages_active',False):
+            # Closing the one owned WAL session consolidates the working image.
+            # Never hash its earlier base file as though it were the full ledger.
+            model.ledger.close();model._long._native_owner.close()
         size = sum(f.stat().st_size for f in path.iterdir() if f.is_file())
         if size > p.max_output_mb*1_000_000:
             raise RuntimeError("output resource limit exceeded; run is not complete")
@@ -195,6 +220,8 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
                          "network_io_bytes": 0, "rss_measurement_unit": "MiB", "output_limit_unit": "decimal MB", "compiled_kernel_seconds": 0, "plotting_seconds": plotting_wall,
                          "output_sha256": hashes})
         atomic_json(path/"manifest.json", metadata)
+        if transfer is not None and metadata['status']=='complete':
+            transfer.publish_final(path,metadata,deadline_monotonic=wall+p.max_wall_seconds)
         return {"run_path": str(path), "status": metadata["status"], "summary": summary}
     except Exception as error:
         # Do not allocate another full state on an RSS/OOM failure. Preserve any
@@ -212,6 +239,10 @@ def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, resto
                          "output_sha256": output_hashes(path)})
         atomic_json(path/"manifest.json", metadata)
         raise
+    finally:
+        if model is not None and p.longitudinal is not None and getattr(model.ledger,'native_pages_active',False):
+            model.ledger.close()
+            if model._long._native_owner is not None:model._long._native_owner.close()
 
 
 def reproduce(p: Config, path: Path, worlds: int) -> dict:
@@ -256,8 +287,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--worlds", type=int, default=3)
     parser.add_argument("--checkpoint-day", type=int)
     parser.add_argument("--checkpoint", type=Path)
+    parser.add_argument("--native-page-store",type=Path)
+    parser.add_argument("--native-page-branch")
+    parser.add_argument("--native-known-latest-floor",type=Path)
+    parser.add_argument("--native-owner-dir",type=Path)
     args = parser.parse_args(argv)
     try:
+        page_options=None;known_latest_floor=None
+        if args.native_page_store is not None:
+            if args.command not in {'run','resume'} or args.native_page_branch is None:
+                raise ValueError('native checkpoint CLI requires run/resume and an explicit operational branch')
+            from .native_page_backend import NativePageOptions,handle
+            page_options=NativePageOptions(args.native_page_store,args.native_page_branch,source_hash()).validate()
+            if args.native_known_latest_floor is not None:
+                # Supplied separately by the owner; never extracted from CP JSON.
+                known_latest_floor=handle(json.loads(args.native_known_latest_floor.read_text()))
+        elif any(v is not None for v in (args.native_page_branch,args.native_known_latest_floor,args.native_owner_dir)):
+            raise ValueError('native checkpoint arguments require an explicit store')
         if args.command == "pipeline":
             from .pipeline import run_pipeline
             result = run_pipeline(args.spec, args.scale, args.output, args.runtime_limits)
@@ -277,19 +323,22 @@ def main(argv: list[str] | None = None) -> int:
                 if value["source_sha256"] != source_hash():
                     raise ValueError("checkpoint source hash differs; migration is not supported")
                 saved_config=Config.from_dict(value['state']['config'])
-                restored = (Model.restore_checkpoint(args.checkpoint,storage_dir=path,expected_config=saved_config)
+                restored = (Model.restore_checkpoint(args.checkpoint,storage_dir=path,expected_config=saved_config,
+                                **({'page_options':page_options,'known_latest_floor':known_latest_floor,'native_owner_dir':args.native_owner_dir} if page_options is not None else {}))
                             if saved_config.longitudinal is not None else Model.restore(value["state"]))
                 restart_origin = {"parent_run_id":origin["run_id"],
                     "parent_manifest_sha256":digest((args.checkpoint.parent/"manifest.json").read_bytes()),
                     "checkpoint_file":args.checkpoint.name,"checkpoint_sha256":digest(args.checkpoint.read_bytes()),
                     "parent_source_sha256":origin["source_sha256"],"parent_config_sha256":origin["config_sha256"]}
-                result = run_world(restored.config, path, restored=restored, restart_origin=restart_origin)
+                result = run_world(restored.config, path, restored=restored, restart_origin=restart_origin,
+                    **({'page_options':page_options,'known_latest_floor':known_latest_floor,'native_owner_dir':args.native_owner_dir} if page_options is not None else {}))
             elif args.command == "reproduce":
                 if not 2 <= args.worlds <= 1000:
                     raise ValueError("worlds must be between 2 and 1000")
                 result = reproduce(p, path, args.worlds)
             else:
-                result = run_world(p, path, checkpoint_day=args.checkpoint_day)
+                result = run_world(p, path, checkpoint_day=args.checkpoint_day,
+                    **({'page_options':page_options,'known_latest_floor':known_latest_floor,'native_owner_dir':args.native_owner_dir} if page_options is not None else {}))
         print(json.dumps(result, indent=2, allow_nan=False))
         return 0
     except (ValueError, OSError, RuntimeError, TimeoutError, MemoryError) as error:

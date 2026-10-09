@@ -126,7 +126,7 @@ def provenance() -> dict:
     return {"source_sha256": source_hash(), "git_commit": commit, "git_dirty": dirty,
             "python": sys.version, "platform": platform.platform(), "machine": platform.machine(),
             "dependencies": "Python standard library only", "container_image": None,
-            "random_stream": "SHA256(seed,world,process,event,entity)/53-bit uniform; Box-Muller normal",
+            "random_stream": "SHA256(seed,world,[optional versioned world_context frame],process,event,entity)/53-bit uniform; Box-Muller normal; absent context preserves legacy key bytes",
             "created_utc": datetime.now(timezone.utc).isoformat()}
 
 

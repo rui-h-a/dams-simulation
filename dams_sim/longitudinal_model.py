@@ -38,14 +38,16 @@ def age_at(birth: str, current: date) -> float:
 
 class LongitudinalEngine:
     version = 'longitudinal-1'
-    def __init__(self, config, *, storage_dir=None):
+    def __init__(self, config, *, storage_dir=None, page_options=None, native_owner_dir=None,known_latest_floor=None):
         from .model import Agent
         if source_hash()!=IMPORTED_SOURCE_SHA256:raise ValueError('longitudinal source changed after import; restart from a frozen source')
         self.execution_source_sha256=IMPORTED_SOURCE_SHA256
         self._state_hash_codec=STATE_HASH_CODEC
         self.config=config.validate(); self.l=config.longitudinal
-        self.clock=GregorianClock(self.l); self.rng=WorldRandom(config.seed,config.world)
-        self.ledger=ExactLedger(storage_dir)
+        self.clock=GregorianClock(self.l)
+        self.rng=WorldRandom(config.seed,config.world,world_context=self.l.world_context)
+        self.ledger=ExactLedger(storage_dir,page_options=page_options) if page_options is not None else ExactLedger(storage_dir)
+        self._native_owner=None
         self.day=0; self.failed_day=False
         self.agents=[]; self.people=[]; self.slots={}; self.slot_guild={}
         self.guild_alias={g:g for g in range(config.guilds)}
@@ -66,6 +68,15 @@ class LongitudinalEngine:
             self._enter(i,guild,token,age,initial=True)
         self.ledger.commit(); self._topology(); self._authority()
         self.ledger.commit()
+        if page_options is not None:
+            from .native_checkpoint_owner import CheckpointOwner, default_owner_directory
+            if page_options.execution_source_sha256!=self.execution_source_sha256:
+                raise ValueError('native storage executing source differs')
+            self._native_owner=CheckpointOwner(native_owner_dir or default_owner_directory(page_options,digest(canonical(self.config.to_dict()))),
+                source_sha256=self.execution_source_sha256,config_sha256=digest(canonical(self.config.to_dict())))
+            if self._native_owner.latest() is not None:
+                raise ValueError('native fresh world requires a fresh external owner namespace; restore the retained checkpoint')
+            self.ledger.activate_pages(day=0,known_latest_floor=known_latest_floor)
 
     def check_disk(self):
         size=sum(p.stat().st_size for p in self.ledger.directory.iterdir() if p.is_file())
@@ -287,8 +298,11 @@ class LongitudinalEngine:
         if self._state_hash_codec!=STATE_HASH_CODEC:raise ValueError('legacy checkpoint is inspection-only; resume with the original frozen implementation')
         if self.failed_day:raise RuntimeError('partial day failed; restore a durable checkpoint before continuing')
         if self.day>=self.config.days:raise ValueError('world has reached its specified horizon')
-        self.ledger.begin()
-        try:self._step();self.ledger.commit()
+        try:
+            if getattr(self.ledger,'native_pages_active',False):
+                self.ledger.commit_day(self.day+1,self._step)
+            else:
+                self.ledger.begin();self._step();self.ledger.commit()
         except BaseException:
             self.ledger.rollback();self.failed_day=True;raise
 
@@ -504,21 +518,45 @@ class LongitudinalEngine:
         if self.failed_day:raise ValueError('cannot serialize a partially failed day as a restartable state')
         value=copy.deepcopy(self.header());value['agents']=[dataclasses.asdict(a) for a in self.agents];value['ledger_rows']=self.ledger.materialize();return value
 
-    def write_snapshot(self,path):
+    def write_snapshot(self,path,*,final=False):
         if self.failed_day or self.ledger.db.in_transaction:raise ValueError('snapshot requires a successfully completed day boundary')
         if source_hash()!=self.execution_source_sha256:raise ValueError('longitudinal execution source changed; cannot certify a mixed-version snapshot')
         if self._state_hash_codec!=STATE_HASH_CODEC:raise ValueError('new checkpoint writer requires the current state hash codec; retain the original legacy checkpoint')
         path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
         if path.exists() or path.with_suffix('.sqlite').exists():raise ValueError('immutable longitudinal checkpoint already exists')
-        database=path.with_suffix('.sqlite');temporary=database.with_name('.'+database.name+'.tmp')
+        native=getattr(self.ledger,'native_pages_active',False)
+        database=path.with_suffix('.sqlite') if not native or final else None
+        temporary=None if database is None else database.with_name('.'+database.name+'.tmp')
+        native_descriptor=None
         try:
-            descriptor=self.ledger.snapshot(temporary)
-            if temporary.stat().st_size>self.config.max_output_mb*1e6:raise RuntimeError('longitudinal sidecar output resource limit exceeded')
-            temporary.rename(database)
-            descriptor['file']=database.name
+            if native:
+                floor=self.ledger.latest_floor
+                owned=self._native_owner.latest()
+                if owned is not None:floor=owned['floor']
+                native_descriptor=self.ledger.snapshot_pages(self.day,known_latest_floor=floor)
+                descriptor=native_descriptor
+                if final:
+                    receipt=self.ledger.export_pages(native_descriptor['handle'],temporary,known_latest_floor=self.ledger.latest_floor)
+                    actual=snapshot_semantics(temporary)
+                    if any(actual[k]!=native_descriptor[k] for k in actual):
+                        raise ValueError('native final export ledger semantics differs')
+                    descriptor={**actual,'file':database.name,'sha256':receipt['byte_sha256'],'bytes':receipt['bytes']}
+            else:
+                descriptor=self.ledger.snapshot(temporary)
+            if temporary is not None:
+                if temporary.stat().st_size>self.config.max_output_mb*1e6:raise RuntimeError('longitudinal sidecar output resource limit exceeded')
+                temporary.rename(database)
+                descriptor['file']=database.name
+                if native:
+                    from .native_checkpoint_owner import observed_file
+                    published=observed_file(database)
+                    if (published['sha256']!=receipt['byte_sha256'] or published['bytes']!=receipt['bytes']
+                            or published['identity'][:4]!=receipt['anchor'][:4]):
+                        raise ValueError('native final export changed during sidecar publication')
             envelope={'checkpoint_format_version':CHECKPOINT_FORMAT_VERSION,'state_hash_codec':self._state_hash_codec,
                       'source_sha256':source_hash(),'config_sha256':digest(canonical(self.config.to_dict())),
                       'state_semantic_sha256':self._semantic_digest_with_ledger(descriptor['semantic_sha256']),'ledger':descriptor,'state':self.header()}
+            if native_descriptor is not None:envelope['native_checkpoint']=native_descriptor
             def writer(stream):
                 stream.write('{')
                 for n,k in enumerate(sorted(envelope)):
@@ -536,15 +574,19 @@ class LongitudinalEngine:
                         stream.write('}')
                     else:stream.write(canonical(value))
                 stream.write('}\n')
-            atomic_stream(path,writer,max_bytes=int(self.config.max_output_mb*1e6)-database.stat().st_size)
+            atomic_stream(path,writer,max_bytes=int(self.config.max_output_mb*1e6)-(0 if database is None else database.stat().st_size))
         finally:
-            if temporary.exists():temporary.unlink()
-        return {'file':path.name,'sha256':file_digest(path),'day':self.day,'source_sha256':envelope['source_sha256'],'config_sha256':envelope['config_sha256'],
+            if temporary is not None and temporary.exists():temporary.unlink()
+        item={'file':path.name,'sha256':file_digest(path),'day':self.day,'source_sha256':envelope['source_sha256'],'config_sha256':envelope['config_sha256'],
                 'checkpoint_format_version':CHECKPOINT_FORMAT_VERSION,'state_hash_codec':self._state_hash_codec,
-                'state_semantic_sha256':envelope['state_semantic_sha256'],'files':[{'file':p.name,'sha256':file_digest(p),'bytes':p.stat().st_size} for p in (path,database)]}
+                'state_semantic_sha256':envelope['state_semantic_sha256'],'files':[{'file':p.name,'sha256':file_digest(p),'bytes':p.stat().st_size} for p in ((path,) if database is None else (path,database))]}
+        if native:
+            item['native_checkpoint']=native_descriptor
+            self._native_owner.publish(path,item,self.ledger.latest_floor)
+        return item
 
     @classmethod
-    def restore(cls,value,*,storage_dir=None,ledger_snapshot=None):
+    def restore(cls,value,*,storage_dir=None,ledger_snapshot=None,ledger_instance=None,native_owner=None):
         from .model import Agent
         if source_hash()!=IMPORTED_SOURCE_SHA256 or value.get('execution_source_sha256')!=IMPORTED_SOURCE_SHA256:
             raise ValueError('longitudinal restored execution source differs; resume with the original frozen source')
@@ -553,7 +595,10 @@ class LongitudinalEngine:
         obj._state_hash_codec=value.get('state_hash_codec',LEGACY_STATE_HASH_CODEC)
         if obj._state_hash_codec not in (STATE_HASH_CODEC,LEGACY_STATE_HASH_CODEC):raise ValueError('unknown longitudinal state hash codec')
         typed=integer_state_maps(value)
-        obj.clock=GregorianClock(obj.l);obj.rng=WorldRandom(obj.config.seed,obj.config.world);obj.failed_day=False
+        obj.clock=GregorianClock(obj.l)
+        obj.rng=WorldRandom(obj.config.seed,obj.config.world,world_context=obj.l.world_context)
+        obj.failed_day=False
+        obj._native_owner=native_owner
         obj.agents=[Agent(**a) for a in value['agents']]
         for name in ('day','people','target','demand','cash','closed_day','suspended_day','unfunded_workdays','history','authority_change_sum','authority_change_count','last_work_per_present_member','branch_origin','execution_source_sha256'):setattr(obj,name,copy.deepcopy(value[name]))
         for name in ('slots','slot_guild','guild_alias','memory','routine','adoption','migration_paid'):setattr(obj,name,typed[name])
@@ -565,9 +610,9 @@ class LongitudinalEngine:
             if not 0<=i<len(obj.agents) or obj.people[i]['exited_day'] is not None or obj.people[i]['slot']!=slot:raise ValueError('active roster differs from retained people')
         if {r['id'] for r in obj.people if r['exited_day'] is None}!=set(obj.slots.values()):raise ValueError('active eligibility roster differs')
         if len(obj.slots)>(obj.l.max_active_members or obj.config.n):raise ValueError('active member cap exceeded')
-        obj.ledger=ExactLedger(storage_dir,snapshot=ledger_snapshot)
+        obj.ledger=ledger_instance if ledger_instance is not None else ExactLedger(storage_dir,snapshot=ledger_snapshot)
         obj.ledger.journal_codec=obj._state_hash_codec
-        if ledger_snapshot is None:obj.ledger.restore_rows(value['ledger_rows'])
+        if ledger_snapshot is None and ledger_instance is None:obj.ledger.restore_rows(value['ledger_rows'])
         obj._topology();obj._authority_signature=(tuple((g,tuple(ids),obj.policy(g)) for g,ids in sorted(obj.members.items())),obj.closed_day,obj.suspended_day)
         obj.validate_semantics();return obj
 
@@ -591,7 +636,7 @@ class LongitudinalEngine:
         for person,guild,amount in self.ledger.rows('credits'):
             if not 0<=person<len(self.agents) or not 0<=guild<self.config.guilds or not math.isfinite(amount) or amount<0:raise ValueError('credit semantic validation failed')
 
-    def fork(self,new_config,*,storage_dir=None):
+    def fork(self,new_config,*,storage_dir=None,page_options=None,native_owner_dir=None):
         if self._state_hash_codec!=STATE_HASH_CODEC:raise ValueError('legacy checkpoint is inspection-only; fork with the original frozen implementation')
         new_config.validate()
         if source_hash()!=self.execution_source_sha256:raise ValueError('branch parent execution source changed')
@@ -623,13 +668,72 @@ class LongitudinalEngine:
         directory=Path(storage_dir) if storage_dir is not None else Path(__import__('tempfile').mkdtemp(prefix='dams-branch-'))
         directory.mkdir(parents=True,exist_ok=True)
         if self.failed_day or self.ledger.db.in_transaction:raise ValueError('branch parent is not at a committed day boundary')
-        child=self.restore(header,storage_dir=directory,ledger_snapshot=self.ledger.path)
+        if getattr(self.ledger,'native_pages_active',False):
+            if page_options is None:raise ValueError('native scientific fork requires a fresh operational storage branch')
+            descriptor=self.ledger.snapshot_pages(self.day,known_latest_floor=self.ledger.latest_floor)
+            ledger=ExactLedger.from_pages(directory,descriptor,page_options=page_options,known_latest_floor=self.ledger.latest_floor,
+                verify_export=lambda database,desc,receipt:verify_native_image(header,database,desc))
+            child=self.restore(header,storage_dir=directory,ledger_instance=ledger)
+        else:
+            if page_options is not None:raise ValueError('native fork cannot relabel a legacy parent; use native storage from initialization')
+            child=self.restore(header,storage_dir=directory,ledger_snapshot=self.ledger.path)
         child.config=new_config;child.l=new_config.longitudinal;child.clock=GregorianClock(child.l)
         child.branch_origin={'parent_source_sha256':source_hash(),'parent_config_sha256':digest(canonical(self.config.to_dict())),'parent_day':self.day,'parent_state_semantic_sha256':self.semantic_digest()}
+        if page_options is not None:
+            from .native_checkpoint_owner import CheckpointOwner,default_owner_directory
+            child._native_owner=CheckpointOwner(native_owner_dir or default_owner_directory(page_options,digest(canonical(new_config.to_dict()))),
+                source_sha256=source_hash(),config_sha256=digest(canonical(new_config.to_dict())))
+            if child._native_owner.latest() is not None:raise ValueError('native scientific fork owner namespace already exists')
         return child
 
 
-def verify_snapshot(path,*,expected_config=None,expected_source_sha256=None):
+def verify_native_image(state,database,descriptor,*,expected_state_sha256=None,expected_source_sha256=None):
+    """Actual exported image rows plus the unchanged full engine-state codec."""
+    actual=snapshot_semantics(database)
+    if any(actual[k]!=descriptor[k] for k in actual):raise ValueError('native exported ledger semantics mismatch')
+    codec=state.get('state_hash_codec',LEGACY_STATE_HASH_CODEC)
+    header={k:v for k,v in state.items() if k!='agents'}
+    integer_state_maps(header)
+    h=hashlib.sha256();hash_state_json(h,header,codec)
+    for agent in state['agents']:h.update(b'\n');h.update(canonical(agent))
+    h.update(b'\n');h.update(actual['semantic_sha256'].encode())
+    if expected_state_sha256 is not None and h.hexdigest()!=expected_state_sha256:
+        raise ValueError('longitudinal checkpoint full state digest mismatch')
+    validate_persisted_state(state,database,expected_source_sha256=expected_source_sha256)
+    return h.hexdigest()
+
+
+def load_snapshot_envelope(path,*,expected_config=None,expected_source_sha256=None):
+    """Decode the exact no-follow bytes read under an original FD observation."""
+    from ._committed_pages import Directory,identity
+    import os
+    if source_hash()!=IMPORTED_SOURCE_SHA256:raise ValueError('longitudinal verifier source changed after import; restart from a frozen source')
+    path=Path(path).absolute();directory=Directory(path.parent)
+    try:
+        info=os.stat(path.name,dir_fd=directory.fd,follow_symlinks=False)
+        raw,anchor=directory.read_observed(path.name,info.st_size)
+        def pairs(items):
+            value={}
+            for key,item in items:
+                if key in value:raise ValueError('duplicate checkpoint JSON object key')
+                value[key]=item
+            return value
+        value=json.loads(raw,object_pairs_hook=pairs,parse_constant=lambda _:(_ for _ in ()).throw(ValueError('nonfinite checkpoint JSON value')))
+        if identity(os.stat(path.name,dir_fd=directory.fd,follow_symlinks=False))!=anchor:
+            raise ValueError('longitudinal checkpoint envelope changed during decode')
+    finally:directory.close()
+    checkpoint_codec(value)
+    expected_source=source_hash() if expected_source_sha256 is None else expected_source_sha256
+    if value['source_sha256']!=expected_source or value['state'].get('execution_source_sha256')!=expected_source:
+        raise ValueError('longitudinal checkpoint source differs')
+    config=Config.from_dict(value['state']['config'])
+    if value['config_sha256']!=digest(canonical(config.to_dict())) or expected_config is not None and config.to_dict()!=expected_config.to_dict():
+        raise ValueError('longitudinal checkpoint config differs')
+    if len(raw)>config.max_output_mb*1e6:raise ValueError('longitudinal checkpoint envelope exceeds declared output limit')
+    return value,{'path':str(path),'sha256':digest(raw),'bytes':len(raw),'identity':list(anchor)}
+
+
+def verify_snapshot(path,*,expected_config=None,expected_source_sha256=None,page_options=None,known_latest_floor=None,export_dir=None,native_floor_observer=None):
     """Pure-I/O verification; an explicit historical source never enables resume.
 
     Historical checkpoints retain their original source/model/hash identities.
@@ -637,13 +741,29 @@ def verify_snapshot(path,*,expected_config=None,expected_source_sha256=None):
     hash. Model restoration still requires the executing frozen source to match.
     """
     if source_hash()!=IMPORTED_SOURCE_SHA256:raise ValueError('longitudinal verifier source changed after import; restart from a frozen source')
-    path=Path(path);value=load_checkpoint_json(path);codec=checkpoint_codec(value)
+    path=Path(path);value,_=load_snapshot_envelope(path,expected_config=expected_config,expected_source_sha256=expected_source_sha256);codec=checkpoint_codec(value)
     expected_source=source_hash() if expected_source_sha256 is None else expected_source_sha256
     if value['source_sha256']!=expected_source or value['state'].get('execution_source_sha256')!=expected_source:
         raise ValueError('longitudinal checkpoint source differs')
     config=Config.from_dict(value['state']['config'])
     if value['config_sha256']!=digest(canonical(config.to_dict())) or expected_config is not None and config.to_dict()!=expected_config.to_dict():raise ValueError('longitudinal checkpoint config differs')
-    side=value['ledger'];database=path.parent/side['file']
+    side=value['ledger']
+    native=value.get('native_checkpoint')
+    if side.get('backend')=='native-committed-pages-v1':
+        if native!=side or page_options is None or known_latest_floor is None or export_dir is None:
+            raise ValueError('native checkpoint requires options, external latest floor and owned export directory')
+        from .native_page_backend import export_existing,NativePageBackend
+        from .longitudinal_storage import TABLE_COLUMNS
+        export_dir=Path(export_dir);export_dir.mkdir(parents=True,exist_ok=True)
+        database=export_dir/(path.stem+'.sqlite')
+        receipt=export_existing(page_options,native,database,known_latest_floor=known_latest_floor,tables=TABLE_COLUMNS)
+        if receipt['bytes']!=native['bytes']:raise ValueError('native export geometry differs')
+        verify_native_image(value['state'],database,native,expected_state_sha256=value['state_semantic_sha256'],expected_source_sha256=expected_source)
+        NativePageBackend.verify_export(database,receipt)
+        if native_floor_observer is not None:native_floor_observer(receipt['latest_floor'])
+        NativePageBackend.verify_export(database,receipt)
+        return value,database
+    database=path.parent/side['file']
     if database.parent.resolve()!=path.parent.resolve() or database.is_symlink() or not database.is_file() or file_digest(database)!=side['sha256'] or database.stat().st_size!=side['bytes']:raise ValueError('longitudinal checkpoint ledger integrity mismatch')
     actual=snapshot_semantics(database)
     if any(actual[k]!=side[k] for k in actual):raise ValueError('longitudinal checkpoint ledger semantics mismatch')
@@ -654,6 +774,21 @@ def verify_snapshot(path,*,expected_config=None,expected_source_sha256=None):
     h.update(b'\n');h.update(actual['semantic_sha256'].encode())
     if h.hexdigest()!=value['state_semantic_sha256']:raise ValueError('longitudinal checkpoint full state digest mismatch')
     validate_persisted_state(state,database,expected_source_sha256=expected_source)
+    if native is not None:
+        if page_options is None or known_latest_floor is None or export_dir is None:
+            raise ValueError('native final state requires options, external latest floor and owned export directory')
+        from .native_page_backend import export_existing,NativePageBackend
+        from .longitudinal_storage import TABLE_COLUMNS
+        export_dir=Path(export_dir);export_dir.mkdir(parents=True,exist_ok=True)
+        exported=export_dir/(path.stem+'.sqlite')
+        receipt=export_existing(page_options,native,exported,known_latest_floor=known_latest_floor,tables=TABLE_COLUMNS)
+        if receipt['byte_sha256']!=side['sha256'] or receipt['bytes']!=side['bytes']:
+            raise ValueError('native final CAS/exported flat SQLite bytes differ')
+        if any(native[k]!=actual[k] for k in actual) or native['day']!=state['day'] or native['bytes']!=side['bytes']:
+            raise ValueError('native final checkpoint/flat ledger binding differs')
+        NativePageBackend.verify_export(exported,receipt)
+        if native_floor_observer is not None:native_floor_observer(receipt['latest_floor'])
+        NativePageBackend.verify_export(exported,receipt)
     return value,database
 
 
@@ -716,7 +851,11 @@ def validate_persisted_state(state,database,*,expected_source_sha256=None):
             if type(r[key]) is not int or r[key]<0:raise ValueError('persisted exposure must be nonnegative integer counts')
         if r['active_calendar_days']>day-r['entered_day']:raise ValueError('persisted member exposure exceeds elapsed time')
     clock=GregorianClock(l)
-    db=sqlite3.connect(f'file:{Path(database).resolve()}?mode=ro',uri=True);ledger=ExactLedger.__new__(ExactLedger);ledger.db=db
+    # This is a complete sealed flat snapshot, not a live WAL database. SQLite's
+    # mode=ro alone can create WAL/SHM beside a WAL-header export and mutate the
+    # retained output roster. Byte/semantic gates bind this exact flat image;
+    # immutable=1 prevents a validation reader from creating recovery sidecars.
+    db=sqlite3.connect(Path(database).resolve().as_uri()+'?mode=ro&immutable=1',uri=True);ledger=ExactLedger.__new__(ExactLedger);ledger.db=db
     try:
         ledger.validate_schema()
         view=SimpleNamespace(config=config,l=l,clock=clock,day=day,agents=agents,people=people,cash=state['cash'],metrics=state['metrics'],ledger=ledger)

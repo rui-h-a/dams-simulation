@@ -8,6 +8,7 @@ from __future__ import annotations
 from dataclasses import asdict
 import hashlib
 import json
+import os
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -149,14 +150,29 @@ TABLE_TYPES={'pending':('INTEGER','TEXT','INTEGER','INTEGER','REAL','TEXT','INTE
              'seen':('TEXT',),'journal':('INTEGER','INTEGER','TEXT','TEXT','TEXT'),'credits':('INTEGER','INTEGER','REAL'),'delays':('TEXT','INTEGER','INTEGER')}
 
 class ExactLedger:
-    def __init__(self,directory=None,*,snapshot=None):
+    def __init__(self,directory=None,*,snapshot=None,page_options=None):
+        self._pages=None
         self.journal_codec=STATE_HASH_CODEC
         self.directory=Path(directory) if directory is not None else Path(tempfile.mkdtemp(prefix='dams-longitudinal-'))
-        self.directory.mkdir(parents=True,exist_ok=True)
+        if page_options is None:self.directory.mkdir(parents=True,exist_ok=True)
+        else:
+            from .native_page_backend import NativePageOptions, ensure_directory, need, CODEC_SHA256, codec
+            need(type(page_options) is NativePageOptions, 'native options type invalid')
+            page_options.validate()
+            need(sqlite3.sqlite_version==codec.SQLITE_PIN,'native pages require reviewed SQLite runtime '+codec.SQLITE_PIN)
+            need(codec.module_sha()==CODEC_SHA256,'accepted native codec source changed')
+            ensure_directory(self.directory)
         self.path=self.directory/'.longitudinal-working.sqlite'
-        if self.path.exists():raise ValueError('working longitudinal database already exists; restore into a fresh directory')
-        self.db=sqlite3.connect(self.path)
-        self.db.execute('PRAGMA journal_mode=DELETE');self.db.execute('PRAGMA synchronous=FULL')
+        if self.path.exists() or self.path.is_symlink():raise ValueError('working longitudinal database already exists; restore into a fresh directory')
+        if page_options is None:self.db=sqlite3.connect(self.path)
+        else:
+            from .native_page_backend import open_new_database
+            self.db=open_new_database(self.path)
+        if page_options is None:
+            self.db.execute('PRAGMA journal_mode=DELETE');self.db.execute('PRAGMA synchronous=FULL')
+        else:
+            from .native_page_backend import configure
+            configure(self.db)
         if snapshot is not None:
             source=sqlite3.connect(f'file:{Path(snapshot).resolve()}?mode=ro',uri=True)
             try:source.backup(self.db)
@@ -173,6 +189,9 @@ class ExactLedger:
             CREATE TABLE delays(kind TEXT NOT NULL,delay INTEGER NOT NULL,count INTEGER NOT NULL,PRIMARY KEY(kind,delay));
             ''')
             self.db.commit()
+        if page_options is not None:
+            from .native_page_backend import NativePageBackend
+            self._pages=NativePageBackend(self.db,self.path,page_options)
     def validate_schema(self):
         if self.db.execute('PRAGMA user_version').fetchone()[0]!=SCHEMA_VERSION:raise ValueError('unknown longitudinal ledger schema')
         tables={r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}
@@ -189,30 +208,111 @@ class ExactLedger:
         sequences=list(self.db.execute('SELECT name,seq FROM sqlite_sequence'))
         if len({r[0] for r in sequences})!=len(sequences) or any(name not in {'pending','journal'} or type(seq) is not int or seq<0 or seq<self.db.execute(f'SELECT coalesce(max(seq),0) FROM {name}').fetchone()[0] for name,seq in sequences):raise ValueError('longitudinal next-event sequence differs')
         if self.db.execute('PRAGMA quick_check').fetchone()[0]!='ok':raise ValueError('SQLite snapshot is corrupt')
-    def begin(self):self.db.execute('BEGIN IMMEDIATE')
-    def commit(self):self.db.commit()
-    def rollback(self):self.db.rollback()
+    @property
+    def native_pages_active(self):
+        return self._pages is not None and self._pages.session is not None
+    @property
+    def retained_handle(self):
+        return None if self._pages is None else self._pages.retained_handle
+    @property
+    def latest_floor(self):
+        return None if self._pages is None else self._pages.latest_floor
+    def _mutation_gate(self):
+        if self.native_pages_active and not self._pages.in_day:
+            raise ValueError('native ledger mutation requires the owned daily commit gate')
+    def begin(self):
+        if self.native_pages_active:raise ValueError('native daily transaction is owned by commit_day')
+        self.db.execute('BEGIN IMMEDIATE')
+    def commit(self):
+        if self.native_pages_active:raise ValueError('native daily transaction is owned by commit_day')
+        self.db.commit()
+    def rollback(self):
+        if self.native_pages_active:self._pages.session.poisoned=True
+        self.db.rollback()
+    def activate_pages(self,day=0,*,known_latest_floor=None):
+        if self._pages is None:raise ValueError('native page options were not selected')
+        return self._pages.activate(day,known_latest_floor=known_latest_floor)
+    def commit_day(self,completed_day,callback):
+        if self.native_pages_active:return self._pages.commit_day(completed_day,callback)
+        self.begin()
+        try:result=callback();self.commit();return result
+        except BaseException:self.rollback();raise
+    def snapshot_pages(self,day,*,known_latest_floor=None):
+        if not self.native_pages_active:raise ValueError('native pages not activated')
+        value=self._pages.snapshot(day,known_latest_floor=known_latest_floor)
+        # Preserve the original ordered-row digest; a page root is never its substitute.
+        value.update(schema_version=SCHEMA_VERSION,semantic_sha256=self.semantic_digest(),
+                     row_counts={t:self.db.execute(f'SELECT count(*) FROM {t}').fetchone()[0] for t in TABLE_COLUMNS})
+        self._pages.session.check();self._pages._floor(known_latest_floor)
+        return value
+    def export_pages(self,selected,destination,*,known_latest_floor):
+        if not self.native_pages_active:raise ValueError('native pages not activated')
+        return self._pages.export(selected,destination,known_latest_floor=known_latest_floor)
+    def reset_pages(self,*,known_latest_floor=None):
+        if not self.native_pages_active:raise ValueError('native pages not activated')
+        return self._pages.reset(known_latest_floor=known_latest_floor)
+    @classmethod
+    def from_pages(cls,directory,descriptor,*,page_options,known_latest_floor,verify_export=None):
+        from .native_page_backend import (NativePageBackend, configure, descriptor_check,
+                                         ensure_directory, export_existing, EXPORT_KEYS, need)
+        descriptor_check(descriptor,page_options,TABLE_COLUMNS)
+        need(known_latest_floor is not None,'native restore requires external latest floor')
+        frozen=canonical(descriptor);descriptor=json.loads(frozen)
+        need(verify_export is None or callable(verify_export),'native export verifier must be callable')
+        directory=Path(directory);ensure_directory(directory)
+        path=directory/'.longitudinal-working.sqlite'
+        receipt=export_existing(page_options,descriptor,path,known_latest_floor=known_latest_floor,tables=TABLE_COLUMNS)
+        original_proof={k:receipt[k] for k in EXPORT_KEYS}
+        if verify_export is not None:
+            # Caller verifies scientific JSON + flat-row state on this one exported inode.
+            verify_export(path,json.loads(frozen),json.loads(canonical(receipt)))
+        NativePageBackend.verify_export(path,original_proof)
+        semantics=snapshot_semantics(path)
+        need(semantics['semantic_sha256']==descriptor['semantic_sha256'] and semantics['row_counts']==descriptor['row_counts'],
+             'native exported ledger semantic digest/counts differ')
+        NativePageBackend.verify_export(path,original_proof)
+        obj=cls.__new__(cls);obj.journal_codec=STATE_HASH_CODEC
+        obj.directory=directory;obj.path=path;obj._pages=None
+        obj.db=sqlite3.connect(path.absolute().as_uri()+'?mode=rw',uri=True)
+        try:
+            # Full schema/quick_check already ran on this exact exported inode.
+            # Repeating quick_check on the EXCLUSIVE writer opens SQLite's TEMP
+            # database and violates the reviewed single-main NativeSession gate.
+            configure(obj.db);obj.db.execute('PRAGMA schema_version').fetchone()
+            obj._pages=NativePageBackend(obj.db,path,page_options)
+            obj._pages.adopt({**descriptor,'_export_proof':original_proof},known_latest_floor=receipt['latest_floor'])
+            return obj
+        except BaseException:
+            if obj._pages is not None:obj._pages.close()
+            else:obj.db.close()
+            raise
     def add_journal(self,day,kind,event,data):
+        self._mutation_gate()
         self.db.execute('INSERT INTO journal(day,kind,event,payload) VALUES(?,?,?,?)',(day,kind,event,journal_json(data,codec=self.journal_codec,kind=kind)))
     def mark_seen(self,event):
+        self._mutation_gate()
         cursor=self.db.execute('INSERT OR IGNORE INTO seen VALUES(?)',(event,));return cursor.rowcount==1
     def seen_count(self):return self.db.execute('SELECT count(*) FROM seen').fetchone()[0]
     def push(self,kind,guild,claim):
+        self._mutation_gate()
         d=asdict(claim)
         self.db.execute('INSERT INTO pending(kind,guild,ready,priority,event,agent,created,observed,audit_detected,fraudulent,correction) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(kind,guild,d['ready'],d['priority'],d['event'],d['agent'],d['created'],d['observed'],int(d['audit_detected']),int(d['fraudulent']),int(d['correction'])))
     def take_ready(self,kind,guild,day,limit):
+        self._mutation_gate()
         if limit<=0:return []
         rows=self.db.execute('SELECT seq,ready,event,agent,created,observed,audit_detected,fraudulent,correction,priority FROM pending WHERE kind=? AND guild=? AND ready<=? ORDER BY ready,priority,seq LIMIT ?',(kind,guild,day,limit)).fetchall()
         self.db.executemany('DELETE FROM pending WHERE seq=?',((r[0],) for r in rows))
         from .model import Claim
         return [Claim(r[1],r[2],r[3],r[4],r[5],bool(r[6]),bool(r[7]),bool(r[8]),r[9]) for r in rows]
     def take_sequence(self,seq):
+        self._mutation_gate()
         row=self.db.execute('SELECT ready,event,agent,created,observed,audit_detected,fraudulent,correction,priority FROM pending WHERE seq=?',(seq,)).fetchone()
         if row is None:raise ValueError('pending evidence row disappeared')
         self.db.execute('DELETE FROM pending WHERE seq=?',(seq,))
         from .model import Claim
         return Claim(*row[:5],bool(row[5]),bool(row[6]),bool(row[7]),row[8])
     def take_ready_domains(self,kind,domains,day,limit):
+        self._mutation_gate()
         if limit<=0:return []
         domains=set(domains)
         if len(domains)<=300:
@@ -231,11 +331,14 @@ class ExactLedger:
         sql='SELECT count(*) FROM pending'+(' WHERE '+' AND '.join(conditions) if conditions else '')
         return self.db.execute(sql,args).fetchone()[0]
     def add_credit(self,person,guild,value):
+        self._mutation_gate()
         self.db.execute('INSERT INTO credits VALUES(?,?,?) ON CONFLICT(person,guild) DO UPDATE SET amount=amount+excluded.amount',(person,guild,value))
     def credit(self,person,guild):
         row=self.db.execute('SELECT amount FROM credits WHERE person=? AND guild=?',(person,guild)).fetchone();return row[0] if row else 0.
-    def decay_credits(self,factor):self.db.execute('UPDATE credits SET amount=amount*?',(factor,))
-    def add_delay(self,kind,delay):self.db.execute('INSERT INTO delays VALUES(?,?,1) ON CONFLICT(kind,delay) DO UPDATE SET count=count+1',(kind,delay))
+    def decay_credits(self,factor):
+        self._mutation_gate();self.db.execute('UPDATE credits SET amount=amount*?',(factor,))
+    def add_delay(self,kind,delay):
+        self._mutation_gate();self.db.execute('INSERT INTO delays VALUES(?,?,1) ON CONFLICT(kind,delay) DO UPDATE SET count=count+1',(kind,delay))
     def delay_summary(self,kind,q=.95):
         rows=self.db.execute('SELECT delay,count FROM delays WHERE kind=? ORDER BY delay',(kind,)).fetchall();n=sum(c for _,c in rows)
         if not n:return None,None
@@ -256,6 +359,7 @@ class ExactLedger:
         h.update(canonical({'sqlite_sequence':list(self.db.execute('SELECT name,seq FROM sqlite_sequence ORDER BY name'))}))
         return h.hexdigest()
     def snapshot(self,path):
+        if self.native_pages_active:raise ValueError('native checkpoints use snapshot_pages; final images use export_pages')
         if self.db.in_transaction:raise ValueError('checkpoint must be at a committed day boundary')
         path=Path(path)
         if path.exists():raise ValueError('immutable longitudinal snapshot already exists')
@@ -269,6 +373,7 @@ class ExactLedger:
         if sum(self.db.execute(f'SELECT count(*) FROM {t}').fetchone()[0] for t in TABLE_COLUMNS)>max_rows:raise MemoryError('use streaming snapshot API for large longitudinal state')
         return {**{t:list(self.rows(t)) for t in TABLE_COLUMNS},'__sequences__':list(self.db.execute('SELECT name,seq FROM sqlite_sequence ORDER BY name'))}
     def restore_rows(self,values):
+        self._mutation_gate()
         if set(values)!=set(TABLE_COLUMNS)|{'__sequences__'}:raise ValueError('ledger row inventory differs')
         with self.db:
             for table,columns in TABLE_COLUMNS.items():
@@ -277,12 +382,17 @@ class ExactLedger:
             self.db.execute('DELETE FROM sqlite_sequence')
             self.db.executemany('INSERT INTO sqlite_sequence VALUES(?,?)',values['__sequences__'])
         self.validate_schema()
-    def close(self):self.db.close()
+    def close(self):
+        if self._pages is not None:self._pages.close()
+        else:self.db.close()
 
 
 def snapshot_semantics(path):
-    """Read-only exact schema/ordered-row verification for public consumers."""
-    db=sqlite3.connect(f'file:{Path(path).resolve()}?mode=ro',uri=True)
+    """Verify a sealed, complete flat image; never pass an active WAL base."""
+    # A completed native export retains a WAL-mode SQLite header, but its
+    # complete bytes are in this one immutable image. A normal mode=ro reader
+    # would create WAL/SHM siblings and change the published output roster.
+    db=sqlite3.connect(Path(path).resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
     obj=ExactLedger.__new__(ExactLedger);obj.db=db
     try:
         obj.validate_schema()

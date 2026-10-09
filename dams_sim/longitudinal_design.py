@@ -214,6 +214,7 @@ def _long_config(spec, context, strategy, *, horizon=None):
         if strategy=='crisis-trigger':trigger='review_backlog_per_active_member';threshold=2.
     elif strategy!='never':raise ValueError('unknown adoption strategy')
     return LongitudinalConfig(calendar_start=spec.calendar_start,holidays=holidays,
+        world_context=f'longitudinal-context-v1:{spec.name}:n={spec.n}:{context}',
         organization_initial_age_years=v['age'],initial_memory=v['memory'],initial_routine_strength=v['routine'],
         historical_verified_credit_per_member=v['verified_credit'],annual_exit_probability=v['exit'],
         initial_cash_per_member=v['initial_cash'],max_active_members=spec.n*2,max_people_ever=spec.n*8,
