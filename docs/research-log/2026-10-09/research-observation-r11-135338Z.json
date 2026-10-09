@@ -1,0 +1,160 @@
+{
+  "schema": "dams-portable-dated-research-observation-v1",
+  "observation_as_of": "2026-10-09T13:53:38.891234+00:00",
+  "classification": "formal declared group precision-pilot; no completion claimed",
+  "scientific_identity": {
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e",
+    "config_sha256": "2ffeb69b513adb69656c486a1745f018ecd25a64f9ffa408b99915b432f4a942",
+    "case_id": "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+    "world_id": 20001,
+    "initial_population": 1000,
+    "horizon_days": 3743
+  },
+  "case_program_completion": {
+    "durable_exit_code": 0,
+    "durable_finished_utc": "2026-10-09T13:35:46.273062+00:00",
+    "manifest_status": "complete",
+    "manifest_bytes": 7133,
+    "manifest_sha256": "e8806ba7c7c5c2c9cfdd32ee0872c0f11a11369d8268a9161f4e8d4814197baa",
+    "final_state_day": 3743,
+    "final_state_semantic_sha256": "2957e2bca9bf866f6c92ce5820d10db8249043e6aad72cdf76a3372bbfcb7a09",
+    "manifest_declared_output_bytes": 14741015157,
+    "manifest_declared_output_sha256": {
+      ".longitudinal-working.sqlite": "8e6a533a8689997e8bd577fcf95807028d33da3d3b94030f7a8c8e0947452491",
+      "checkpoint-day-003690.json": "eee9c2d78829aa02c8eb1ee8e24a08b499552f3385df81e418fc03c2be54d6be",
+      "checkpoint-day-003690.sqlite": "5e7216ce3d5f4d7b2fbce812579fd99b085bc3058e5d7ac0497c3462097ae780",
+      "checkpoint-day-003743.json": "8fe2d66c9fdff5d1710f99f3ba318bfef972b4a73e05c208bcd4aac293b64be5",
+      "checkpoint-day-003743.sqlite": "6776c13656d3d39fecb7884ef37ca18a20b14f6acbce83a1ba81fc09eff36c9a",
+      "checkpoint-index.json": "b5d7d017b84f71a7628e50c4c12cc01a7e4f24335a28b242f6a299179a27f4e3",
+      "final_state.json": "b8d8c6f147ce14075f2afaac46d58a0973f6ea11fb989ff97c2799eb794615b9",
+      "final_state.sqlite": "6776c13656d3d39fecb7884ef37ca18a20b14f6acbce83a1ba81fc09eff36c9a",
+      "report.md": "93514e73473f11ac4c1d37d472d7ed8be5a397fd25952c14f1f104734d8b1714",
+      "report.svg": "6cc6f1ab86c1881dbc60d5d422b3db990c76eb8426fd49dc9ab1f52b8a0aaba5",
+      "summary.json": "38761885756e8bc44a55e7a1470835911c86629fffe679d62ae52cc3b0f02aab",
+      "timeseries.csv": "fbb098bb5d25a148493b0b022ad13e306aaf50d84462ba907eb5811b489845e6"
+    },
+    "raw_hashes_newly_independently_recomputed_for_this_observation": false,
+    "restart_origin": {
+      "checkpoint_file": "checkpoint-day-002520.json",
+      "checkpoint_sha256": "95fbc0cc3142639c272c01c33fe91f6115f43c4c60043312bdb708246fc9c584",
+      "parent_attempt": "attempt-000",
+      "parent_index_sha256": "06dc352801a65ae92af7dd444e996c1aca376b756ed3805880a7b3023d433cb3"
+    },
+    "day_zero_rerun_of_this_case": false,
+    "independent_full_raw_acceptance_proven": false,
+    "complete_raw_release_published": false
+  },
+  "original_full_stage_continuation": {
+    "actual_launch_status": "ORIGINAL_FULL_STAGE_ENTRY_ACTUALLY_LAUNCHED",
+    "started_utc": "2026-10-09T13:35:53.041435+00:00",
+    "spec": "longitudinal-adoption-5y",
+    "scale": 1000,
+    "frozen_inventory_sha256": "3c971b2650311612146eaf8d7fac5fc2064a1e707c8c286a3516a0a094d48706",
+    "planned_entries": 144,
+    "pilot_world_ids": [
+      20000,
+      20001,
+      20002,
+      20003
+    ],
+    "invocations": 1,
+    "automatic_restarts": 0,
+    "entry_and_pipeline_processes_confirmed_live": true,
+    "terminal_result_receipt_present": false,
+    "waiting_for_previous_exit_zero": false,
+    "world_definition_seeds_source_and_classification_changed": false
+  },
+  "independent_previous_strategy_raw_gate": {
+    "supervisor_and_reader_confirmed_live": true,
+    "terminal_receipt_present": false,
+    "success_or_failure_not_yet_claimed": true
+  },
+  "acceptance": {
+    "formal_accepted_paired_worlds": 0,
+    "tracked_partial_milestone_groups_complete": 0,
+    "tracked_partial_milestone_groups_total": 4,
+    "tracked_partial_milestone_groups": [
+      {
+        "initial_population": 1000,
+        "post_adoption_years": 5
+      },
+      {
+        "initial_population": 1000,
+        "post_adoption_years": 10
+      },
+      {
+        "initial_population": 10000,
+        "post_adoption_years": 5
+      },
+      {
+        "initial_population": 10000,
+        "post_adoption_years": 10
+      }
+    ],
+    "these_four_groups_are_not_the_full_goal": true,
+    "partial_milestone_definition_basis": "historical four-group inventory; not current-source scientific admission",
+    "required_larger_population_groups_pending": [
+      100000,
+      1000000,
+      10000000
+    ],
+    "predeclared_pilot_worlds": 4,
+    "predeclared_confirmation_min_worlds": 16,
+    "predeclared_confirmation_max_worlds": 128,
+    "confirmation_count_selected_by_predeclared_precision_freeze": true,
+    "prompt_does_not_limit_formal_simulations_to_four": true,
+    "confirmation_has_run": false,
+    "individual_manifest_and_exit_zero_are_not_full_study_acceptance": true
+  },
+  "checkpoint_function": {
+    "purpose": "recover a saved complete state of the same scientific case after validating its original source, configuration and checkpoint",
+    "verified_restart_day": 2520,
+    "checkpoint_continuation_creates_an_extra_independent_world": false,
+    "different_preregistered_worlds_and_prescribed_parent_histories_still_require_their_own_simulations": true,
+    "initial_population_1000_establishes_population_100000_or_1000000_performance": false
+  },
+  "large_scale_formal_cloud_execution": {
+    "started": false,
+    "complete_case_or_high_scale_admission_verified": false,
+    "last_retained_provider_census_utc": "2026-10-09T13:04:23.212239+00:00",
+    "last_retained_provider_census_exit_code": 0,
+    "last_retained_provider_census_instance_count": 0,
+    "this_publication_performed_new_provider_probe_or_mutation": false,
+    "small_case_proves_larger_populations_or_full_experiment": false
+  },
+  "sources": [
+    {
+      "role": "durable_case_exit",
+      "original_receipt_sha256": "1e802a576f048c96f6cd951ea16a739b0ebad360b424d0906fc01806d92e84b4",
+      "original_receipt_bytes": 129,
+      "original_preserved_privately": true
+    },
+    {
+      "role": "original_entry_launch",
+      "original_receipt_sha256": "f5ab362defb2b2fdbd8c84a00d9ec88cb8305a5225c6c8cdf63972ff6609e244",
+      "original_receipt_bytes": 967,
+      "original_preserved_privately": true
+    },
+    {
+      "role": "case_manifest",
+      "original_receipt_sha256": "e8806ba7c7c5c2c9cfdd32ee0872c0f11a11369d8268a9161f4e8d4814197baa",
+      "original_receipt_bytes": 7133,
+      "original_preserved_privately": true
+    },
+    {
+      "role": "last_provider_observation",
+      "original_receipt_sha256": "133b33fce38e209f524a7739c57d8f903b835649a21649f42fe7c4bb56902520",
+      "original_receipt_bytes": 517,
+      "original_preserved_privately": true
+    }
+  ],
+  "milestone_definition_provenance": {
+    "historical_roster_observed_utc": "2026-10-09T03:10:21.020538+00:00",
+    "historical_roster_receipt_sha256": "3e1c4204c54e07de3a07256a8b6a9e574d36a8c69b0e65840263e424a89a7f52",
+    "current_frozen_design_file_sha256": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2",
+    "historical_source_pins_are_not_adopted_for_current_cases": true
+  },
+  "whole_goal_complete": false
+}
