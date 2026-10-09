@@ -1,0 +1,49 @@
+{
+  "status": "ACTUAL_ORIGINAL_CASE_CONTINUED_NEW_COMPLETED_DAYS",
+  "observed_utc": "2026-10-09T11:48:27.009646+00:00",
+  "case_id": "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+  "attempt": "attempt-001",
+  "manifest_status": "running",
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "config_sha256": "2ffeb69b513adb69656c486a1745f018ecd25a64f9ffa408b99915b432f4a942",
+  "n": 1000,
+  "world": 20001,
+  "full_config_calendar_days": 3743,
+  "restart_origin": {
+    "checkpoint_file": "checkpoint-day-002520.json",
+    "checkpoint_sha256": "95fbc0cc3142639c272c01c33fe91f6115f43c4c60043312bdb708246fc9c584",
+    "parent_attempt": "attempt-000",
+    "parent_index_sha256": "06dc352801a65ae92af7dd444e996c1aca376b756ed3805880a7b3023d433cb3"
+  },
+  "read_only_tail_observation": {
+    "query": "SELECT seq,day,kind FROM journal ORDER BY seq DESC LIMIT 1",
+    "seq": 9010787,
+    "zero_based_completed_day": 2609,
+    "kind": "day_end",
+    "committed_ledger_calendar_position": 2610,
+    "new_completed_days_since_original_checkpoint": 90
+  },
+  "new_checkpoint_index_exists": false,
+  "new_checkpoint_days": null,
+  "checkpoint_integrity_new_gate_claimed": false,
+  "no_extra_model_started": true,
+  "no_sqlite_or_full_raw_rehash_performed": true,
+  "source_limits_config_unchanged": true,
+  "formal_group_complete": false,
+  "whole_goal_complete": false,
+  "root_terminal_result_received": false,
+  "original_receipt_sha256": "fdb12f642bf410b34ae8212d6024ff90e15de1d00088b915fd1760fea4083b7e",
+  "original_receipt_bytes": 1774,
+  "publication_derivation": {
+    "private_process_identifier_and_operation_endpoint_omitted": true,
+    "original_preserved_privately": true,
+    "does_not_replace_checkpoint_integrity_gate": true
+  },
+  "research_classification": "declared precision-pilot; full-horizon individual-strategy continuation; not confirmation or completed study group",
+  "original_run_classification": "formal declared group precision-pilot; no completion claimed",
+  "classification_source_receipt_sha256": "96cfcc90e0e1513ce87e1a7e5f17d7be644d7c895881c1c38f1add03fed42206",
+  "confirmation_not_run": true,
+  "complete_strategy_is_not_complete_paired_world": true,
+  "restart_does_not_promote_study_classification": true
+}

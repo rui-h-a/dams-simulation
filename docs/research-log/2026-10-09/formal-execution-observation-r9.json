@@ -234,5 +234,11 @@
     "model_execution_requested": false,
     "raw_copy_requested": false,
     "accepted": false
-  }
+  },
+  "research_classification": "declared precision-pilot; full-horizon individual-strategy continuation; not confirmation or completed study group",
+  "original_run_classification": "formal declared group precision-pilot; no completion claimed",
+  "classification_source_receipt_sha256": "96cfcc90e0e1513ce87e1a7e5f17d7be644d7c895881c1c38f1add03fed42206",
+  "confirmation_not_run": true,
+  "complete_strategy_is_not_complete_paired_world": true,
+  "restart_does_not_promote_study_classification": true
 }
