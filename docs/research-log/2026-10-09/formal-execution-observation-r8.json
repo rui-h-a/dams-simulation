@@ -1,0 +1,227 @@
+{
+  "schema": "dams-explicit-narrow-record-derivative-v1",
+  "original_record_sha256": "74540fa83fd079ddc24f819fff20b759614a469978c9222b155fed20b4037c9d",
+  "original_record_bytes": 7210,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "omitted_original_fields": [
+    {
+      "pointer": "/ssd_observed_free_bytes",
+      "private_field_removed": true,
+      "canonical_value_sha256": "6a8b4f4aae985cfdaef79a54efc80381d5b4eee7882ec95288ecb03dde2985cf",
+      "canonical_value_bytes": 12
+    },
+    {
+      "pointer": "/free_space_not_reserved",
+      "private_field_removed": true,
+      "canonical_value_sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+      "canonical_value_bytes": 4
+    }
+  ],
+  "transformed_original_fields": [],
+  "record": {
+    "at_utc": "2026-10-09T09:43:33.485495+00:00",
+    "status": "ACTUAL_FORMAL_RUNNING_UNACCEPTED_INDIVIDUAL_RAW_GATE_PENDING",
+    "formal_attempt_manifests": [
+      {
+        "case_id": "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6339,
+        "manifest_sha256": "98ce27c84cf8a669dd3ee1e3e08ae36ae392877042d55694aa5ea0c953548357",
+        "config_sha256": "30c62763eb8ffeaf56ffcc42118f7873212cb33f2d47ffc66910cfa356513b43",
+        "output_bytes": 3233347171,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6188,
+        "manifest_sha256": "1c7e206f88ca28092c48aca91ca2b6af9161676c584470989185eb68699e5de1",
+        "config_sha256": "2958dfdded4eec6d1a41230d7afd3ce9e10a2412b0aea2b7db475f1a066334d2",
+        "output_bytes": 1045034518,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6177,
+        "manifest_sha256": "e99cd6bf14e78ad111e981be1eb3ae1140c9ad24289dd96735aa8ce2a5abb2ad",
+        "config_sha256": "c336c8db43c641fc69a8c9d1b2ae44d5405361b8a7ddabf249149bac94d840a8",
+        "output_bytes": 1043215550,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6326,
+        "manifest_sha256": "a991e9dee50af38b9bcb04c90acfb69b1f47cc9b83f40764f0688e85db977a16",
+        "config_sha256": "eacae057f0ad4e0a85463c97a871d1387982b3972c90c86dd84bff06e3bd29c7",
+        "output_bytes": 3403316070,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6327,
+        "manifest_sha256": "e521e543975666b67609b57f4fb735a811d11498f8d57658022285153e401866",
+        "config_sha256": "f1df33b52fab54b331a841805d615307a6eca26f81d9a1356602b48a005554d1",
+        "output_bytes": 3218915758,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6326,
+        "manifest_sha256": "95773837a10390ba451d62664ab09aa0f804bde1461aca0fb93f4653a4182276",
+        "config_sha256": "f9d4361112000f770c5ed28b88e0d6733b6a3b05e8586654da98e4c010ee6829",
+        "output_bytes": 3220306736,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6321,
+        "manifest_sha256": "a0b4e5907d419caeb9f4d88b8975eb8868ac5b6ba5112c8ec8f2dac138220703",
+        "config_sha256": "92ede29eefaa5e99ec0d1dec64e70807973320956f108920ffcef08d379f51ee",
+        "output_bytes": 3247003022,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6851,
+        "manifest_sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9",
+        "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+        "output_bytes": 14755819885,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "61f0b5c86ecbbdf58fc7ece8e31e9dac40062352b608db6a02d6ca0257e8af48",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6177,
+        "manifest_sha256": "72a2cc64fbfc574e5edbc730166e0fbe48b2a6e811dcc162a45f418281483662",
+        "config_sha256": "a864d237f9657a61a21e7e6c6d1a29c46a4550aef7a5debbc3ff260b415a9f60",
+        "output_bytes": 1043669190,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6333,
+        "manifest_sha256": "38f0de34e6833eb51395fe26f86614a50379f512f265f838bd012aecc0eb04f8",
+        "config_sha256": "f9bf244325a006dd2cfff949a90961c409a4c07c49fe2a8f9c34f8231ce45016",
+        "output_bytes": 3243604620,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "6837d30c15cb9e25f7a08da098008e9d1cea9409b7892294d188b0cdd83defec",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6186,
+        "manifest_sha256": "769940e11914bad4882249faec3a110417c23aef0560b50fe101dfc430a6b8b9",
+        "config_sha256": "de62b7b3e1125aa592387ebd704acef8578df663d737304526534f1deece09f8",
+        "output_bytes": 1045950556,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "697a171300530f0d300b4974b35e9853519956a6140edb498ced2e1f65c3580f",
+        "attempt": "attempt-000",
+        "status": "complete",
+        "manifest_bytes": 6323,
+        "manifest_sha256": "138adfacf5bf104939ab75a2c751b6719f95061e6914df5808c61a94b441f79d",
+        "config_sha256": "26cace99fcfec3c690f13f3ce0f0ccf965d255fb1ff32a9ef49c30bcb0e7bf18",
+        "output_bytes": 3215423491,
+        "completed_days": null,
+        "exit_code": 0
+      },
+      {
+        "case_id": "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+        "attempt": "attempt-000",
+        "status": "running",
+        "manifest_bytes": 4514,
+        "manifest_sha256": "2558d839ef5b869ce844d027ae821eeb3c2f2eaf3a39ab672ae7a4bef9671375",
+        "config_sha256": "2ffeb69b513adb69656c486a1745f018ecd25a64f9ffa408b99915b432f4a942",
+        "output_bytes": null,
+        "completed_days": null,
+        "exit_code": null,
+        "manifest_keys": [
+          "config",
+          "config_sha256",
+          "container_image",
+          "created_utc",
+          "dependencies",
+          "execution_provenance",
+          "git_commit",
+          "git_dirty",
+          "machine",
+          "pipeline_driver_sha256",
+          "platform",
+          "python",
+          "random_stream",
+          "run_id",
+          "scientific_case_id",
+          "source_sha256",
+          "status",
+          "worker_pid"
+        ],
+        "files": [
+          "checkpoint-day-000540.json",
+          "checkpoint-day-000630.sqlite",
+          ".checkpoint-day-000720.sqlite.tmp",
+          "checkpoint-day-000540.sqlite",
+          "manifest.json",
+          ".longitudinal-working.sqlite",
+          "checkpoint-index.json",
+          "checkpoint-day-000630.json"
+        ]
+      }
+    ],
+    "first_formal_raw_gate_pending": true,
+    "actual_prune_r2_pending": true,
+    "accepted_paired_worlds": 0,
+    "completed_main_groups": 0,
+    "main_paper_modified": false,
+    "goal_complete": false,
+    "original_deadline_utc": "2026-10-15T08:54:46.960873Z",
+    "group": "longitudinal-adoption-5y-n1000",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "parent_supplied_case_classification": {
+      "reported_complete_prehistory_prefixes": 11,
+      "reported_complete_full_strategy_manifests": 1,
+      "complete_full_strategy_case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "complete_full_strategy_world_id": 20000,
+      "running_full_strategy_case_id": "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+      "running_full_strategy_world_id": 20001,
+      "calendar_days_per_full_strategy": 3743,
+      "case_61f0_is_completed_prehistory_prefix": true,
+      "classification_source": "root actual frozen-case classification message; not acceptance inferred from a manifest"
+    },
+    "accepted_full_strategy_trajectories": 0,
+    "accepted_counts_not_inferred_from_manifest_status": true,
+    "new_formal_confirmation_worlds": 0,
+    "original_cumulative_budget_usd": 100,
+    "whole_goal_complete": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "dams-explicit-record-origin-map-v1",
+  "records": [
+    {
+      "record": "ssd-internal-prune-r2/root-native-unlink-recheck.json",
+      "source_sha256": "6e9774924272101285beaa0691801671b583ff59c652dff4abda705e6f8c9f9c",
+      "source_bytes": 748,
+      "exact_source_bytes": true
+    },
+    {
+      "record": "ssd-internal-prune-r2/two-leaf-reconstruction-summary.json",
+      "source_sha256": "5f4cde99d9264a25358eace56dbe90b71ce33e030d0e9e333f2797dcfd81fa08",
+      "source_bytes": 13307,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "paper-layout-isolated-integration-r1/build-and-render-receipt.json",
+      "source_sha256": "2b746c87d04250a3e46acdee5c23e65eee1eccc4993dd39378077c8c1d2d6749",
+      "source_bytes": 1656,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "paper-layout-isolated-integration-r1/reading-review-receipt.json",
+      "source_sha256": "215a8c6a717719d3db2bdf3d06dd94e3345e8e92191bd78b62fd383ccfc9de4d",
+      "source_bytes": 2007,
+      "exact_source_bytes": false
+    },
+    {
+      "record": "complete-engineering-offdevice-r1/complete-readback-receipt.json",
+      "source_sha256": "7f305bc4d9ed011c429d980cefcc1ee941dfe7c61e61d76445462e7bcf668126",
+      "source_bytes": 6159,
+      "exact_source_bytes": true
+    }
+  ],
+  "original_private_records_preserved": true,
+  "whole_goal_complete": false
+}

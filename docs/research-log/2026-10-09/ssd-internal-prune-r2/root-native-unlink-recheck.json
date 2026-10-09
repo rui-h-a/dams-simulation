@@ -1,0 +1,16 @@
+{
+  "status": "PASS_ROOT_DIFFERENT_OWNER_9_NATIVE_FINITE_UNLINK_CONTROLS",
+  "controls": 9,
+  "exit_code": 0,
+  "wall_seconds": 0.13033666599949356,
+  "pins_before_after_exact": {
+    "actor-candidate.py": "4656c551e1c61131a4c100f760e4e273ed863ad02697a38a11b5e804fee02da9",
+    "reconstruct_two_confirmed_unlinks.py": "95212cb3edd845151e8bee8572dd91b7faaf27bbe2b36cd37a1634022b72facb",
+    "test_narrow_controls.py": "4aa04841167ff2ef62eb16a4568ad46cfaebfd0ed6a00fd733f1ff2a61045bb9",
+    "source-freeze.json": "19fdbf7ca6b7cb7b26aae6a991eb61519cf8512d4f937b90b6d5ff1109de348c"
+  },
+  "root_patch_and_reconstruction_helper_full_read": true,
+  "real_quarantine_mutated": false,
+  "model_or_paid_cloud_calls": false,
+  "whole_goal_complete": false
+}

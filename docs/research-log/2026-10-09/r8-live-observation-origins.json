@@ -1,0 +1,13 @@
+{
+  "schema": "dams-explicit-record-origin-map-v1",
+  "records": [
+    {
+      "record": "formal-execution-observation-r8.json",
+      "source_sha256": "74540fa83fd079ddc24f819fff20b759614a469978c9222b155fed20b4037c9d",
+      "source_bytes": 7210,
+      "exact_source_bytes": false
+    }
+  ],
+  "original_private_records_preserved": true,
+  "whole_goal_complete": false
+}

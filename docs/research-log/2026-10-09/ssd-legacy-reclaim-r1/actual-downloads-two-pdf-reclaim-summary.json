@@ -1,0 +1,74 @@
+{
+  "schema": "dams-explicit-narrow-record-derivative-v1",
+  "original_record_sha256": "30df236316db46a095d89199c5718977a8545188b0aea4ae36879b12a75d3596",
+  "original_record_bytes": 2944,
+  "original_record_preserved_privately": true,
+  "derivative_not_executable_configuration": true,
+  "omitted_original_fields": [
+    {
+      "pointer": "/internal_disk_usage_after",
+      "private_field_removed": true,
+      "canonical_value_sha256": "cceb05f544a9e05adf906dd15417f67fe5dc2522a8796eb1c8a4a6dc72ac118d",
+      "canonical_value_bytes": 61
+    },
+    {
+      "pointer": "/internal_disk_usage_before",
+      "private_field_removed": true,
+      "canonical_value_sha256": "ecef8943a58e13f1d49310910e03ee900f512a7b740f7fdaf516ecd1187a3a4f",
+      "canonical_value_bytes": 61
+    }
+  ],
+  "transformed_original_fields": [
+    {
+      "pointer": "/results",
+      "private_field_removed": false,
+      "canonical_value_sha256": "058ed3b84b8855117f4036b0a3af561ca1ce0fb44825c218042080b09c519a5c",
+      "canonical_value_bytes": 2005,
+      "transformation": "Only explicitly selected finite observations retained; full original is preserved privately."
+    }
+  ],
+  "record": {
+    "status": "PASS_BOTH_EXACT_DOWNLOADS_DAMS_PDFS_VERIFIED_EXISTING_SSD_ALIASES_AND_INTERNAL_DUPLICATES_RECLAIMED",
+    "actual_successful_files": 2,
+    "actual_reclaimed_logical_bytes": 1495838,
+    "actual_reclaimed_allocated_bytes": 1499136,
+    "whole_goal_complete": false,
+    "failures": [],
+    "results": [
+      {
+        "status": "PASS_ACTUAL_EXACT_DOWNLOADS_PDF_OWNED_ALIAS_ADOPTION_AND_INTERNAL_RECLAIM",
+        "payload": {
+          "bytes": 764055,
+          "sha256": "c537cc9fe56ac17d26b7148b1f373c8723e5c81b8d692b1e9ed5b82d231b07cb"
+        },
+        "actual_reclaimed_allocated_bytes": 765952,
+        "original_quarantine_absent": true,
+        "all_original_raw_native_metadata_and_failure_preserved": true,
+        "physical_source_SSD_metadata_equality_claimed": false,
+        "actual_owned_alias_adoption": {
+          "bytes": 2029,
+          "sha256": "7b8ed7eddf0367e78604e5bf22e71d6457822c21c118f4568ef1377b58baa954"
+        }
+      },
+      {
+        "status": "PASS_ACTUAL_EXACT_DOWNLOADS_PDF_OWNED_ALIAS_ADOPTION_AND_INTERNAL_RECLAIM",
+        "payload": {
+          "bytes": 731783,
+          "sha256": "ef70730306d680e5cb3ace6f49c51dd076a53ab0dbdf56ec3dfeeb0a71ce93e5"
+        },
+        "actual_reclaimed_allocated_bytes": 733184,
+        "original_quarantine_absent": true,
+        "all_original_raw_native_metadata_and_failure_preserved": true,
+        "physical_source_SSD_metadata_equality_claimed": false,
+        "actual_owned_alias_adoption": {
+          "bytes": 1984,
+          "sha256": "a64d1841abd4a1f8617be08499c73b51316bd6bd66d9661841d7ea1bd880b546"
+        }
+      }
+    ],
+    "initial_alias_snapshot_was_not_persisted_in_first_refused_attempt": true,
+    "later_exact_two_owned_alias_adoption_explicitly_authorized": true,
+    "initial_refusal_and_original_native_records_retained_privately": true,
+    "existing_full_byte_identical_archive_destinations_used_without_overwrite": true
+  }
+}
