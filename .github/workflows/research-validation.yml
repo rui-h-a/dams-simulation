@@ -24,5 +24,6 @@ jobs:
           download-from-astral-mirror: "false"
       - name: Supervise finite managed-Python controls and print manifests
         run: |
+          uv python install 3.14.2
           control_python="$(uv python find 3.14.2)"
           /usr/bin/python3 validation/journal_chunks/run_controls.py --control-python "$control_python"
