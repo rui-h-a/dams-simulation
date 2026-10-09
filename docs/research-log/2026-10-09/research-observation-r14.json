@@ -1,0 +1,29 @@
+{
+  "accepted_paired_worlds": 0,
+  "actual_tiny_cloud_owned_bucket_absent": true,
+  "added_confirmation_samples": 0,
+  "code_and_logs_remain_versioned": true,
+  "engineering_evidence": "engineering-preservation-r14.json",
+  "entire_cloud_resources_and_billing_closed": false,
+  "formal_results_external_validity_and_final_thesis": "INCOMPLETE",
+  "individual_strategy_raw_gate": "r13 retained PASS, one initial-N1000/3743-day pilot strategy; not a complete paired world or a confirmation sample",
+  "large_population_formal_acceptance": {
+    "100000": false,
+    "1000000": false,
+    "10000000": false
+  },
+  "observed_utc": "2026-10-09T16:04:50.231508+00:00",
+  "original_study_entry": {
+    "automatic_restarts": 0,
+    "exit_code": 1,
+    "finished_utc": "2026-10-09T15:35:00.031000+00:00",
+    "invocations": 1,
+    "limits_relaxed": false,
+    "raw_deletions": 0,
+    "status": "ORIGINAL_ENTRY_STOPPED_OR_REFUSED",
+    "whole_group_complete": false
+  },
+  "original_study_entry_capacity_refusal": "insufficient disk for the declared complete world outputs",
+  "schema": "DAMS-public-research-observation-r14",
+  "whole_goal_complete": false
+}

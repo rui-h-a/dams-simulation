@@ -1,0 +1,484 @@
+{
+  "actual_bounded_Linux": {
+    "GCP_calls": 0,
+    "Model_all_six_PASS": true,
+    "Model_integration_control_count": 6,
+    "accepted_scientific_worlds_added": 0,
+    "actual_clean_runner_download_install_observed": true,
+    "actual_scheduler_spawn_resume_and_fork_PASS": true,
+    "all_control_interpreters": "explicit managed Python3.14.2",
+    "artifact_count": 0,
+    "automatic_reruns": 0,
+    "branch": "validation/journal-chunks-20261010-r3",
+    "commit": "02817516302c566add4ac36b65ead64afb8b0711",
+    "completed_utc": "2026-10-09T16:00:11.166794+00:00",
+    "executed_unittest_PASS_count": 53,
+    "full_logs": {
+      "job.txt": {
+        "bytes": 46751,
+        "sha256": "97193fe90e460db9d89eb1defd816213e643557ca8914245e7001f912c704888"
+      },
+      "run.zip": {
+        "bytes": 25473,
+        "sha256": "021fdc3af441dc02b686046415089811a414d664c37d5d03f216d8e44e97ac95"
+      }
+    },
+    "full_population_or_GCP_guest_admission": false,
+    "host_results_counted_as_Linux_PASS": false,
+    "identity_after": {
+      "base_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+      "core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+      "driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+      "runtime_bytes_and_modes_exact": true,
+      "runtime_file_count": 65
+    },
+    "job_id": 113904418064,
+    "job_steps": [
+      {
+        "conclusion": "success",
+        "name": "Set up job",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Observe system Python SQLite independently",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Run astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Supervise finite managed-Python controls and print manifests",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Post Run astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "Complete job",
+        "status": "completed"
+      }
+    ],
+    "managed_control_python_capability": {
+      "GCP_guest_verified": false,
+      "accepted_scientific_worlds_added": 0,
+      "engineering_controls_only": true,
+      "identity": {
+        "base_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+        "core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "runtime_bytes_and_modes_exact": true,
+        "runtime_file_count": 65
+      },
+      "octet_length_capability": true,
+      "pidfd_open_available": false,
+      "pidfd_send_signal_available": false,
+      "platform": "linux",
+      "proc_available": true,
+      "python_executable_basename": "python3.14",
+      "python_version": "3.14.2",
+      "runtime_label": "uv-managed",
+      "schema1_actual_control": "PASS",
+      "schema2_actual_control": "PASS",
+      "sqlite_version": "3.50.4"
+    },
+    "matching_run_count": 1,
+    "prior_failures": {
+      "r1": {
+        "failure_preserved": true,
+        "sha256": "a71e3e5749ed1e469ac65b2c314e0d8b58b3f99e5be25ae66c1c9c49da13e114"
+      },
+      "r2": {
+        "failure_preserved": true,
+        "sha256": "c02733b124704fe7cafca7ee05f6094215391e77f6ffac4a9c57f2c05bb07e79"
+      }
+    },
+    "r1_r2_source_refs_unchanged": true,
+    "registered_unittest_count": 54,
+    "remote79_fullbytes_modes_readback": "PASS",
+    "repository": "rui-h-a/dams-simulation",
+    "run_attempt": 1,
+    "run_conclusion": "success",
+    "run_id": 37955370651,
+    "run_status": "completed",
+    "runner_wall_seconds": 19.640105522,
+    "skip_reason": "host Mach accounting is Darwin-only",
+    "skipped_unittest_count": 1,
+    "stage_log_fullbytes_and_SHA_readback": {
+      "ledger": {
+        "bytes": 1447,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": 9,
+        "sha256": "6e585fafb31e3b5cbf7a0e04bae367960128ecb184596c266b418b9543cec126",
+        "skipped_tests": 0
+      },
+      "legacy-benchmark": {
+        "bytes": 2347,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": 10,
+        "sha256": "f6791c4e40c25e125f8436b142e46e50d4e002a888266504214696a0b3a6136b",
+        "skipped_tests": 1
+      },
+      "legacy-checkpoint": {
+        "bytes": 1785,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": 9,
+        "sha256": "07307906e7f5c86771f1a526ebaf40e3114b9dd42f68b4617623fe0de9737107",
+        "skipped_tests": 0
+      },
+      "legacy-model": {
+        "bytes": 2607,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": 16,
+        "sha256": "dfba8e3702e0863e4014be7d36fecef307cfd8aa1ae9979a94ce9604dd9ee1ea",
+        "skipped_tests": 0
+      },
+      "model-integration": {
+        "bytes": 3288,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": null,
+        "sha256": "d00c2a6003dfa2362973c5d801c683ef4ff25d1340ad009c36d3be625156db86",
+        "skipped_tests": 0
+      },
+      "process-ownership": {
+        "bytes": 1112,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": 6,
+        "sha256": "0239e684d3e2751772249f64d904fe6fdb467b0f1542536ebed427220a7883dc",
+        "skipped_tests": 0
+      },
+      "scheduler-integration": {
+        "bytes": 649,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": null,
+        "sha256": "6c07ac398ef3d38dfceb596a9ea86bbd58581d5dc4fde1b090dfb925fbed4fc2",
+        "skipped_tests": 0
+      },
+      "supervisor-routing": {
+        "bytes": 818,
+        "exact_original_stage_log_bytes_reconstructed": true,
+        "exit_code": 0,
+        "registered_tests": 4,
+        "sha256": "1036d93beeb409086f5f79b38d485d61c5293e9e1217c60578fd022fadb37ac1",
+        "skipped_tests": 0
+      }
+    },
+    "stage_records": [
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 818,
+        "log_sha256": "1036d93beeb409086f5f79b38d485d61c5293e9e1217c60578fd022fadb37ac1",
+        "name": "supervisor-routing",
+        "observed_peak_process_tree_rss_bytes": 30937088,
+        "registered_tests": 4,
+        "skipped_tests": 0,
+        "wall_seconds": 0.6051617440000001
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 1112,
+        "log_sha256": "0239e684d3e2751772249f64d904fe6fdb467b0f1542536ebed427220a7883dc",
+        "name": "process-ownership",
+        "observed_peak_process_tree_rss_bytes": 30445568,
+        "registered_tests": 6,
+        "skipped_tests": 0,
+        "wall_seconds": 0.6054971619999918
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 1447,
+        "log_sha256": "6e585fafb31e3b5cbf7a0e04bae367960128ecb184596c266b418b9543cec126",
+        "name": "ledger",
+        "observed_peak_process_tree_rss_bytes": 36720640,
+        "registered_tests": 9,
+        "skipped_tests": 0,
+        "wall_seconds": 1.6112815990000087
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 2607,
+        "log_sha256": "dfba8e3702e0863e4014be7d36fecef307cfd8aa1ae9979a94ce9604dd9ee1ea",
+        "name": "legacy-model",
+        "observed_peak_process_tree_rss_bytes": 35938304,
+        "registered_tests": 16,
+        "skipped_tests": 0,
+        "wall_seconds": 7.039128371999993
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 1785,
+        "log_sha256": "07307906e7f5c86771f1a526ebaf40e3114b9dd42f68b4617623fe0de9737107",
+        "name": "legacy-checkpoint",
+        "observed_peak_process_tree_rss_bytes": 38535168,
+        "registered_tests": 9,
+        "skipped_tests": 0,
+        "wall_seconds": 1.611331327000002
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 2347,
+        "log_sha256": "f6791c4e40c25e125f8436b142e46e50d4e002a888266504214696a0b3a6136b",
+        "name": "legacy-benchmark",
+        "observed_peak_process_tree_rss_bytes": 55021568,
+        "registered_tests": 10,
+        "skipped_tests": 1,
+        "wall_seconds": 1.2113478050000026
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 3288,
+        "log_sha256": "d00c2a6003dfa2362973c5d801c683ef4ff25d1340ad009c36d3be625156db86",
+        "name": "model-integration",
+        "observed_peak_process_tree_rss_bytes": 40083456,
+        "wall_seconds": 5.039541880999991
+      },
+      {
+        "exit_code": 0,
+        "guard_failed": null,
+        "log_bytes": 649,
+        "log_sha256": "6c07ac398ef3d38dfceb596a9ea86bbd58581d5dc4fde1b090dfb925fbed4fc2",
+        "name": "scheduler-integration",
+        "observed_peak_process_tree_rss_bytes": 90755072,
+        "wall_seconds": 1.8365833109999983
+      }
+    ],
+    "status": "BOUNDED_LINUX_R3_VALIDATION_PASS",
+    "system_python_capability": {
+      "GCP_guest_verified": false,
+      "accepted_scientific_worlds_added": 0,
+      "engineering_controls_only": true,
+      "identity": {
+        "base_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+        "core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "runtime_bytes_and_modes_exact": true,
+        "runtime_file_count": 65
+      },
+      "octet_length_capability": true,
+      "pidfd_open_available": true,
+      "pidfd_send_signal_available": true,
+      "platform": "linux",
+      "proc_available": true,
+      "python_executable_basename": "python3",
+      "python_version": "3.12.3",
+      "runtime_label": "system-python",
+      "schema1_actual_control": "PASS",
+      "schema2_actual_control": "PASS",
+      "sqlite_version": "3.45.1"
+    },
+    "system_supervisor_capability": {
+      "actual_pidfd_self_open": true,
+      "pidfd_open_available": true,
+      "pidfd_send_signal_available": true,
+      "platform": "linux",
+      "proc_identity_readable": true,
+      "python_version": "3.12.3",
+      "runtime_label": "system-supervisor",
+      "scientific_controls_executed_by_supervisor": false
+    },
+    "workflow_dispatch_POSTs": 1,
+    "zip_entries": [
+      {
+        "bytes": 46751,
+        "crc32": 118018938,
+        "name": "0_journal-validation.txt"
+      },
+      {
+        "bytes": 634,
+        "crc32": 3175857209,
+        "name": "journal-validation/system.txt"
+      },
+      {
+        "bytes": 2110,
+        "crc32": 2470278362,
+        "name": "journal-validation/1_Set up job.txt"
+      },
+      {
+        "bytes": 11623,
+        "crc32": 4195258425,
+        "name": "journal-validation/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+      },
+      {
+        "bytes": 1221,
+        "crc32": 3303228044,
+        "name": "journal-validation/3_Observe system Python SQLite independently.txt"
+      },
+      {
+        "bytes": 2481,
+        "crc32": 3463699190,
+        "name": "journal-validation/4_Run astral-sh_setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7.txt"
+      },
+      {
+        "bytes": 27362,
+        "crc32": 1873809062,
+        "name": "journal-validation/5_Supervise finite managed-Python controls and print manifests.txt"
+      },
+      {
+        "bytes": 157,
+        "crc32": 3927302607,
+        "name": "journal-validation/9_Post Run astral-sh_setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7.txt"
+      },
+      {
+        "bytes": 1757,
+        "crc32": 3771876070,
+        "name": "journal-validation/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+      },
+      {
+        "bytes": 61,
+        "crc32": 182012215,
+        "name": "journal-validation/11_Complete job.txt"
+      }
+    ]
+  },
+  "actual_tiny_cloud_byte_probe": {
+    "actual_callback_http_attempts": 126,
+    "application_generations": 2,
+    "archive_copy_count": 1,
+    "archive_head": {
+      "downloaded_bytes_upper": 388780,
+      "requests_upper": 126,
+      "sequence": 274,
+      "sha256": "bfda640aa82b25b6f5e9da7ea37a51807a09d830c0bfeb9ed8c42b1278e221dc",
+      "uploaded_bytes_upper": 5454
+    },
+    "finished_utc": "2026-10-09T15:58:20.175451+00:00",
+    "intent_sha256": "9428c091ef62a2c3e2d4cb2b20793511112c2ea4b6f9d1ed54b00615771226ca",
+    "management_attempts": 9,
+    "management_downloaded_upper": 589833,
+    "management_uploaded_upper": 929,
+    "no_compute": true,
+    "original_fixture_bytes_per_generation": 16384,
+    "original_master_holds_not_refunded": true,
+    "owned_bucket_absent": true,
+    "production_preservation_science_linux_or_paid_admission": false,
+    "restored_all_original_bytes_exact": true,
+    "scientific_samples": 0,
+    "soft_delete_disabled_from_birth": true,
+    "status": "PASS_ACTUAL_TWO_GENERATION_ORIGINAL_BYTE_ARCHIVE_RESTORE_AND_OWNED_CLEANUP",
+    "whole_goal_complete": false
+  },
+  "added_scientific_samples": 0,
+  "archive_library_source_sha256": "3739695e6406e00b560cca40f79b9dcd96baf02d7190693f0537e2a6256c911f",
+  "evidence_counts": {
+    "adapter_independent_controls": 10,
+    "adapter_producer_offline_controls": 19,
+    "root_entry_independent_controls": 8,
+    "transport_offline_control_groups": 15
+  },
+  "full_existing_case_lossless_control": {
+    "Model_executed": false,
+    "actual_original_fullstate_sha256": "867cd1eb3720251dcc92d775cd9ac77a4552142dd6fe2a8ec6a94b429b9294b6",
+    "implementation_core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "logical_rows": {
+      "credits": 3595,
+      "delays": 721,
+      "journal": 13228569,
+      "pending": 270866,
+      "seen": 3001911
+    },
+    "observed_database_reduction_percent": "76.23327366164259957922001053",
+    "observed_new_over_old_ratio": "0.2376672633835740042077998947",
+    "old_source_relabelled": false,
+    "original_binding": {
+      "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "state_semantic_sha256": "867cd1eb3720251dcc92d775cd9ac77a4552142dd6fe2a8ec6a94b429b9294b6"
+    },
+    "original_database_bytes": 3681513472,
+    "original_database_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43",
+    "original_persisted_gate": {
+      "active_person_roster": 1447,
+      "day": 3743,
+      "ever_people": 3859,
+      "valid": true,
+      "work_events": 3472616.0
+    },
+    "originals_written": false,
+    "sqlite_sequence": [
+      [
+        "journal",
+        13228569
+      ],
+      [
+        "pending",
+        6533760
+      ]
+    ],
+    "status": "PURE_IO_LOSSLESS_TRANSCODE_PASS",
+    "transcoded_descriptor": {
+      "bytes": 874975232,
+      "file": "transcoded-ledger.sqlite",
+      "row_counts": {
+        "credits": 3595,
+        "delays": 721,
+        "journal": 13228569,
+        "pending": 270866,
+        "seen": 3001911
+      },
+      "schema_version": 2,
+      "semantic_sha256": "5aeb47187a87251dfb99d7b1b55d46349e8ec8576d37eec2046d7ba164b60fe0",
+      "sha256": "8e25ddf46a118fb3219c9f0ce95cdfa86bd1c3833666947ed08beb3a28f8a8a7"
+    },
+    "transcoded_persisted_gate": {
+      "active_person_roster": 1447,
+      "day": 3743,
+      "ever_people": 3859,
+      "valid": true,
+      "work_events": 3472616.0
+    }
+  },
+  "limits": {
+    "GCP_guest_full_workload_proven": false,
+    "dual_archive_copy_proven": false,
+    "entire_cloud_project_billing_closed": false,
+    "full_all_generation_production_admission": false,
+    "full_real_DAMS_dependency_census": false,
+    "large_population_formal_acceptance": false
+  },
+  "observed_utc": "2026-10-09T16:04:50.231508+00:00",
+  "preserved_defects_and_repairs": [
+    "Bounded journal validation fixed oversized BLOB/catalog/metadata and NUL-SHA bypass defects; original failures remain.",
+    "Generation adapter initial local numeric commit-pointer rebinding was independently reproduced, then rejected by durable plan/commit pins.",
+    "Real framed HTTPResponse and wrapped HTTPError EOF exposed a socket-close compatibility defect; original ERROR and fixed controls remain.",
+    "Root orchestration review reproduced foreign endpoint/port, disabled optimized assertions, nested OAuth retry and post-read-only deadline defects; exact final guards passed eight independent controls.",
+    "Linux r1 lacked managed PIDfd; r2 failed to install managed Python before find; r3 explicitly installs and separates system supervisor from managed runtime."
+  ],
+  "receipt_SHA256": {
+    "Linux_r3": "26e94a40969b2e15db4c2e91a065c8eba1f789d5707fa59b2994e43a81f56c5e",
+    "actual_tiny_cloud_probe": "a0f8210b3cd025ae865174ab9d12a0f5054e4f5108270c91051faa0181fedaf9",
+    "full_existing_case_lossless_control": "1e6a1e62e0fb335f69e3418baea46d79774980e52ca0f329e57eed596fe9b345"
+  },
+  "schema": "DAMS-public-engineering-preservation-r14",
+  "transport_source_sha256": "65fd434be350d2c713af466e5c37e05e32cf9fd5dd0764441c633c108723947e",
+  "whole_goal_complete": false
+}
