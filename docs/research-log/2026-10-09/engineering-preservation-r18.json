@@ -1,0 +1,140 @@
+{
+  "actual_original_source_Linux_CI": {
+    "actual_CI_commit": "4b3660e87de648d2571db2bb85d4f6700f7fdfcd",
+    "all456_child_manifests_and3648_output_SHA_references_bound": true,
+    "all9_pipeline_stage_SHA_bindings": true,
+    "artifact": {
+      "actual_complete_regular_file_readbacks": 5111,
+      "compressed_bytes": 65689965,
+      "compressed_sha256": "9e7eeb62e6390c0ab7d58a72b7510e933503ced43bc5b03fa1cdb9b87dada713",
+      "declared_execution_files_bound": 5108,
+      "durable_retention_scope": "Complete downloaded artifact and original ZIP are retained privately; the expiring Actions artifact alone is not a permanent independent backup.",
+      "expires_at": "2026-10-16T20:00:24Z",
+      "extra_members": "execution-manifest itself plus two known test symlink fixture paths uploaded as regular identical target-byte copies; both target bindings verified",
+      "name": "research-validation-37983734863-1",
+      "uncompressed_bytes": 323482870
+    },
+    "build_scope": "The successful build log is retained; artifact does not contain the dist binary packages.",
+    "build_step_success": true,
+    "days_set": [
+      30
+    ],
+    "declared_spec": "validation",
+    "formal_longitudinal_samples_added": 0,
+    "independent_primary_worlds": 2,
+    "job": {
+      "all15_steps_actual_success": true,
+      "completed_at": "2026-10-09T20:00:36Z",
+      "conclusion": "success",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "linux-validation",
+      "started_at": "2026-10-09T19:57:33Z"
+    },
+    "logical_case_rows": 458,
+    "only_changed_path_from_original_public_parent": [
+      ".github/workflows/research-validation.yml"
+    ],
+    "original56_runtime_bytes_Git_blob_mode_type_size_bound": true,
+    "original_failed_CI_run_preserved": true,
+    "original_longitudinal_driver_preserved_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "original_public_source_commit": "0902037cb41320b09f86873fbb4da30e5ae12c68",
+    "pipeline_exit_code": 0,
+    "population_set": [
+      120
+    ],
+    "regular_driver_actually_executed_sha256": "2a0a008804324ba914eed86282d564ceab7dd18de36d21950f0c800667e7b110",
+    "run": {
+      "conclusion": "success",
+      "created_at": "2026-10-09T19:57:29Z",
+      "head_branch": "research/original-linux-ci-env-20261010",
+      "head_sha": "4b3660e87de648d2571db2bb85d4f6700f7fdfcd",
+      "html_url": "https://github.com/rui-h-a/dams-simulation/actions/runs/37983734863",
+      "id": 37983734863,
+      "run_attempt": 1,
+      "status": "completed",
+      "updated_at": "2026-10-09T20:00:37Z"
+    },
+    "scope_limit": "N=120, 30-day regular validation and two primary validation worlds; not the five/ten-year comparison or large-population formal study.",
+    "tests": {
+      "elapsed_seconds": 52.819,
+      "errors": 0,
+      "existing_host_specific_skip": 1,
+      "failures": 0,
+      "formerly_failing28_transfer_tests": "all actual ok",
+      "passed": 322,
+      "run": 323
+    },
+    "unique_complete_cases": 456
+  },
+  "current_manuscript": {
+    "PDF_bytes": 769879,
+    "PDF_sha256": "6659022e28944c0f23c06546c542fec60bd0bad8e83b1bd329027f159cad8b6d",
+    "all75_normalized_layout_text_equal": true,
+    "allpage_final_scientific_visual_acceptance": false,
+    "appendices_source_sha256": "b35102fbf3e3509f57a0772522db6d6bcbfeabd0f0771d13619633aaa26999e8",
+    "appendix_refinement": "Six table row-group gaps; no scientific word/content change.",
+    "compile_exit_code": 0,
+    "critical_warnings": 0,
+    "default_text_reading_order_counterexample_preserved": true,
+    "exact_two_source_PDF_paths_published": true,
+    "formal_results_remain_pending": true,
+    "other_remote_leaf_OIDs_modes_types_preserved": true,
+    "pages": 75,
+    "private_manuscript_draft_commit": "07f3bcc8796ec1be79e544dbe3f5d1ef5058c14d",
+    "text_comparison_mode": "pdftotext -layout",
+    "two_physical_worktrees_HEAD_index_and_unrelated_refs_preserved": true
+  },
+  "exact_case_lossless_archive": {
+    "all13_new_full_hash_encode_decode_original_byte_comparisons_passed": true,
+    "all23_cases_or_entire_dataset_backup_complete": false,
+    "all_retained_archive_and_tar_members_full_SHA_verified": true,
+    "archive_index_content_sha256": "7fc0b152ba55f3b621e6eb0d6a0e24a4b1cbd81f71e55f4af33ed5ad820fd840",
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "finished_utc": "2026-10-09T19:57:14.912268+00:00",
+    "new_scientific_samples": 0,
+    "new_semantic_full_case_gate_from_archiving": false,
+    "original_raw_semantic_gates_remain_preserved": true,
+    "prior_hash_alias_skips": 0,
+    "raw_bytes": 14755822222,
+    "raw_file_count": 13,
+    "raw_originals_retained": true,
+    "remote_backup_status": "PENDING",
+    "scope_limit": "One original scientific case with the exact retained13-file roster. The local immutable archive includes original checkpoints and working/final raw state; it does not certify every checkpoint generation or all formal cases. Remote private transfer/finalize is underway but is not yet accepted.",
+    "separate_fault_domain_backup_verified": false,
+    "status": "PASS_ACTUAL_LOCAL_PERSISTENT_LOSSLESS_CASE_ARCHIVE_AND_PRIVATE_TRANSPORT",
+    "transport_bytes": 1032570880,
+    "transport_member_count": 1021,
+    "transport_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+    "unique_encoded_chunk_bytes": 1030388263,
+    "unique_encoded_chunk_count": 999
+  },
+  "execution_source": {
+    "longitudinal_driver9_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "science_core25_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "scientific_spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "new_formal_accepted_samples_from_engineering": 0,
+  "reviewed_R4_operational_candidate": {
+    "actual_finite_offline_controls_passed": 26,
+    "actual_prelaunch_route_captured_before_Popen": true,
+    "adopted_into_active_original_source": false,
+    "current_GCP_compute_continuation_admitted": false,
+    "evidence_content_sha256": {
+      "freeze": "1da94f795483834457df26a9790d20be5944584a0b2d998e218925c890985313",
+      "independent_review": "ff5091985c94189593d559fa813d329868ffc842a3f75bc08410008ae79673ac",
+      "root_review": "1fbead205e7451ab048e1967e3fff925c2dc2abf9041154e7b8d253db199eeec"
+    },
+    "isolated_package_commit": "4019f40887a4d969efcde4a8ada8f395d5ca6c27",
+    "original25science_and9driver_and_entry_and_runtime_bytes_preserved": true,
+    "prelaunch_scope": "Explicit hardware/provider/owner fixtures and a Popen interceptor; no real child, Linux guest launch/checkpoint/stop/reap or cloud compute admission.",
+    "previous_authentication_security_collector_obstruction_is_not_current_blocker": true,
+    "remaining_admission_scope": "Genuine current ownership/fencing closure, complete scientific handoff, dual every-generation acknowledgments, provider/guest/full workload and cumulative affordable retention/continuation remain separate gates.",
+    "root_review_utc": "2026-10-09T20:11:32.974992+00:00",
+    "semantic_change": "Immutable original scientific/runtime maximum deadlines are separate from earlier finite-node operational stop/reap clocks; original zero science file caps remain unlimited sentinels while preservation retains its finite positive archive envelope."
+  },
+  "schema": "DAMS-engineering-preservation-r18-1",
+  "scope": "Actual original-source Linux CI readback, a reviewed isolated operational candidate, one local exact case archive and a compiled manuscript refinement; no scientific respecification or cloud compute admission.",
+  "whole_goal_complete": false
+}
