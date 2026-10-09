@@ -1,0 +1,17 @@
+{
+  "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+  "error": "interrupted at a completed-day boundary; checkpoint retained",
+  "error_type": "InterruptedError",
+  "formal_group_complete": false,
+  "full_study_gate": false,
+  "identity": {
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "old_attempt_and_all_raw_preserved": true,
+  "outer_wall_seconds": 3496.842339708004,
+  "paid_cloud_started": false,
+  "source_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+  "status": "STOPPED_OR_FAILED_SAME_CASE_CONTINUATION"
+}

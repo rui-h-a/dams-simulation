@@ -1,6 +1,6 @@
 {
   "schema": "dams-research-progress-evidence-v1",
-  "observed_utc": "2026-10-09T06:16:10.986080+00:00",
+  "observed_utc": "2026-10-09T06:29:45.400839+00:00",
   "whole_goal_complete": false,
   "formal_main_groups": {
     "completed": 0,
@@ -66,5 +66,9 @@
       ]
     }
   ],
-  "no_new_paid_resource_started_during_this_log_update": true
+  "no_new_paid_resource_started_during_this_log_update": true,
+  "small_counterexample_raw_data_published": true,
+  "workload_latest_completed_day": 3540,
+  "workload_attempt_2_status": "stopped by original soft time guard; checkpoint preserved",
+  "workload_attempt_3_status": "same source/config/world restore requested from day 3540, remaining 203 model days"
 }
