@@ -1,0 +1,110 @@
+{
+  "schema": "dams-portable-timestamped-small-research-observation-v1",
+  "compiled_utc": "2026-10-09T12:47:16.143245+00:00",
+  "execution_observation_as_of": "2026-10-09T12:34:36.798050+00:00",
+  "execution": {
+    "observed_utc": "2026-10-09T12:34:36.798050+00:00",
+    "classification": "formal declared group precision-pilot; no completion claimed",
+    "confirmation_has_run": false,
+    "initial_population": 1000,
+    "horizon_days": 3743,
+    "current_writer_published_checkpoint_day": 3060,
+    "new_complete_days_since_restart_checkpoint": 540,
+    "checkpoint_index_sha256": "1fca2c4a3a52f79ea2e319d5d2988bc8e50634be1f54de5af30c795d8f2ca4c2",
+    "new_checkpoint_independent_raw_validation": false,
+    "case_id": "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+    "config_sha256": "2ffeb69b513adb69656c486a1745f018ecd25a64f9ffa408b99915b432f4a942",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "resume_run_result_present": false,
+    "continuation_entry_launch_present": false,
+    "raw_gate_result_present": false,
+    "formal_accepted_paired_worlds": 0,
+    "formal_main_groups_complete": 0,
+    "formal_main_groups_total": 4,
+    "scientific_source_changed": false,
+    "whole_goal_complete": false,
+    "observation_as_of": "2026-10-09T12:34:36.798050+00:00",
+    "checkpoint_progress_basis": "writer-published checkpoint metadata; independent raw validation remains pending",
+    "entry_coordinator_waiting_for_case_durable_exit_zero": true,
+    "confirmation_not_run": true
+  },
+  "resource_census": {
+    "observed_utc": "2026-10-09T12:38:08.076632+00:00",
+    "resource_families": [
+      {
+        "resource": "instances",
+        "exit_code": 0,
+        "count": 0
+      },
+      {
+        "resource": "disks",
+        "exit_code": 0,
+        "count": 0
+      },
+      {
+        "resource": "addresses",
+        "exit_code": 0,
+        "count": 0
+      },
+      {
+        "resource": "buckets",
+        "exit_code": 0,
+        "count": 0
+      }
+    ],
+    "provider_mutations": 0,
+    "final_project_closeout_complete": false,
+    "scope": "four observed resource families in the research project; final closeout remains incomplete"
+  },
+  "compute_preparation_controls": {
+    "collector_reopen_observed_utc": "2026-10-09T12:38:05.301329Z",
+    "collector_reopen_passed": true,
+    "entry_full_check_passed": true,
+    "science_window_expired": true,
+    "provider_dispatches": 0,
+    "paid_execution_admitted": false,
+    "remaining_admission_observed_utc": "2026-10-09T12:40:09.743696+00:00",
+    "complete_scientific_case_admission_proven": false,
+    "scientific_source_changed": false,
+    "engineering_controls_do_not_establish_scientific_execution_or_admission": true
+  },
+  "storage_status": {
+    "writer_checkpoint_publication_recorded": true,
+    "new_checkpoint_independent_raw_validation_complete": false,
+    "active_full_case_complete": false,
+    "active_full_case_raw_publication_complete": false,
+    "previously_verified_recovery_checkpoint_day": 2520
+  },
+  "sources": [
+    {
+      "role": "execution",
+      "original_receipt_bytes": 2742,
+      "original_receipt_sha256": "d4837a68938dfa51815d8a2fcfe6df81a34d634b3bca1d33795bada44f7a33f1",
+      "original_preserved_privately": true
+    },
+    {
+      "role": "resources",
+      "original_receipt_bytes": 1684,
+      "original_receipt_sha256": "7bb148e423bd198fc98e2369fd59104a5ad9693b3d890efc38ed6091b334a477",
+      "original_preserved_privately": true
+    },
+    {
+      "role": "head_check",
+      "original_receipt_bytes": 2792,
+      "original_receipt_sha256": "08a924db45386ee1c12b1600533733d8640ac7326778b93d8810b7a7ca889fef",
+      "original_preserved_privately": true
+    },
+    {
+      "role": "admission",
+      "original_receipt_bytes": 1592,
+      "original_receipt_sha256": "b54ca6447b9cf19308d9e361d7351eb2d067e831f387ca2e77f13d5b02b130c5",
+      "original_preserved_privately": true
+    }
+  ],
+  "publication_derivation": {
+    "process_identifiers_private_paths_device_details_identity_and_financial_operation_fields_omitted": true,
+    "original_raws_preserved": true
+  },
+  "restart_does_not_change_classification_or_add_an_independent_world": true,
+  "whole_goal_complete": false
+}

@@ -20,7 +20,7 @@
   "ten_million_agent_execution_complete": false,
   "prior_execution_processes_observed_absent": true,
   "durable_running_marker_is_not_live_process_evidence": true,
-  "current_execution_claim": "The original case continuation launcher was actually started. No new model tick or completed world is inferred from launcher startup.",
+  "current_execution_claim": "At the stated observation time the original precision-pilot continuation remained active with writer-published checkpoint day 3060. Full-case completion and independent raw acceptance remain pending.",
   "first_strategy_original_raw_verification": "PURE_IO_REVERIFICATION_LAUNCHED_TERMINAL_ACCEPTANCE_PENDING",
   "first_strategy_raw_gate_admission_sha256": "b022eca31e225550b6ae9c1b92f75dfec00a246edd99e106a86532ceccd9ed12",
   "cases": [
@@ -227,9 +227,11 @@
     "accepted_complete_world": false,
     "latest_status_observed": "OBSERVED_ORIGINAL_CASE_ACTIVE_WITH_PUBLISHED_CHECKPOINT",
     "new_tick_verification_record": "formal-execution-first-new-days-r9.json",
-    "latest_published_checkpoint_day": 2880,
+    "latest_published_checkpoint_day": 3060,
     "latest_checkpoint_independent_raw_verification_complete": false,
-    "previously_verified_recovery_checkpoint_day": 2520
+    "previously_verified_recovery_checkpoint_day": 2520,
+    "checkpoint_observation_as_of": "2026-10-09T12:34:36.798050+00:00",
+    "new_complete_days_since_restart_checkpoint_as_observed": 540
   },
   "raw_gate_relaunch": {
     "status": "ACTUAL_ORIGINAL_PURE_IO_RAW_GATE_STARTED",
@@ -246,18 +248,59 @@
   "confirmation_not_run": true,
   "complete_strategy_is_not_complete_paired_world": true,
   "restart_does_not_promote_study_classification": true,
-  "latest_execution_observation_utc": "2026-10-09T12:20:54.661221+00:00",
-  "latest_execution_observation_record": "formal-execution-published-checkpoint-r9.json",
-  "latest_published_checkpoint_day": 2880,
+  "latest_execution_observation_utc": "2026-10-09T12:34:36.798050+00:00",
+  "latest_execution_observation_record": "research-observation-r9-123436Z.json",
+  "latest_published_checkpoint_day": 3060,
   "latest_checkpoint_independent_raw_verification_complete": false,
   "coordinator_original_144_case_entry_actually_started": true,
   "coordinator_waiting_for_this_case_durable_exit_zero": true,
   "storage_status": {
-    "writer_published_checkpoint_pair": true,
-    "writer_declared_checkpoint_hashes_are_not_independent_raw_validation": true,
-    "checkpoint_pair_independently_raw_verified": false,
-    "active_full_case_results_complete": false,
+    "writer_checkpoint_publication_recorded": true,
+    "new_checkpoint_independent_raw_validation_complete": false,
+    "active_full_case_complete": false,
     "active_full_case_raw_publication_complete": false,
     "previously_verified_recovery_checkpoint_day": 2520
+  },
+  "observation_as_of": "2026-10-09T12:34:36.798050+00:00",
+  "checkpoint_counter_represents_stated_observation_time": true,
+  "provider_resource_observation": {
+    "observed_utc": "2026-10-09T12:38:08.076632+00:00",
+    "resource_families": [
+      {
+        "resource": "instances",
+        "exit_code": 0,
+        "count": 0
+      },
+      {
+        "resource": "disks",
+        "exit_code": 0,
+        "count": 0
+      },
+      {
+        "resource": "addresses",
+        "exit_code": 0,
+        "count": 0
+      },
+      {
+        "resource": "buckets",
+        "exit_code": 0,
+        "count": 0
+      }
+    ],
+    "provider_mutations": 0,
+    "final_project_closeout_complete": false,
+    "scope": "four observed resource families in the research project; final closeout remains incomplete"
+  },
+  "compute_preparation_controls": {
+    "collector_reopen_observed_utc": "2026-10-09T12:38:05.301329Z",
+    "collector_reopen_passed": true,
+    "entry_full_check_passed": true,
+    "science_window_expired": true,
+    "provider_dispatches": 0,
+    "paid_execution_admitted": false,
+    "remaining_admission_observed_utc": "2026-10-09T12:40:09.743696+00:00",
+    "complete_scientific_case_admission_proven": false,
+    "scientific_source_changed": false,
+    "engineering_controls_do_not_establish_scientific_execution_or_admission": true
   }
 }
