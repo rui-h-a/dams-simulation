@@ -1,0 +1,272 @@
+{
+  "accepted_scientific_completion": {
+    "confirmation_worlds_completed": 0,
+    "confirmation_worlds_required_pending_fixed_precision_rule": [
+      16,
+      128
+    ],
+    "formal_groups_complete": 0,
+    "fully_accepted_paired_worlds": 0,
+    "fully_complete_pilot_worlds": 0,
+    "pilot_worlds_required": 4
+  },
+  "copied_cases_add_independent_samples": false,
+  "execution_source": {
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "frozen_case_inventory": {
+    "all_configs_seed_world_case_identities_unchanged": true,
+    "canonical_inventory_sha256": "a46d380379330692661b3d5454323a6b61b2cfb3d407056f53fba944c5609370",
+    "cases": 144,
+    "complete_config_inventory_raw_sha256": "3ba9d744950be1fc0ae5614c9164fb6dfe31731065845d7ceabf5f6980d39dcd"
+  },
+  "higher_population_groups_completed_by_this_observation": false,
+  "non_atomic_observations": true,
+  "observed_utc": "2026-10-09T19:19:25.331396+00:00",
+  "original_entry_continuation": {
+    "actual_spawn_worker_count": 2,
+    "actual_spawn_workers_observed": true,
+    "admission_content_sha256": "a943931ac46b1eb1845279604d6aeb135a870270c3db328eae19481a4eedd10b",
+    "aggregate_io_and_live_markers_not_independent_raw_coverage_or_acceptance": true,
+    "automatic_restarts": 0,
+    "entry_launch_content_sha256": "2f0cb43a1b93e5ac302f808a7e8bb4c7e609f8fabedbdc83be82484fdc7f50cf",
+    "entry_sha256": "ec747003cbed9503470e9ccc2b56ed2ba399c8309fe68459ff0cc9d10e07bee8",
+    "entry_started_utc": "2026-10-09T19:05:16.765238+00:00",
+    "invocations": 1,
+    "latest_observation_end_utc": "2026-10-09T19:13:25.533143+00:00",
+    "latest_observation_start_utc": "2026-10-09T19:13:25.246256+00:00",
+    "new_independently_accepted_cases": 0,
+    "observation_content_sha256": "48b1b7b6fee06ccfc80b4e50d36db6407eb9cc40106e8d187654fc0309082a6f",
+    "owned_entry_observed_live": true,
+    "paid_cloud_calls": 0,
+    "parent_aggregate_io_bytes": {
+      "read": 77131206656,
+      "write": 593920
+    },
+    "producer_case_observations": [
+      {
+        "attempt": "attempt-000",
+        "case_id": "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+        "checkpoint_and_producer_markers_are_not_independent_raw_acceptance": true,
+        "checkpoint_index_content_sha256": "365e2969b59f0e6e7cee68423a58faba9dbbead0cae597856002e9642509b4c6",
+        "configuration_sha256": "586263acfa68e0fe04a8743a43fd7fe1268e6c9195dbf69d26d633f3a5c5d1e4",
+        "frozen_scientific_tags": {
+          "arm_id": "startup-founding",
+          "branch_day": 0,
+          "context": "startup",
+          "counts_as_additional_mc_sample": false,
+          "independent_mc_unit": 20003,
+          "intervention": "dams",
+          "parent_case_id": null,
+          "role": "strategy",
+          "strategy": "founding",
+          "world": 20003
+        },
+        "independently_accepted_at_this_cutoff": false,
+        "latest_checkpoint_producer_file_pins": [
+          {
+            "bytes": 3607679,
+            "file": "checkpoint-day-000900.json",
+            "sha256": "057e0415241ac8ab6c1eba69cddff9f16ff5cf26dbbe56a95b26d0ec5ee06701"
+          },
+          {
+            "bytes": 730996736,
+            "file": "checkpoint-day-000900.sqlite",
+            "sha256": "6acea66b4dedca56a83f9574007be47a638c43aa55172d6cba47a574014ef716"
+          }
+        ],
+        "latest_producer_checkpoint_day": 900,
+        "planned_calendar_days": 3743,
+        "population": 1000,
+        "producer_manifest_content_sha256": "1fea83d22b6b4c8596cf46bd944c0fa038e9f9aa1fae4bbf76f729c3b449ed1c",
+        "producer_manifest_created_utc": "2026-10-09T19:08:26.660517+00:00",
+        "producer_manifest_mtime_utc": "2026-10-09T19:08:26.663059+00:00",
+        "producer_observation_cutoff_utc": "2026-10-09T19:13:25.533143+00:00",
+        "producer_status": "running",
+        "seed": 20261008
+      },
+      {
+        "actual_attempt_exit_code": 0,
+        "attempt": "attempt-001",
+        "case_id": "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+        "checkpoint_and_producer_markers_are_not_independent_raw_acceptance": true,
+        "checkpoint_index_content_sha256": "2033dfa4711330284960fa738d13cade5e4f2250d1ef0a9baeb4477106dbd059",
+        "configuration_sha256": "5c7b3ba8fc9966b4c357ccd9eb415d46a7ec604021d580c362378e588de09f0d",
+        "exit_content_sha256": "c04056f8cd10baa2d5a0e9754bb7961de9dff9d150f13fc714e135fedd3c6a9c",
+        "exit_marker_mtime_utc": "2026-10-09T19:10:19.729090+00:00",
+        "frozen_scientific_tags": {
+          "branch_day": 1096,
+          "context": "traditional",
+          "counts_as_additional_mc_sample": false,
+          "parent_case_id": null,
+          "role": "prehistory-prefix",
+          "world": 20003
+        },
+        "independently_accepted_at_this_cutoff": false,
+        "latest_checkpoint_producer_file_pins": [
+          {
+            "bytes": 3762349,
+            "file": "checkpoint-day-001096.json",
+            "sha256": "eedfc5a6e27f9cfe8f234114f92f1af2a65b2d9d22b0aaa9b5f2206ce95996a2"
+          },
+          {
+            "bytes": 807825408,
+            "file": "checkpoint-day-001096.sqlite",
+            "sha256": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849"
+          }
+        ],
+        "latest_producer_checkpoint_day": 1096,
+        "planned_calendar_days": 1096,
+        "population": 1000,
+        "producer_complete_pending_independent_full_raw_gate": true,
+        "producer_exit_code": 0,
+        "producer_manifest_content_sha256": "d895f02975eff0b7af14093aa23103ce3d0c3caf58d9ad9b4e66b2f1b969f59c",
+        "producer_manifest_created_utc": "2026-10-09T19:09:39.051311+00:00",
+        "producer_manifest_mtime_utc": "2026-10-09T19:10:19.705517+00:00",
+        "producer_observation_cutoff_utc": "2026-10-09T19:13:25.533143+00:00",
+        "producer_output_sha256": {
+          ".longitudinal-working.sqlite": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+          "checkpoint-day-001096.json": "eedfc5a6e27f9cfe8f234114f92f1af2a65b2d9d22b0aaa9b5f2206ce95996a2",
+          "checkpoint-day-001096.sqlite": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+          "checkpoint-index.json": "2033dfa4711330284960fa738d13cade5e4f2250d1ef0a9baeb4477106dbd059",
+          "final_state.json": "a0655e3e838985371ed48421333eeb35603e6d62ff666e3fccf0eabea791c86a",
+          "final_state.sqlite": "3ff8b37cf8f8f5e5a6036e47f0d6b58ce26c04d2afa11654fcae3369a2df4849",
+          "report.md": "17a96b153ae3631f5587eec3c5c47a8a41e2ac22197eb5b2b0db08155e40eb97",
+          "report.svg": "0ea68972232fa819d382921f275cfdccaf4095a75567e5c3dfd5ad5adf9c60f9",
+          "summary.json": "4125a111fc4bf1ec79b2b0537765cf973709d8728b90ab4f2fd47de5546d204e",
+          "timeseries.csv": "b78bbd9405aff7b15b00b3151eab9a5feb3eacd6c9cad21702d016642b540b77"
+        },
+        "producer_restart_origin": {
+          "checkpoint_file": "checkpoint-day-001096.json",
+          "checkpoint_sha256": "eedfc5a6e27f9cfe8f234114f92f1af2a65b2d9d22b0aaa9b5f2206ce95996a2",
+          "parent_attempt": "attempt-000",
+          "parent_index_sha256": "0d568c44d8e4af992343cf03149d82cf662e550ddfc20e4c79c20dbc345eaefc"
+        },
+        "producer_status": "complete",
+        "seed": 20261008
+      },
+      {
+        "attempt": "attempt-000",
+        "case_id": "b48a23516beee42e66a44245b3bafb38c4908acb6b1abd6ac9dcff2405278778",
+        "checkpoint_and_producer_markers_are_not_independent_raw_acceptance": true,
+        "checkpoint_index_content_sha256": "fe8dcd4d65cd60b04993e628266b2a093a8100c4ab508e99fd509ad7df9a2b54",
+        "configuration_sha256": "cef76fd21612514c12df0a5b8abe3c1814fc6922cbcd511252fb11ae9e56c34d",
+        "frozen_scientific_tags": {
+          "arm_id": "startup-founding",
+          "branch_day": 0,
+          "context": "startup",
+          "counts_as_additional_mc_sample": false,
+          "independent_mc_unit": 20002,
+          "intervention": "dams",
+          "parent_case_id": null,
+          "role": "strategy",
+          "strategy": "founding",
+          "world": 20002
+        },
+        "independently_accepted_at_this_cutoff": false,
+        "latest_checkpoint_producer_file_pins": [
+          {
+            "bytes": 2512373,
+            "file": "checkpoint-day-000540.json",
+            "sha256": "90d45a53c4fc056760531c6a9af1b237a4a00c1f163d4a909969d3533dbc96f6"
+          },
+          {
+            "bytes": 405155840,
+            "file": "checkpoint-day-000540.sqlite",
+            "sha256": "ff38b7c5bfa2eda0b9824bc411098827887e45aedb2a5990da3a0566d6fe5735"
+          }
+        ],
+        "latest_producer_checkpoint_day": 540,
+        "planned_calendar_days": 3743,
+        "population": 1000,
+        "producer_manifest_content_sha256": "b58279666efb804e8014b2c02c7c5c65aa48ff6c8530f0054fd6bd3136e0bce4",
+        "producer_manifest_created_utc": "2026-10-09T19:10:21.388238+00:00",
+        "producer_manifest_mtime_utc": "2026-10-09T19:10:21.388998+00:00",
+        "producer_observation_cutoff_utc": "2026-10-09T19:13:25.533143+00:00",
+        "producer_status": "running",
+        "seed": 20261008
+      }
+    ],
+    "producer_progress_is_not_new_accepted_science": true,
+    "root_launch_content_sha256": "ecd1a15234d59a938f74402b215e6878ad678fce1d1c42dc3ac615394c611f7f",
+    "root_launch_utc": "2026-10-09T19:05:16.735125+00:00",
+    "scale": 1000,
+    "spec": "longitudinal-adoption-5y",
+    "terminal_run_result_present": false
+  },
+  "overall_goal_completion_percentage_not_inferred_from_23_of_144": true,
+  "prior_original_entry_terminal": {
+    "automatic_restarts": 0,
+    "exact_actor_and_storage_fault_cause_proven": false,
+    "exit_code": 1,
+    "finished_utc": "2026-10-09T18:48:17.454045+00:00",
+    "historical_census_bytes_retained_without_relabelling": true,
+    "historical_census_counts": {
+      "complete": 21,
+      "failed": 1,
+      "unstarted": 121,
+      "valid-latest-checkpoint": 1
+    },
+    "historical_remaining_cases": 123,
+    "owned_process_group_terminal_absence_verified": true,
+    "primary_exception": "output integrity mismatch: final_state.sqlite",
+    "primary_exception_type": "ValueError",
+    "stage_census_content_sha256": "89306a05f85349c8ae4347dcd6c3c76ab43020a2a320d279ef6c810cb80e5107",
+    "terminal_content_sha256": "b4945f7be963c01b677b0ac67655729706fcab63d0196748254927c39264e8b3"
+  },
+  "same_case_recovery_reconciliation": {
+    "accepted_case_ids": [
+      "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+      "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+      "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+      "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+      "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+      "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+      "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+      "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "61f0b5c86ecbbdf58fc7ece8e31e9dac40062352b608db6a02d6ca0257e8af48",
+      "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+      "6837d30c15cb9e25f7a08da098008e9d1cea9409b7892294d188b0cdd83defec",
+      "697a171300530f0d300b4974b35e9853519956a6140edb498ced2e1f65c3580f",
+      "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+      "789e1f3d87bbdddbe934523b5de8e5358e4d4159f317c7661a3e641fe08d196a",
+      "799b86b37429c5eb7b2b05e9fdaa00b6f4c29584474898c895eb66b26fea1ef2",
+      "7fe58544fe85c8d9d894b4ec0bf06e30d8ac2eef6f333d4f503837edf704fb94",
+      "86a86b3a7dd89e74d29970e98fe431f9a578a2627539598aa7509df7f8280bca",
+      "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+      "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+      "8f687163b5e6822c632869a9dc0136b66f136e0b405bcd5acaa940c2d328bfe7",
+      "908c8fc9b30e25d4c7dcc65aba8e913ed6ad32ffb668b72ed65bbf1784608cf1",
+      "9d15701506a883efff43a9499c81de562a9c7192a31fb9180f0135ffc1f1fb36",
+      "a2fedfd7c76e1ca1f7e75bf8625b783d7cf3642f7a04673de8eeb3d2284fc79e"
+    ],
+    "accepted_cases": 23,
+    "accepted_individual_strategy_cases": 2,
+    "accepted_prefix_cases": 21,
+    "assigned_cases_not_accepted_in_incremental_reconciliation": 121,
+    "baseline_22_content_sha256": "5d61dd5c9ebcfb012031c1d7dee6e14bfec420fb84c86e5620f1f2888e6d0066",
+    "baseline_22_observed_utc": "2026-10-09T19:05:16.724623+00:00",
+    "content_sha256": "2e1cb2a226c982b82c633838ed5a5f97b8b1beefa8513cdb74aeaf4500e082e6",
+    "copied_historical_census_not_rewritten": true,
+    "method": "Retained prelaunch 22-case reconciliation plus one original-complete-case-validator accepted existing 8d prehistory prefix; cumulative verified lower bound, not a fresh all-144 census or a new Monte Carlo sample.",
+    "new_samples_added_by_recovery": 0,
+    "newly_accepted_attempt": "attempt-001",
+    "newly_accepted_existing_case_id": "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+    "newly_accepted_original_world": 20003,
+    "newly_accepted_role": "prehistory-prefix",
+    "not_a_new_144_wide_census": true,
+    "observed_utc": "2026-10-09T19:19:25.331396+00:00",
+    "other_live_producer_completions_counted_without_validation": false,
+    "prior_22_reconciliation_unchanged": true,
+    "remaining_assigned_cases_not_accepted": 121,
+    "single_original_raw_gate_content_sha256": "8092ed27b586f2ae15e707035c23229939516f7572d1761a9d1c3d684b46cf37",
+    "single_raw_gate_execution_content_sha256": "f32b01243b23aa2dfdee748e684645fb72c32afd789ea7d9f628247527981514"
+  },
+  "schema": "DAMS-dated-scientific-observation-r17-1",
+  "scientific_source_config_seeds_case_ids_and_deadlines_unchanged": true,
+  "scope": "Actual original-entry failure, exact same-case recovery and root-owned continuation. No copied world is a new sample; live markers and I/O are not accepted science.",
+  "source_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+  "whole_goal_complete": false
+}
