@@ -1,0 +1,144 @@
+{
+  "GCP_formal_compute_continuation_admitted": false,
+  "current_manuscript_two_figure_refinement": {
+    "PDF_bytes": 769868,
+    "actual_canonical_pages_viewed_at_96dpi": [
+      59,
+      60
+    ],
+    "adopted_figure_count": 2,
+    "adopted_vector_sha256": {
+      "benchmark_parallel.pdf": "7ceeac82eb927eb7b8cea62fbcfa72fcc1db3bf2a28ab9551b2b81f059478beb",
+      "benchmark_parallel.svg": "522ae4190071da3adf6a4e0796d9c24f0da358d8912f5fe2ae545053a9208c51",
+      "benchmark_projection.pdf": "a3e4b243415b17cb6f7ca7e3c29ec24798d4267ac949801e14c47defec8a9a73",
+      "benchmark_projection.svg": "3c575e919fa123e61296cbd7030ea1d6948ea0431c604b8b5aa1cd99710ac1a8"
+    },
+    "all75_normalized_ordered_text_exact": false,
+    "all_TeX_and_global_float_sources_unchanged": true,
+    "all_captions_and_nonfigure_text_ordered_exact": true,
+    "all_data_artists_mapping_and_labels_preserved": true,
+    "allpage_final_scientific_visual_acceptance": false,
+    "appendices_source_sha256": "b35102fbf3e3509f57a0772522db6d6bcbfeabd0f0771d13619633aaa26999e8",
+    "canonical_PDF_sha256": "871bf1c37f74142ea17451980869373f4cafb0bee9e3ba97334f502d4e52ddd1",
+    "compile_exit_code": 0,
+    "critical_warnings": 0,
+    "current_figure_numbers": [
+      22,
+      23
+    ],
+    "figure23_numeric_artist_mapping_proof_preserved": true,
+    "figure23_token_multiset_exact": true,
+    "figure_adoption_generator_sha256": {
+      "parallel_panel_layout.py": "b91e036564074573b51008628a3ec9d68a593d6f4ce013a8018da59b516064ae",
+      "performance_figures.py": "25c2915239425788e1308459b5db48667323e57bc493916714ef267896a2b15d"
+    },
+    "formal_results_remain_pending": true,
+    "geometric_extraction_order_change_page": 60,
+    "historical_measurement_publication_manifest_unchanged": true,
+    "new_generators_vectors_and_current_PDF_GitHub_publication_pending": true,
+    "normalized_ordered_text_exact_pages": 74,
+    "pages": 75,
+    "pixel_equality_and_ordered_extraction_failures_preserved": true,
+    "root_canonical_two_page_visual_status": "PASS",
+    "root_visual_observed_utc": "2026-10-09T21:12:06.065394+00:00",
+    "scope": "Minimal text size, plot geometry, legend spacing and Workers/Median separation; measured/projection/guard/ideal semantics and all cached numbers remain exact.",
+    "true_visual_failure_iterations_preserved": 2,
+    "two_physical_manuscript_copies_identical": true,
+    "underfull_warnings": 4
+  },
+  "exact_case_lossless_remote_backup": {
+    "actual_finalize_exit_code": 0,
+    "all1021_transport_members_full_SHA_roster_verified": true,
+    "all13_local_new_full_hash_encode_decode_original_byte_comparisons_passed": true,
+    "all23_cases_or_entire_dataset_backup_complete": false,
+    "archive_index_content_sha256": "7fc0b152ba55f3b621e6eb0d6a0e24a4b1cbd81f71e55f4af33ed5ad820fd840",
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "chunks_per_copy": [
+      {
+        "bytes": 536870912,
+        "sha256": "c16f9d1a1ad066fbfd2db7e7dc7af9911716de5d19e9c781b2bc4a2554deb24a"
+      },
+      {
+        "bytes": 495699968,
+        "sha256": "360a7723d42f5e5085eabb810c047c6175f32261f5a731d10591b60c3dbe687f"
+      }
+    ],
+    "each_copy_complete_binary_GET_and_index_readbacks_passed": true,
+    "every_generation_of_every_case_verified": false,
+    "finalize_complete_GET_and_complete_source_transport_rehash_passed": true,
+    "finished_utc": "2026-10-09T20:35:46.272805+00:00",
+    "new_remote_SQLite_semantic_revalidation_performed": false,
+    "new_scientific_samples": 0,
+    "original_raw_and_prior_semantic_gates_retained": true,
+    "prior_hash_alias_skips": 0,
+    "r18_historical_PENDING_record_preserved_exact": true,
+    "raw_file_count": 13,
+    "raw_logical_bytes": 14755822222,
+    "remote_copies": 2,
+    "remote_index_bytes": 2122,
+    "remote_index_content_sha256": "07dfdad7f92075beed11d622d58d866e4e1aad129f58d54c2ec8d840e97f53c2",
+    "scope_limit": "One exact retained 13-file case roster. Original-file verification is local; remote finalization rehashes their complete lossless transport. Two remote copies share one provider and repository, with correlated failure risk; they are not independent disaster recovery.",
+    "status": "ACTUAL_TWO_REMOTE_COPIES_FULL_BINARY_VERIFIED",
+    "transport_bytes": 1032570880,
+    "transport_content_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+    "unique_encoded_chunk_bytes": 1030388263,
+    "unique_encoded_chunk_count": 999
+  },
+  "execution_source": {
+    "longitudinal_driver9_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "science_core25_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "scientific_spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "later_local_generator_reconciliation": {
+    "GitHub_source_publication_complete": false,
+    "all_other_remote_functions_AST_preserved": true,
+    "already_verified_two_target_drawing_blocks_and_parallel_caption_exact": true,
+    "base_remote_generator_sha256": "314f36a7a4e8c51d11d639c237794453d82eb1701a129cce1dbbf90a2aef6f59",
+    "before_generator_sha256": "25c2915239425788e1308459b5db48667323e57bc493916714ef267896a2b15d",
+    "canonical_PDF_and_vector_bytes_unchanged": true,
+    "current_local_generator_sha256": "be1a6460f263ff5f2c9e2e2076ed82eee81576dada97dd63394874ac15fb9bae",
+    "new_render_or_new_data_executed_for_reconciliation": false,
+    "observed_utc": "2026-10-09T21:22:56.787143+00:00",
+    "preserved_unrelated_remote_changes": [
+      "table arraystretch omission",
+      "workload figure height 9.2",
+      "full comma-separated population labels"
+    ],
+    "scientific_source_config_seeds_and_raw_unchanged": true,
+    "scope": "A local reconciliation preserves unrelated upstream plotting changes; it does not re-run or re-certify plots. The two target drawing blocks retain their previous byte/AST proof. Publication requires a separate fresh-parent guarded change."
+  },
+  "new_formal_accepted_samples_from_engineering": 0,
+  "prior_r18_evidence_retained_without_reexecution": {
+    "Linux_CI_run": 37983734863,
+    "Linux_CI_status": "success",
+    "R4_active_source_adoption": false,
+    "R4_controls": 26,
+    "engineering_record_content_sha256": "ead73c8d6df2f37d02292031a9f5935a6a1eb1516c48c2ff53d4f5c4ffb934d9",
+    "formal_samples_added": 0,
+    "new_CI_or_operational_controls_executed": 0,
+    "regular_validation_days": 30,
+    "regular_validation_logical_rows": 458,
+    "regular_validation_population": 120,
+    "regular_validation_primary_worlds": 2,
+    "regular_validation_unique_cases": 456,
+    "scientific_record_content_sha256": "f0779b51ef0661a53f455a6c1626f15ed69f0450b3b90006e4bef2dfd08dddf7"
+  },
+  "schema": "DAMS-engineering-preservation-r19-1",
+  "scope": "Actual one-case remote byte preservation and selective two-figure canonical layout adoption; prior Linux CI and isolated operational evidence remain separately classified. No new scientific samples or cloud compute admission.",
+  "separate_source_and_figure_publication_preparation": {
+    "API_ceiling": 80,
+    "actual_root_offline_prepare_API_calls": 0,
+    "actual_root_offline_prepare_exit_code": 0,
+    "actual_root_offline_prepare_observed_utc": "2026-10-09T21:40:31.962647+00:00",
+    "binding_and_new_exact_root_review_still_required": true,
+    "fresh_public_parent_and_private_main_bindings_complete": false,
+    "independent_static_guard_scope": "Pinned unbound helper/intent/preparation only; no helper invocation, API, raw, Model or publication by the reviewer.",
+    "independent_static_guard_status": "PASS_LIMITED_STATIC_UNBOUND_REVISION",
+    "local_hydration_executed": false,
+    "payload_scope": "Two public plotting sources and five private draft vector/PDF assets; separate from this three-file dated-log append.",
+    "scope_is_publication_or_GCP_admission": false,
+    "source_artifact_publication_executed": false,
+    "success_API_count_derived_statically": 77
+  },
+  "whole_goal_complete": false
+}
