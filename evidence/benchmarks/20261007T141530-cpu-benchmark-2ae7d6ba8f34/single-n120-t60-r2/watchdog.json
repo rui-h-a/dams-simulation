@@ -1,1 +1,0 @@
-{"exit_code":0,"monitor_cadence_seconds":0.05,"resource_stop":null,"sampled_peak_rss_mb":31.859375,"sampled_process_disk_read_bytes":0,"sampled_process_disk_write_bytes":327680,"spawn_to_exit_wall_seconds":0.6260546660000728,"status":"complete","task":"single-n120-t60-r2","task_path":"evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/single-n120-t60-r2"}

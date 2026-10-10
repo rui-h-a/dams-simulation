@@ -15,10 +15,13 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from dams_sim.config import Config
+from dams_sim.enterprise_growth import EnterpriseGrowthState
+from dams_sim.enterprise_operations import EnterpriseOperatingState
+from dams_sim.randomness import WorldRandom
 from dams_sim.longitudinal import GregorianClock
 from dams_sim.longitudinal_design import PRIMARY_ENDPOINTS,resolve_longitudinal_spec,freeze_precision,declared_contrasts
 from dams_sim.longitudinal_model import verify_snapshot
-from dams_sim.longitudinal_storage import integer_key_map,snapshot_semantics
+from dams_sim.longitudinal_storage import ExactLedger,integer_key_map,snapshot_semantics
 from dams_sim.longitudinal_outputs import INTEGRALS,build_tables,interval_table,iter_timeseries,snapshot_rows
 from dams_sim.longitudinal_pipeline import stage_inventory,driver_hash
 from dams_sim.spec import case_key
@@ -28,6 +31,21 @@ from research_tools import longitudinal_derived as _derived
 
 VALIDATOR_IMPORT_SHA256=file_digest(Path(__file__))
 SOURCE_IMPORT_SHA256=source_hash()
+
+
+def iter_journal_rows(connection,*,include_sequence=False):
+    """Read original logical rows from either physical ledger representation.
+
+    The containing raw gate verifies the SQLite schema and immutable bytes.
+    Compressed fragments additionally verify their hashes and sequence coverage
+    while streamed; a physical SQL tail is never treated as the full journal.
+    """
+    ledger=ExactLedger.__new__(ExactLedger);ledger.db=connection
+    rows=ledger.rows('journal')
+    try:
+        for row in rows:
+            yield row if include_sequence else row[1:]
+    finally:rows.close()
 
 
 def _require_current_validator():
@@ -95,6 +113,12 @@ class _RawDailyAccounting:
         'appeals_denied','confirmed_records','fraudulent_records_accepted','corrections'))
     def __init__(self,config,state,config_history=()):
         self.config=config;self.state=state;self.config_history=config_history
+        self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
+        self.operations=EnterpriseOperatingState(config) if config.enterprise_operations is not None else None
+        self.market_rng=WorldRandom(config.seed,config.world,world_context=config.longitudinal.world_context)
+        if self.operations is not None:self.supported=self.supported | {"financing_inflow_resource_units","enterprise_legal_and_interest_resource_units","enterprise_material_and_logistics_resource_units","enterprise_coordination_hours","orders_arrived_units","orders_expired_units","delivered_product_units"}
+        self.supported = self.supported | ({'infrastructure_setup_resource_units',
+            'infrastructure_maintenance_resource_units'} if self.enterprise is not None else set())
         self.people={p['id']:p for p in state['people']}
         self.tokens={p['token']:p for p in state['people']}
         self.agents={a['id']:a for a in state['agents']}
@@ -133,12 +157,44 @@ class _RawDailyAccounting:
         if l.closure_day==day:self.closed=day
         if l.suspension_day==day:self.suspended=day
         operating=self.closed is None and self.suspended is None
+        operation_received=operation_borrowed=0.
+        if self.operations is not None:
+            demand=next((v for when,v in reversed(l.demand_schedule) if when<=day),1.)
+            operation_received,operation_borrowed,operation_begin=self.operations.start_day(day,
+                working=working,creating=creating,operating=operating,cash=self.cash,
+                demand_multiplier=demand,capacity=self.enterprise.capacity,growth=self.enterprise,
+                noise=self.market_rng.normal('enterprise_market_orders',day),year_days=clock.days_in_year(day))
+            actual_begin=[(kind,event,value) for kind,event,value in events if kind=='enterprise_market_begin']
+            if actual_begin!=[('enterprise_market_begin',f'market:begin:{day}',operation_begin)]:raise ValueError('raw market arrival/delivery/credit phase differs')
+            self.cash+=operation_received+operation_borrowed
+            self.metrics['revenue_resource_units']+=operation_received;self.metrics['financing_inflow_resource_units']+=operation_borrowed
+        growth_kinds={'infrastructure_complete','hiring_target_ready','workforce_contraction',
+            'infrastructure_requested','hiring_requested','growth_unfunded'}
+        actual_growth=[(kind,event,value) for kind,event,value in events if kind in growth_kinds]
+        expected_growth=[]
+        if self.enterprise is not None:
+            previous_guilds=self.enterprise.guilds
+            setup,expected_growth=self.enterprise.begin_day(day,self.cash,
+                active=p.n if day==0 else len(self.members),operating=operating,
+                payroll_per_member=l.payroll_resource_units_per_member_workday,
+                expansion_allowed=self.operations.expansion_allowed(self.enterprise) if self.operations is not None else True)
+            self.cash-=setup;self.metrics['infrastructure_setup_resource_units']+=setup
+            for g in range(previous_guilds,self.enterprise.guilds):
+                self.alias[g]=g;self.adoption[str(g)]=None
+        expected_growth=[(kind,f'enterprise:{day}:{index}',value) for index,(kind,value) in enumerate(expected_growth)]
+        if actual_growth!=expected_growth:raise ValueError('raw enterprise decisions/costs/schedules differ from past resources')
         reported=record['metrics_cumulative'];daily=record['metrics_daily']
         for key in set(reported)|set(daily)|set(self.previous_reported):
             current=self.number(reported.get(key,0.),'cumulative metric '+key,low=-math.inf)
             change=self.number(daily.get(key,0.),'daily metric '+key,low=-math.inf)
             if change!=current-self.previous_reported.get(key,0.):
                 raise ValueError('raw metric cumulative difference differs: '+key)
+        if self.operations is not None:
+            occupied={self.people[i]['slot'] for i in self.members if not any(k in {'exit','retirement','layoff'} and v['person']==i for k,e,v in events)}
+            if day==0:occupied=set(range(p.n))
+            ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
+            for k,e,v in events:
+                if k=='entry' and not v['initial'] and not ready.get(v['slot'],False):raise ValueError('raw recruitment bypasses talent lead time')
         work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False
         for kind,event,value in events:
             if kind=='entry':
@@ -195,6 +251,8 @@ class _RawDailyAccounting:
             elif kind=='review':reviews.append((event,value))
             elif kind=='appeal':appeals.append((event,value))
             elif kind=='commit':commits.append((event,value))
+        if self.operations is not None:
+            for i in self.members:self.operations.filled(self.people[i]['slot'])
         active=sorted(self.members) if self.closed is None and self.suspended is None else []
         if record['active']!=len(active):raise ValueError('raw lifecycle active exposure differs')
         self.metrics['calendar_days_observed']+=1
@@ -216,6 +274,11 @@ class _RawDailyAccounting:
         if type(n) not in (int,float) or n!=int(n) or not 0<=n<=len(active) or not working and n:
             raise ValueError('raw present exposure outside lifecycle/calendar bounds')
         present=active if working and l.annual_leave_workdays==0 else None
+        if self.operations is not None and working:
+            # Reconstruct keyed attendance without rerunning agents; this also
+            # closes the creation-stop tail where work records are absent.
+            leave=min(1.,l.annual_leave_workdays/max(1,clock.workdays_in_year(day)))
+            present=[i for i in active if self.market_rng.uniform('leave',day,self.people[i]['token'])>=leave]
         if not working or not active:present=[]
         if present is not None and len(present)!=n:raise ValueError('raw present exposure differs from zero-leave calendar')
         if present is None and work:present=sorted(v['person'] for v in work)
@@ -228,10 +291,17 @@ class _RawDailyAccounting:
                 self.person_exposure[i]['present_workdays']+=1
         else:self.unknown_present.update(active)
         training={i:l.training_hours_per_workday if self.adoption[str(self.members[i])] is not None and day-self.adoption[str(self.members[i])]<l.transition_days else 0. for i in present or []}
+        if self.operations is not None:
+            for i in training:training[i]+=self.operations.training(self.people[i],day)
         if present is not None:
             trainees=sum(v>0 for v in training.values())
             due=n*(l.payroll_resource_units_per_member_workday+l.maintenance_resource_units_per_member_workday)+trainees*l.dual_run_resource_units_per_member_workday
+            infrastructure_due=self.enterprise.maintenance_due() if self.enterprise is not None and working and operating else 0.
+            operation_due=(math.fsum(self.operations.context(self.agents[i]['site']).legal_resource_units_per_worker_workday for i in present)+operation_begin['interest_due']) if self.operations is not None else 0.
+            due+=infrastructure_due+operation_due
             funding=min(1.,self.cash/due) if due else 1.;paid=due*funding;self.cash-=paid
+            if self.enterprise is not None:self.metrics['infrastructure_maintenance_resource_units']+=infrastructure_due*funding
+            if self.operations is not None:self.metrics['enterprise_legal_and_interest_resource_units']+=operation_due*funding
             for key,value in (('operating_resource_units',paid),('operating_unfunded_resource_units',due-paid),
                 ('payroll_resource_units',n*l.payroll_resource_units_per_member_workday*funding),
                 ('maintenance_resource_units',n*l.maintenance_resource_units_per_member_workday*funding),
@@ -241,7 +311,7 @@ class _RawDailyAccounting:
             # No event identifies each absent person on zero-funding/tail days.
             # Retain that declared exposure, checking the paid component identity.
             daily=record['metrics_daily'];paid=daily.get('operating_resource_units',0.)
-            components=sum(daily.get(k,0.) for k in ('payroll_resource_units','maintenance_resource_units','dual_run_resource_units'))
+            components=sum(daily.get(k,0.) for k in ('payroll_resource_units','maintenance_resource_units','dual_run_resource_units','infrastructure_maintenance_resource_units','enterprise_legal_and_interest_resource_units'))
             if not math.isclose(paid,components,rel_tol=1e-12,abs_tol=1e-8):raise ValueError('raw operating paid components differ')
             self.cash-=paid;funding=0. if self.cash==0 and creating else None
         if working and operating:
@@ -309,7 +379,11 @@ class _RawDailyAccounting:
                 original_cooperation=max(0.,min(1.,agent['reciprocity']*morning['trust']*(1-morning['fatigue'])))
                 expected_cooperation=0. if attack_active and p.attack=='freeride' and i in attackers else original_cooperation
                 if value['cooperation']!=expected_cooperation:raise ValueError('raw cooperation differs from morning evidence')
-                reservations=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*original_cooperation+training[i]
+                coordination=self.operations.coordination(len(active),self.enterprise.guilds,self.enterprise.departments,self.enterprise.sites,agent['site']) if self.operations is not None else 0.
+                if self.operations is not None:
+                    if value['enterprise_coordination']!=coordination*funding or value['enterprise_calendar_fraction']!=self.operations.calendar_fraction(clock,agent['site'],day):raise ValueError('raw context/coordination reservation differs')
+                    if not 0<=value['enterprise_production_fraction']<=1:raise ValueError('raw production constraint fraction invalid')
+                reservations=coordination+.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*original_cooperation+training[i]
                 governance[i]=.05 if (1-agent['care_hours']-reservations)*funding>=.05 else 0.
                 if votes[i]['formal_share']!=morning['share'] or votes[i]['participates'] and not governance[i]:
                     raise ValueError('raw vote differs from morning work evidence/time capacity')
@@ -332,7 +406,23 @@ class _RawDailyAccounting:
         self.metrics['attack_hours_consumed']+=consumed;self.metrics['attack_budget_hours']+=consumed
         # Every present person has a work record only during funded creation.
         if work or not observed_present:self.metrics['cooperation_units']+=math.fsum(cooperation)
-        revenue=output*l.revenue_resource_units_per_work_unit;self.cash+=revenue;self.metrics['revenue_resource_units']+=revenue
+        revenue=output*l.revenue_resource_units_per_work_unit
+        material_cost=0.
+        if self.operations is not None:
+            by_site=defaultdict(float)
+            for v in work:by_site[self.agents[v['person']]['site']]+=v['produced_research_only']
+            if output>self.operations.productive_limit(self.enterprise.capacity,self.cash,self.enterprise.sites)+1e-8:raise ValueError('raw production exceeds contract/capital/installed plant')
+            interest_paid=operation_begin['interest_due']*(funding if funding is not None else 0.)
+            material_cost,operation_end=self.operations.finish_day(day,by_site,self.cash,interest_paid=interest_paid)
+            if [(k,e,v) for k,e,v in events if k=='enterprise_market_end']!=[('enterprise_market_end',f'market:end:{day}',operation_end)]:raise ValueError('raw production/delivery/settlement phase differs')
+            self.cash-=material_cost;self.metrics['operating_resource_units']+=material_cost
+            self.metrics['enterprise_material_and_logistics_resource_units']+=material_cost
+            self.metrics['orders_arrived_units']+=operation_begin['arrivals'];self.metrics['orders_expired_units']+=operation_begin['expired'];self.metrics['delivered_product_units']+=operation_begin['delivered']
+            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(self.operations.coordination(len(active),self.enterprise.guilds,self.enterprise.departments,self.enterprise.sites,self.agents[i]['site']) for i in ([] if auto_closure else present))*funding
+            if record.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw operating stock differs from actual complete history')
+            revenue=operation_received
+        else:
+            self.cash+=revenue;self.metrics['revenue_resource_units']+=revenue
         if present is not None:
             for i in ([] if auto_closure else present):self.metrics['training_hours']+=training[i]*funding
         if work or not observed_present or funding==0:
@@ -370,6 +460,11 @@ class _RawDailyAccounting:
             if type(value['fraudulent']) is not bool or type(value['correction']) is not bool:raise ValueError('raw commit boolean differs')
             self.metrics['confirmed_records']+=1;self.metrics['fraudulent_records_accepted']+=int(value['fraudulent'])
             if value['correction']:self.metrics['corrections']+=1
+        if self.enterprise is not None:
+            self.enterprise.observe(day,revenue,paid+material_cost,working=working and operating)
+            if record.get('enterprise_growth_state')!=self.enterprise.to_dict():
+                raise ValueError('raw enterprise state differs from full decision/cash history')
+        elif 'enterprise_growth_state' in record:raise ValueError('unexpected raw enterprise state')
         if record['output']!=output or record['cash']!=self.cash:raise ValueError('raw work/resource balance differs from day end')
         unsupported=set()
         if present is None:
@@ -387,6 +482,9 @@ class _RawDailyAccounting:
         self.previous_reported=dict(reported)
 
     def finish(self):
+        if self.operations is not None and self.state.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw final operating stock differs')
+        if self.enterprise is not None and self.state.get('enterprise_growth_state')!=self.enterprise.to_dict():
+            raise ValueError('raw final enterprise stock differs from persisted state')
         if self.seen_people!=set(self.people) or set(self.members)!=set(self.state['slots'].values()):
             raise ValueError('raw entry/final retained person roster differs')
         for i,person in self.people.items():
@@ -407,11 +505,11 @@ def verify_daily_evidence(path,config,state,database,*,config_history=()):
     from itertools import zip_longest
     clock=GregorianClock(config.longitudinal)
     connection=sqlite3.connect(f'file:{Path(database).resolve()}?mode=ro',uri=True)
-    sentinel=object();last=None;count=0
+    sentinel=object();last=None;count=0;journal=None
     try:
         from itertools import groupby
         accounting=_RawDailyAccounting(config,state,config_history)
-        journal=connection.execute('SELECT day,kind,event,payload FROM journal ORDER BY seq')
+        journal=iter_journal_rows(connection)
         events=groupby(journal,key=lambda r:r[0])
         for count,(row,stored,event) in enumerate(zip_longest(iter_timeseries(path),state['history'],events,fillvalue=sentinel),1):
             if any(v is sentinel for v in (row,stored,event)):raise ValueError('daily CSV/state/journal roster differs')
@@ -432,7 +530,7 @@ def verify_daily_evidence(path,config,state,database,*,config_history=()):
             if any(row[k]!=record[v] for k,v in direct.items()):raise ValueError('daily observed stock differs from journal')
             if row['closed']!=(record['closed_day'] is not None) or row['suspended']!=(record['suspended_day'] is not None):
                 raise ValueError('daily closure/suspension differs from journal')
-            if row['adoption_days']!=_adoption_csv(record['adoption_days'],config.guilds,day):raise ValueError('daily adoption differs from journal')
+            if row['adoption_days']!=_adoption_csv(record['adoption_days'],record['enterprise_growth_state']['guilds'] if config.enterprise_growth is not None else config.guilds,day):raise ValueError('daily adoption differs from journal')
             creating=config.longitudinal.work_creation_stop_day is None or day<config.longitudinal.work_creation_stop_day
             if row['work_creation_enabled'] is not creating:raise ValueError('daily creation/tail scope differs')
             for key,value in row.items():
@@ -440,10 +538,20 @@ def verify_daily_evidence(path,config,state,database,*,config_history=()):
                     if key.endswith(suffix) and value!=record[source].get(key[:-len(suffix)],0):
                         raise ValueError('daily exposure/cost metric differs from journal: '+key)
             accounting.verify(day,daily,record)
+            if config.enterprise_growth is not None:
+                direct_growth={'initial_population':config.n,'organization_capacity':accounting.enterprise.capacity,
+                    'workforce_target':accounting.enterprise.target,'guild_count':accounting.enterprise.guilds,
+                    'department_count':accounting.enterprise.departments,'site_count':accounting.enterprise.sites}
+                if any(row.get(k)!=v for k,v in direct_growth.items()):raise ValueError('daily enterprise stock differs from journal')
+            if accounting.operations is not None:
+                expected={'market_price_resource_units':accounting.operations.price,'order_backlog_units':accounting.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in accounting.operations.shipments),'credit_debt_resource_units':accounting.operations.debt}
+                if any(row.get(k)!=v for k,v in expected.items()):raise ValueError('daily market stock differs from complete event history')
             last=row
         if count!=config.days or state['day']!=config.days:raise ValueError('daily evidence incomplete/oversized horizon')
         accounting.finish()
-    finally:connection.close()
+    finally:
+        if journal is not None:journal.close()
+        connection.close()
     _require_current_validator()
     return last
 
@@ -462,6 +570,12 @@ def verify_summary_evidence(summary,config,state,database):
               'cash_resource_units':state['cash'],'adoption_days':state['adoption'],
               'active_members_final':len(state['slots']) if state['closed_day'] is None and state['suspended_day'] is None else 0,
               'branch_origin':state['branch_origin']}
+    if config.enterprise_growth is not None:
+        growth=state['enterprise_growth_state']
+        expected.update({'initial_population':config.n,'organization_capacity_final':growth['capacity'],
+            'workforce_target_final':growth['target'],'guild_count_final':growth['guilds'],
+            'department_count_final':growth['departments'],'site_count_final':growth['sites']})
+    if config.enterprise_operations is not None:expected['enterprise_operating_state_final']=state['enterprise_operating_state']
     for key,value in expected.items():
         if summary.get(key)!=value:raise ValueError('summary identity/lifecycle differs from retained state: '+key)
     connection=sqlite3.connect(f'file:{Path(database).resolve()}?mode=ro',uri=True)
@@ -474,9 +588,10 @@ def verify_summary_evidence(summary,config,state,database):
 
 
 class CheckedLongitudinalStudy:
-    def __init__(self,root,*,publication_required=True,producer_in_progress=False,expected_provenance=None):
+    def __init__(self,root,*,publication_required=True,producer_in_progress=False,expected_provenance=None,page_options=None,known_latest_floor=None):
         _require_current_validator()
         self.root=Path(root).resolve();self.inputs={};self.cases={};self.observations=[];self.endpoints=[]
+        self.page_options=page_options;self.known_latest_floor=known_latest_floor
         self.pipeline=self.read_json('pipeline_manifest.json')
         if self.pipeline.get('schema_version')!=3:raise ValueError('not a longitudinal scientific version')
         if self.pipeline.get('status')!='complete' and not (producer_in_progress and self.pipeline.get('status')=='running' and self.pipeline.get('scientific_status')=='complete'):
@@ -539,6 +654,31 @@ class CheckedLongitudinalStudy:
         self.read_hash(name)
         if self.file(name).read_bytes()!=_csv_bytes(rows):raise ValueError('CSV differs from rebuilt raw table: '+str(name))
 
+    def _verify_snapshot(self,path,config):
+        from dams_sim.longitudinal_model import load_snapshot_envelope
+        envelope,_=load_snapshot_envelope(path,expected_config=config)
+        if envelope.get('native_checkpoint') is None:return verify_snapshot(path,expected_config=config)
+        options=getattr(self,'page_options',None)
+        if options is None:raise ValueError('native raw gate requires explicit storage options and external owner floor')
+        from dams_sim.native_checkpoint_owner import CheckpointOwner,default_owner_directory
+        import tempfile
+        owner=CheckpointOwner(default_owner_directory(options,envelope['config_sha256']),source_sha256=envelope['source_sha256'],config_sha256=envelope['config_sha256'])
+        try:
+            latest=owner.latest(minimum_floor=getattr(self,'known_latest_floor',None))
+            if latest is None:raise ValueError('native raw gate latest external owner missing')
+            def retain_floor(floor):
+                # Observation proofs append CAS records. Preserve their new floor
+                # externally while retaining the exact latest CP/source bytes.
+                current=owner.latest(minimum_floor=latest['floor'])
+                owner.publish(current['checkpoint']['path'],current['descriptor'],floor)
+            # Export only into an owned temporary sibling. Original raw roster
+            # remains untouched; final-state callers receive its original flat DB.
+            with tempfile.TemporaryDirectory(prefix='native-raw-verify-',dir=Path(options.store_root).parent) as exported:
+                result=verify_snapshot(path,expected_config=config,page_options=options,known_latest_floor=latest['floor'],export_dir=exported,native_floor_observer=retain_floor)
+                if envelope['ledger'].get('backend')=='native-committed-pages-v1':return result[0],None
+                return result
+        finally:owner.close()
+
     def _case(self,row,reference,expected_provenance,config_history=()):
         config=Config.from_dict(row['config']);ident=row['case_id']
         if case_key(config)!=ident:raise ValueError('scientific case ID differs')
@@ -561,14 +701,18 @@ class CheckedLongitudinalStudy:
         allowed=set(required);days=[];final_envelope=None
         for descriptor in [m['final_state_descriptor'],*index['snapshots']]:
             parts=descriptor.get('files')
-            if not isinstance(parts,list) or len(parts)!=2 or {p['file'] for p in parts}!={descriptor['file'],str(Path(descriptor['file']).with_suffix('.sqlite'))}:
+            native_periodic=descriptor is not m['final_state_descriptor'] and descriptor.get('native_checkpoint') is not None
+            expected={descriptor['file']} if native_periodic else {descriptor['file'],str(Path(descriptor['file']).with_suffix('.sqlite'))}
+            if not isinstance(parts,list) or len(parts)!=len(expected) or {p['file'] for p in parts}!=expected:
                 raise ValueError('snapshot group descriptor differs')
             for part in parts:
                 path=attempt/part['file'];allowed.add(part['file'])
                 if path.parent!=attempt or self.read_hash(str(path.relative_to(self.root)))!=part['sha256'] or path.stat().st_size!=part['bytes']:
                     raise ValueError('snapshot group bytes differ')
             if file_digest(attempt/descriptor['file'])!=descriptor['sha256']:raise ValueError('descriptor pointer digest differs')
-            envelope,_=verify_snapshot(attempt/descriptor['file'],expected_config=config)
+            envelope,_=self._verify_snapshot(attempt/descriptor['file'],config)
+            if descriptor.get('native_checkpoint')!=envelope.get('native_checkpoint'):
+                raise ValueError('native raw descriptor/envelope handle differs')
             if envelope['state']['day']!=descriptor['day'] or envelope['state_semantic_sha256']!=descriptor['state_semantic_sha256']:
                 raise ValueError('snapshot complete-state digest/day differs')
             if descriptor is m['final_state_descriptor']:final_envelope=envelope
@@ -736,13 +880,13 @@ class CheckedLongitudinalStudy:
     def read_snapshot(self,case_id):
         """Read one verified full state at a time; never retain all populations."""
         case=self.cases[case_id]
-        return verify_snapshot(case['attempt']/'final_state.json',expected_config=case['config'])
+        return self._verify_snapshot(case['attempt']/'final_state.json',case['config'])
 
     def iter_journal(self,case_id):
         import sqlite3
         path=self.cases[case_id]['ledger_path']
         connection=sqlite3.connect(f'file:{path.resolve()}?mode=ro',uri=True)
-        try:yield from connection.execute('SELECT day,kind,event,payload FROM journal ORDER BY seq')
+        try:yield from iter_journal_rows(connection)
         finally:connection.close()
 
     def select(self,stage=None,**tags):
@@ -759,8 +903,58 @@ class CheckedLongitudinalStudy:
                 'validator_import_sha256':VALIDATOR_IMPORT_SHA256,'source_import_sha256':SOURCE_IMPORT_SHA256}
 
 
-def validate_longitudinal_output(output,spec=None,scale=None,*,publication_required=True,producer_in_progress=False,expected_provenance=None):
-    checked=CheckedLongitudinalStudy(output,publication_required=publication_required,producer_in_progress=producer_in_progress,expected_provenance=expected_provenance)
+class CheckedLongitudinalCases(CheckedLongitudinalStudy):
+    """The existing whole-case raw gate for a stopped, possibly partial task.
+
+    This reader never promotes individual cases to a complete study. Parent
+    branch and inventory closure are checked by the census caller, separately
+    from the full Gregorian/state/ledger checks reused by ``_case``.
+    """
+    def __init__(self, root, identity):
+        _require_current_validator()
+        self.root = Path(root).absolute()
+        for path in (self.root, *self.root.parents):
+            if path.is_symlink():
+                raise ValueError('partial case root has a symlink ancestor')
+        if not self.root.is_dir():
+            raise ValueError('partial case root is absent')
+        required = {'source_sha256', 'pipeline_driver_sha256', 'spec_sha256'}
+        if set(identity) != required:
+            raise ValueError('partial case identity is incomplete')
+        if (identity['source_sha256'] != source_hash()
+                or identity['pipeline_driver_sha256'] != driver_hash()):
+            raise ValueError('partial case source/driver differs')
+        self.identity = dict(identity)
+        self.inputs = {}
+        self.cases = {}
+        self.page_options = None
+        self.known_latest_floor = None
+
+    def validate_case(self, row, attempt, *, expected_provenance=None, config_history=()):
+        attempt = Path(attempt).absolute()
+        for path in (attempt, *attempt.parents):
+            if path.is_symlink():
+                raise ValueError('partial case attempt has a symlink ancestor')
+            if path == self.root:
+                break
+        if not attempt.is_relative_to(self.root):
+            raise ValueError('partial case attempt outside its root')
+        reference = {'attempt': str(attempt.relative_to(self.root)),
+                     'manifest_sha256': file_digest(attempt/'manifest.json')}
+        result = self._case(row, reference, expected_provenance, config_history)
+        _require_current_validator()
+        self.cases[row['case_id']] = result
+        return result
+
+    def result(self):
+        return {'status': 'individual-case-raw-validation',
+                'unique_complete_cases': len(self.cases),
+                'full_study_gate': False, 'identity': self.identity}
+
+
+def validate_longitudinal_output(output,spec=None,scale=None,*,publication_required=True,producer_in_progress=False,expected_provenance=None,page_options=None,known_latest_floor=None):
+    checked=CheckedLongitudinalStudy(output,publication_required=publication_required,producer_in_progress=producer_in_progress,expected_provenance=expected_provenance,
+        **({'page_options':page_options,'known_latest_floor':known_latest_floor} if page_options is not None else {}))
     if spec is not None and checked.spec.name!=spec or scale is not None and checked.spec.n!=scale:raise ValueError('requested longitudinal spec/scale differs')
     return checked.result()
 

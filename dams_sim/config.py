@@ -4,6 +4,8 @@ from __future__ import annotations
 import dataclasses
 import math
 from .longitudinal import LongitudinalConfig
+from .enterprise_growth import EnterpriseGrowthConfig
+from .enterprise_operations import EnterpriseOperatingConfig
 
 
 @dataclasses.dataclass(frozen=True)
@@ -50,10 +52,19 @@ class Config:
     max_rss_mb: float = 2048.0
     max_events: int = 2_000_000
     longitudinal: LongitudinalConfig | None = None
+    enterprise_growth: EnterpriseGrowthConfig | None = None
+    enterprise_operations: EnterpriseOperatingConfig | None = None
 
     def validate(self) -> Config:
         if self.longitudinal is not None and not isinstance(self.longitudinal, LongitudinalConfig):
             raise ValueError('longitudinal must be a LongitudinalConfig; use Config.from_dict for JSON')
+        if self.enterprise_growth is not None:
+            if not isinstance(self.enterprise_growth, EnterpriseGrowthConfig):
+                raise ValueError('enterprise_growth must be an EnterpriseGrowthConfig')
+            self.enterprise_growth.validate(self)
+        if self.enterprise_operations is not None:
+            if not isinstance(self.enterprise_operations, EnterpriseOperatingConfig):raise ValueError("enterprise_operations must be typed")
+            self.enterprise_operations.validate(self)
         horizon_limit = 50_000 if self.longitudinal is not None else 3650
         integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
         if self.longitudinal is not None:
@@ -111,6 +122,9 @@ class Config:
         value = dataclasses.asdict(self)
         if self.longitudinal is None:
             value.pop('longitudinal')
+        if self.enterprise_growth is None:
+            value.pop('enterprise_growth')
+        if self.enterprise_operations is None:value.pop('enterprise_operations')
         return value
 
     @classmethod
@@ -121,6 +135,9 @@ class Config:
         value = dict(value)
         if value.get('longitudinal') is not None:
             value['longitudinal'] = LongitudinalConfig.from_dict(value['longitudinal'])
+        if value.get('enterprise_growth') is not None:
+            value['enterprise_growth'] = EnterpriseGrowthConfig.from_dict(value['enterprise_growth'])
+        if value.get('enterprise_operations') is not None:value['enterprise_operations']=EnterpriseOperatingConfig.from_dict(value['enterprise_operations'])
         for name in ("hierarchy_weights", "backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             if name in value:
                 value[name] = tuple(value[name])

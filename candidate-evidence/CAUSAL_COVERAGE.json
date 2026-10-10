@@ -1,0 +1,116 @@
+{
+  "schema": "enterprise-causal-coverage-v3",
+  "scope": "Independent synthetic candidate; no adoption into frozen N30/N120/144 studies",
+  "implemented_causal_paths": [
+    {
+      "mechanism": "price competition and orders",
+      "before": "demand multiplies individual production; no order stock or competitor price",
+      "after": "orders = base × demand × (competitor_price/own_price)^elasticity × exp(sigma × common_keyed_noise - sigma²/2); FIFO priced contracts expire; price adjusts only after actual work",
+      "path": "dams_sim/enterprise_operations.py:EnterpriseOperatingState.start_day/finish_day → longitudinal_model._step",
+      "parameters": "base_orders, elasticity, competitor price, noise, expiry and price response are scenario assumptions",
+      "observables": "orders_arrived_units, orders_expired_units, market_price, order_backlog_units; complete begin/end journal"
+    },
+    {
+      "mechanism": "production and materials",
+      "before": "agent production immediately yields proportional cash",
+      "after": "original skill/learning/fatigue/cooperation/governance/transition output is bounded by contracts, installed seats and cash-funded materials/logistics; actual efforts scale before work claims, fatigue and learning update",
+      "path": "longitudinal_model._step → productive_limit/finish_day",
+      "observables": "produced_work_units, effort_hours, enterprise_material_and_logistics_resource_units, productive booking fraction; full raw work records",
+      "calibration": "none"
+    },
+    {
+      "mechanism": "logistics and settled cash",
+      "before": "no shipment or receivable",
+      "after": "site shipment ready_day = dispatch_day + declared delay; revenue received only on arrival; cumulative product = delivered + in_transit",
+      "path": "EnterpriseOperatingState.start_day/finish_day",
+      "observables": "delivered_product_units, revenue_resource_units, receivable_resource_units, shipment stock",
+      "calibration": "country costs and transit days are unestimated scenario parameters; no real-company replication"
+    },
+    {
+      "mechanism": "credit and investment",
+      "before": "existing paid seat/guild/site expansion uses cash and past revenue/cost signal",
+      "after": "same delayed investment controller sees settled revenue, existing recurring cost and material costs; lender uses past margin/backlog/reserve gap, bounded credit and explicit accruing interest",
+      "path": "enterprise_growth.begin_day/observe + enterprise_operations.start_day → longitudinal_model._enterprise_begin_day",
+      "observables": "financing_inflow_resource_units, debt, interest accrued/paid, requested/completed infrastructure, cash",
+      "limits": "no bank default/restructuring/capital market equilibrium; credit parameters unestimated"
+    },
+    {
+      "mechanism": "talent and structure",
+      "before": "existing construction and hiring-target delays, exits/layoffs, dynamic guild/department/sites and paid recruitment",
+      "after": "vacancy-specific recruitment lead plus training lead reserving actual entrant time; original lifespan/leave/fatigue/knowledge loss retained",
+      "path": "longitudinal_model._lifecycle + enterprise_operations.recruit_ready/training",
+      "observables": "entrant times, vacancy stock, training_hours, active/ever people, departments/guild/sites; full checkpoint state",
+      "limits": "no explicit applicant pool or migration visa process"
+    },
+    {
+      "mechanism": "management and coordination",
+      "before": "department/site counts did not consume productive time",
+      "after": "layers = 1 + ceil(log(departments)/log(span)); overload and cross-site context cost reserve agent time before governance/production",
+      "path": "EnterpriseOperatingState.coordination → longitudinal_model._step.variable_reservations",
+      "observables": "enterprise_coordination_hours, work time, production, fatigue and resulting governance claims",
+      "limits": "span/layer formula is hypothesis; no detailed manager assignment/network or cultural psychological coefficients"
+    },
+    {
+      "mechanism": "country context",
+      "before": "growth candidate no contextual operational cost path",
+      "after": "declared local UTC work window affects production availability, legal cost is cash funded, logistics delays/cost and cross-site communication affect later productivity/cash",
+      "path": "CountryContext/calendar_fraction/context/coordination → daily agent path",
+      "observables": "booked context fractions, costs, delays and realized work",
+      "limits": "one global company workday remains; no DST/treaty/visa/regulatory completeness. Country labels do not enter individual skills, honesty or random keys"
+    },
+    {
+      "mechanism": "persistence and raw scientific verification",
+      "before": "full existing state/ledger/history/CSV/source gate",
+      "after": "all order/shipment/debt/vacancy/price state in committed header; raw event reconstruction checks consistency of market/credit/growth/attendance/settlements and final summary using shared model transition methods. Separate independent arithmetic and adversarial controls test the three reproduced repair paths, not a second complete economic implementation; exact checkpoint resume and policy fork retain operating state",
+      "path": "longitudinal_model.write_snapshot/restore/validate_persisted_state + research_tools.validate_longitudinal._RawDailyAccounting",
+      "observables": "source/config/ledger semantic hashes, raw journal, all daily history, complete raw summary checks"
+    }
+  ],
+  "validation_machinery": {
+    "path": "research_tools/enterprise_validation.py",
+    "implemented": "exclusive frozen role/entity/industry/country/time split; predeclared metrics/scales/weights, parameter grid and all world seeds; calibration-only multi-objective loss, all scores preserved for ambiguous/nonidentifiable fits; local finite-difference rank; frozen evaluation predictions before target read; fixed temporal predictive diagnostics",
+    "actual_controls": "synthetic parameter-recovery and access/overlap/source/seed/drift rejection tests only",
+    "actual_observations": "only previously exposed official 2022 Amazon headcount excerpt available as diagnostic",
+    "missing": "full multi-organization multi-period observed objectives, audited normalizers for revenue/margin, external historical-exposure stewardship, empirical fit, independent cross-enterprise/industry/country holdout, posterior estimation/predictive checks and global identifiability",
+    "strict_boundary": "millions of real employees do not identify individual agent traits or a firm's decision process; uncalibrated model resource units are not dollars"
+  },
+  "not_implemented_in_this_version": [
+    "multi-competitor strategic game",
+    "multistage supply-chain/task DAG integration from older separate enterprise component",
+    "R&D portfolio/product innovation",
+    "mergers/acquisitions",
+    "detailed management communication network",
+    "visa/talent migration",
+    "all-country legal mechanism",
+    "cultural behavior parameters",
+    "posterior estimation",
+    "validated extreme-shock external forecasting"
+  ],
+  "bounds": "initial population, endogenous target, installed capacity, ever identities and explicit resource stop caps are separate; no n×2/n×8 growth rule. A declared organizational capacity maximum is a scenario boundary, not an empirical universal ceiling. Reaching resource safety caps refuses execution rather than shortening the horizon.",
+  "correctness_repairs": [
+    {
+      "mechanism": "calendar settled cash to workday signals",
+      "before": "v2 discarded non-workday receipts and paid interest from the controller signal although cash/ledger were correct",
+      "after": "pending_revenue and pending_operating_cost accumulate each calendar day; eligible workday EWMA consumes the entire pending amount once, then resets; signal half-life remains workday based; decisions use prior signals",
+      "formula": "P_R <- P_R+R_d; P_C <- P_C+C_d; on eligible workday S_R <- S_R+w(P_R-S_R), S_C <- S_C+w(P_C-S_C), P_R=P_C=0; w=1-exp(-ln(2)/half_life_workdays)",
+      "scope": "settled revenue and paid operating/material/logistics costs; financing inflow and one-time recruitment/migration/construction capital outlays are not operating-margin receipts/costs",
+      "path": "enterprise_growth.observe -> longitudinal_model._step -> complete day_end state",
+      "observables": "calendar carry stocks, last_cash_observed_day, workday signals; complete checkpoint and raw daily reconstruction",
+      "calibration": "none"
+    },
+    {
+      "mechanism": "committed recovery observables",
+      "before": "v2 internal order/debt conservation did not bind delivered_revenue to metrics or last committed operating/growth journal",
+      "after": "cumulative revenue/products/orders/borrowed/material-logistics match independently accumulated metrics; complete operating and growth state plus metrics match last committed day_end; all original full-history raw predicates remain",
+      "path": "LongitudinalEngine.validate_semantics/write_snapshot/restore/validate_persisted_state; ExactLedger.latest_journal_row decodes only last-row fragments; full iter_rows scan remains in raw gate",
+      "limits": "a tail witness does not replace full raw accounting or authenticate an externally modified complete history"
+    },
+    {
+      "mechanism": "finite order-envelope preflight",
+      "before": "finite individual parameters could still produce overflow at day zero",
+      "after": "log-space bound covers the declared minimum/maximum price, demand <=10, the exact counter-RNG normal envelope sqrt(108 ln2), the full horizon and maximum revenue/material/logistics unit; 16-fold arithmetic headroom; unsafe envelope is rejected without clipping orders",
+      "path": "EnterpriseOperatingConfig.validate",
+      "limits": "numeric representability is not empirical parameter plausibility"
+    }
+  ]
+}

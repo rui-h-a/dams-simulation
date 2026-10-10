@@ -1,1 +1,0 @@
-{"exit_code":0,"monitor_cadence_seconds":0.05,"resource_stop":null,"sampled_peak_rss_mb":41.265625,"sampled_process_disk_read_bytes":0,"sampled_process_disk_write_bytes":1536000,"spawn_to_exit_wall_seconds":1.2947349169999143,"status":"complete","task":"strong-r2-w4-world2","task_path":"evidence/benchmarks/20261007T143303-cpu-benchmark-6ad2db33c118/strong-r2-w4-world2"}

@@ -1,1 +1,0 @@
-{"exit_code":0,"monitor_cadence_seconds":0.05,"resource_stop":null,"sampled_peak_rss_mb":36.640625,"sampled_process_disk_read_bytes":0,"sampled_process_disk_write_bytes":4096,"spawn_to_exit_wall_seconds":1.2538885830003892,"status":"complete","task":"weak-r0-w4-world5","task_path":"evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/weak-r0-w4-world5"}

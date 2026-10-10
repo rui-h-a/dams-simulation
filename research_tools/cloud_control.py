@@ -34,7 +34,7 @@ class GuardError(RuntimeError):
 def stage_capabilities(c, s):
     """Resolve a frozen single-VM profile; never infer a purchase fallback.
 
-    Missing mode retains the historical C4D Spot contract. M3 Standard is an
+    Missing mode retains the historical C4D Spot contract. M3/C4N Standard is an
     explicit opt-in with catalog-bound guest expectations and quota dimensions.
     The catalog is a planning input, not evidence of capacity or guest hardware.
     """
@@ -44,6 +44,24 @@ def stage_capabilities(c, s):
         allowed_disks = ("hyperdisk-balanced",)
         quota = {"metric": "PREEMPTIBLE_CPUS", "info_id": "PREEMPTIBLE-CPUS-per-project-region",
                  "dimensions": {"region": c["region"]}}
+    elif mode == "STANDARD" and machine == "c4d-highmem-4":
+        allowed_disks = ("hyperdisk-balanced",)
+        quota = {"metric": "CPUS_PER_VM_FAMILY", "info_id": "CPUS-PER-VM-FAMILY-per-project-region",
+                 "dimensions": {"region": c["region"], "vm_family": "C4D"}}
+        if "disk_type" not in s or s.get("quota") != quota:
+            raise GuardError("Standard C4D4 requires explicit Hyperdisk and its exact regional family quota")
+        catalog = c["price_snapshot"].get("machines", {}).get(machine, {})
+        if (type(catalog.get("vcpus")) is not int or catalog["vcpus"] != 4
+                or money(catalog.get("memory_gib", 0)) != 31 or catalog.get("architecture") != "X86_64"
+                or not catalog.get("zone") or c["zones"] != [catalog["zone"]]
+                or not catalog["zone"].startswith(c["region"] + "-")):
+            raise GuardError("Standard C4D4 catalog CPU/RAM/architecture/zone differs")
+        expected = s.get("expected_guest", {})
+        if (not isinstance(expected, dict) or set(expected) != {"architecture", "vcpus", "memory_gib_min", "memory_gib_max"}
+                or expected["architecture"] != "x86_64" or type(expected["vcpus"]) is not int or expected["vcpus"] != 4
+                or not 0 < money(expected["memory_gib_min"]) < money(expected["memory_gib_max"])
+                or money(expected["memory_gib_max"]) != 31):
+            raise GuardError("Standard C4D4 requires exact CPU/architecture and usable/catalog RAM bounds")
     elif mode == "STANDARD" and machine in ("m3-ultramem-32", "m3-ultramem-64", "m3-ultramem-128"):
         allowed_disks = ("pd-balanced", "pd-ssd", "hyperdisk-balanced")
         quota = {"metric": "M3_CPUS", "info_id": "M3-CPUS-per-project-region",
@@ -64,6 +82,28 @@ def stage_capabilities(c, s):
         minimum, maximum = money(expected["memory_gib_min"]), money(expected["memory_gib_max"])
         if minimum <= 0 or minimum >= maximum or maximum != money(catalog.get("memory_gib", 0)):
             raise GuardError("guest RAM range must specify a positive usable minimum, an OS margin and the exact catalog maximum")
+    elif mode == "STANDARD" and machine in ("c4n-highcpu-192", "c4n-highmem-192"):
+        allowed_disks = ("hyperdisk-balanced",)
+        quota = {"metric": "CPUS_PER_VM_FAMILY", "info_id": "CPUS-PER-VM-FAMILY-per-project-region",
+                 "dimensions": {"region": c["region"], "vm_family": "C4N"}}
+        if "disk_type" not in s or s.get("quota") != quota:
+            raise GuardError("Standard C4N requires its explicit Hyperdisk and exact regional family quota profile")
+        catalog = c["price_snapshot"].get("machines", {}).get(machine, {})
+        memory = {"c4n-highcpu-192": 384, "c4n-highmem-192": 1488}[machine]
+        if (type(catalog.get("vcpus")) is not int or catalog["vcpus"] != 192
+                or money(catalog.get("memory_gib", 0)) != memory or catalog.get("architecture") != "X86_64"
+                or not catalog.get("zone") or c["zones"] != [catalog["zone"]]
+                or not catalog["zone"].startswith(c["region"] + "-")):
+            raise GuardError("Standard C4N catalog CPU/RAM/architecture/zone differs from the frozen described shape")
+        expected = s.get("expected_guest", {})
+        if (not isinstance(expected, dict)
+                or set(expected) != {"architecture", "vcpus", "memory_gib_min", "memory_gib_max"}
+                or expected["architecture"] != "x86_64" or type(expected["vcpus"]) is not int
+                or expected["vcpus"] != 192):
+            raise GuardError("Standard C4N requires explicit catalog-bound guest CPU/architecture expectations")
+        minimum, maximum = money(expected["memory_gib_min"]), money(expected["memory_gib_max"])
+        if not 0 < minimum < maximum or maximum != money(memory):
+            raise GuardError("C4N usable RAM requires an explicit positive minimum, OS margin and exact catalog maximum")
     else:
         raise GuardError("unsupported machine/purchase profile; no implicit Standard or Spot fallback")
     if s.get("quota", quota) != quota:
@@ -81,6 +121,29 @@ def stage_capabilities(c, s):
     elif "disk_iops" in s or "disk_throughput_mibps" in s:
         raise GuardError("Persistent Disk must not inherit Hyperdisk performance provisioning")
     return {"purchase_mode": mode, "disk_type": disk, "disk_interface": "NVME", "quota": quota}
+
+
+
+def stage_termination_action(c, s, *, compute_only):
+    """Only an explicit bounded compute-only preservation phase may STOP.
+
+    STOP retains the sole boot disk after the CPU deadline. It does not delete
+    storage or authorize restart; root must recover/ACK and delete by global D.
+    Historical GCS and missing action keep provider DELETE unchanged.
+    """
+    action = s.get("termination_action", "DELETE")
+    if action not in ("DELETE", "STOP"):
+        raise GuardError("unsupported frozen instance termination action")
+    if action == "STOP":
+        limits = s.get("runtime_limits", {})
+        fields = ("phase_max_output_bytes", "phase_spool_bytes",
+                  "phase_checkpoint_headroom_bytes", "phase_metadata_reserve_bytes")
+        if (not compute_only or c.get("execution_mode") != "compute-only-iap"
+                or s.get("purchase_mode") != "STANDARD" or s.get("machine_type") != "c4d-highmem-4"
+                or not isinstance(limits, dict)
+                or any(type(limits.get(k)) is not int or limits[k] <= 0 for k in fields)):
+            raise GuardError("STOP requires the explicit bounded compute-only Standard C4D4 preservation phase")
+    return action
 
 
 def stage_vm_rate(c, s):
@@ -167,6 +230,8 @@ def locked(path):
 
 def checked_config(c, now=None):
     now = now or datetime.now(timezone.utc)
+    if c.get("execution_mode", "legacy-gcs") not in ("legacy-gcs", "compute-only-iap"):
+        raise GuardError("unknown execution mode; no implicit GCS fallback")
     required = {"version", "authorization_id", "project", "region", "zones", "bucket",
                 "service_account", "subnet", "image", "source_commit", "global_deadline_utc",
                 "budget_cap_usd", "reserve_usd", "prior_spend_usd", "price_snapshot", "stages",
@@ -216,6 +281,7 @@ def checked_config(c, now=None):
         if not NAME.fullmatch(s["id"]):
             raise GuardError("invalid stage ID")
         stage_capabilities(c, s)
+        stage_termination_action(c, s, compute_only=c.get("execution_mode") == "compute-only-iap")
         stage_vm_rate(c, s)
         stage_disk_rate(c, s)
         if not isinstance(s["max_seconds"], int) or s["max_seconds"] < 180:
@@ -503,18 +569,35 @@ def labels(c, s):
 
 
 def create_command(c, s, e, zone, startup):
+    return _create_command(c, s, e, zone, startup, compute_only=False)
+
+
+def create_compute_only_command(c, s, e, zone, startup, *, startup_sha256):
+    """Pure argv only; root pins/reviews PREPARE-ONLY startup before dispatch."""
+    path = Path(startup)
+    if (not isinstance(startup_sha256, str) or not re.fullmatch("[0-9a-f]{64}", startup_sha256)
+            or path.is_symlink() or not path.is_file()
+            or hashlib.sha256(path.read_bytes()).hexdigest() != startup_sha256):
+        raise GuardError("compute-only startup requires exact separately approved bytes")
+    return _create_command(c, s, e, zone, startup, compute_only=True)
+
+
+def _create_command(c, s, e, zone, startup, *, compute_only):
     caps = stage_capabilities(c, s)
+    action = stage_termination_action(c, s, compute_only=compute_only)
     if zone not in c["zones"] or utc(e["termination_utc"]) > utc(c["global_deadline_utc"]):
         raise GuardError("create zone/absolute expiry differs from the frozen plan")
     performance = (["--boot-disk-provisioned-iops=3000", "--boot-disk-provisioned-throughput=140"]
                    if caps["disk_type"] == "hyperdisk-balanced" else [])
+    credentials = (["--no-service-account", "--no-scopes"] if compute_only else
+                   ["--service-account=" + c["service_account"], "--scopes=https://www.googleapis.com/auth/devstorage.read_write"])
     return ["gcloud", "compute", "instances", "create", e["instance_name"],
             "--project=" + c["project"], "--zone=" + zone, "--machine-type=" + s["machine_type"],
-            "--provisioning-model=" + caps["purchase_mode"], "--instance-termination-action=DELETE",
+            "--provisioning-model=" + caps["purchase_mode"], "--instance-termination-action=" + action,
             "--termination-time=" + e["termination_utc"], "--maintenance-policy=TERMINATE", "--no-restart-on-failure",
             "--image=" + c["image"], "--boot-disk-type=" + caps["disk_type"], "--boot-disk-size=" + str(s.get("disk_gib", 50)) + "GB",
             "--boot-disk-interface=" + caps["disk_interface"], *performance, "--boot-disk-auto-delete",
-            "--service-account=" + c["service_account"], "--scopes=https://www.googleapis.com/auth/devstorage.read_write",
+            *credentials,
             "--network-interface=subnet=" + c["subnet"] + ",nic-type=GVNIC" + (",no-address" if c["network_mode"] == "internal-offline" else ",network-tier=PREMIUM"),
             "--metadata=enable-oslogin=TRUE,block-project-ssh-keys=TRUE,dams-source-commit=" + c["source_commit"] + ",dams-source-image-id=" + str(c["image_id"]),
             "--metadata-from-file=startup-script=" + str(startup),
@@ -557,16 +640,26 @@ class Gcloud:
 
 
 def validate_instance(c, s, e, vm):
+    return _validate_instance(c, s, e, vm, compute_only=False)
+
+
+def validate_compute_only_instance(c, s, e, vm):
+    """Explicit no-SA readback; never called by the legacy GCS execute path."""
+    return _validate_instance(c, s, e, vm, compute_only=True)
+
+
+def _validate_instance(c, s, e, vm, *, compute_only):
     caps = stage_capabilities(c, s)
+    action = stage_termination_action(c, s, compute_only=compute_only)
     expected = labels(c, s)
     if vm.get("name") != e["instance_name"] or any(vm.get("labels", {}).get(k) != v for k, v in expected.items()):
         raise GuardError("existing VM does not match this frozen task/stage")
     scheduling = vm.get("scheduling", {})
     if vm["machineType"].split("/")[-1] != s["machine_type"] or scheduling.get("provisioningModel") != caps["purchase_mode"]:
         raise GuardError("existing VM differs from the frozen machine/purchase mode")
-    if (scheduling.get("instanceTerminationAction") != "DELETE" or not scheduling.get("terminationTime")
+    if (scheduling.get("instanceTerminationAction") != action or not scheduling.get("terminationTime")
             or utc(scheduling["terminationTime"]) != utc(e["termination_utc"]) or scheduling.get("maxRunDuration")):
-        raise GuardError("existing VM lacks bounded absolute deletion")
+        raise GuardError("existing VM termination action/absolute time differs from the frozen plan")
     if caps["purchase_mode"] == "STANDARD" and (scheduling.get("automaticRestart") is not False or scheduling.get("onHostMaintenance") != "TERMINATE"):
         raise GuardError("Standard VM restart/maintenance policy differs from the bounded frozen plan")
     if vm.get("deletionProtection"):
@@ -574,7 +667,10 @@ def validate_instance(c, s, e, vm):
     if vm.get("zone", "").split("/")[-1] not in c["zones"]:
         raise GuardError("existing VM zone differs from the frozen candidate zones")
     accounts = vm.get("serviceAccounts", [])
-    if len(accounts) != 1 or accounts[0].get("email") != c["service_account"] or accounts[0].get("scopes") != ["https://www.googleapis.com/auth/devstorage.read_write"]:
+    if compute_only:
+        if accounts != []:
+            raise GuardError("compute-only VM must have no attached service account or scopes")
+    elif len(accounts) != 1 or accounts[0].get("email") != c["service_account"] or accounts[0].get("scopes") != ["https://www.googleapis.com/auth/devstorage.read_write"]:
         raise GuardError("existing VM has different/overbroad attached credentials")
     interfaces = vm.get("networkInterfaces", [])
     if len(interfaces) != 1 or interfaces[0].get("nicType") != "GVNIC" or interfaces[0].get("subnetwork", "").split("/")[-1] != c["subnet"].split("/")[-1]:
@@ -593,7 +689,7 @@ def validate_instance(c, s, e, vm):
     if len(vm.get("disks", [])) != 1 or not vm["disks"][0].get("boot") or not vm["disks"][0].get("autoDelete"):
         raise GuardError("unexpected unmanaged/retained extra disk")
     if caps["purchase_mode"] == "STANDARD" and vm["disks"][0].get("interface") != caps["disk_interface"]:
-        raise GuardError("Standard M3 boot disk must use the frozen NVMe interface")
+        raise GuardError("Standard boot disk must use the frozen NVMe interface")
     return vm
 
 
@@ -629,7 +725,7 @@ def preflight_quotas(g, c, stage=None):
     targets = {}
     for s in planned:
         caps = stage_capabilities(c, s)
-        key = caps["purchase_mode"]
+        key = "C4D_STANDARD" if caps["quota"]["dimensions"].get("vm_family") == "C4D" else "C4N_STANDARD" if caps["quota"]["dimensions"].get("vm_family") == "C4N" else caps["purchase_mode"]
         target = c["price_snapshot"]["machines"][s["machine_type"]]["vcpus"]
         if type(target) is not int or target < 1:
             raise GuardError("actual machine catalog CPU count is missing/invalid")
@@ -669,6 +765,80 @@ def preflight_quotas(g, c, stage=None):
         if (info.get("name") != c["region"] or len(q) != 1
                 or money(q[0]["limit"]) - money(q[0]["usage"]) < targets["STANDARD"]):
             raise GuardError("requested Standard M3 stage lacks unused M3 CPU quota; other pools cannot substitute")
+    if "C4D_STANDARD" in targets:
+        r = g.run(["gcloud", "beta", "quotas", "info", "describe", "CPUS-PER-VM-FAMILY-per-project-region",
+                   "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
+        info = json.loads(r["stdout"]) if r["exit"] == 0 else {}
+        if (r["exit"] != 0 or info.get("quotaId") != "CPUS-PER-VM-FAMILY-per-project-region"
+                or info.get("metric") != "compute.googleapis.com/cpus_per_vm_family"
+                or quota_value(info, {"region": c["region"], "vm_family": "C4D"}) < targets["C4D_STANDARD"]):
+            raise GuardError("requested Standard C4D stage lacks an effective exact regional family grant")
+        # QuotaInfo is a grant, not usage. Until family usage is available,
+        # this narrow adapter requires no current C4D instance/reservation in
+        # the granted region. Other regions/families are accounted by actual
+        # global quota headroom; they do not consume this regional grant.
+        # Readbacks remain cooperative observations, not provider capacity.
+        for resource in ("instances", "reservations", "operations"):
+            r = g.run(["gcloud", "compute", resource, "list", "--project=" + c["project"], "--format=json"])
+            data = json.loads(r["stdout"]) if r["exit"] == 0 else None
+            if not isinstance(data, list) or any(not isinstance(row, dict) for row in data):
+                raise GuardError("C4D family usage census is missing or malformed")
+            for row in data:
+                if resource == "operations":
+                    if row.get("status") == "DONE":
+                        continue
+                    target = row.get("targetLink", "")
+                    if (not target or "/instances/" in target or "/reservations/" in target):
+                        raise GuardError("pending compute operation leaves C4D family allocation unverified")
+                    continue
+                machine = (row.get("machineType") if resource == "instances" else
+                           row.get("specificReservation", {}).get("instanceProperties", {}).get("machineType"))
+                if not isinstance(machine, str) or not machine:
+                    raise GuardError("C4D family census machine identity is unavailable")
+                if machine.rsplit("/", 1)[-1].startswith("c4d-"):
+                    zone = row.get("zone")
+                    match = re.fullmatch(r"([a-z][a-z0-9-]*[0-9])-[a-z]", zone.rsplit("/", 1)[-1]) if isinstance(zone, str) else None
+                    if match is None:
+                        raise GuardError("C4D family census resource zone is unavailable/invalid")
+                    if match.group(1) == c["region"]:
+                        raise GuardError("existing regional C4D usage requires actual family headroom accounting; grant alone is insufficient")
+    if "C4N_STANDARD" in targets:
+        r = g.run(["gcloud", "beta", "quotas", "info", "describe", "CPUS-PER-VM-FAMILY-per-project-region",
+                   "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
+        info = json.loads(r["stdout"]) if r["exit"] == 0 else {}
+        if (r["exit"] != 0 or info.get("quotaId") != "CPUS-PER-VM-FAMILY-per-project-region"
+                or info.get("metric") != "compute.googleapis.com/cpus_per_vm_family"
+                or quota_value(info, {"region": c["region"], "vm_family": "C4N"}) < targets["C4N_STANDARD"]):
+            raise GuardError("requested Standard C4N stage lacks an effective exact regional family grant")
+        # QuotaInfo is a grant, not usage. Until family usage is available,
+        # this narrow adapter requires no current C4N instance/reservation in
+        # the granted region. Other regions/families are accounted by actual
+        # global quota headroom; they do not consume this regional grant.
+        # Readbacks remain cooperative observations, not provider capacity.
+        for resource in ("instances", "reservations", "operations"):
+            r = g.run(["gcloud", "compute", resource, "list", "--project=" + c["project"], "--format=json"])
+            data = json.loads(r["stdout"]) if r["exit"] == 0 else None
+            if not isinstance(data, list) or any(not isinstance(row, dict) for row in data):
+                raise GuardError("C4N family usage census is missing or malformed")
+            for row in data:
+                if resource == "operations":
+                    if row.get("status") == "DONE":
+                        continue
+                    target = row.get("targetLink", "")
+                    if (not target or "/instances/" in target or "/reservations/" in target):
+                        raise GuardError("pending compute operation leaves C4N family allocation unverified")
+                    continue
+                machine = (row.get("machineType") if resource == "instances" else
+                           row.get("specificReservation", {}).get("instanceProperties", {}).get("machineType"))
+                if not isinstance(machine, str) or not machine:
+                    raise GuardError("C4N family census machine identity is unavailable")
+                if machine.rsplit("/", 1)[-1].startswith("c4n-"):
+                    zone = row.get("zone")
+                    match = re.fullmatch(r"([a-z][a-z0-9-]*[0-9])-[a-z]", zone.rsplit("/", 1)[-1]) if isinstance(zone, str) else None
+                    if match is None:
+                        raise GuardError("C4N family census resource zone is unavailable/invalid")
+                    if match.group(1) == c["region"]:
+                        raise GuardError("existing regional C4N usage requires actual family headroom accounting; grant alone is insufficient")
     r = g.run(["gcloud", "compute", "project-info", "describe", "--project=" + c["project"], "--format=json"])
     if r["exit"] != 0:
         raise GuardError("global CPU quota unverified")
@@ -713,7 +883,7 @@ def preflight_environment(g, c):
     if any(stage_capabilities(c, s)["purchase_mode"] == "STANDARD" for s in c["stages"]):
         features = {row.get("type") for row in im.get("guestOsFeatures", [])}
         if not {"GVNIC", "UEFI_COMPATIBLE"}.issubset(features):
-            raise GuardError("fixed M3 image lacks required gVNIC/UEFI features; guest NVMe/driver trial remains necessary")
+            raise GuardError("fixed Standard image lacks required gVNIC/UEFI features; guest NVMe/driver trial remains necessary")
     subnet = g.run(["gcloud", "compute", "networks", "subnets", "describe", c["subnet"].split("/")[-1],
                     "--region=" + c["region"], "--project=" + c["project"], "--format=json"])
     if subnet["exit"] != 0:
@@ -827,6 +997,9 @@ for name,sha in manifest['source_files_sha256'].items():
 
 def execute(c, folder):
     """Explicitly authorized coordinator only. Fail closed on ambiguous creation."""
+    if c.get("execution_mode") == "compute-only-iap":
+        from research_tools.compute_only_entry import execute as compute_execute
+        return compute_execute(checked_config(c), folder)
     if c.get('paid_actions_authorized') is not True:raise GuardError('execute requires explicit private paid-action authorization')
     c = checked_config(c)
     folder = Path(folder)
@@ -995,6 +1168,15 @@ def main(argv=None):
         c = checked_config(json.loads(a.private_config.read_text()))
         if a.spec is not None and (c.get("requested_spec") != a.spec or c.get("requested_scale") != a.scale):
             raise GuardError("selected spec/scale differs from frozen private task plan")
+        if c.get("execution_mode") == "compute-only-iap":
+            from research_tools.compute_only_entry import Entry, execute as compute_execute
+            if a.action == "plan":
+                with Entry(c) as entry:
+                    result = entry.plan()
+            else:
+                result = compute_execute(c, a.state_dir)
+            print(json.dumps(result, indent=2))
+            return 0
         if a.action == "plan":
             print(json.dumps({"mode": "local-plan-no-cloud-actions", "deadline_utc": c["global_deadline_utc"],
                               "stage_reservations_usd": {s["id"]: str(stage_cost(c, s)) for s in c["stages"]},
@@ -1003,7 +1185,7 @@ def main(argv=None):
         if c.get("paid_actions_authorized") is not True:
             raise GuardError("paid actions require explicit private authorization")
         return execute(c, a.state_dir)
-    except (GuardError, KeyError, ValueError, OSError) as e:
+    except (GuardError, KeyError, ValueError, OSError, subprocess.SubprocessError) as e:
         print("Cloud control refused: " + str(e), file=sys.stderr)
         return 2
 

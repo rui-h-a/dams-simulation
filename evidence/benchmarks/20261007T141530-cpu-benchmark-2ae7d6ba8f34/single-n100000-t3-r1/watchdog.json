@@ -1,1 +1,0 @@
-{"exit_code":0,"monitor_cadence_seconds":0.05,"resource_stop":null,"sampled_peak_rss_mb":528.578125,"sampled_process_disk_read_bytes":0,"sampled_process_disk_write_bytes":147271680,"spawn_to_exit_wall_seconds":29.15813191699999,"status":"complete","task":"single-n100000-t3-r1","task_path":"evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/single-n100000-t3-r1"}

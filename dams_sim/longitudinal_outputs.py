@@ -63,6 +63,8 @@ def snapshot_rows(path,config,requested):
 
 def window_observation(spec,case,rows,start,end,window_id,status='complete'):
     config=case['config'];tags=case['tags'];summary=case['summary']
+    if config.enterprise_growth is not None:
+        raise ValueError('endogenous growth requires a separately frozen dynamic-domain observation-window protocol')
     lc=config.longitudinal;clock=GregorianClock(lc)
     if status!='complete':
         begin=finish=None;values={k:None for k in INTEGRALS};gain=None
@@ -116,6 +118,8 @@ def build_tables(spec,cases):
     Cases are {case_id, config:Config, tags, summary, attempt:Path}. The caller
     verifies each manifest and snapshot group before passing them here.
     """
+    if any(c['config'].enterprise_growth is not None for c in cases):
+        raise ValueError('endogenous growth candidate has no admitted paired study protocol; fixed-domain tables are unavailable')
     lookup={(c['tags']['arm_id'],c['config'].world):c for c in cases if c['tags']['role']=='strategy'}
     worlds=sorted({c['config'].world for c in cases});plans=[];needed={c['case_id']:set() for c in cases}
     for contrast in declared_contrasts(spec):

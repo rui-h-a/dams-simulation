@@ -1,8 +1,0 @@
-{
-  "status": "passed",
-  "scope": "Synthetic regression fixture only; generating-condition count differs from rule recovery count. Original scientific outputs untouched.",
-  "wrapper_sha256": "16e73d7bb3e931b292e3d2f3782a46fe2ca6e8556730c10948b1d08afde70fcc",
-  "expected": "3 of 6",
-  "rule_recovery_fixture": 4,
-  "font_notice_present": true
-}

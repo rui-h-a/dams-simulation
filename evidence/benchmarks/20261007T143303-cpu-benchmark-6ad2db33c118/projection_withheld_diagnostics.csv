@@ -1,9 +1,0 @@
-target,withheld_n,withheld_days,observed,predicted,relative_error,training_cells,diagnostic
-rss_mb,120,60,32.109375,32.51678472222201,0.012688185996208684,3,leave_one_workload_cell_out_refit; not independent hardware validation
-rss_mb,1000,30,42.078125,41.70243980532792,-0.008928277927594921,3,leave_one_workload_cell_out_refit; not independent hardware validation
-rss_mb,10000,30,149.296875,154.19886363635916,0.032833832833802874,3,leave_one_workload_cell_out_refit; not independent hardware validation
-rss_mb,100000,3,529.78125,835.3385416615583,0.576761241855121,3,leave_one_workload_cell_out_refit; not independent hardware validation
-output_mb,120,60,0.300005,0.2970522848316832,-0.009842219857391707,3,leave_one_workload_cell_out_refit; not independent hardware validation
-output_mb,1000,30,1.530831,1.5629475471311618,0.02097981235757686,3,leave_one_workload_cell_out_refit; not independent hardware validation
-output_mb,10000,30,15.602929,15.183868171117187,-0.02685783091641403,3,leave_one_workload_cell_out_refit; not independent hardware validation
-output_mb,100000,3,73.611014,71.3964776237573,-0.030084307441311582,3,leave_one_workload_cell_out_refit; not independent hardware validation

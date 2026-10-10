@@ -1,9 +1,0 @@
-# Qualified local preservation repair
-
-Root/critic found original normal closeout deleted after terminal preservation failure, and could delete an unACKed native checkpoint despite a successful dual terminal copy. Native actual sealed dictionaries also failed the old poll Boolean check. Original source freeze8a720/test12 and critic REPORT508f9c0643b42b9bf6fcef2c2f7e139c4a22a53bd65bf23a2b0d807feee0b992 remain unchanged.
-
-The new source gates normal active deletion on exact native history→sealed→guestACK→original CollectorACK/two accepted current restorations→terminal closed-byte copies→exact assigned census→fresh unchanged view. Failures keep holds and do not actively delete. Provider absolute DELETE remains fixed; no deadline/cap extension is provided. Read-only poll uses native manifest validation and correct item/index or manifest payloads, not a new producer.
-
-Final two stable rounds:21original controls+12new eachPASS/0errors,10.681s and10.951s; source2123 fileSHA exact before/after, threeAST checksPASS; bash-n0. Original bad test12 unchanged has exactly1historical FAIL each round, explicitly segregated as rejected old behavior. No blanket alltests/science/cloud claim. All source changes confined to the three owned files;25 core files and every other baseline file are unchanged. Initial setup/import failures and prior-source pass iteration remain preserved, not counted as final stability.
-
-Only pure native opaque I/O and fake SDK were executed. Native scientific gate is deliberately fixture-mocked; no Model instantiated, no root raw/ledger/config/provider/auth/network/Git/paid operation. Separate accepted original Collector full-state/full-raw/ancestry gates remain prerequisites. Normal closeout cannot certify all144 complete or any formal group; failed/unstarted remain in exact census and science_complete=false. Detailed finite API/limitations in SCHEMA and HANDOFF. Independent repair refutation pending.

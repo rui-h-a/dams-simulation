@@ -11,7 +11,8 @@ Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-s
 Defaults: bounded local validation, 120 people, runs/validation-n120.
 Full research runs use the same versioned pipeline and automatic resource scheduler.
 Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
-private mode-0600 file. This selects the GCP control plan; no public paid default.
+private mode-0600 file. Its explicit execution mode selects legacy GCS or
+compute-only IAP phases; no public paid default or implicit storage fallback.
 HELP
   exit 0
 fi

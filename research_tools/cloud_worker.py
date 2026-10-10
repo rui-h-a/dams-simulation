@@ -959,7 +959,8 @@ def verify_guest(runtime, measurements):
     if (not isinstance(expected, dict) or set(expected) != required or expected['architecture'] != 'x86_64'
             or type(expected['vcpus']) is not int or expected['vcpus'] <= 0):
         raise GuardError("frozen guest CPU/architecture expectations are incomplete")
-    if mode == 'STANDARD' and (machine not in ('m3-ultramem-32', 'm3-ultramem-64', 'm3-ultramem-128')
+    if mode == 'STANDARD' and (machine not in ('m3-ultramem-32', 'm3-ultramem-64', 'm3-ultramem-128',
+                                                               'c4n-highcpu-192', 'c4n-highmem-192')
                                or expected['vcpus'] != int(machine.rsplit('-', 1)[-1])):
         raise GuardError("unsupported or inconsistent frozen Standard guest profile")
     if scheduling.get('automatic_restart') != 'FALSE' or scheduling.get('on_host_maintenance') != 'TERMINATE':
@@ -976,6 +977,11 @@ def verify_guest(runtime, measurements):
         minimum, maximum = Decimal(str(expected['memory_gib_min'])), Decimal(str(expected['memory_gib_max']))
     except (InvalidOperation, ValueError):
         raise GuardError("frozen memory range is invalid") from None
+    if machine in ('c4n-highcpu-192', 'c4n-highmem-192'):
+        nominal = Decimal(384 if machine == 'c4n-highcpu-192' else 1488)
+        if (mode != 'STANDARD' or not minimum.is_finite() or not maximum.is_finite()
+                or maximum != nominal or not 0 < minimum < maximum):
+            raise GuardError("C4N frozen guest RAM differs from catalog or explicit usable margin")
     memory = measurements.get('guest_memory_total_bytes')
     if (not minimum.is_finite() or not maximum.is_finite() or not 0 < minimum < maximum
             or type(memory) is not int or not minimum * 2**30 <= memory <= maximum * 2**30):

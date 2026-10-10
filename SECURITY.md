@@ -1,7 +1,0 @@
-# Research security boundary
-
-The model and synthetic inputs contain no customer records, credentials, private endpoints or real people. Do not include restricted papers, private thesis Git history, secrets or production software in releases. Report security issues through the repository issue tracker after a public remote is actually established; there is no asserted private support endpoint.
-
-The reference provides experiment integrity (stable event IDs, duplicate-credit suppression, atomic writes, source/config/output hashes), not a deployed authorization system. Hashes detect differences, not input truth or authenticity. Config and checkpoint files should be trusted research artifacts; checkpoint hashes are not signatures. No cryptographic privacy, proof-of-personhood, distributed controller independence, network consensus or permanent storage guarantee is implemented by the ABM. The stylized consensus scenario's zero unilateral censorship assumes an honest live quorum and does not establish real censorship resistance.
-
-Synthetic false-source and audit processes explicitly allow residual fraud and false rejection. A rejected claim may be independently reinspected through the capacity-limited appeal path; good-faith dissent and incorrect decisions are not penalized as misconduct. Current correction admits previously rejected credit. Retroactive revocation, key compromise, multi-account admission, Byzantine collusion and geographic partitions require separate protocol experiments; do not claim they are tested by these simulation scenarios.

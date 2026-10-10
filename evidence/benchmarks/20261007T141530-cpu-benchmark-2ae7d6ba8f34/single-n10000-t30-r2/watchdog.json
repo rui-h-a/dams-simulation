@@ -1,1 +1,0 @@
-{"exit_code":0,"monitor_cadence_seconds":0.05,"resource_stop":null,"sampled_peak_rss_mb":151.0625,"sampled_process_disk_read_bytes":0,"sampled_process_disk_write_bytes":31256576,"spawn_to_exit_wall_seconds":23.500049750000017,"status":"complete","task":"single-n10000-t30-r2","task_path":"evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/single-n10000-t30-r2"}

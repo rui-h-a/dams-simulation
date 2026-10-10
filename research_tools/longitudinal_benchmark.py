@@ -119,6 +119,18 @@ def ledger_observation(run):
     if working.exists():
         try:
             with closing(sqlite3.connect(f'file:{working.resolve()}?mode=ro', uri=True, timeout=1)) as connection:
+                schema=connection.execute('PRAGMA user_version').fetchone()[0]
+                value['ledger_physical_schema_version']=schema
+                if schema==2:
+                    # Telemetry must not expand the complete audit history.
+                    # Only the pure-I/O raw gate certifies its logical contents.
+                    value['physical_journal_tail_rows']=connection.execute('SELECT count(*) FROM journal').fetchone()[0]
+                    value['logical_journal_observation']='not-scanned; full raw verification required'
+                    return value
+                if schema not in (0,1):
+                    raise ValueError('unknown longitudinal ledger schema')
+                if schema==0:
+                    value['journal_observation_basis']='physical unversioned probe table; not a schema-validated ledger'
                 value['journal_rows'] = connection.execute('SELECT count(*) FROM journal').fetchone()[0]
                 item = connection.execute("SELECT day,payload FROM journal WHERE kind='day_end' ORDER BY seq DESC LIMIT 1").fetchone()
                 if item:
