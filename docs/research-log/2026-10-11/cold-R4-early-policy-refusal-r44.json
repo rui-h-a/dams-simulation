@@ -1,0 +1,23 @@
+{
+  "schema": "DAMS-cold-R4-early-policy-refusal-r44",
+  "UTC": "2026-10-10T20:07:38.509759+00:00",
+  "actual_refusal_receipt_sha256": "2b6afd1e6eccc269cbbc1ef36aefd1f32ee66e426a031b89f406a03af58cadf4",
+  "actual_source_sha256": "c5122c21ab098b0c21246512f149befa03488d1f47cbe3122ed79f2f6cc3dcbf",
+  "status": "ACTUAL_R4_CLOSED_POLICY_MISMATCH_BEFORE_METER_AUTH_PROVIDER_CASES",
+  "actual_returncode": 1,
+  "actual_exec_tool_completed_and_reaped": true,
+  "wrong_unexecuted_phase_minimum_bytes": 85899345920,
+  "actual_retained_policy_minimum_bytes": 94489280512,
+  "normal_operation_started": false,
+  "provider_calls_added": 0,
+  "auth_attempts_added": 0,
+  "raw_retirement_performed": false,
+  "new_scientific_samples": 0,
+  "requests_retained": 221,
+  "results_retained": 221,
+  "pending_retained": 0,
+  "charged_prefix_445_preserved": true,
+  "new_funding_issued": false,
+  "automatic_retry_performed": false,
+  "source_only_R4_review_did_not_certify_actual_policy": true
+}
