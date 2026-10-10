@@ -1,0 +1,161 @@
+{
+  "schema": "DAMS-incremental-research-evidence-r48-1",
+  "snapshot_UTC": "2026-10-10T23:42:58.355842+00:00",
+  "formal_science": {
+    "n30": {
+      "verified_paired_worlds": 70,
+      "pilot_worlds": 4,
+      "confirmation_worlds": 66,
+      "complete_independent_remote_full13_recovery_proofs": 140,
+      "adverse_and_null_results_retained": true
+    },
+    "n120": {
+      "verified_paired_worlds": 61,
+      "pilot_worlds": 4,
+      "confirmation_worlds": 57,
+      "planned_confirmation_worlds": 66,
+      "remaining_confirmation_worlds": 9,
+      "calendar_days_per_case": 1917,
+      "CLI_state": "RUNNING_EXISTING_FULL_RAW_REVALIDATION",
+      "existing_pairs_revalidated_this_resume_at_snapshot": 41,
+      "new_completed_worlds_in_readonly_restore_operation": 0,
+      "final_precision_and_statistics_acceptance": "PENDING"
+    },
+    "original_1000": {
+      "verified_cases": 35,
+      "planned_pilot_cases": 144,
+      "verified_complete_pilot_paired_worlds": 0,
+      "planned_pilot_paired_worlds": 4,
+      "confirmation_worlds": 0,
+      "state": "BLOCKED_CAPACITY_AND_ARCHIVE_CONSUMER_ADMISSION",
+      "concurrent_free_admission_bytes": 153378624512
+    },
+    "larger_scales": {
+      "populations": [
+        10000,
+        100000,
+        1000000,
+        10000000
+      ],
+      "new_verified_complete_five_or_ten_year_paired_worlds": 0,
+      "state": "BLOCKED_FULL_WORKLOAD_AND_RESOURCE_ADMISSION"
+    }
+  },
+  "actual_completed_readonly_restore": {
+    "schema": "DAMS-operations-copyless-readonly-semantic-restore-1",
+    "status": "READONLY_OPERATIONS_MODEL_STATE_RESTORED",
+    "original_science_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "checkpoint_sha256": "095d1bef8b0ba2775b74fa82fb06918bf2bc4c76c4c7b8e7d66a7cec591f65fc",
+    "database_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43",
+    "database_bytes": 3681513472,
+    "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+    "day": 3743,
+    "state_semantic_sha256": "867cd1eb3720251dcc92d775cd9ac77a4552142dd6fe2a8ec6a94b429b9294b6",
+    "ledger_semantic_sha256": "5aeb47187a87251dfb99d7b1b55d46349e8ec8576d37eec2046d7ba164b60fe0",
+    "row_counts": {
+      "pending": 270866,
+      "seen": 3001911,
+      "journal": 13228569,
+      "credits": 3595,
+      "delays": 721
+    },
+    "sqlite_sequence": [
+      [
+        "journal",
+        13228569
+      ],
+      [
+        "pending",
+        6533760
+      ]
+    ],
+    "new_working_database_bytes": 0,
+    "new_scientific_worlds": 0,
+    "advance_days": 0,
+    "fork_calls": 0,
+    "original_Model_API_called": false,
+    "writable_resume_certified": false,
+    "operations_derived_restore_body": true,
+    "wall_seconds": 1076.4988148330012,
+    "cpu_seconds": 415.149989,
+    "peak_rss_bytes": 83017728,
+    "complete_input_SHA_and_EOF_rechecked": true,
+    "db_connection_closed": true,
+    "operator_source_sha256": "d461b50f898139d946b45d01936dd7c88d1c9c15ac5ff858fec5680f57767d50",
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "actual_outer_exit_code": 0,
+    "actual_child_exit_code": 0,
+    "owned_child_reaped": true,
+    "owned_process_group_absence_observed": true,
+    "full_input_SHA_EOF_scope": [
+      "final_state.json",
+      "final_state.sqlite"
+    ],
+    "other_11_lineage": "prior full13 actual proof plus unchanged native; no new full13 payload read",
+    "original_13_native_before_after_equal": true,
+    "independent_review_scope": "Actual receipts, source and protected metadata; monitor aggregates independently recomputed. No independent model-transition or raw-payload replay.",
+    "fence_scope": "saved before/after ps/lsof, not continuous exclusive writer lease",
+    "independent_transition_validation": false,
+    "archive_retirement_authorized": false,
+    "metrics_independently_recomputed": {
+      "samples": 538,
+      "min_external_free_bytes": 105500438528,
+      "max_sampled_rss_bytes": 78364672,
+      "max_sampled_owned_allocated_bytes": 8192,
+      "self_ru_maxrss_bytes": 83017728,
+      "elapsed_seconds": 1088.9687292909948,
+      "result_wall_seconds": 1076.4988148330012,
+      "cpu_seconds": 415.149989
+    },
+    "evidence_sha256": {
+      "result": "37e58951090037ddd7158d453673d28987cbb25f9318b74fe7045e5ac044901f",
+      "terminal": "f04cb5daa0af8ba9ef7952dade6c9c2e848d5e46a8ef3371dbef71953cea7afd",
+      "outer_tool": "c1364d554042e72064c832e77706633178f0bed5977a4c25fbd42eb468196bdd",
+      "peer": "bd8d50b531c2910d3a66f5bb0b52f2806bcf5238c846a8d635ced6800e31bb66"
+    }
+  },
+  "cold_storage": {
+    "n30_complete_independent_backup_cases": 140,
+    "prior_distinct_retirement_receipts": 30,
+    "r7_success_receipts_at_snapshot": 13,
+    "total_distinct_retirement_receipts_at_snapshot": 43,
+    "r7_state": "RUNNING",
+    "observed_free_bytes": 105909932032,
+    "free_bytes_are_actual_volume_observation_not_inferred_unlink_bytes": true,
+    "original_1000_raw_retired_by_this_operation": false
+  },
+  "archive_consumer": {
+    "r4_independent_teardown_review": "QUALIFIED_OFFLINE_CONTROLS_ONLY",
+    "r4_source_sha256": "142beb013a955fb36e0696cc687fd51d64e4c313135b1ef9743ccb582dfe3234",
+    "r4_review_sha256": "2195a7426913a20806f3621b52f9e9f006d5f233635ef7c6ac2d566005856e4f",
+    "real_original_case_admission": "NOT_READY",
+    "original_full13_bytes": 14755822222,
+    "existing_full_hydrate_staging_and_publish_peak_bytes": 29511637593,
+    "protected_free_floor_bytes": 104152956928,
+    "legacy_bundle_not_standard_Lifecycle_archive": true,
+    "candidate_controls_not_formal_science": true,
+    "cold_staging_plus_floor_lower_bound_bytes_excluding_additional_codec_bound": 133664594521,
+    "existing_all_phase_admission_callback_required_extra_bytes": 29511644444,
+    "existing_all_phase_admission_callback_minimum_free_bytes_excluding_additional_codec_bound": 133664601372,
+    "real_case_admission_source_review_sha256": "6114c4852644f375c5889632a2fcdb1b35bb1cc983da73a6f1478cd42b1f8a35"
+  },
+  "budget_and_resources": {
+    "cumulative_budget_USD": 100,
+    "existing_reservation_envelopes_USD": 99.55,
+    "reservations_are_not_supplier_spend": true,
+    "supplier_cost_reconciliation": "PENDING",
+    "new_funding_suballocation_issued": false,
+    "new_compute_VM_created": false,
+    "GCS_use_within_existing_authorization_allowed": true,
+    "original_global_deadline_UTC": "2026-10-15T08:54:46.960873Z"
+  },
+  "paper": {
+    "main_PDF_pages": 83,
+    "main_PDF_sha256": "c25d4706cd455063bb4e6b621763b3dbef6a0ee36ab132409fd77557423aeaed",
+    "new_N120_final_statistics_in_paper": false,
+    "new_PDF_build_or_page_validation_in_this_operation": false
+  },
+  "whole_goal_complete": false,
+  "R47_and_failed_attempts_preserved": true
+}

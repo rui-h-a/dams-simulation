@@ -1,5 +1,19 @@
 # Current evidence — 2026-10-11
 
+Snapshot: 2026-10-10T23:42:58.355842+00:00. N30 retains 66 confirmation pairs and 140 independent full-case recovery proofs. N120 retains 61/70 verified pairs (4 pilot + 57/66 confirmation); its original CLI is still revalidating existing raw data before the nine remaining confirmation worlds. At this snapshot, 41 existing pairs have been revalidated; these are not new worlds.
+
+A real 3,743-day, initially 1,000-person case passed an operations-only, copyless readonly state/ledger inspection: 1,076.50 seconds, peak RSS 83,017,728 bytes, zero new working database, actual exit 0 and reaped child. The final JSON and SQLite were fully hashed through EOF; the other eleven files inherit the prior full13 proof plus unchanged native metadata. Independent review checked the actual receipts, sources and monitoring, without independently replaying model transitions. This is neither the original writable Model API certificate nor a new paired world or permission to retire this case.
+
+The original study remains 35/144 cases and zero complete pilot paired worlds. Its 153,378,624,512-byte concurrent admission remains unchanged. The existing archive consumer is not ready for this real case: full hydration currently needs about 27.5 GiB of staging and publication above the protected floor, and the old bundle still needs a compatible read path. N30 cold retirement has 43 distinct completed receipts; R7 is still running. Actual free space is 105909932032 bytes, not an inferred logical deletion total.
+
+No new funding or compute VM was issued. The US$100 cumulative cap and existing reservations remain; reservations are not supplier invoices. N120 final precision/statistics, larger long-term studies, external validation, and final paper acceptance remain incomplete.
+
+[Full R48 observation](research-observation-r48.json). The unchanged R47 record follows.
+
+---
+
+# Current evidence — 2026-10-11
+
 Snapshot: 2026-10-10T22:40:41.183354+00:00. N120 retains61/70 paired worlds (4 pilot,57/66 confirmation at this immutable capture); original source1917 days remains unchanged. Current state: RUNNING_ORIGINAL_CLI_SOURCE_BOUND_ACTORS. CLI liveness can be cached full-raw revalidation, not new Model days/worlds; immutable pair capture times are not completion times or ETA. Final precision/statistics/paper acceptance remains pending. N30 retains70 paired worlds and140 full13 remote proofs.
 
 R5 actually exited1 and was reaped after27 of111 assigned closed cases;84 remained. Together with the retained three earlier cases,30 distinct N30 redundant-raw retirements are evidenced. The terminal2657/2657/0-pending prefix is immutable history, not a permanent current meter head. Its lastHTTP200 failed normal EOF (body0,reserved26161B); the earlier sequence221 non-EOF body1900544B/reserved3085182B remains charged too. HTTP status does not identify the failure cause. No refund/reset occurred.
