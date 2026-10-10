@@ -1,0 +1,112 @@
+{
+  "schema": "DAMS-n300-original-CLI-prepare-r45",
+  "UTC": "2026-10-10T20:48:37.199014+00:00",
+  "actual_prepare_start_UTC": "2026-10-10T20:32:04.876919+00:00",
+  "actual_prepare_exit_UTC": "2026-10-10T20:32:05.184733+00:00",
+  "status": "PREPARED_NOT_EXECUTED_NOT_ADMITTED",
+  "actual_prepare_exit_code": 0,
+  "producer_reaped": true,
+  "initial_population": 300,
+  "calendar_days_including_settlement_tail": 1917,
+  "full_observation_years": 5,
+  "settlement_tail_days": 90,
+  "planned_pilot_world_ids": [
+    42000,
+    42001,
+    42002,
+    42003
+  ],
+  "planned_pilot_cases": 8,
+  "pilot_inventory": [
+    {
+      "case_id": "a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17",
+      "world": 42000,
+      "arm": "startup-existing",
+      "canonical_full_config_sha256": "cf1f9ad6c32c3ac3fb9458f5dcf57b99d15ced6bdf48f9462eb652d79cecf8f1"
+    },
+    {
+      "case_id": "0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82",
+      "world": 42000,
+      "arm": "startup-founding",
+      "canonical_full_config_sha256": "7fd9d66351e9963e09c00174b585034f6189448371e4e7cb59bbafdb45556076"
+    },
+    {
+      "case_id": "fc80f4a7435199ad0e90e9e6c33c4ec4456f0951ee6340da6332fb20b77e6b2e",
+      "world": 42001,
+      "arm": "startup-existing",
+      "canonical_full_config_sha256": "4f0891789e9711a48246e5aa36e393a5018876c9ac6f08ff2ce6a895d75dabdf"
+    },
+    {
+      "case_id": "44dc5ad9d0f3cfc8b281fabb01cf4e6970606fe14c7a2b7bbb77068392a64f70",
+      "world": 42001,
+      "arm": "startup-founding",
+      "canonical_full_config_sha256": "e1e4db058888de835809f16baf7b7ce15a895d51577ff18de85795e7ca77b8dc"
+    },
+    {
+      "case_id": "cfc525c9a9baaee38d77fe47b355d3c5740ac66d20f2929023e769e535fa846e",
+      "world": 42002,
+      "arm": "startup-existing",
+      "canonical_full_config_sha256": "f4336fab221d6b17f34f105efc01029867cfe1e37b8a3b23f0f0e35a1a0fc268"
+    },
+    {
+      "case_id": "1349b3ad6fe3b8bf8b64eca44b0c9449de50d0e43360de486be7f68f1bad249e",
+      "world": 42002,
+      "arm": "startup-founding",
+      "canonical_full_config_sha256": "5f12750ca291776b66cc2568ebb73b54ede73c068b8ec7b19764ce309233437d"
+    },
+    {
+      "case_id": "91832b8824880bac51da97f013e580e4b687e9cde7896221b1f0e576528f0062",
+      "world": 42003,
+      "arm": "startup-existing",
+      "canonical_full_config_sha256": "45e9427b301fb9447a4077d1ea792ebc1c2c36150f781eec648257750cfa7e57"
+    },
+    {
+      "case_id": "075e6f26a0ccb1a9ff27f1229de6110db18bd8fb904543c085825a6b80902702",
+      "world": 42003,
+      "arm": "startup-founding",
+      "canonical_full_config_sha256": "471fd38d3471495eb6ad6ee81a2f537af5a79a0df9162d0253f239ecb8a2292d"
+    }
+  ],
+  "confirmation_world_start": 52000,
+  "confirmation_min": 16,
+  "confirmation_max": 128,
+  "assigned_confirmation_worlds": null,
+  "confirmation_count_requires_own_pilot_variance": true,
+  "N120_count66_not_transferred": true,
+  "completed_pilot_worlds": 0,
+  "completed_confirmation_worlds": 0,
+  "Model_execution_started_by_prepare": false,
+  "formal_READY_claimed": false,
+  "study_sha256": "3d6d4cfdeaccb5df0edf7c3493eb3217c2b3edd7e12708268a779d08fde48b4b",
+  "runtime_sha256": "3d7cdd13d051e46e1b8dc350d8ff798798fd4faa008460bcd65666135461f469",
+  "source_commit": "f9b8740bd21735ac9962d382fdf0ca652e07e917",
+  "entry_sha256": "2732dc6ff3d73e9848c022522e02a744ca0e77b775d472227585e8229784494a",
+  "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+  "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+  "independent_prepare_review_sha256": "0389f1d240984735461e7b01e9dad049b9fb9a3855affc2426f67acdfbbe73c6",
+  "actual_evidence_sha256": {
+    "start": "2ad05b49b6bf56341ccd211ef858f3ed29621c7d3dd2766cbe20a3d00a2b9465",
+    "exit": "3fd0eb826ea9625640c1e995579a9a3c9000f4d92b15e4ff3f5f7aa3e4fdff4a",
+    "stdout": "1c9dde88436761f69a85e286b3653ee693ca68c57e336b35056220bcad987a49",
+    "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "study": "3d6d4cfdeaccb5df0edf7c3493eb3217c2b3edd7e12708268a779d08fde48b4b",
+    "runtime": "3d7cdd13d051e46e1b8dc350d8ff798798fd4faa008460bcd65666135461f469"
+  },
+  "declared_resource_profile": {
+    "N300_case_output_cap_bytes": 17179869184,
+    "pair_scheduler_batch_output_bytes": 34628173824,
+    "pair_free_threshold_bytes": 120259084288,
+    "max_workers": 2,
+    "CPU_budget": 2,
+    "per_world_RSS_bytes": 536870912,
+    "aggregate_memory_budget_bytes": 1073741824
+  },
+  "formal_admission_pending": [
+    "whole-machine CPU/RAM and storage capacity",
+    "source-bound execution ownership and persistence",
+    "own pilot then disjoint confirmation roster"
+  ],
+  "resource_estimates_are_not_actual_capacity_measurements": true,
+  "empirical_validation": false,
+  "overall_goal_complete": false
+}
