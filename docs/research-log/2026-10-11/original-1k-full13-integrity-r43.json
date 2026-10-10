@@ -1,0 +1,21 @@
+{
+  "schema": "DAMS-original-1k-complete-leaf-byte-integrity-r43",
+  "UTC": "2026-10-10T19:18:01.984628+00:00",
+  "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+  "manifest_sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9",
+  "calendar_days": 3743,
+  "actual_full13_result_sha256": "fa236b429e80696afe618ea8e41a465866f405fc115139ac5c502647e68e2267",
+  "verified_files": 13,
+  "verified_original_bytes": 14755822222,
+  "bounded_actual_read_seconds": 220.94916824999382,
+  "all_accepted_SHA_and_binary_EOF": true,
+  "original_source_and_native_metadata_unchanged": true,
+  "Model_restore_executed": false,
+  "archive_registration_executed": false,
+  "scientific_worlds_added": 0,
+  "restore_minimum_additional_working_SQLite_bytes": 3681513472,
+  "restore_admission_needs_safe_floor_plus_working_DB_and_temporary_margin": true
+}
