@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "scope": "offline operator retention capability; dummy cases only",
+  "candidate_sha256": "eba48e962b0ebc212ebe736b1a7e317ad958226bd6eb0c5b4c912a2f139277a2",
+  "patch_sha256": "7a991c7198d94277a900fac9022d76a533b93da2588fd3bcc9be5c7600be4d5b",
+  "author_rounds": [
+    {
+      "round": 1,
+      "UTC": "2026-10-10T15:26:59.051989+00:00",
+      "exit_code": 0,
+      "wall_seconds": 18.918713874998502,
+      "log_sha256": "26b38cd9a2fe2b46a34e98272b2f5f3a1e434dd1ffa600ac527305702b72beed",
+      "test_summary": [
+        "Ran 95 tests in 18.718s",
+        "OK"
+      ],
+      "fresh_process": true,
+      "formal_cases": false,
+      "network": false
+    },
+    {
+      "round": 2,
+      "UTC": "2026-10-10T15:27:18.031146+00:00",
+      "exit_code": 0,
+      "wall_seconds": 15.956842291983776,
+      "log_sha256": "1cfc6da17e4460c87dfd8509950f731a8e186d730948c779bcd7ed9149c1c211",
+      "test_summary": [
+        "Ran 95 tests in 15.702s",
+        "OK"
+      ],
+      "fresh_process": true,
+      "formal_cases": false,
+      "network": false
+    }
+  ],
+  "syntax_parsed_modules": 37,
+  "independent_controls": [
+    {
+      "name": "valid_explicit_pin_and_default_TTL_no_context_leak",
+      "status": "PASS"
+    },
+    {
+      "name": "external_root_pin_cannot_retarget_case_id",
+      "status": "PASS"
+    },
+    {
+      "name": "external_root_pin_cannot_retarget_definition_sha256",
+      "status": "PASS"
+    },
+    {
+      "name": "external_root_pin_cannot_retarget_archive_sha256",
+      "status": "PASS"
+    },
+    {
+      "name": "external_root_pin_cannot_retarget_policy_sha256",
+      "status": "PASS"
+    },
+    {
+      "name": "external_root_pin_cannot_retarget_registered_epoch",
+      "status": "PASS"
+    },
+    {
+      "name": "real_expiry_after_delete_intent_default_refuses_then_fresh_grant_resumes_history",
+      "status": "PASS"
+    },
+    {
+      "name": "registration_utc_mutation_after_plan_cannot_rebase_authority",
+      "status": "PASS"
+    },
+    {
+      "name": "valid_TTL_capability_cannot_override_changed_source_gate",
+      "status": "PASS"
+    },
+    {
+      "name": "valid_TTL_capability_cannot_manufacture_second_domain_backend",
+      "status": "PASS"
+    },
+    {
+      "name": "valid_TTL_capability_cannot_waive_live_reader_lease",
+      "status": "PASS"
+    },
+    {
+      "name": "expired_explicit_grant_never_falls_back_even_when_default_TTL_elapsed",
+      "status": "PASS"
+    }
+  ],
+  "independent_result_sha256": "ed50a5e3b35605e74da45d14a421b83b8d319b34ce4e8ad526e5edab5ec2d0d6",
+  "independent_receipt_sha256": "62889810cd6ec68c94bd230d180b52d2a717b33581fef5ed8d35172b835b6913",
+  "original_sources_unchanged": true,
+  "default_retention_seconds": 86400,
+  "daemon_default_unchanged": true,
+  "actual_case_retirement": false,
+  "actual_provider_or_fault_domain_certification": false,
+  "failed_intermediate_iterations_preserved": true,
+  "limits": [
+    "Caller-pinned root capability is not a digital signature.",
+    "A default call cannot discover or mint authorization.",
+    "Expired refusal may leave intact bytes in quarantine.",
+    "No actual OS wall-clock rollback or power loss was induced.",
+    "No N120 archive-aware resume migration is certified."
+  ]
+}

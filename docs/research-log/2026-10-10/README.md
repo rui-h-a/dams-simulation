@@ -1,3 +1,7 @@
+## Newer dated evidence: 2026-10-11
+
+See [the current snapshot](../2026-10-11/README.md). The following R38/R37 records remain unchanged historical observations.
+
 ## Latest actual observation: 2026-10-10T14:31:18.694113+00:00 (R38)
 
 N120 retains four pilot and 23 confirmation paired worlds (27/70), all with both complete 1,917-day arms and original raw-gate receipts; 43 confirmation worlds remain. The latest pair, world 51022, starts with 120 people and ends with 174 active people in both arms. These are synthetic exogenous-growth results, not calibrated real-enterprise effects. N30 retains all 70 scientific pairs and adverse output/resource findings. Its independent backup has 98/140 distinct complete 13-file generation/EOF/SHA proofs at this cutoff. Original144 remains 35 accepted cases (28 prefixes, seven complete strategies), zero complete paired worlds and 109 cases remaining. Process observations are dated and do not count as completion.

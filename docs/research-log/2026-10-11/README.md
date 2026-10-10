@@ -1,0 +1,11 @@
+# Current evidence — 2026-10-11
+
+Snapshot: 2026-10-10T15:48:15.847379+00:00. N120 has 4 pilot + 32/66 confirmation paired worlds (36/70); 34 confirmation worlds remain. Each accepted pair retains two complete 1917-day trajectories. N30 remains 70 accepted paired worlds; adverse findings and the four precision gates are preserved. Actual generation-bound complete13 backup proofs cover 122/140 N30 cases; whole-batch closeout is still required. Original 1000-person pilot remains 35/144 accepted cases and zero complete paired worlds.
+
+[Full snapshot](research-observation-r39.json) · [Actual retention controls](storage-retention-r2-controls.json) · [Previous measurements and scale registries](../2026-10-10/README.md).
+
+The operator retention increment preserves the original default and every archive, source, ownership, result, recovery and backup gate. A caller may supply an externally pinned, case-specific expiring capability only to shorten an operator TTL. Per-transaction authorization history survives partial deletion and a fresh-grant resume. This code does not authorize retirement of active N120 raw paths or of original files still fenced by the running N30 backup actor. Two 95-control fresh runs and 12 different-owner counterexamples passed; intermediate failures are retained. Actual-provider proof, archive-aware research resume and power-loss durability are separate requirements.
+
+Replay the published dummy controls with `python -m unittest discover -s tests -p 'test_storage_lifecycle*.py' -v`. These are operator tests, not formal research or external validation. Full closed N30 case hydration and frozen-model final checkpoint restoration passed without advancing any day; a separately implemented full-byte check verified all13 plus the restored working database. Only those reproducible owned restore copies were retired, retaining original science and archives.
+
+The latest formal PDF remains83 pages. No new paper result is inferred from retention controls, a single restore or cloud preparation. GCP resource counts are dated actual queries, not claims that all recurring services have been closed. Entire research, larger studies, external validation, final PDF and paid-service closure remain incomplete.

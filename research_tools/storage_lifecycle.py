@@ -248,12 +248,14 @@ class Lifecycle:
             self._local.backend_checks = {}
             self._local.io_bytes = 0; self._local.io_started = time.monotonic()
             self._local.archive_view = None
+            self._local.retention_authorization = None
             try:
                 yield
             finally:
                 self._local.deadline = float("inf")
                 self._local.backend_checks = {}
                 self._local.archive_view = None
+                self._local.retention_authorization = None
 
     def _hash(self, path, expected=None):
         self._tick()
@@ -713,6 +715,7 @@ class Lifecycle:
             raise GuardError("cleanup journal is not an admitted derived artifact")
         if is_original:
             self._promotion(dest, definition)
+            self._check_retention_authorization(require_ttl_elapsed=True)
         qname = _key(txn["quarantine_name"]); quarantine = self.vault / "quarantine" / qname
         source = folder / row["relative"]
         protected = {_path(g["pin"]["path"]) for g in definition["gates"]}
@@ -733,6 +736,7 @@ class Lifecycle:
             if source.stat().st_dev != self.vault.stat().st_dev:
                 raise GuardError("transactional quarantine needs the same filesystem")
             with _directory(source.parent) as parent, _directory(quarantine.parent) as qparent:
+                if is_original: self._check_retention_authorization(require_ttl_elapsed=True)
                 if _identity(os.stat(source.name, dir_fd=parent, follow_symlinks=False)) != txn["identity"]:
                     raise GuardError("source swapped before quarantine rename")
                 _rename_noreplace(parent, source.name, qparent, qname)
@@ -747,9 +751,11 @@ class Lifecycle:
         self._gates(definition); self._backup(definition, row); self._retained(row)
         # Complete immutable CAS/backends were fully decoded at the start of
         # THIS exclusive operation; no archive writer/GC can run under the lock.
+        if is_original: self._check_retention_authorization(require_ttl_elapsed=True)
         actual = self._hash(quarantine, row)
         txn["phase"] = "delete-intent"; self._write(dest / "state.json", state)
         with _directory(quarantine.parent) as qparent:
+            if is_original: self._check_retention_authorization(require_ttl_elapsed=True)
             if _identity(os.stat(qname, dir_fd=qparent, follow_symlinks=False)) != actual["identity"]:
                 raise GuardError("quarantine changed before final unlink")
             os.unlink(qname, dir_fd=qparent); os.fsync(qparent)
@@ -844,19 +850,122 @@ class Lifecycle:
             return {"status": "AUTHORITATIVE_ARCHIVE_PROMOTION_PASS", "case_id": case_id,
                     "archive_sha256": digest, "actual_backends": receipts, "physical_raw_evicted": False}
 
-    def evict_closed_raw(self, case_id):
-        """Explicit promoted-original path eviction. Unique bytes are retained."""
+    def _check_retention_authorization(self, *, require_ttl_elapsed=False):
+        """Recheck a caller-pinned capability; it changes ONLY operator TTL.
+
+        The caller/root owns admission of the external SHA pin. Case metadata,
+        promotion, an archive or a backup flag cannot introduce this capability.
+        It is rechecked before quarantine and unlink, including resumed journals.
+        """
+        context = getattr(self._local, "retention_authorization", None)
+        if context is None: return None
+        path = self._pin(context["pin"])
+        value, raw = self._read(path)
+        if (len(raw) != context["pin"]["bytes"]
+                or hashlib.sha256(raw).hexdigest() != context["pin"]["sha256"]):
+            raise GuardError("retention authorization differs from its external SHA pin")
+        snapshots = {}
+        for name, target, expected_sha in (
+                ("authorization", path, context["pin"]["sha256"]),
+                ("definition", context["dest"] / "definition.json", context["definition_sha256"]),
+                ("archive", context["dest"] / "archive.json", context["archive_sha256"])):
+            _, data = self._read(target)
+            if hashlib.sha256(data).hexdigest() != expected_sha:
+                raise GuardError("retention authorization immutable binding changed")
+            snapshots[name] = _identity(target.stat())
+        if context.get("identities") is not None and snapshots != context["identities"]:
+            raise GuardError("retention authorization/binding identity changed")
+        fields = {"schema", "issuer", "authorization_id", "scope", "case_id",
+                  "definition_sha256", "archive_sha256", "policy_sha256", "registered_epoch",
+                  "issued_utc", "not_before_utc", "expires_utc", "retention_seconds",
+                  "active_writer_count", "hot_parent_dependency_count", "restore_recipe", "reason"}
+        if (not isinstance(value, dict) or set(value) != fields
+                or type(value["schema"]) is not int or value["schema"] != SCHEMA
+                or value["issuer"] != "root-case-retention-authorization-v1"
+                or value["scope"] != "shorten-operator-retention-only"
+                or value["case_id"] != context["case_id"]
+                or value["definition_sha256"] != context["definition_sha256"]
+                or value["archive_sha256"] != context["archive_sha256"]
+                or value["policy_sha256"] != context["policy_sha256"]
+                or hashlib.sha256(_json(asdict(self.policy))).hexdigest() != context["policy_sha256"]
+                or type(value["active_writer_count"]) is not int or value["active_writer_count"] != 0
+                or type(value["hot_parent_dependency_count"]) is not int or value["hot_parent_dependency_count"] != 0
+                or value["restore_recipe"] != "storage-lifecycle-restore-case-v1"
+                or not isinstance(value["reason"], str) or not 0 < len(value["reason"]) <= 1024):
+            raise GuardError("retention authorization case/archive/policy/definition/scope differs")
+        _key(value["authorization_id"])
+        ttl = value["retention_seconds"]
+        if type(ttl) not in (int, float) or not math.isfinite(ttl) or not 0 <= ttl < self.policy.retention_seconds:
+            raise GuardError("retention authorization must strictly shorten only the operator TTL")
+        state, _ = self._read(context["dest"] / "state.json")
+        epoch = state.get("registered_epoch")
+        if (type(epoch) not in (int, float) or not math.isfinite(epoch)
+                or type(value["registered_epoch"]) is not type(epoch)
+                or epoch != value["registered_epoch"] or epoch != context["registered_epoch"]):
+            raise GuardError("retention authorization registration binding differs")
+        try:
+            times = [datetime.fromisoformat(value[key]) for key in ("issued_utc", "not_before_utc", "expires_utc")]
+            if any(t.tzinfo is None for t in times): raise ValueError("timezone missing")
+            issued, starts, expires = [t.timestamp() for t in times]
+            registered = datetime.fromisoformat(state["registered_utc"])
+            if registered.tzinfo is None: raise ValueError("registration timezone missing")
+            now = time.time()  # real wall clock; neither registration nor expiry is rebased
+            if (not all(math.isfinite(t) for t in (issued, starts, expires, now))
+                    or not 0 <= epoch <= issued <= starts <= now < expires
+                    or abs(registered.timestamp() - epoch) > 1.0):
+                raise ValueError("future/expired/inconsistent time")
+            if require_ttl_elapsed and now - epoch < ttl:
+                raise ValueError("shortened TTL is not currently elapsed")
+        except (KeyError, TypeError, ValueError, OverflowError, OSError):
+            raise GuardError("retention authorization is not currently valid on the real clock") from None
+        context["identities"] = snapshots
+        return {"authorization_id": value["authorization_id"],
+                "authorization_sha256": context["pin"]["sha256"],
+                "definition_sha256": context["definition_sha256"],
+                "archive_sha256": context["archive_sha256"], "policy_sha256": context["policy_sha256"],
+                "issued_utc": value["issued_utc"], "expires_utc": value["expires_utc"],
+                "default_retention_seconds": self.policy.retention_seconds, "retention_seconds": ttl}
+
+    def evict_closed_raw(self, case_id, *, retention_authorization_pin=None):
+        """Promoted-only eviction; default TTL and every scientific gate remain.
+
+        Optional external root authority is expiring and case/definition/archive/
+        policy-bound. It does not promote content, admit backups, waive leases or
+        hot dependencies, or alter definitions, policies or registration times.
+        Ordinary maintain_once never supplies it.
+        """
         with self._operation(case_id):
             dest, definition, folder = self._definition(case_id); self._gates(definition)
             archive, digest = self._archive(dest, definition); self._local.archive_view = (archive, digest)
             self._promotion(dest, definition)
             state, _ = self._read(dest / "state.json")
             if state.get("archive_sha256") != digest: raise GuardError("raw eviction archive commit differs")
-            if time.time() - state["registered_epoch"] < self.policy.retention_seconds:
+            retention = None
+            if retention_authorization_pin is not None:
+                # Validate the pin shape before copying any caller-controlled data.
+                if (not isinstance(retention_authorization_pin, dict)
+                        or type(retention_authorization_pin.get("bytes")) is not int
+                        or not 0 < retention_authorization_pin["bytes"] <= MAX_METADATA):
+                    raise GuardError("retention authorization metadata exceeds its bound")
+                self._pin(retention_authorization_pin)
+                _, definition_bytes = self._read(dest / "definition.json")
+                self._local.retention_authorization = {
+                    "pin": dict(retention_authorization_pin), "dest": dest, "case_id": case_id,
+                    "definition_sha256": hashlib.sha256(definition_bytes).hexdigest(),
+                    "archive_sha256": digest, "policy_sha256": hashlib.sha256(_json(definition["policy"])).hexdigest(),
+                    "registered_epoch": state["registered_epoch"], "identities": None}
+                retention = self._check_retention_authorization()
+            ttl = self.policy.retention_seconds if retention is None else retention["retention_seconds"]
+            if time.time() - state["registered_epoch"] < ttl:
                 return {"status": "RETAINED_TTL", "case_id": case_id, "raw_paths_evicted": 0}
             before = shutil.disk_usage(self.vault).free; unlinked = []
             for txn in state["cleanup_transactions"]:
                 if txn.get("kind") == "promoted-original":
+                    if retention is not None and txn["phase"] != "deleted":
+                        admissions = txn.setdefault("retention_authorizations", [])
+                        if not admissions or admissions[-1]["authorization_sha256"] != retention["authorization_sha256"]:
+                            admissions.append({"admitted_utc": _utc(), **retention})
+                            self._write(dest / "state.json", state)
                     if self._finish_transaction(dest, definition, folder, state, txn, promoted=True): unlinked.append(txn)
             known = {t["relative"] for t in state["cleanup_transactions"]}
             gate_paths = {_path(g["pin"]["path"]) for g in definition["gates"]}
@@ -866,12 +975,15 @@ class Lifecycle:
                 actual = self._hash(folder / row["relative"], row)
                 txn = {"relative": row["relative"], "quarantine_name": "txn-" + case_id + "-" + os.urandom(12).hex(),
                        "identity": actual["identity"], "phase": "planned", "bytes": row["bytes"], "kind": "promoted-original"}
+                if retention is not None:
+                    txn["retention_authorizations"] = [{"admitted_utc": _utc(), **retention}]
                 state["cleanup_transactions"].append(txn); self._write(dest / "state.json", state)
                 if self._finish_transaction(dest, definition, folder, state, txn, promoted=True): unlinked.append(txn)
             self._gates(definition); self._archive(dest, definition)
             audit = {"operation": "promoted-raw-physical-eviction", "utc": _utc(), "raw_paths_evicted": len(unlinked),
                      "logical_unlinked_bytes": sum(t["bytes"] for t in unlinked), "scientific_content_deleted": False,
                      "new_scientific_samples": 0, "free_before": before, "free_after": shutil.disk_usage(self.vault).free}
+            if retention is not None: audit["explicit_root_retention_authorization"] = retention
             state["audit"].append(audit); self._write(dest / "state.json", state)
             return {"status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS", "case_id": case_id, **audit}
 
