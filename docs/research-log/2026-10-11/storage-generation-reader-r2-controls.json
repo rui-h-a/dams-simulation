@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "scope": "bounded fixed-generation reader and close guards; operator tests are not formal or external model validation",
+  "source_sha256": "f2a3ce5956a6cc3ba65c58078eb72c3460462d9a34bffa58d72264fe386b9cbc",
+  "author_original_controls_per_round": 32,
+  "author_original_fresh_rounds": 2,
+  "author_replay_of_prior_independent_controls_per_round": 18,
+  "author_replay_rounds": 2,
+  "different_owner_controls_per_round": 19,
+  "different_owner_fresh_rounds": 2,
+  "different_owner_all_pass": true,
+  "independent_receipt_sha256": "a6d9432216ba2425fe0161b11130ebc8517a0c2cb0664c22d98ce1efb5cf0ff0",
+  "prior_three_close_failures_preserved": true,
+  "backend_creation_budget_meter_and_credentials_are_not_reader_responsibilities": true,
+  "actual_provider_admission_separate": true
+}
