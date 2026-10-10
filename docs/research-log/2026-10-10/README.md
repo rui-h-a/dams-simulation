@@ -1,5 +1,18 @@
 # Current verified research snapshot
 
+As of 2026-10-10T10:51:43.608804+00:00: N30 retains all four pilot and 66 confirmation paired worlds, fixed precision targets and independent statistical checks; results are in the reviewed 79-page thesis. N120 has four pilot and seven of 66 confirmation paired worlds. Its original producer has stopped at the real disk-reservation guard, with incomplete-case checkpoints retained; it is not currently running. The original 144-case study retains 35 accepted cases and zero complete paired worlds.
+
+The isolated causal r3 candidate repairs the three independently reproduced r2 defects. Ninety-four author controls and two fixed 1,917-day persistence profiles pass; these are engineering evidence, not empirical calibration or additional formal worlds. Independent review remains separately dated.
+
+Full N30 backup remains in progress: 27/140 remote cases have complete 13-file binary-generation restore proofs at this cutoff. All primary archives were fully decoded; physical originals remain. Storage recovery does not delete unique evidence or relax scientific specifications.
+
+[Full current observation](research-observation-r34.json). The overall research remains incomplete.
+
+<details>
+<summary>Earlier dated observations, preserved unchanged</summary>
+
+# Current verified research snapshot
+
 As of 10 October 2026, 10:25 UTC: N30 has completed four pilot and 66 confirmation paired worlds; its four fixed precision targets and independent arithmetic checks pass. These synthetic results are now in the independently reviewed 79-page thesis, with all 116 formal source/assets verified on GitHub. N120 has four pilot and five of 66 confirmation paired worlds, and continues under its original frozen source. The original 144-case study retains 35 accepted cases and zero complete paired worlds; the overall research remains incomplete.
 
 The separate enterprise causal candidate is held after independent controls reproduced dropped non-workday growth signals, an inconsistent cumulative-revenue checkpoint acceptance, and a validated numerical order-envelope overflow. Its earlier 83 controls and two full-calendar engineering trajectories do not establish scientific correctness or empirical calibration. Repairs use a new isolated version and do not modify existing formal studies.
@@ -55,5 +68,7 @@ The storage validation also restored one already validated 13-file case from a m
 Snapshot 2026-10-10T10:25:37.053535+00:00 retains all 70 complete N30 paired records exactly. N120 has four closed pilot pairs and 5/66 closed confirmation pairs, each retaining both full 1,917-day arms, recorded raw hashes and typed normal exits. The fixed N120 confirmation roster excludes its own pilots. Current full source and metadata guards and stat-only raw rosters are recorded; this preparer does not repeat the raw scientific gate. Eight N120 pilot arms have a dated primary lossless-archive/full-restore event, with physical originals retained. N30 results are integrated into the independently reviewed 79-page thesis; the separate causal r2 candidate has 83 offline controls and two full-calendar engineering trajectories, without formal or empirical adoption. Original144 remains the separately dated 35/144 accepted cases and zero paired worlds. Full N30 GCS backup was actually launched; complete primary140-case decode and two selected remote13-file decode receipts are recorded, while full remote backup completion remains unaccepted. The overall research remains incomplete.
 
 [Full dated observation and preserved antecedents](research-observation-r33.json).
+
+</details>
 
 </details>
