@@ -1,0 +1,58 @@
+{
+  "actual_current_concept_figure_reading_size_review": {
+    "PDF_sha256": "871bf1c37f74142ea17451980869373f4cafb0bee9e3ba97334f502d4e52ddd1",
+    "actual_PDF_pages_rendered_and_viewed": [
+      17,
+      23,
+      29,
+      30,
+      32,
+      37,
+      40,
+      56
+    ],
+    "all75_page_visual_acceptance": false,
+    "concept_figures_checked": 8,
+    "formal_paired_results_added": false,
+    "reproducible_high_impact_defects_found": 0,
+    "source_PDF_main_body_and_figure_guards_unchanged": 16,
+    "total_PDF_pages": 75
+  },
+  "actual_previous_research_log_publication": {
+    "actual_API_calls": 118,
+    "all_old_contents_and_all_other_tree_leaf_OIDs_modes_types_preserved": true,
+    "force": false,
+    "main_commits": {
+      "rui-h-a/dams-simulation": "b53da1f37a957e8ef8980a4f70891b9102ce399d",
+      "rui-h-a/dams-thesis": "6da2e7ddbfeadda8c14ac2ef69c67ec7890bff7b"
+    },
+    "new_payloads_per_repository": 3,
+    "observed_utc": "2026-10-10T00:03:22.862105+00:00",
+    "old_JSONs_per_repository": 20,
+    "visibility_and_parent_verified": true
+  },
+  "actual_private_formal_draft_object_catchup": {
+    "all_branches_sync_claim": false,
+    "all_non_target_refs_HEAD_index_config_tracked_stats_named_guards_and_statuses_preserved": true,
+    "branch": "research/formal-thesis-draft-20261010",
+    "commit": "fe1b6aed61ed3f028caced4691f7d23eff7d5e32",
+    "full_asset_blobs_and_physical_assets_per_copy": 68,
+    "full_blob_bytes_per_copy": 1977277,
+    "independent_physical_copies_verified": 2,
+    "observed_utc": "2026-10-10T00:37:35.448251+00:00",
+    "parent": "07f3bcc8796ec1be79e544dbe3f5d1ef5058c14d",
+    "tree": "67757a94ddacd705197874b8398579b2a2470e61",
+    "worktree_or_source_writes": false
+  },
+  "execution_source": {
+    "longitudinal_driver9_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "science_core25_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "scientific_spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "historical_pending_or_timeout_receipts_retained_at_original_cutoffs": true,
+  "newly_root_accepted_case_reported": "b48a23516beee42e66a44245b3bafb38c4908acb6b1abd6ac9dcff2405278778",
+  "r23_preparation_and_publication_scope": "Three dated records only; immutable old JSONs and complete previous README retained; no new scientific execution or paid resources.",
+  "root_acceptance_and_publication_are_distinct": true,
+  "schema": "DAMS-engineering-preservation-r23-1",
+  "whole_goal_complete": false
+}
