@@ -6,10 +6,13 @@ cd "$task_root"
 case "$(uname -s)" in Darwin|Linux) ;; *) echo 'Use a POSIX Linux/macOS terminal or WSL2; native Windows is not verified.' >&2; exit 2;; esac
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   cat <<'HELP'
-Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y] [--scale PEOPLE]
-                [--output DIRECTORY] [--runtime-limits JSON]
+Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|small-enterprise-5y] [--scale PEOPLE]
+                [--output DIRECTORY] [--runtime-limits JSON] [--prepare-only]
 Defaults: bounded local validation, 120 people, runs/validation-n120.
 Full research runs use the same versioned pipeline and automatic resource scheduler.
+small-enterprise-5y requires explicit --scale 30|120|300, --output and
+--runtime-limits; --prepare-only freezes its inventory without executing cases.
+It uses the retained five-year paired-study helper, never a paid cloud default.
 Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
 private mode-0600 file. Its explicit execution mode selects legacy GCS or
 compute-only IAP phases; no public paid default or implicit storage fallback.
@@ -18,24 +21,41 @@ HELP
 fi
 task_spec=validation
 task_scale=120
+task_scale_explicit=false
 task_output=
 task_limits=
 task_prepare=false
+require_option_value() {
+  if (($# < 2)) || [[ -z "$2" || "$2" == -* ]]; then
+    echo "${1}: missing argument value; paths beginning with '-' require a './' prefix." >&2
+    exit 2
+  fi
+}
 while (($#)); do
   case "$1" in
-    --spec) task_spec=${2:?missing spec}; shift 2;;
-    --scale) task_scale=${2:?missing scale}; shift 2;;
-    --output) task_output=${2:?missing output}; shift 2;;
-    --runtime-limits) task_limits=${2:?missing limits}; shift 2;;
+    --spec) require_option_value "$@"; task_spec=$2; shift 2;;
+    --scale) require_option_value "$@"; task_scale=$2; task_scale_explicit=true; shift 2;;
+    --output) require_option_value "$@"; task_output=$2; shift 2;;
+    --runtime-limits) require_option_value "$@"; task_limits=$2; shift 2;;
     --prepare-only) task_prepare=true; shift;;
     *) echo "Unknown argument: $1" >&2; exit 2;;
   esac
 done
-case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
+case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|small-enterprise-5y) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
 case "$task_scale" in ''|*[!0-9]*) echo 'Scale must be an integer population.' >&2; exit 2;; esac
 if ((task_scale<2)); then echo 'Scale must be at least two people.' >&2; exit 2; fi
+if [[ "$task_spec" == small-enterprise-5y ]]; then
+  [[ "$task_scale_explicit" == true ]] || { echo 'Small-enterprise study requires explicit --scale 30, 120 or 300.' >&2; exit 2; }
+  case "$task_scale" in 30|120|300) ;; *) echo 'Small-enterprise population must be 30, 120 or 300.' >&2; exit 2;; esac
+  [[ -n "$task_output" ]] || { echo 'Small-enterprise study requires --output.' >&2; exit 2; }
+  [[ -n "$task_limits" ]] || { echo 'Small-enterprise study requires --runtime-limits.' >&2; exit 2; }
+  [[ -z "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]] || { echo 'Small-enterprise selector is local; private cloud execution requires a separately admitted coordinator.' >&2; exit 2; }
+fi
 if [[ -z "$task_output" ]]; then task_output="runs/${task_spec}-n${task_scale}"; fi
-if command -v uv >/dev/null 2>&1 && [[ "$(uv --version)" == 'uv 0.9.26'* ]]; then
+is_pinned_uv_version() {
+  [[ "$1" == 'uv 0.9.26' || "$1" == 'uv 0.9.26 '* ]]
+}
+if command -v uv >/dev/null 2>&1 && is_pinned_uv_version "$(uv --version)"; then
   task_uv=$(command -v uv)
 else
   # Official release artifacts pinned by SHA256; no sudo or profile changes.
@@ -68,12 +88,17 @@ else
 fi
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 task_uv_version=$("$task_uv" --version)
-[[ "$task_uv_version" == 'uv 0.9.26'* ]] || { echo 'uv tool version differs from the verified bootstrap version.' >&2; exit 2; }
+is_pinned_uv_version "$task_uv_version" || { echo 'uv tool version differs from the verified bootstrap version.' >&2; exit 2; }
 echo "Using $task_uv_version at $task_uv; managed Python 3.14.2"
 echo "Preparing locked dependencies; spec=$task_spec population=$task_scale output=$task_output"
 task_sync_args=(sync --locked --extra analysis --python 3.14.2)
 if [[ "${DAMS_OFFLINE_DEPENDENCIES:-0}" == 1 ]]; then task_sync_args+=(--offline); fi
 "$task_uv" "${task_sync_args[@]}"
+if [[ "$task_spec" == small-enterprise-5y ]]; then
+  task_args=(--population "$task_scale" --output "$task_output" --runtime-limits "$task_limits")
+  if [[ "$task_prepare" == true ]]; then task_args+=(--prepare-only); fi
+  exec "$task_uv" run --no-sync python -m research_tools.small_enterprise "${task_args[@]}"
+fi
 if [[ "$task_prepare" == true ]]; then
   "$task_uv" run --no-sync python - "$task_spec" "$task_scale" <<'PY'
 import sys
