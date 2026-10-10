@@ -1,0 +1,114 @@
+{
+  "schema": "DAMS-oldSID-historical-layout-and-actual-custody-r47",
+  "UTC": "2026-10-10T22:40:41.183354+00:00",
+  "historical_snapshot": "2b685dee6fad03abf8d0b42b121d69e04e155269a881da1b8ff4802e74e0bbcd",
+  "scientific_source_is_distinct_from_current35_4daf": true,
+  "original_logical_files": 101,
+  "original_logical_bytes": 30018917994,
+  "historical_redundant_payloads_retired": 30,
+  "historical_retired_logical_bytes": 24265368797,
+  "historical_observed_free_delta_bytes": 14928707584,
+  "saved_present_files": 71,
+  "saved_present_logical_bytes": 5753549197,
+  "saved_layout_cutoff_UTC": "2026-10-10T21:49:19.910402+00:00",
+  "historical_logical30GB_is_not_current_freeable_bytes": true,
+  "free_delta_not_exclusive_attribution": true,
+  "retained_failed_SQLite_files": 3,
+  "retained_failed_SQLite_logical_bytes": 5660655616,
+  "failed8_minimum_retention_preserved": true,
+  "additional_retirement_authorized": false,
+  "fresh_fixed_two_copy_readback_actual_status": "ACTUAL_FIXED_OLD_SID_TWO_COPY_FULL_GH_READBACK_PASS",
+  "actual_readback_UTC": "2026-10-10T22:03:56.636973+00:00",
+  "actual_outer_exit0_reaped": true,
+  "copy_proofs": [
+    {
+      "copy": "a",
+      "release_id": 406853492,
+      "index_asset_id": 623040206,
+      "pack_assets": [
+        {
+          "asset_id": 622782761,
+          "bytes": 536870912,
+          "sha256": "3beeea4dd65ec808088ac6a4980e65f02497e50daff519b5408aa8c2b362de42"
+        },
+        {
+          "asset_id": 622817411,
+          "bytes": 536870912,
+          "sha256": "360317fe75f667660e405ea9de7195fbf18c2ba3d889b032ce71377af8d2286c"
+        },
+        {
+          "asset_id": 622843652,
+          "bytes": 536870912,
+          "sha256": "81c98cd37638cf88fb4ee811ca3bcab6d639233394b2b214c34a3d67480b7a78"
+        },
+        {
+          "asset_id": 622875308,
+          "bytes": 536870912,
+          "sha256": "2969fa905765f714c591f04a64356066e48c6cb26f67fe3b0a41066c104aa04e"
+        },
+        {
+          "asset_id": 622902041,
+          "bytes": 536870912,
+          "sha256": "dbf53fff9c55e783aaefbcd5f4630e248d0d1f7fd51710578bb7ee4684ba17ba"
+        },
+        {
+          "asset_id": 622927534,
+          "bytes": 156481243,
+          "sha256": "f9621aac8e270ccdad2c7a0f1a9e7a5e2ef2b3c7aaf85627dba9fa2b02e3e958"
+        }
+      ],
+      "fixed_generations": 2871,
+      "all_binary_SHA_MD5_length_EOF_verified": true
+    },
+    {
+      "copy": "b",
+      "release_id": 406853502,
+      "index_asset_id": 623040629,
+      "pack_assets": [
+        {
+          "asset_id": 622793956,
+          "bytes": 536870912,
+          "sha256": "3beeea4dd65ec808088ac6a4980e65f02497e50daff519b5408aa8c2b362de42"
+        },
+        {
+          "asset_id": 622827633,
+          "bytes": 536870912,
+          "sha256": "360317fe75f667660e405ea9de7195fbf18c2ba3d889b032ce71377af8d2286c"
+        },
+        {
+          "asset_id": 622853922,
+          "bytes": 536870912,
+          "sha256": "81c98cd37638cf88fb4ee811ca3bcab6d639233394b2b214c34a3d67480b7a78"
+        },
+        {
+          "asset_id": 622886993,
+          "bytes": 536870912,
+          "sha256": "2969fa905765f714c591f04a64356066e48c6cb26f67fe3b0a41066c104aa04e"
+        },
+        {
+          "asset_id": 622911991,
+          "bytes": 536870912,
+          "sha256": "dbf53fff9c55e783aaefbcd5f4630e248d0d1f7fd51710578bb7ee4684ba17ba"
+        },
+        {
+          "asset_id": 622930808,
+          "bytes": 156481243,
+          "sha256": "f9621aac8e270ccdad2c7a0f1a9e7a5e2ef2b3c7aaf85627dba9fa2b02e3e958"
+        }
+      ],
+      "fixed_generations": 2871,
+      "all_binary_SHA_MD5_length_EOF_verified": true
+    }
+  ],
+  "same_GitHub_provider_correlation_preserved": true,
+  "new_scientific_samples": 0,
+  "fresh_Model_restore_claimed": false,
+  "publication_read_raw_or_remote_payloads": false,
+  "new_raw_retirement_by_readback": false,
+  "actual_evidence_sha256": {
+    "layout": "b0645c9975c7860b89f4a0280e09c234195fc94e58b7626d38673098b142a4ff",
+    "success": "e6cad4614eaf38cd4fa0c864ef5b95801244c8717542e80076f255c8f0558708",
+    "custody": "b35990cdbb808be44d1667d6456566ddc0dcc24127b97f57dcc9816c9697d4a3",
+    "outer": "8e825656c862b5e517103ca13eee297c48a975776bce3fa0e9f65ca4c3ea89a6"
+  }
+}
