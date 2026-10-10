@@ -1,0 +1,78 @@
+{
+  "execution_source": {
+    "longitudinal_driver9_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "science_core25_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "scientific_spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "original_0214_gate_acceptance": {
+    "actual_terminal_exit_code": 0,
+    "canonical1096_parent_origin_and_all_CSV_prefix_closure": true,
+    "full_raw_bytes": 10159196396,
+    "full_raw_files": 13,
+    "new_Model_or_completed_simulation_rerun": false,
+    "new_paired_worlds": 0,
+    "normal_direct_child_reaped_without_TERM_KILL": true,
+    "pre_post_full_SHA_stat_roster_equal": true,
+    "source56_full_SHA_stat_guarded": true
+  },
+  "paper_pending_result_consistency": {
+    "PDF_sha256": "871bf1c37f74142ea17451980869373f4cafb0bee9e3ba97334f502d4e52ddd1",
+    "corresponding_printed_pages": [
+      18,
+      33
+    ],
+    "frozen_spec_confirmation_range": [
+      16,
+      128
+    ],
+    "frozen_spec_n": 1000,
+    "frozen_spec_pilot_worlds": 4,
+    "full75_page_final_acceptance": false,
+    "longitudinal_effects_transition_payback_and_survival_differences": "PENDING",
+    "no_reproducible_completion_contradiction_found": true,
+    "pending_markers_present": true,
+    "physical_PDF_pages": [
+      19,
+      34
+    ]
+  },
+  "previous_r24_publication": {
+    "all_existing_leaf_entries_and_repository_visibility_preserved": true,
+    "full_Contents_readbacks": 6,
+    "full_blob_readbacks": 6,
+    "github_calls": 134,
+    "old_JSON_after_full_readbacks": 48,
+    "old_JSON_records_per_repository": 24,
+    "public_main_commit": "591b9c79b1edf926ea58f357e65edf8aea3feef5"
+  },
+  "publication_scope": {
+    "dated_files": 3,
+    "no_source_raw_or_private_draft_changes": true,
+    "old_JSON_records_per_repository": 26,
+    "old_JSON_total": 52,
+    "previous_README_exact_complete_prefix_bytes": 56873,
+    "request_ceiling": 142
+  },
+  "record_cutoff_utc": "2026-10-10T01:29:24.954590+00:00",
+  "redundant_derived_CAS_recycling": {
+    "all_archive_members_full_SHA_local_bytes_compared": 1021,
+    "complete_archive_stat_unchanged": true,
+    "new_scientific_samples": 0,
+    "observed_utc": "2026-10-10T01:15:50.595155+00:00",
+    "original13_raw_and_checkpoints_stat_unchanged": true,
+    "original_source_delete_authorized": false,
+    "original_source_or_active_case_mutations": 0,
+    "remote_archive_objects_not_mutated": true,
+    "remote_calls": 0,
+    "removed_derived_encoded_members": 999,
+    "removed_logical_bytes": 1030388263,
+    "retained_archive_bytes": 1032570880,
+    "retained_archive_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+    "retained_nonencoded_metadata_members": 22,
+    "safe_restore_required": "Stream only matching regular encoded/<SHA> member from fully SHA-bound retained archive; verify complete size/SHA before atomic materialization. Never extractall.",
+    "source_and_evidence_retained": true,
+    "status": "PASS_VERIFIED_REDUNDANT_DERIVED_CAS_RECYCLED"
+  },
+  "schema": "DAMS-engineering-preservation-r25-1",
+  "whole_goal_complete": false
+}

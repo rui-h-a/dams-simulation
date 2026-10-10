@@ -1,0 +1,240 @@
+{
+  "accepted_scientific_completion": {
+    "accepted_case_ids": [
+      "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+      "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+      "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+      "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+      "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+      "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+      "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+      "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+      "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "61f0b5c86ecbbdf58fc7ece8e31e9dac40062352b608db6a02d6ca0257e8af48",
+      "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+      "6837d30c15cb9e25f7a08da098008e9d1cea9409b7892294d188b0cdd83defec",
+      "697a171300530f0d300b4974b35e9853519956a6140edb498ced2e1f65c3580f",
+      "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+      "789e1f3d87bbdddbe934523b5de8e5358e4d4159f317c7661a3e641fe08d196a",
+      "799b86b37429c5eb7b2b05e9fdaa00b6f4c29584474898c895eb66b26fea1ef2",
+      "7fe58544fe85c8d9d894b4ec0bf06e30d8ac2eef6f333d4f503837edf704fb94",
+      "86a86b3a7dd89e74d29970e98fe431f9a578a2627539598aa7509df7f8280bca",
+      "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+      "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+      "8f687163b5e6822c632869a9dc0136b66f136e0b405bcd5acaa940c2d328bfe7",
+      "908c8fc9b30e25d4c7dcc65aba8e913ed6ad32ffb668b72ed65bbf1784608cf1",
+      "9d15701506a883efff43a9499c81de562a9c7192a31fb9180f0135ffc1f1fb36",
+      "a2fedfd7c76e1ca1f7e75bf8625b783d7cf3642f7a04673de8eeb3d2284fc79e",
+      "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+      "b48a23516beee42e66a44245b3bafb38c4908acb6b1abd6ac9dcff2405278778"
+    ],
+    "accepted_cases": 26,
+    "accepted_prefixes": 21,
+    "accepted_single_strategies": 5,
+    "basis": "Retained exact accepted25 baseline plus one independently accepted existing 0214 full branch case; not a new all144 raw census.",
+    "confirmation_worlds_complete": 0,
+    "confirmation_worlds_rule": {
+      "maximum": 128,
+      "minimum": 16
+    },
+    "formal_groups_complete": 0,
+    "paired_worlds": 0,
+    "pilot_worlds_complete": 0,
+    "pilot_worlds_required": 4,
+    "remaining_unaccepted_cases": 118,
+    "required_frozen_cases": 144,
+    "root_acceptance_utc": "2026-10-10T01:28:11.806655+00:00"
+  },
+  "classification": "precision-pilot; confirmation-not-run",
+  "counts_are_whole_goal_percentage_or_ETA": false,
+  "dated_small_metadata_observation": {
+    "attempt_records": 36,
+    "current_Python_function_or_simulation_day_or_ETA": "UNPROVEN",
+    "frozen_inventory_cases": 144,
+    "new_Model_worker_proven": false,
+    "new_raw_or_semantic_validation_by_observer": false,
+    "not_globally_atomic_snapshot_or_heartbeat": true,
+    "observation_utc": "2026-10-10T01:29:24.954590+00:00",
+    "original_owners_present_at_observation": true,
+    "per_world_required_prefixes": 9,
+    "per_world_required_strategies": 27,
+    "producer_complete_roles": {
+      "prehistory-prefix": 28,
+      "strategy": 6
+    },
+    "producer_complete_unique_cases": 34,
+    "producer_incomplete_inventory_cases": 110,
+    "world_readiness": [
+      {
+        "accepted": 6,
+        "producer_complete": 8,
+        "required": 36,
+        "world": 20000
+      },
+      {
+        "accepted": 8,
+        "producer_complete": 9,
+        "required": 36,
+        "world": 20001
+      },
+      {
+        "accepted": 5,
+        "producer_complete": 9,
+        "required": 36,
+        "world": 20002
+      },
+      {
+        "accepted": 7,
+        "producer_complete": 8,
+        "required": 36,
+        "world": 20003
+      }
+    ]
+  },
+  "execution_source": {
+    "longitudinal_driver9_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "science_core25_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "scientific_spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "formal_results_and_full_manuscript_acceptance": "PENDING",
+  "newly_root_accepted_original_single_strategy": {
+    "KILL_sent": false,
+    "Model_or_simulation_rerun": false,
+    "TERM_sent": false,
+    "actual_nonpayload_SQL_trace_records": 182,
+    "actual_readonly_SQLite_connections": 9,
+    "actual_resource_observations": 1331,
+    "all_1096_parent_CSV_rows_equal_child_prefix": true,
+    "arm_id": "traditional-dams",
+    "case_id": "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+    "complete_daily_history_state_accounting_and_retained_snapshot_checks_passed": true,
+    "config_sha256": "939c545c62d8b8805d1e7b7b7d2d066eecd710b7dcf8c17dab5f98ffcb174112",
+    "constructor_attempts": {
+      "ExactLedger.__init__": 0,
+      "LongitudinalEngine.__init__": 0,
+      "Model.__init__": 0
+    },
+    "expected_branch_origin": {
+      "parent_case_id": "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+      "parent_config_sha256": "6594a99bf3413a847e9726993289cf25d1ab51c82c8b5d92a236255d00be061f",
+      "parent_day": 1096,
+      "parent_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "parent_state_semantic_sha256": "7cbd7b0f6fee1dea047e3f4f5544df7bbe7788593dd6dbe162cf5d730a40a9c1"
+    },
+    "full_raw_SHA_stat_roster_pre_post_equal": true,
+    "full_raw_bytes": 10159196396,
+    "full_raw_files": 13,
+    "full_raw_pre_and_post_SHA_length_roster": {
+      ".longitudinal-working.sqlite": {
+        "bytes": 2531778560,
+        "sha256": "0ec6e9d49d9cef397066d7b562d2c7f224f95353962fc6a7cb8413bf97f47ba5"
+      },
+      "checkpoint-day-003706.json": {
+        "bytes": 11286899,
+        "sha256": "b68d0d9dd83af67c80c5bcefa94c89dcd2bb46317dabe26b13e5d30141f409ef"
+      },
+      "checkpoint-day-003706.sqlite": {
+        "bytes": 2526765056,
+        "sha256": "194064bfdc1fd2df6df044e3141abfd0f599103f3ba65f7b33dd5f8ec8579c2f"
+      },
+      "checkpoint-day-003743.json": {
+        "bytes": 11390571,
+        "sha256": "899356b0c08d9f057fef1890d12055983cc6ddbe473c96b120044716928eb30b"
+      },
+      "checkpoint-day-003743.sqlite": {
+        "bytes": 2531778560,
+        "sha256": "270b737ca82c1ace0e5c19499180de8f27ad7da23c9cba28b6a8986eda80abaa"
+      },
+      "checkpoint-index.json": {
+        "bytes": 1689,
+        "sha256": "0b47e0d87f4dd854621c6d5ad35c8a9ff2bb8a479dc4aa6c8eb3884f28329f68"
+      },
+      "final_state.json": {
+        "bytes": 11390561,
+        "sha256": "022eee4cb13dea2ce5507cb4e84da39d6d04a06ac7a2dae622bfae00dbff44a8"
+      },
+      "final_state.sqlite": {
+        "bytes": 2531778560,
+        "sha256": "270b737ca82c1ace0e5c19499180de8f27ad7da23c9cba28b6a8986eda80abaa"
+      },
+      "manifest.json": {
+        "bytes": 7258,
+        "sha256": "a7f0c04a221767616a5c19c63c61b91400f720c3e0a398d5792845344a288846"
+      },
+      "report.md": {
+        "bytes": 1567,
+        "sha256": "0da46d5fee008bb321b5971ebb8e14184b4ce72bc18efe484027dee2f0206956"
+      },
+      "report.svg": {
+        "bytes": 119778,
+        "sha256": "9f90e38236766372944cf08edccc9fd24bca7a15f439744845488d31143612d3"
+      },
+      "summary.json": {
+        "bytes": 2882,
+        "sha256": "a5597b5bd7233d7bb79a56a4da02b3f4b6a9c5f36b82a53b83a411cc856c30ce"
+      },
+      "timeseries.csv": {
+        "bytes": 2894455,
+        "sha256": "b0f33e2c0b84a607915ed6663837fa3c6de2844fa21545b5a4f9bae7282e3132"
+      }
+    },
+    "full_study_gate": false,
+    "historical_parent_full_raw_acceptance_reused_not_reexecuted": true,
+    "horizon_days": 3743,
+    "new_independent_worlds": 0,
+    "new_paired_worlds": 0,
+    "normal_direct_child_reaped": true,
+    "original_execution_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "original_validator": "research_tools.validate_longitudinal.CheckedLongitudinalCases.validate_case",
+    "parent_case_id": "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+    "parent_metadata_CSV_full_SHA_stat_pre_post_equal": true,
+    "parent_metadata_CSV_pre_and_post_SHA_length_roster": {
+      "manifest.json": {
+        "bytes": 6332,
+        "sha256": "80a8ec9d233d4e6e6a5d210136135ffa0b235b894507ac34cf44644dc6b7071a"
+      },
+      "timeseries.csv": {
+        "bytes": 806636,
+        "sha256": "1e154028014b771f24addaf1e07c98538593fc3c6b2aa92eb160eeda8eed21c4"
+      }
+    },
+    "parent_prefix_days": 1096,
+    "producer_manifest_sha256": "a7f0c04a221767616a5c19c63c61b91400f720c3e0a398d5792845344a288846",
+    "retained_snapshot_days": [
+      3743,
+      3743,
+      3706
+    ],
+    "root_acceptance_utc": "2026-10-10T01:28:11.806655+00:00",
+    "root_current_source56_full_SHA_stat_checked": true,
+    "source56_worker_pre_post_full_SHA_stat_equal": true,
+    "state_semantic_sha256": "ac0e7d0103479492b51d2b59cf5abfecef0844becdbb7f534ae421b75adbf096",
+    "status": "ROOT_ACCEPTED_ORIGINAL_0214_FULL_RAW_CASE",
+    "strategy": "fixed-3y",
+    "terminal_utc": "2026-10-10T01:24:24.351409+00:00",
+    "wall_seconds_including_cleanup": 1346.4076730000088,
+    "worker_and_supervisor_exit_codes": 0,
+    "world": 20001
+  },
+  "next_case_validation_at_record_cutoff": {
+    "arm_id": "century-dams",
+    "canonical_parent_case_id": "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+    "case_id": "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+    "dated_cutoff_utc": "2026-10-10T01:29:24.954590+00:00",
+    "launch_utc": "2026-10-10T01:29:13.918093+00:00",
+    "new_accepted_cases": 0,
+    "new_independent_paired_worlds": 0,
+    "original_days": 3743,
+    "parent_prefix_days": 1096,
+    "readonly_SQLite_connector_sha256": "cf3e6b7f6f3e59cf21a0d317b63d5f977618b5f5d1b6f3ce96f526111f3ce406",
+    "status": "ACTUAL_LIVE_AT_DATED_CUTOFF_NO_TERMINAL_PASS_OR_NEW_ACCEPTANCE",
+    "strategy": "fixed-3y",
+    "supervisor_sha256": "c6001bc4abdc0bcfb2289c6f42d119e427a248376c229ef96f0e97efca88ae76",
+    "worker_sha256": "3af67e06207bf732b3ed8bf582bfaa7ce32dff71507403a10f7787a0c9271678",
+    "world": 20002
+  },
+  "raw_archive_completeness_for_whole_study": "NOT_VERIFIED",
+  "schema": "DAMS-research-observation-r25-1",
+  "study": "longitudinal-adoption-5y",
+  "whole_goal_complete": false
+}
