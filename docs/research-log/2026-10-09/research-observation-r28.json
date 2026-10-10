@@ -1,0 +1,372 @@
+{
+  "actual_formal_entry_continuation": {
+    "GCP_guest_execution": false,
+    "automatic_restarts": 0,
+    "cached_case_reuse_requires_original_frozen_validation": true,
+    "entry_evidence": {
+      "bytes": 1029,
+      "sha256": "5c6bb8f05a0147424615cd654abc6e583cad07216319e9b1e492670be859eced"
+    },
+    "invocations": 1,
+    "new_Model_completion_observed_at_cutoff": false,
+    "new_independent_worlds_completed_at_cutoff": 0,
+    "original_execution_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "original_identity": {
+      "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+      "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+    },
+    "original_runtime_bytes": 789,
+    "original_runtime_sha256": "5bb350b3400482da8a9e5f27eb6eac5b75a673f25b36b7d68219b5e9e8bb2c8c",
+    "owned_launch_corroborated_utc": "2026-10-10T03:53:23.586232+00:00",
+    "paid_cloud_calls": 0,
+    "root_owned_launch_evidence": {
+      "bytes": 1583,
+      "sha256": "d339f2058626e2713edd302a9308a12adcfac399459ef7ef5681cec6f3fd0433"
+    },
+    "scale": 1000,
+    "spec": "longitudinal-adoption-5y",
+    "started_utc": "2026-10-10T03:53:08.531777+00:00",
+    "status": "ONE_FROZEN_FORMAL_ENTRY_ACTUALLY_LAUNCHED",
+    "uses_same_existing_144_case_inventory_and_completed34_case_identities": true
+  },
+  "b225_versioned_artifact_recovery": {
+    "additional_MC_worlds_or_samples": 0,
+    "all_original_stat_and_small_metadata_hash_guards_pass": true,
+    "arm": "startup-founding",
+    "artifact_result_evidence": {
+      "bytes": 221263,
+      "sha256": "abe8d01431fbedb01a08a79ed7f12e9d3737b7a5c2f210e1d37ec6c509fe56c6"
+    },
+    "artifact_stage_model_executions": 0,
+    "artifact_stage_normal_exit": 0,
+    "artifact_stage_owned_child_reaped": true,
+    "artifact_stage_wall_seconds": 67.21688220798387,
+    "canonical144_inventory_and_original_runtime_unchanged": true,
+    "canonical_replacement_sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480",
+    "case_id": "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+    "cloned_original_directories": 72,
+    "cloned_original_files": 504,
+    "context": "startup",
+    "days": 3743,
+    "full3743_gate_PASS_claimed": true,
+    "full3743_independent_raw_gate_status": "ACTUAL_INDIVIDUAL_RAW_GATE_PASS_INDEPENDENT25_PASS_ROOT_EXISTING_CASE_ACCEPTED",
+    "full3743_independent_terminal_review": {
+      "all_checks_passed": true,
+      "bytes": 45630,
+      "check_count": 25,
+      "sha256": "92cc096faf60690de9b659538a34fad96000973c7ed23b5436f7accee524c491",
+      "status": "NO_BLOCKER_INDEPENDENT_TERMINAL_JOINT_EVIDENCE_25_CHECKS_PASS"
+    },
+    "full3743_individual_raw_gate": {
+      "Model_or_simulation_execution": false,
+      "all13_full_prepost_bytes_and_SHA_equal": true,
+      "all_final_and_retained_checkpoint_full_bytes_source_config_semantic_state_ledger_and_day_history_checked": true,
+      "case_id": "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+      "config_sha256": "586263acfa68e0fe04a8743a43fd7fe1268e6c9195dbf69d26d633f3a5c5d1e4",
+      "day": 3743,
+      "direct_child_reaped": true,
+      "exit_code": 0,
+      "finished_utc": "2026-10-10T03:46:15.408743+00:00",
+      "full3743daily_CSV_history_events_stocks_state_accounting_summary_and_required_output_roster_checked": true,
+      "full_raw_after": {
+        ".longitudinal-working.sqlite": {
+          "bytes": 3679629312,
+          "sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480"
+        },
+        "checkpoint-day-003690.json": {
+          "bytes": 12746356,
+          "sha256": "e24c972002d9eef1de1132ee3f91bafecfe822683e20e70271686863c9d3772e"
+        },
+        "checkpoint-day-003690.sqlite": {
+          "bytes": 3667795968,
+          "sha256": "21dfb2fbfc68763a9977ee517aea8bfe2875798c731ece27c5fe24c738d3255d"
+        },
+        "checkpoint-day-003743.json": {
+          "bytes": 12913477,
+          "sha256": "84efe4468cbf6566c83e36780b201c33da95ee9212e5b063bc3dd6d256571606"
+        },
+        "checkpoint-day-003743.sqlite": {
+          "bytes": 3679629312,
+          "sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480"
+        },
+        "checkpoint-index.json": {
+          "bytes": 1689,
+          "sha256": "c86f577ca4a9cb06c62a777cce8c3d33c4af30dac34d98e0ee775a08963e5fd8"
+        },
+        "final_state.json": {
+          "bytes": 12913467,
+          "sha256": "c347767d049e4ba25d0a9a69c28f9508e9f3719d86fb30e0e8efbbbfa5a375da"
+        },
+        "final_state.sqlite": {
+          "bytes": 3679629312,
+          "sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480"
+        },
+        "manifest.json": {
+          "bytes": 11332,
+          "sha256": "3d19705069ad9640c764dd0c471295a2942a8c2e4cde5d7e36da98aa96d9f3fa"
+        },
+        "report.md": {
+          "bytes": 1555,
+          "sha256": "8b5f1ae3ec2fea39a3d14870a177b3a1fa28c1776e62cb42641e4f425003f60a"
+        },
+        "report.svg": {
+          "bytes": 119873,
+          "sha256": "c1c44d91e070a3fce6c4f4188a6b324c9c79c8238557dec20f917dad7eb05970"
+        },
+        "summary.json": {
+          "bytes": 2496,
+          "sha256": "6d1145b515da7c50a186f03631186b7c605625946a96d3b3ed02247d3082eda0"
+        },
+        "timeseries.csv": {
+          "bytes": 2921411,
+          "sha256": "29fcb24491bbe0fc88f540c44e9a198b40b978dc6cc2843eccd3c52ca7c2321b"
+        }
+      },
+      "full_raw_before": {
+        ".longitudinal-working.sqlite": {
+          "bytes": 3679629312,
+          "sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480"
+        },
+        "checkpoint-day-003690.json": {
+          "bytes": 12746356,
+          "sha256": "e24c972002d9eef1de1132ee3f91bafecfe822683e20e70271686863c9d3772e"
+        },
+        "checkpoint-day-003690.sqlite": {
+          "bytes": 3667795968,
+          "sha256": "21dfb2fbfc68763a9977ee517aea8bfe2875798c731ece27c5fe24c738d3255d"
+        },
+        "checkpoint-day-003743.json": {
+          "bytes": 12913477,
+          "sha256": "84efe4468cbf6566c83e36780b201c33da95ee9212e5b063bc3dd6d256571606"
+        },
+        "checkpoint-day-003743.sqlite": {
+          "bytes": 3679629312,
+          "sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480"
+        },
+        "checkpoint-index.json": {
+          "bytes": 1689,
+          "sha256": "c86f577ca4a9cb06c62a777cce8c3d33c4af30dac34d98e0ee775a08963e5fd8"
+        },
+        "final_state.json": {
+          "bytes": 12913467,
+          "sha256": "c347767d049e4ba25d0a9a69c28f9508e9f3719d86fb30e0e8efbbbfa5a375da"
+        },
+        "final_state.sqlite": {
+          "bytes": 3679629312,
+          "sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480"
+        },
+        "manifest.json": {
+          "bytes": 11332,
+          "sha256": "3d19705069ad9640c764dd0c471295a2942a8c2e4cde5d7e36da98aa96d9f3fa"
+        },
+        "report.md": {
+          "bytes": 1555,
+          "sha256": "8b5f1ae3ec2fea39a3d14870a177b3a1fa28c1776e62cb42641e4f425003f60a"
+        },
+        "report.svg": {
+          "bytes": 119873,
+          "sha256": "c1c44d91e070a3fce6c4f4188a6b324c9c79c8238557dec20f917dad7eb05970"
+        },
+        "summary.json": {
+          "bytes": 2496,
+          "sha256": "6d1145b515da7c50a186f03631186b7c605625946a96d3b3ed02247d3082eda0"
+        },
+        "timeseries.csv": {
+          "bytes": 2921411,
+          "sha256": "29fcb24491bbe0fc88f540c44e9a198b40b978dc6cc2843eccd3c52ca7c2321b"
+        }
+      },
+      "full_raw_bytes": 14748315560,
+      "full_study_gate": false,
+      "new_independent_worlds": 0,
+      "original_execution_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+      "original_identity": {
+        "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+        "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+        "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+      },
+      "peak_combined_RSS_bytes": 285786112,
+      "peak_worker_RSS_bytes": 262520832,
+      "producer_manifest_sha256": "3d19705069ad9640c764dd0c471295a2942a8c2e4cde5d7e36da98aa96d9f3fa",
+      "retained_snapshot_days_verified_by_unchanged_original_gate": [
+        3743,
+        3743,
+        3690
+      ],
+      "scientific_case_acceptance": "ACCEPTED_EXISTING_RECOVERED_B225_FULL3743_ORIGINAL_RAW_CASE",
+      "source56_full_bytes_stat_before_after_equal": true,
+      "state_semantic_sha256": "e5f7dc3734f7917aaf34199badd9e31829834b949377d84c6efa7a12d0d35873",
+      "status": "PASS_ACTUAL_ORIGINAL_CLOSED_COMPLETE_CASE_RAW_GATE",
+      "supervisor_wall_seconds_including_cleanup": 998.137562791002,
+      "terminal_returned_utc": "2026-10-10T03:46:16.040163+00:00",
+      "wall_seconds": 997.4612874589802,
+      "world": 20003
+    },
+    "full3743_raw_gate_launch_evidence": {
+      "bytes": 735,
+      "sha256": "bb72fc3e6b9e801e3c459c6ab86269e15f85f58772d0871a0056fb4aa8cd290d"
+    },
+    "legacy2433_bytes_restored": false,
+    "legacy_expected_working_sha256": "2433fa30c79128e447cf30c2c76d7e235fcd88cb3b858afb98e592a5c7bbc713",
+    "new_artifact_manifest_sha256": "3d19705069ad9640c764dd0c471295a2942a8c2e4cde5d7e36da98aa96d9f3fa",
+    "new_selected_references_sha256": "239f23f5ee8c3c50dee5a73b64405f400974012d3d8b5145a8d1c54e3db0cf87",
+    "original_execution_provenance_config_times_source_state_unchanged": true,
+    "original_producer_manifest_sha256": "62d830f47053112677353df8d9bf4f04de19e7a4cdaecd940c53c69fc8d2c6b1",
+    "original_raw_file_names_and_all_prior_attempts_preserved": true,
+    "preserved_actual_drifted_working_sha256": "90cd2bfa8cde2d31d5f65a898bf13b0a688542aa370fd7dd2b227d52a1e3abb9",
+    "root_artifact_reference_closure_evidence": {
+      "bytes": 3110,
+      "sha256": "94fc8b5d0ad9cc54d6c826e44cd10d78c0dd69bfbcf745d83c8ee69a73c5eb5a"
+    },
+    "root_existing_case_acceptance": {
+      "available_case_count_after": 34,
+      "available_case_count_before": 33,
+      "bytes": 3911,
+      "same_existing_case_not_new_simulation_or_MC_sample": true,
+      "sha256": "fb44f6ce4ab38c8a601d121917937bc0fd24d73f1149efdc2a7f2900da4c7342",
+      "status": "ACCEPTED_EXISTING_RECOVERED_B225_FULL3743_ORIGINAL_RAW_CASE",
+      "utc": "2026-10-10T03:53:04.234378+00:00"
+    },
+    "source56_full_SHA_stat_pre_post_pass": true,
+    "unique_selected_b225_reference_change_verified": true,
+    "world": 20003
+  },
+  "complete_paired_worlds": 0,
+  "confirmation_worlds_complete": 0,
+  "current34_reconciliation_evidence": {
+    "all_required_cases_per_world": 36,
+    "bytes": 4012,
+    "confirmation_range": [
+      16,
+      128
+    ],
+    "remaining_cases": 110,
+    "sha256": "5b86c33443848572e577818211e7a9165254813e91060403a6e443e70d95e9f7",
+    "utc": "2026-10-10T03:53:04.234378+00:00"
+  },
+  "current_pipeline_validated_cases": 34,
+  "current_validated_case_ids": [
+    "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+    "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+    "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+    "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+    "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+    "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+    "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+    "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+    "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+    "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "61f0b5c86ecbbdf58fc7ece8e31e9dac40062352b608db6a02d6ca0257e8af48",
+    "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+    "6837d30c15cb9e25f7a08da098008e9d1cea9409b7892294d188b0cdd83defec",
+    "697a171300530f0d300b4974b35e9853519956a6140edb498ced2e1f65c3580f",
+    "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+    "789e1f3d87bbdddbe934523b5de8e5358e4d4159f317c7661a3e641fe08d196a",
+    "799b86b37429c5eb7b2b05e9fdaa00b6f4c29584474898c895eb66b26fea1ef2",
+    "7fe58544fe85c8d9d894b4ec0bf06e30d8ac2eef6f333d4f503837edf704fb94",
+    "86a86b3a7dd89e74d29970e98fe431f9a578a2627539598aa7509df7f8280bca",
+    "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+    "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+    "8f687163b5e6822c632869a9dc0136b66f136e0b405bcd5acaa940c2d328bfe7",
+    "908c8fc9b30e25d4c7dcc65aba8e913ed6ad32ffb668b72ed65bbf1784608cf1",
+    "9d15701506a883efff43a9499c81de562a9c7192a31fb9180f0135ffc1f1fb36",
+    "a2fedfd7c76e1ca1f7e75bf8625b783d7cf3642f7a04673de8eeb3d2284fc79e",
+    "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+    "b48a23516beee42e66a44245b3bafb38c4908acb6b1abd6ac9dcff2405278778",
+    "c6860127e3ccd9dd71737868f9d1e19673387e6b851128a1ca94c9a0c555f134",
+    "d64c249cb3cbd8712a3615f2f254194d1f05697b518e7112bdf6580c0e785d55",
+    "dfca4cccb8e4cb954f967804c155f77b286d2108143375b899bef75f66df3b3a",
+    "e28f67d29def9a877c9c048ec4e2e47ccc714e398bfdf9936eba2e88d28571f7",
+    "e391978e0b7c56d127687602c7584eeceab029f6d5fd3646e0b76947c65d4fac",
+    "e42a1098d79331bf74df1df07cf700051f255f9707bfb35e0efb9d9ddabe02c1",
+    "f1b6b2c939d4385ea04ca5e378237baf6a1a32a138748201c3096d7aaf422987"
+  ],
+  "current_validated_cases_per_world": [
+    8,
+    9,
+    9,
+    8
+  ],
+  "current_validated_prefix_cases": 28,
+  "current_validated_single_strategy_cases": 6,
+  "formal_continuation_status": "ONE_FROZEN_ORIGINAL_FORMAL_ENTRY_ACTUALLY_LAUNCHED_NO_NEW_CASE_COMPLETION_OBSERVED_AT_CUTOFF",
+  "formal_groups_complete": 0,
+  "historical_acceptance": {
+    "accepted_case_count": 34,
+    "accepted_case_ids": [
+      "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+      "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+      "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+      "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+      "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+      "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+      "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+      "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+      "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+      "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "61f0b5c86ecbbdf58fc7ece8e31e9dac40062352b608db6a02d6ca0257e8af48",
+      "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+      "6837d30c15cb9e25f7a08da098008e9d1cea9409b7892294d188b0cdd83defec",
+      "697a171300530f0d300b4974b35e9853519956a6140edb498ced2e1f65c3580f",
+      "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+      "789e1f3d87bbdddbe934523b5de8e5358e4d4159f317c7661a3e641fe08d196a",
+      "799b86b37429c5eb7b2b05e9fdaa00b6f4c29584474898c895eb66b26fea1ef2",
+      "7fe58544fe85c8d9d894b4ec0bf06e30d8ac2eef6f333d4f503837edf704fb94",
+      "86a86b3a7dd89e74d29970e98fe431f9a578a2627539598aa7509df7f8280bca",
+      "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+      "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+      "8f687163b5e6822c632869a9dc0136b66f136e0b405bcd5acaa940c2d328bfe7",
+      "908c8fc9b30e25d4c7dcc65aba8e913ed6ad32ffb668b72ed65bbf1784608cf1",
+      "9d15701506a883efff43a9499c81de562a9c7192a31fb9180f0135ffc1f1fb36",
+      "a2fedfd7c76e1ca1f7e75bf8625b783d7cf3642f7a04673de8eeb3d2284fc79e",
+      "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+      "b48a23516beee42e66a44245b3bafb38c4908acb6b1abd6ac9dcff2405278778",
+      "c6860127e3ccd9dd71737868f9d1e19673387e6b851128a1ca94c9a0c555f134",
+      "d64c249cb3cbd8712a3615f2f254194d1f05697b518e7112bdf6580c0e785d55",
+      "dfca4cccb8e4cb954f967804c155f77b286d2108143375b899bef75f66df3b3a",
+      "e28f67d29def9a877c9c048ec4e2e47ccc714e398bfdf9936eba2e88d28571f7",
+      "e391978e0b7c56d127687602c7584eeceab029f6d5fd3646e0b76947c65d4fac",
+      "e42a1098d79331bf74df1df07cf700051f255f9707bfb35e0efb9d9ddabe02c1",
+      "f1b6b2c939d4385ea04ca5e378237baf6a1a32a138748201c3096d7aaf422987"
+    ],
+    "accepted_per_world": [
+      8,
+      9,
+      9,
+      8
+    ],
+    "accepted_prefix_cases": 28,
+    "accepted_single_strategy_cases": 6,
+    "evidence": {
+      "bytes": 13089,
+      "sha256": "5667a3b8e02d92b5e6e6498fbf9f09b1cb3177e8023f3478fb8e582af8ab7279"
+    },
+    "scope": "Dated original acceptance is retained. The subsequent33-case quarantine period and artifact drift remain historical evidence; the existing b225 case was accepted again only after full3743 raw validation, independent25 checks and root reference/source closure.",
+    "utc": "2026-10-10T02:43:51.498386+00:00"
+  },
+  "latest_named_actual_gate_launch_utc": "2026-10-10T03:29:37.898002+00:00",
+  "new_original_formal_cases_or_independent_worlds_completed": 0,
+  "original_execution_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+  "original_identity": {
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "other_cases_not_independently_accepted": 110,
+  "pending_integrity_case_ids": [],
+  "pilot_worlds_complete": 0,
+  "pilot_worlds_required": 4,
+  "previously_accepted_pending_integrity_revalidation": 0,
+  "prior_r27_full_scientific_tables_retained": {
+    "bytes": 42165,
+    "record": "research-observation-r27.json",
+    "sha256": "8c6767e5e88d9cdc40d24a1c168be3ab5e7bbc8d0ff0aad83fb6a55a837e2157",
+    "six_complete_existing_prefix_raw_tables_and_dated_acceptances_unchanged": true
+  },
+  "record_cutoff_utc": "2026-10-10T03:53:23.586232+00:00",
+  "schema": "DAMS-r28-existing-case-recovery-and-actual-formal-continuation-observation-1",
+  "status": "ACTUAL_EXISTING_CASE_RECOVERED_ACCEPTED_AND_ONE_FROZEN_FORMAL_ENTRY_LAUNCHED",
+  "total_assigned_case_inventory": 144,
+  "whole_goal_complete": false
+}
