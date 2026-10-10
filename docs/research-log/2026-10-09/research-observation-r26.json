@@ -1,0 +1,380 @@
+{
+  "accepted_scientific_completion": {
+    "accepted_case_ids": [
+      "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+      "0208d5d4ba6fb565a8bca6b13e5b0f40abaaca5edfa2c65b135334f3141ff11e",
+      "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+      "21334b9942f8e0516e5da52fa5052072f29953992dc9d5fd0151392c7410582c",
+      "2b741933ab8e8ce5e38d12ae93d0e43d34dddadd071e6598d07f29708c6f6b6f",
+      "30336e6295ed71ceee88da55b265a18571e1841a4cfea6e89ea665745899fb44",
+      "31b26a7c346d0a58376402ceece17905681145ac7dce2e8eef32ddb88be23f23",
+      "37b4424b26aa73525ccd19e8822d3bc4767a921d850dede51c8b8001e771bdd8",
+      "41a0588c531a792542c4327b666e76b94ca524062877d639dfdae214de6a2959",
+      "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "61f0b5c86ecbbdf58fc7ece8e31e9dac40062352b608db6a02d6ca0257e8af48",
+      "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+      "6837d30c15cb9e25f7a08da098008e9d1cea9409b7892294d188b0cdd83defec",
+      "697a171300530f0d300b4974b35e9853519956a6140edb498ced2e1f65c3580f",
+      "6f61ec975d78767669798419f58efe00e0ccc768501649f6c48a1f5441d6f5f9",
+      "789e1f3d87bbdddbe934523b5de8e5358e4d4159f317c7661a3e641fe08d196a",
+      "799b86b37429c5eb7b2b05e9fdaa00b6f4c29584474898c895eb66b26fea1ef2",
+      "7fe58544fe85c8d9d894b4ec0bf06e30d8ac2eef6f333d4f503837edf704fb94",
+      "86a86b3a7dd89e74d29970e98fe431f9a578a2627539598aa7509df7f8280bca",
+      "8c6afafeb446bda95e2c7569b710004febabc8e2673b3d56649afc254bcd7c41",
+      "8d7e356a20ae1f9986e6a29aeaff424489b1bdb7ac83d6244e097b27ee0caf7e",
+      "8f687163b5e6822c632869a9dc0136b66f136e0b405bcd5acaa940c2d328bfe7",
+      "908c8fc9b30e25d4c7dcc65aba8e913ed6ad32ffb668b72ed65bbf1784608cf1",
+      "9d15701506a883efff43a9499c81de562a9c7192a31fb9180f0135ffc1f1fb36",
+      "a2fedfd7c76e1ca1f7e75bf8625b783d7cf3642f7a04673de8eeb3d2284fc79e",
+      "b2250564a8f9e34194b31a27ac0170e7db2b60298734a9ba31d086d766815f26",
+      "b48a23516beee42e66a44245b3bafb38c4908acb6b1abd6ac9dcff2405278778",
+      "c6860127e3ccd9dd71737868f9d1e19673387e6b851128a1ca94c9a0c555f134"
+    ],
+    "accepted_cases": 28,
+    "accepted_prefixes": 22,
+    "accepted_single_strategies": 6,
+    "basis": "Retained exact accepted26 baseline plus independent acceptance of existing 01ae branch and c686 root prefix, yielding accepted28; no new all144 raw census.",
+    "confirmation_worlds_complete": 0,
+    "confirmation_worlds_rule": {
+      "maximum": 128,
+      "minimum": 16
+    },
+    "formal_groups_complete": 0,
+    "incremental_reconciliation_sha256": "a268a51531fe2acf589356f3ae52fc946f9a633918b2b6b07f87da51e4b469c1",
+    "paired_worlds": 0,
+    "pilot_worlds_complete": 0,
+    "pilot_worlds_required": 4,
+    "remaining_unaccepted_cases": 116,
+    "required_frozen_cases": 144,
+    "root_acceptance_utc": "2026-10-10T01:58:43.204417+00:00",
+    "world_readiness": [
+      {
+        "accepted": 6,
+        "required": 36,
+        "world": 20000
+      },
+      {
+        "accepted": 9,
+        "required": 36,
+        "world": 20001
+      },
+      {
+        "accepted": 6,
+        "required": 36,
+        "world": 20002
+      },
+      {
+        "accepted": 7,
+        "required": 36,
+        "world": 20003
+      }
+    ]
+  },
+  "classification": "precision-pilot; confirmation-not-run",
+  "counts_are_whole_goal_percentage_or_ETA": false,
+  "dated_small_metadata_observation": {
+    "accepted28_is_a_later_separate_root_reconciliation": true,
+    "accepted_cases_at_observation": 27,
+    "accepted_world_counts_at_observation": [
+      6,
+      8,
+      6,
+      7
+    ],
+    "attempt_records": 36,
+    "current_Python_function_or_simulation_day_or_ETA": "UNPROVEN",
+    "frozen_inventory_cases": 144,
+    "new_Model_worker_proven": false,
+    "new_raw_or_semantic_validation_by_observer": false,
+    "not_globally_atomic_snapshot_or_heartbeat": true,
+    "observation_utc": "2026-10-10T01:54:12.437121+00:00",
+    "original_owners_present_at_observation": true,
+    "per_world_required_prefixes": 9,
+    "per_world_required_strategies": 27,
+    "producer_complete_roles": {
+      "prehistory-prefix": 28,
+      "strategy": 6
+    },
+    "producer_complete_unique_cases": 34,
+    "producer_incomplete_inventory_cases": 110,
+    "world_readiness": [
+      {
+        "accepted": 6,
+        "producer_complete": 8,
+        "required": 36,
+        "world": 20000
+      },
+      {
+        "accepted": 8,
+        "producer_complete": 9,
+        "required": 36,
+        "world": 20001
+      },
+      {
+        "accepted": 6,
+        "producer_complete": 9,
+        "required": 36,
+        "world": 20002
+      },
+      {
+        "accepted": 7,
+        "producer_complete": 8,
+        "required": 36,
+        "world": 20003
+      }
+    ]
+  },
+  "execution_source": {
+    "longitudinal_driver9_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "science_core25_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "scientific_spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+  },
+  "formal_results_and_full_manuscript_acceptance": "PENDING",
+  "newly_root_accepted_original_root_prefix": {
+    "KILL_sent": false,
+    "Model_or_simulation_rerun": false,
+    "TERM_sent": false,
+    "actual_nonpayload_SQL_trace_records": 182,
+    "actual_readonly_SQLite_connections": 9,
+    "actual_resource_observations": 55,
+    "all366_daily_history_events_stocks_state_accounting_summary_roster_checked": true,
+    "canonical_root_prefix_parentNone_getNone_closure": true,
+    "case_id": "c6860127e3ccd9dd71737868f9d1e19673387e6b851128a1ca94c9a0c555f134",
+    "config_sha256": "19e8b4b56006b2490c39015ce61536d06f4cb372f3bb0ec55537b0935990845b",
+    "constructor_attempts": {
+      "ExactLedger.__init__": 0,
+      "LongitudinalEngine.__init__": 0,
+      "Model.__init__": 0
+    },
+    "context": "financing",
+    "counts_as_additional_MC_sample": false,
+    "full_raw_SHA_stat_roster_pre_post_equal": true,
+    "full_raw_bytes": 1051401438,
+    "full_raw_files": 13,
+    "full_raw_pre_and_post_SHA_length_roster": {
+      ".longitudinal-working.sqlite": {
+        "bytes": 262418432,
+        "sha256": "2a6bc5e7892e445711d1a307b240ebafad92dbd32f221d74275b65b3f43a26d5"
+      },
+      "checkpoint-day-000360.json": {
+        "bytes": 1749500,
+        "sha256": "29fe9c356776d3bffbde93782cdf583ba39287965b4fddeb267f68df092c74f5"
+      },
+      "checkpoint-day-000360.sqlite": {
+        "bytes": 258560000,
+        "sha256": "9ce603f974de173d51ac1b1d871be90a3bbab4b43f760b56bb35215b4fba53ba"
+      },
+      "checkpoint-day-000366.json": {
+        "bytes": 1771883,
+        "sha256": "9b74d06ab1e6a0068142bbb26c0ba028f5b64bc6f11b3c3c72d146bdb1dcb19f"
+      },
+      "checkpoint-day-000366.sqlite": {
+        "bytes": 262418432,
+        "sha256": "b8712b03707e9e8c2b0432dbf1ddabcc75a9d477b253df3d4d13699f239b530c"
+      },
+      "checkpoint-index.json": {
+        "bytes": 1684,
+        "sha256": "e59317397a15a39bff0751dc118b5df63b2df726a28bc115c8a9fea20b06edfc"
+      },
+      "final_state.json": {
+        "bytes": 1771873,
+        "sha256": "6a23b4fd4591f804a80a5e6caf8976cbc87450fcc8a56b502feca3c2e04d9552"
+      },
+      "final_state.sqlite": {
+        "bytes": 262418432,
+        "sha256": "b8712b03707e9e8c2b0432dbf1ddabcc75a9d477b253df3d4d13699f239b530c"
+      },
+      "manifest.json": {
+        "bytes": 6181,
+        "sha256": "fedcff5d435e089f19b0c0b9996145cdf4ebcf8746884ff67532c7d3be7eabe4"
+      },
+      "report.md": {
+        "bytes": 1563,
+        "sha256": "3e40572c2fd98fc9d273fddcb7e8b98a325b0e5415456b089d50874de59d526f"
+      },
+      "report.svg": {
+        "bytes": 12894,
+        "sha256": "3f0766b5119c77d74944b9df13f3d7aeaaec8ef005ad557dbc6ed2f06b7fd325"
+      },
+      "summary.json": {
+        "bytes": 2304,
+        "sha256": "6ebdfe2358e4fe4eef657457c4a9f6675db0a900bab56b3b76b814bea12455d8"
+      },
+      "timeseries.csv": {
+        "bytes": 268260,
+        "sha256": "006b6c1744c453dd414e4ec6f163b3a50ad7934f528f688e204f4cb1f82e46d0"
+      }
+    },
+    "full_study_gate": false,
+    "horizon_days": 366,
+    "new_independent_worlds": 0,
+    "new_paired_worlds": 0,
+    "normal_direct_child_reaped": true,
+    "original_execution_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "original_validator": "research_tools.validate_longitudinal.CheckedLongitudinalCases.validate_case",
+    "owner_joint_checks": 25,
+    "parent_CSV_or_DB_required_or_executed": false,
+    "parent_case_id": null,
+    "producer_manifest_sha256": "fedcff5d435e089f19b0c0b9996145cdf4ebcf8746884ff67532c7d3be7eabe4",
+    "retained_snapshot_days": [
+      366,
+      366,
+      360
+    ],
+    "role": "prehistory-prefix",
+    "root_acceptance_utc": "2026-10-10T01:58:43.204417+00:00",
+    "root_current_source56_full_SHA_stat_checked": true,
+    "source56_after_scope": "Worker complete postvalidation fullSHA/stat and core/driver checks PASS; after vector not separately serialized. Root independently hashes all56 and compares exact recorded pre vector.",
+    "source56_after_vector_separately_serialized": false,
+    "source56_worker_pre_post_full_SHA_stat_equal": true,
+    "state_semantic_sha256": "38651e259d471868ded657e5a8e170f382562c967a267c5c62b8e9a454614d59",
+    "status": "ROOT_ACCEPTED_ORIGINAL_C686_FULL_RAW_PREFIX",
+    "terminal_utc": "2026-10-10T01:54:12.288899+00:00",
+    "wall_seconds_including_cleanup": 55.67571595899062,
+    "worker_and_supervisor_exit_codes": 0,
+    "world": 20001
+  },
+  "newly_root_accepted_original_single_strategy": {
+    "KILL_sent": false,
+    "Model_or_simulation_rerun": false,
+    "TERM_sent": false,
+    "actual_nonpayload_SQL_trace_records": 182,
+    "actual_readonly_SQLite_connections": 9,
+    "actual_resource_observations": 1061,
+    "all_1096_parent_CSV_rows_equal_child_prefix": true,
+    "arm_id": "century-dams",
+    "case_id": "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+    "complete_daily_history_state_accounting_retained_snapshot_checks_passed": true,
+    "config_sha256": "35b4311498418c2e09ea588b4d17eab270834de4482dd7090f98569474784fec",
+    "constructor_attempts": {
+      "ExactLedger.__init__": 0,
+      "LongitudinalEngine.__init__": 0,
+      "Model.__init__": 0
+    },
+    "expected_branch_origin": {
+      "parent_case_id": "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+      "parent_config_sha256": "f9bf244325a006dd2cfff949a90961c409a4c07c49fe2a8f9c34f8231ce45016",
+      "parent_day": 1096,
+      "parent_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "parent_state_semantic_sha256": "b0cc18272bb51c384ba0844bf12f19f316b71635607272be761377b03f389c52"
+    },
+    "full_raw_SHA_stat_roster_pre_post_equal": true,
+    "full_raw_bytes": 10931863819,
+    "full_raw_files": 13,
+    "full_raw_pre_and_post_SHA_length_roster": {
+      ".longitudinal-working.sqlite": {
+        "bytes": 2725105664,
+        "sha256": "0601838d230b09fd0324265910764d01ec989a62b207a4413fd297878387a6df"
+      },
+      "checkpoint-day-003706.json": {
+        "bytes": 11274005,
+        "sha256": "a1f6d3b7a8b046511e49eadbd24237abe4bcd7491c9e3925a7bd1db3315cece6"
+      },
+      "checkpoint-day-003706.sqlite": {
+        "bytes": 2719461376,
+        "sha256": "b08acc3f7642338d5c23eb4ed38c9f9a9e9b92b5c6b462ebf8fa548ce81aa68f"
+      },
+      "checkpoint-day-003743.json": {
+        "bytes": 11377042,
+        "sha256": "66d97350098c39faf01268c25d07ec3f3e7de43270bcf68f6ec649a913fec63a"
+      },
+      "checkpoint-day-003743.sqlite": {
+        "bytes": 2725105664,
+        "sha256": "038c1c3eb6438c4c42dd1c6b894d78a56c271fe9046bb4ffd0062956682269b1"
+      },
+      "checkpoint-index.json": {
+        "bytes": 1690,
+        "sha256": "cf142ddd96c0dfe0aa20e7f14c7511c18cea22ae617822b528365e544117fc53"
+      },
+      "final_state.json": {
+        "bytes": 11377032,
+        "sha256": "80ebd12df1a47a37d4d00f518c665131af09b90ee521ce17ff5096899b97faeb"
+      },
+      "final_state.sqlite": {
+        "bytes": 2725105664,
+        "sha256": "038c1c3eb6438c4c42dd1c6b894d78a56c271fe9046bb4ffd0062956682269b1"
+      },
+      "manifest.json": {
+        "bytes": 7257,
+        "sha256": "9ba2b88514b813e8944771179995b01885b47dbb2d966b8bebef64205697cf44"
+      },
+      "report.md": {
+        "bytes": 1567,
+        "sha256": "1b6510d020b456646f97b40bd118f3a12059310a3b94bd96e93bbaf2d4d1d94a"
+      },
+      "report.svg": {
+        "bytes": 119805,
+        "sha256": "99355c0b630fb06dd559a6d6ed334fe05ca88debe08102321b349964c0c7303e"
+      },
+      "summary.json": {
+        "bytes": 2892,
+        "sha256": "04727fd0a003dd904a255c500ad2acbb855367e3a193508525acd7e9c3d3abfc"
+      },
+      "timeseries.csv": {
+        "bytes": 2924161,
+        "sha256": "4cf41a982b714621e6dc7f51a5c368d7934589efb4d374aad1ddbe93baaa7647"
+      }
+    },
+    "full_study_gate": false,
+    "historical_parent_full_raw_acceptance_reused_not_reexecuted": true,
+    "horizon_days": 3743,
+    "new_independent_worlds": 0,
+    "new_paired_worlds": 0,
+    "normal_direct_child_reaped": true,
+    "original_execution_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "original_validator": "research_tools.validate_longitudinal.CheckedLongitudinalCases.validate_case",
+    "parent_case_id": "66bbcd570ce120ad065c5b9d42ebfb773d5d2a6cfca1a0dfe7e1a2c8b888453e",
+    "parent_metadata_CSV_full_SHA_stat_pre_post_equal": true,
+    "parent_metadata_CSV_pre_and_post_SHA_length_roster": {
+      "manifest.json": {
+        "bytes": 6333,
+        "sha256": "38f0de34e6833eb51395fe26f86614a50379f512f265f838bd012aecc0eb04f8"
+      },
+      "timeseries.csv": {
+        "bytes": 806718,
+        "sha256": "d8b4334aeaf3e673d842d499c2c91cbc0eb16241e4df1a2afdfc1747d9252d08"
+      }
+    },
+    "parent_prefix_days": 1096,
+    "producer_manifest_sha256": "9ba2b88514b813e8944771179995b01885b47dbb2d966b8bebef64205697cf44",
+    "retained_snapshot_days": [
+      3743,
+      3743,
+      3706
+    ],
+    "root_acceptance_utc": "2026-10-10T01:50:38.199841+00:00",
+    "root_current_source56_full_SHA_stat_checked": true,
+    "source56_after_scope": "Guarded complete postvalidation equality with original source/core driver; root subsequently full-hashed current56 against recorded pre vector.",
+    "source56_after_vector_separately_serialized": false,
+    "source56_worker_pre_post_full_SHA_stat_equal": true,
+    "state_semantic_sha256": "dcd81d725a7c02d9ea55e049185c8cbabfcad786624a619773b3182b040d4b90",
+    "status": "ROOT_ACCEPTED_ORIGINAL_01AE_FULL_RAW_CASE",
+    "strategy": "fixed-3y",
+    "terminal_utc": "2026-10-10T01:47:07.387509+00:00",
+    "wall_seconds_including_cleanup": 1073.468997125019,
+    "worker_and_supervisor_exit_codes": 0,
+    "world": 20002
+  },
+  "next_case_validation_at_record_cutoff": {
+    "case_id": "e391978e0b7c56d127687602c7584eeceab029f6d5fd3646e0b76947c65d4fac",
+    "context": "financing",
+    "dated_cutoff_basis": "Root event after accepted28 reconciliation; no actual launch evidence included in this frozen record.",
+    "dated_cutoff_utc": "2026-10-10T01:59:29.692868+00:00",
+    "new_accepted_cases": 0,
+    "new_independent_paired_worlds": 0,
+    "original_days": 366,
+    "parent_case_id": null,
+    "readonly_SQLite_connector_sha256": "cf3e6b7f6f3e59cf21a0d317b63d5f977618b5f5d1b6f3ce96f526111f3ce406",
+    "role": "prehistory-prefix",
+    "status": "ROOT_ADMITTED_NOT_ACTUALLY_LAUNCHED_AT_ROOT_CUTOFF",
+    "supervisor_sha256": "c6001bc4abdc0bcfb2289c6f42d119e427a248376c229ef96f0e97efca88ae76",
+    "worker_sha256": "5f025515455b970f63893abd141ecd836391c52666a68e1d111b1b0111ba4da2",
+    "world": 20000
+  },
+  "raw_archive_completeness_for_whole_study": "NOT_VERIFIED",
+  "record_cutoff_utc": "2026-10-10T01:59:29.692868+00:00",
+  "record_scientific_reconciliation_utc": "2026-10-10T01:58:43.204417+00:00",
+  "schema": "DAMS-research-observation-r26-1",
+  "study": "longitudinal-adoption-5y",
+  "whole_goal_complete": false
+}
