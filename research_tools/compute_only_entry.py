@@ -27,7 +27,10 @@ COMPONENTS = {'run.sh', 'cloud/prepare-compute-only.sh', 'cloud/compute-only-ser
     'research_tools/cloud_control.py', 'research_tools/cloud_worker.py',
     'research_tools/cloud_archive.py', 'research_tools/compute_only_worker.py',
     'research_tools/compute_only_control.py', 'research_tools/compute_only_transport.py',
-    'research_tools/compute_only_entry.py', 'research_tools/compute_only_lifecycle.py', 'research_tools/compute_only_remote.py'}
+    'research_tools/compute_only_entry.py', 'research_tools/compute_only_lifecycle.py', 'research_tools/compute_only_remote.py',
+    'research_tools/compute_only_archive.py'}
+ARCHIVE_COMPONENTS = {'research_tools/compute_only_backend_factory.py',
+    'research_tools/compute_only_persistent_backends.py', 'research_tools/persistent_backend_budget_meter.py'}
 FIELDS = {'schema', 'phase', 'stage_id', 'operation_id', 'package_manifest',
           'component_sha256', 'prepare'}
 PREPARE_FIELDS = {'deadline_utc', 'max_seconds', 'max_source_bytes', 'max_source_files',
@@ -50,13 +53,17 @@ class Entry:
     def __init__(self, c, *, root=ROOT, state=None):
         self.stack = ExitStack(); self.c = c; self.frozen = blob(c); self.root = self.stack.enter_context(_directory(root))
         self.state = None if state is None else self.stack.enter_context(_directory(state))
-        self.observed = []; self.source_directories = {}
+        self.observed = []; self.source_directories = {}; self.phase_guards = []
         try:
             value = c['compute_only']; self.options = value
             require(isinstance(value, dict) and value.get('schema') == SCHEMA, 'compute-only entry shape differs')
             phase = value.get('phase')
             require(phase in {'plan', 'prepare', 'collect', 'lifecycle', *UNWIRED}, 'unknown compute-only phase; no GCS fallback')
-            require(set(value) == FIELDS | ({'collect'} if phase == 'collect' else {'lifecycle'} if phase == 'lifecycle' else set()), 'entry fields differ')
+            factory_fields = {'archive_backend_factory'} if 'archive_backend_factory' in value else set()
+            continuation_fields = {'phase_continuation'} if 'phase_continuation' in value else set()
+            require(not factory_fields or phase in {'collect','lifecycle'}, 'archive factory belongs to an explicit collection/lifecycle operation')
+            require(not continuation_fields or factory_fields, 'phase continuation belongs to explicit archive operations')
+            require(set(value) == FIELDS | factory_fields | continuation_fields | ({'collect'} if phase == 'collect' else {'lifecycle'} if phase == 'lifecycle' else set()), 'entry fields differ')
             require(isinstance(value['operation_id'], str) and re.fullmatch('[0-9a-f]{64}', value['operation_id']),
                     'entry operation requires a retained immutable identity')
             stages = [s for s in c['stages'] if s['id'] == value['stage_id']]
@@ -77,7 +84,8 @@ class Entry:
             require(self.prepare_deadline <= self.termination <= cloud_control.utc(c['global_deadline_utc'])
                     and (self.allow_expired or datetime.now(timezone.utc) < (self.termination if phase=='lifecycle' else self.prepare_deadline)), 'entry fixed deadline expired or extends the original deadline')
             require(self.prepare_deadline.utcoffset().total_seconds() == 0, 'entry prepare deadline must be UTC')
-            pins = value['component_sha256']; require(isinstance(pins, dict) and set(pins) == COMPONENTS, 'entry component pins incomplete')
+            components = self.components = COMPONENTS | (ARCHIVE_COMPONENTS if factory_fields else set())
+            pins = value['component_sha256']; require(isinstance(pins, dict) and set(pins) == components, 'entry component pins incomplete')
             for name, sha in pins.items():
                 require(isinstance(sha, str) and re.fullmatch('[0-9a-f]{64}', sha), 'component SHA type differs')
                 raw, anchor = _read_relative(self.root, name, p['max_source_bytes'], self.stack)
@@ -87,7 +95,7 @@ class Entry:
             require(isinstance(manifest, dict) and set(manifest) == {'commit', 'source_files_sha256'}
                     and manifest['commit'] == c['source_commit'], 'entry approved source manifest differs')
             files = manifest['source_files_sha256']
-            require(isinstance(files, dict) and COMPONENTS <= set(files) and len(files) <= p['max_source_files'], 'source roster incomplete')
+            require(isinstance(files, dict) and components <= set(files) and len(files) <= p['max_source_files'], 'source roster incomplete')
             require({x.relative_to(self.root.path).as_posix() for x in (self.root.path/'dams_sim').glob('*.py')}
                     == {x for x in files if x.startswith('dams_sim/') and '/' not in x[9:] and x.endswith('.py')},
                     'source core roster differs')
@@ -97,7 +105,7 @@ class Entry:
                 raw, anchor = _read_relative(self.root, name, p['max_source_bytes']-count, self.stack)
                 count += len(raw); require(count <= p['max_source_bytes'] and digest(raw) == sha, 'listed source bytes differ')
                 self.observed.append((name, raw, anchor))
-            require(all(files[name] == pins[name] for name in COMPONENTS), 'package and component pins disagree')
+            require(all(files[name] == pins[name] for name in components), 'package and component pins disagree')
             require(Path(__file__).absolute() == self.root.path/'research_tools/compute_only_entry.py', 'entry executes another source root')
             self.manifest_sha = digest(manifest_raw)
             for item in self.observed:
@@ -137,6 +145,7 @@ class Entry:
             require(current == raw and current_anchor == anchor, 'entry approved source/input drift')
         for path, old in self.source_directories.items():
             info=path.lstat(); require(stat.S_ISDIR(info.st_mode) and (info.st_dev,info.st_ino)==old,'entry source ancestor changed')
+        for guard in self.phase_guards: guard.check()
 
     def prepare_argv(self):
         p = self.options['prepare']
@@ -202,7 +211,7 @@ class Entry:
                 'helper_deadline_utc':helper_deadline,'original_prepare_deadline_utc':self.options['prepare']['deadline_utc'],
                 'helper_bounds_shortened_only_for_nested_reaping':True,'science_complete':False}
 
-    def collect(self):
+    def collect(self, *, archive_backends=None):
         require(self.c.get('paid_actions_authorized') is True, 'compute-only IAP collection requires root paid-action authorization for the original existing stage')
         require(self.state is not None, 'compute-only collection needs the existing root state directory')
         o = self.options['collect']; require(isinstance(o,dict) and set(o)==COLLECT_FIELDS, 'collection options differ')
@@ -222,6 +231,14 @@ class Entry:
         from research_tools.cloud_control import utc
         require(utc(admission['deadline_utc'])<=self.termination<=utc(self.c['global_deadline_utc']), 'collection deadline extends fixed node expiry')
         minimum=None if o['minimum_head'] is None else parse(self.reference(o['minimum_head']))
+        if admission.get('schema') == 'dams-compute-only-archive-collector-v1':
+            continuation = self.phase_continuation(o['admission'], assignment_raw)
+            require(transport['remote_runtime_sha256'] == continuation.runtime_sha
+                    and transport['provider_identity_sha256'] == continuation.provider_sha
+                    and transport['instance_id'] == str(continuation.vm['id'])
+                    and transport['remote_transfer_config_sha256'] == continuation.transfer_sha,
+                    'archive collection transport differs from actual enrolled continuation')
+        if archive_backends is None: archive_backends=self.archive_backends(o['admission'])
         retained=self.stack.enter_context(_directory(o['head_receipt_dir']))
         name=self.options['operation_id']+'-BEGIN.json'
         self.check(); self.state.write_new(name,blob({'config_sha256':digest(self.frozen),'generation':o['generation'],'science_complete':False}))
@@ -230,7 +247,8 @@ class Entry:
             name=f'{head["sequence"]:08d}.json'; retained.write_new(name,raw)
             require(read(retained,name)[0]==raw,'retained transport head readback differs')
             self.check(); return dict(head)
-        with Collector(o['admission']['path'],admission_sha256=o['admission']['sha256'],assignment_raw=assignment_raw,minimum_head=minimum) as collector:
+        with Collector(o['admission']['path'],admission_sha256=o['admission']['sha256'],assignment_raw=assignment_raw,minimum_head=minimum,archive_backends=archive_backends) as collector:
+            require(collector.archive is None or collector.archive.p['mode']=='external-persistent','root production collection cannot use fixture backups')
             with IAPTransport(o['transport']['path'],config_sha256=o['transport']['sha256'],collector=collector,retain=retain) as iap:
                 manifest,t1=iap.metadata(o['generation'],'manifest.json',o['max_manifest_bytes'])
                 seal,t2=iap.metadata(o['generation'],'seal.json',o['max_seal_bytes'])
@@ -246,6 +264,37 @@ class Entry:
                 raw=blob(result); self.state.write_new(self.options['operation_id']+'-COLLECTED.json',raw)
                 require(read(self.state,self.options['operation_id']+'-COLLECTED.json')[0]==raw,'entry publication readback differs')
                 self.check(full=True); return result
+
+    def archive_backends(self, admission_ref):
+        from research_tools.compute_only_control import ARCHIVE_COLLECTOR_SCHEMA
+        admission = parse(self.reference(admission_ref))
+        ref = self.options.get('archive_backend_factory')
+        if admission.get('schema') != ARCHIVE_COLLECTOR_SCHEMA:
+            require(ref is None, 'legacy Collector cannot enable an archive factory')
+            return None
+        require(ref is not None, 'archive Collector needs an explicit pinned backend factory')
+        def construct():
+            from research_tools.compute_only_backend_factory import Factory
+            factory = Factory(self, ref, admission_ref)
+            self.backend_factory = factory; self.stack.callback(factory.close)
+            return factory
+        if self.options['phase'] == 'lifecycle':
+            operation = parse(self.reference(self.options['lifecycle']))
+            require(operation.get('phase') != 'launch', 'launch requires its original metadata Collector; actual archive identity does not exist yet')
+            def resolve():
+                require(getattr(self, 'lifecycle_admitted', None) == admission_ref['sha256'],
+                        'actual lifecycle provider/runtime and phase continuation must precede archive construction')
+                self.check(full=True)
+                return construct()()
+            return resolve
+        return construct()
+
+    def phase_continuation(self, admission_ref, assignment_raw):
+        ref = self.options.get('phase_continuation')
+        require(ref is not None, 'archive phase requires retained launch continuation; no new pool')
+        value = PhaseContinuation(self, ref, admission_ref, assignment_raw)
+        self.stack.callback(value.close); self.phase_guards.append(value)
+        return value
 
     def close(self): self.stack.close()
     def __enter__(self): return self
@@ -269,14 +318,177 @@ def _read_relative(root,name,bound,stack):
         return raw,anchor
 
 
+class PhaseContinuation:
+    """One original launch pool may bind exactly one reduced archive pool.
+
+    The externally pinned latest launch head is not replaced by a fresh local
+    baseline. A native reservation binds the bridge before publication; losing
+    that publication fails closed rather than inventing a new allowance.
+    """
+    FIELDS = {'schema', 'launch_admission', 'launch_head_receipt', 'approval',
+              'ledger_path', 'archive_admission_sha256', 'provider', 'doctor',
+              'runtime', 'transfer'}
+
+    def __init__(self, entry, ref, admission_ref, assignment_raw):
+        self.entry = entry; self.stack = ExitStack(); self.closed = False
+        try:
+            self.raw = entry.reference(ref); self.value = v = parse(self.raw)
+            require(isinstance(v, dict) and set(v) == self.FIELDS
+                    and v['schema'] == 'dams-compute-launch-collector-continuation-v1'
+                    and v['archive_admission_sha256'] == admission_ref['sha256'], 'phase continuation exact admission binding differs')
+            self.new = new = parse(entry.reference(admission_ref))
+            old = parse(entry.reference(v['launch_admission']))
+            from research_tools.compute_only_control import COLLECTOR_SCHEMA, ARCHIVE_COLLECTOR_SCHEMA
+            require(old.get('schema') == COLLECTOR_SCHEMA and new.get('schema') == ARCHIVE_COLLECTOR_SCHEMA,
+                    'phase continuation needs an original legacy launch pool and new archive admission')
+            same = ('stage_id','source_sha256','pipeline_driver_sha256','spec_sha256','inventory_sha256',
+                    'assignment_sha256','codec_source_sha256','codec_dependencies_sha256','collector_source_sha256','deadline_utc')
+            require(all(old[k] == new[k] for k in same) and old['stage_id'] == entry.stage['id']
+                    and old['source_sha256'] == source_hash() and old['pipeline_driver_sha256'] == driver_hash()
+                    and all(old[k] == entry.stage[k] for k in ('assignment_sha256','spec_sha256','inventory_sha256')),
+                    'phase source/assignment/codec/deadline cannot change')
+            require(digest(assignment_raw) == old['assignment_sha256'], 'phase assignment differs')
+            launch_paths = [Path(old[k]) for k in ('state_dir','cache_dir')]
+            archive_paths = [Path(new[k]) for k in ('state_dir','cache_dir')]
+            require(all(a != b and a not in b.parents and b not in a.parents
+                        for a in launch_paths for b in archive_paths),
+                    'legacy Collector namespace cannot be relabelled or nested into archive')
+            receipt = parse(entry.reference(v['launch_head_receipt']))
+            require(isinstance(receipt,dict) and set(receipt)=={'head','attempt'}, 'retained launch head receipt shape differs')
+            self.floor = floor = receipt['head']
+            require(isinstance(floor,dict) and set(floor)=={'sequence','sha256','requests','bytes'}
+                    and all(type(floor[k]) is int and floor[k]>=0 for k in ('sequence','requests','bytes'))
+                    and floor['sequence']==floor['requests'] and floor['sequence']>0
+                    and isinstance(floor['sha256'],str) and re.fullmatch('[0-9a-f]{64}',floor['sha256']), 'retained launch head is not an exact typed native floor')
+            self.approval = parse(entry.reference(v['approval']))
+            self.ledger_dir = self.stack.enter_context(_directory(Path(v['ledger_path']).parent))
+            self.ledger_name = Path(v['ledger_path']).name
+            self._hold()
+            self.vm, self.runtime_sha, self.provider_sha, self.transfer_sha = self._enrollment()
+            self.launch = self.stack.enter_context(Collector(v['launch_admission']['path'],
+                admission_sha256=v['launch_admission']['sha256'], assignment_raw=assignment_raw, minimum_head=floor))
+            self.commit = blob({'schema':'dams-compute-launch-archive-bridge-v1', 'continuation_sha256':digest(self.raw),
+                'archive_admission_sha256':admission_ref['sha256'], 'launch_admission_sha256':v['launch_admission']['sha256'],
+                'launch_head':floor})
+            self.marker = 'archive-continuation.json'; self.marker_bound = len(self.commit)+1
+            self.expected = {'requests':floor['requests']+1, 'bytes':floor['bytes']+self.marker_bound}
+            require(all(type(old[k]) is int and type(new[k]) is int and 0 < new[k] <= old[k]-self.expected[n]
+                        for k,n in (('max_fetch_requests','requests'),('max_fetch_bytes','bytes'))),
+                    'archive allowance exceeds original launch pool remainder')
+            with self.launch.locked():
+                current = self.launch.head
+                present = self.marker in os.listdir(self.launch.state.fd)
+                if current == floor:
+                    require(not present, 'phase bridge reservation history missing; no reset')
+                    self.launch._reserve('metadata',self.marker_bound,digest(self.commit))
+                    self.launch.state.write_new(self.marker,self.commit)
+                else:
+                    require(present, 'phase bridge publication missing; no new pool or automatic retry')
+                record = parse(read(self.launch.records,f'{floor["sequence"]+1:08d}.json')[0])
+                require(record == {'sequence':floor['sequence']+1,'previous_sha256':floor['sha256'],
+                    'kind':'metadata','object_sha256':digest(self.commit),'reserved_bytes':self.marker_bound,
+                    'admission_sha256':v['launch_admission']['sha256']}, 'phase bridge native reservation differs')
+                self.committed_head = self.launch.head
+            self.check()
+        except BaseException:
+            self.close(); raise
+
+    def _hold(self):
+        from research_tools import cloud_control as cc
+        d = parse(read(self.ledger_dir,self.ledger_name)[0]); c=self.entry.c; s=self.entry.stage; a=self.approval
+        require(c.get('paid_actions_authorized') is True, 'phase requires original root paid authorization')
+        require(isinstance(d,dict) and d['authorization_id']==c['authorization_id'] and d['deadline_utc']==c['global_deadline_utc']
+            and all(cc.money(d[k])==cc.money(c[v]) for k,v in (('cap_usd','budget_cap_usd'),('reserve_usd','reserve_usd'),('prior_spend_usd','prior_spend_usd')))
+            and s['id'] in d['entries'], 'phase original budget/hold/deadline missing or changed')
+        plan=cc.digest({'stages':c['stages'],'source':c['source_commit'],
+            'control':{k:c.get(k) for k in ('project','region','zones','bucket','service_account','subnet','image','image_id',
+                'network_mode','gcloud_configuration','gcloud_account','max_create_attempts','cost_margin')}})
+        require(d.get('frozen_plan_sha256')==plan, 'phase original frozen plan differs')
+        e=d['entries'][s['id']]
+        intent=cc.digest({'source':c['source_commit'],'stage':s,'cloud_resource_identity':{k:c[k] for k in
+            ('project','region','bucket','service_account','subnet','image','image_id','network_mode','gcloud_configuration','gcloud_account')}})
+        require(set(a)=={'schema','authorization_id','stage_id','intent_sha256','reserved_usd','termination_utc','source_manifest_sha256','paid_actions_authorized'}
+            and a['schema']=='dams-root-compute-live-approval-v1' and a['paid_actions_authorized'] is True
+            and a['authorization_id']==c['authorization_id'] and a['stage_id']==s['id']
+            and a['source_manifest_sha256']==self.entry.manifest_sha and e['intent_sha256']==intent
+            and all(a[k]==e[k] for k in ('intent_sha256','reserved_usd','termination_utc'))
+            and cc.utc(e['termination_utc'])==self.entry.termination and cc.stage_cost(c,s)<=cc.money(e['reserved_usd'])
+            and cc.utc(self.new['deadline_utc'])<=self.entry.termination<=cc.utc(d['deadline_utc']),
+            'phase retained intent/hold/source/node expiry differs')
+        self.hold=e
+
+    def _enrollment(self):
+        from research_tools import cloud_control as cc
+        from research_tools.compute_only_worker import validate_runtime, verify_identity
+        p=parse(self.entry.reference(self.value['provider'])); doctor=parse(self.entry.reference(self.value['doctor']))
+        runtime_raw=self.entry.reference(self.value['runtime']);transfer_raw=self.entry.reference(self.value['transfer'])
+        r=parse(runtime_raw);t=parse(transfer_raw);vm=p['vm'];disk=p['disk']
+        require(runtime_raw==blob(r) and transfer_raw==blob(t), 'phase runtime/transfer canonical bytes differ')
+        require(p['termination_utc']==self.hold['termination_utc'] and p['approval_sha256']==self.value['approval']['sha256'],
+                'phase provider original approval/expiry differs')
+        cc.validate_compute_only_instance(self.entry.c,self.entry.stage,self.hold,vm)
+        validate_runtime(r); provider_sha=digest(blob({'vm':vm,'disk':disk})); runtime_sha=digest(runtime_raw)
+        require(r['source_commit']==self.entry.c['source_commit'] and r['source_manifest_sha256']==self.entry.manifest_sha
+            and r['spec']==self.entry.stage['spec'] and r['scale']==self.entry.stage['scale']
+            and r['provider_identity_sha256']==provider_sha and r['deadline_utc']==self.hold['termination_utc']
+            and r['transfer_config_sha256']==digest(transfer_raw) and t['stage_id']==self.entry.stage['id']
+            and t['expected_source_sha256']==source_hash() and t['deadline_utc']==r['deadline_utc']
+            and doctor['provider_identity_sha256']==provider_sha and doctor['source_manifest_sha256']==self.entry.manifest_sha
+            and str(doctor['measurements']['instance_id'])==str(vm['id']), 'phase actual provider/runtime/source/transfer differs')
+        verify_identity(r,doctor['measurements'])
+        s=self.entry.stage;c=self.entry.c
+        require(r['machine_type']==s['machine_type'] and r['purchase_mode']==cc.stage_capabilities(c,s)['purchase_mode']
+            and r['expected_guest']==s.get('expected_guest',{}) and r.get('preservation_profile')==s.get('preservation_profile'),
+            'phase frozen hardware/preservation differs')
+        dates=cc.stage_science_deadlines(s,self.hold['termination_utc'])
+        if 'preservation_profile' in s:
+            require(set(dates)=={'deadline_utc','stop_cutoff_utc'}
+                and all(s['runtime_limits'].get(k)==v for k,v in dates.items()), 'phase original scientific dates differ')
+            limits=dict(s['runtime_limits'])
+        else:limits={**s['runtime_limits'],**dates}
+        require(r['runtime_limits']==limits and r['pipeline_stop_grace_seconds']==s.get('pipeline_stop_grace_seconds',60)
+            and cc.utc(r['watchdog_shutdown_utc']).timestamp()==cc.utc(self.hold['termination_utc']).timestamp()-30,
+            'phase runtime changes admitted resources/science dates/grace/watchdog')
+        require(0<t['max_spool_bytes']<=int(cc.money(s['max_result_gib'])*2**30)
+            and 0<t['max_transfer_bytes']<=int(cc.money(s['max_egress_gib'])*2**30)
+            and r['controller_lease_timeout_seconds']<=s['max_seconds'], 'phase runtime exceeds original spool/transfer/lease envelope')
+        self.runtime_value=r;self.provider_value=p
+        return vm,runtime_sha,provider_sha,digest(transfer_raw)
+
+    def check(self):
+        require(not self.closed,'phase continuation closed'); self._hold()
+        self.launch.check();require(self.launch.head==self.committed_head
+            and self.committed_head['requests']==self.expected['requests'] and self.committed_head['bytes']==self.expected['bytes'],
+            'launch latest head changed after phase continuation')
+        require(read(self.launch.state,self.marker)[0]==self.commit,'phase bridge publication changed')
+
+    def close(self):
+        if not self.closed:self.closed=True;self.stack.close()
+
+
 
 def execute(c,folder):
     with Entry(c,state=folder) as entry:
-        phase=entry.options['phase']
-        if phase=='plan': return entry.plan()
-        if phase=='prepare': return entry.prepare()
-        if phase=='collect': return entry.collect()
-        if phase=='lifecycle':
-            from research_tools.compute_only_lifecycle import execute as live_execute
-            return live_execute(entry, parse(entry.reference(entry.options['lifecycle'])))
-        raise ValueError('COMPUTE_ONLY_PHASE_UNWIRED:'+phase+':'+UNWIRED[phase])
+        succeeded=False
+        try:
+            phase=entry.options['phase']
+            if phase=='plan': result=entry.plan()
+            elif phase=='prepare': result=entry.prepare()
+            elif phase=='collect': result=entry.collect()
+            elif phase=='lifecycle':
+                from research_tools.compute_only_lifecycle import execute as live_execute
+                options=parse(entry.reference(entry.options['lifecycle']))
+                result=live_execute(entry, options, archive_backends=entry.archive_backends(options['collector_admission']))
+            else: raise ValueError('COMPUTE_ONLY_PHASE_UNWIRED:'+phase+':'+UNWIRED[phase])
+            succeeded=True
+            return result
+        finally:
+            factory=getattr(entry,'backend_factory',None)
+            if factory is not None and factory.meter is not None:
+                raw=blob({'schema':'dams-compute-archive-operation-meter-v1',
+                    'operation_id':entry.options['operation_id'],'operation_succeeded':succeeded,
+                    'meter':factory.snapshot(),'science_complete':False})
+                name=entry.options['operation_id']+'-BACKEND-METER.json'
+                entry.check(full=True); entry.state.write_new(name,raw)
+                require(read(entry.state,name)[0]==raw,'archive operation meter readback differs')
+                entry.check(full=True)

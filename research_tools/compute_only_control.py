@@ -29,6 +29,7 @@ from dams_sim.transfer_spool import SCHEMA, MAX_FILES, MAX_METADATA_BYTES, _code
 from research_tools.validate_longitudinal import CheckedLongitudinalCases
 
 COLLECTOR_SCHEMA = 'dams-compute-only-collector-v1'
+ARCHIVE_COLLECTOR_SCHEMA = 'dams-compute-only-archive-collector-v1'
 KEYS = {'schema', 'stage_id', 'source_sha256', 'pipeline_driver_sha256', 'spec_sha256',
         'inventory_sha256', 'assignment_sha256', 'codec_source_sha256', 'codec_dependencies_sha256',
         'collector_source_sha256', 'deadline_utc', 'max_fetch_requests', 'max_fetch_bytes',
@@ -142,8 +143,9 @@ class Collector:
     Complete rollback of both this namespace AND all external pins is outside
     this contract. Two copies on the same device share a device failure domain.
     """
-    def __init__(self, admission_file, *, admission_sha256, assignment_raw, minimum_head=None):
-        self.closed = False; self.opened = []
+    def __init__(self, admission_file, *, admission_sha256, assignment_raw, minimum_head=None, archive_backends=None):
+        self.closed = False; self.opened = []; self.archive = None
+        self.archive_backends = archive_backends
         try:
             self._initialize(admission_file, admission_sha256, assignment_raw, minimum_head)
         except BaseException:
@@ -160,7 +162,8 @@ class Collector:
         self.admission_observation = (admission_dir, path.name, raw, observed)
         self.admission_sha = admission_sha256; self.config = parse(raw)
         c = self.config
-        require(isinstance(c, dict) and set(c) == KEYS and c['schema'] == COLLECTOR_SCHEMA,
+        require(isinstance(c, dict) and ((set(c) == KEYS and c['schema'] == COLLECTOR_SCHEMA)
+                or (set(c) == KEYS | {'storage_profile'} and c['schema'] == ARCHIVE_COLLECTOR_SCHEMA)),
                 'collector admission shape differs')
         for name in ('source_sha256', 'pipeline_driver_sha256', 'spec_sha256', 'inventory_sha256',
                      'assignment_sha256', 'codec_source_sha256', 'collector_source_sha256'):
@@ -241,6 +244,12 @@ class Collector:
             self.records = child(self.state, 'reservations'); self.results = child(self.state, 'results')
             self.opened.extend([self.records, self.results])
             self._history(minimum_head)
+        if c['schema'] == ARCHIVE_COLLECTOR_SCHEMA:
+            from research_tools.compute_only_archive import ArchiveClosure
+            if callable(self.archive_backends): self.archive_backends = self.archive_backends()
+            self.archive = ArchiveClosure(self, c['storage_profile'], self.archive_backends)
+        else:
+            require(self.archive_backends is None, 'legacy collector cannot silently enable archives')
 
     def check(self):
         require(not self.closed, 'collector closed')
@@ -251,6 +260,7 @@ class Collector:
         for path, observed in self.source_observations.items():
             require(not path.is_symlink() and identity(path.lstat()) == observed, 'collector frozen runtime/source changed')
         self.source_directory.check()
+        if self.archive is not None: self.archive.check()
         directory, name, raw, observed = self.admission_observation
         require(identity(os.stat(name, dir_fd=directory.fd, follow_symlinks=False)) == observed,
                 'external admission identity changed')
@@ -340,6 +350,31 @@ class Collector:
         self.records.write_new(f'{count:08d}.json', blob(value))
         self._history(self._head)
         return count, digest(blob(value))
+
+    def _reserve_batch(self, items):
+        """Archive mode only: same individual holds, one full prefix readback.
+
+        Every planned callback has its own count, byte hold, and chained record.
+        Failed/unused attempts remain charged. This neither waives request caps
+        nor refunds a partially published batch. Caller holds the original lock.
+        """
+        require(self.archive is not None, 'batch reservations require explicit archive profile')
+        self.check(); self._history(self._head)
+        require(isinstance(items,list) and items and len(items)<=65536,'archive reservation batch bound')
+        sequence=self._head['sequence'];previous=self._head['sha256'];total=self._head['bytes']
+        require(sequence+len(items)<=self.config['max_fetch_requests'], 'collector original request allowance exhausted')
+        require(total+sum(_natural(n,True) for _,n,_ in items)<=self.config['max_fetch_bytes'],
+                'collector original byte allowance exhausted')
+        tickets=[]
+        for kind,bound,sha in items:
+            require(kind in ('metadata','chunk'),'archive batch reservation kind differs');self.check()
+            sequence+=1;total+=bound
+            value={'sequence':sequence,'previous_sha256':previous,'kind':kind,'object_sha256':_sha(sha),
+                'reserved_bytes':bound,'admission_sha256':self.admission_sha}
+            raw=blob(value);self.records.write_new(f'{sequence:08d}.json',raw);previous=digest(raw)
+            tickets.append((sequence,previous))
+        self._history(self._head)
+        return tickets
 
     def reserve_metadata_attempt(self, max_bytes):
         """Call BEFORE root metadata IAP fetch; failed attempts remain charged."""
@@ -498,34 +533,41 @@ class Collector:
             for d in reversed(dirs):
                 d.close()
 
+    def _parent_context(self, parent, generation, parent_root):
+        if self.archive is not None:
+            return self.archive.parent_context(parent, generation)
+        parent_group = Directory(parent_root.path / generation)
+        try:
+            parent_m = parse(read(parent_group, 'manifest.json')[0]); receipt = parse(read(parent_group, 'receipt.json')[0])
+            require(parent_m['case_id'] == parent and parent_m['kind'] == 'final'
+                    and receipt['generation'] == generation and receipt['gate'] == 'final-full-raw'
+                    and receipt['admission_sha256'] == self.admission_sha, 'collector completed parent receipt differs')
+            self._history(receipt['counter_high_water'])
+            ack = parse(read(self.state, generation + '.ACK.json')[0])
+            require(any(copy['receipt_sha256'] == digest(read(parent_group, 'receipt.json')[0])
+                        for copy in ack['copies']), 'collector parent receipt lacks retained two-copy ACK')
+            parent_attempt = parent_group.path / 'cases' / parent / parent_m['attempt']
+            self._guard_files(parent_attempt, receipt['files'])
+            parent_envelope, _ = verify_snapshot(parent_attempt / 'final_state.json', expected_config=self.configs[parent])
+            return parent_envelope, parent_attempt
+        finally:
+            parent_group.close()
+
     def _gate(self, collection, attempt, m, parent_generations, parent_root):
         row = self.rows[m['case_id']]; config = self.configs[m['case_id']]
         parents = []; parent = row['tags']['parent_case_id']; origin_expected = None
         while parent is not None:
             require(parent in parent_generations, 'collector requires externally supplied completed parent generation')
             generation = _sha(parent_generations[parent])
-            parent_group = Directory(parent_root.path / generation)
-            try:
-                parent_m = parse(read(parent_group, 'manifest.json')[0]); receipt = parse(read(parent_group, 'receipt.json')[0])
-                require(parent_m['case_id'] == parent and parent_m['kind'] == 'final'
-                        and receipt['generation'] == generation and receipt['gate'] == 'final-full-raw'
-                        and receipt['admission_sha256'] == self.admission_sha, 'collector completed parent receipt differs')
-                self._history(receipt['counter_high_water'])
-                ack = parse(read(self.state, generation + '.ACK.json')[0])
-                require(any(copy['receipt_sha256'] == digest(read(parent_group, 'receipt.json')[0])
-                            for copy in ack['copies']), 'collector parent receipt lacks retained two-copy ACK')
-                parent_attempt = parent_group.path / 'cases' / parent / parent_m['attempt']
-                self._guard_files(parent_attempt, receipt['files'])
-                parent_envelope, _ = verify_snapshot(parent_attempt / 'final_state.json', expected_config=self.configs[parent])
-                if origin_expected is None:
-                    origin_expected = {'parent_case_id': parent, 'parent_source_sha256': parent_envelope['source_sha256'],
-                                       'parent_config_sha256': parent_envelope['config_sha256'], 'parent_day': parent_envelope['state']['day'],
-                                       'parent_state_semantic_sha256': parent_envelope['state_semantic_sha256']}
-                    parent_ledger = parent_attempt / parent_envelope['ledger']['file']
-                    parent_history = parent_envelope['state']['history']
-                parents.append((self.configs[parent].days, self.configs[parent]))
-            finally:
-                parent_group.close()
+            parent_envelope, parent_attempt = self._parent_context(parent, generation, parent_root)
+            if origin_expected is None:
+                origin_expected = {'parent_case_id': parent, 'parent_source_sha256': parent_envelope['source_sha256'],
+                                   'parent_config_sha256': parent_envelope['config_sha256'], 'parent_day': parent_envelope['state']['day'],
+                                   'parent_state_semantic_sha256': parent_envelope['state_semantic_sha256']}
+                parent_ledger = parent_attempt / parent_envelope['ledger']['file']
+                parent_history = parent_envelope['state']['history']
+                parent_csv = parent_attempt / 'timeseries.csv'
+            parents.append((self.configs[parent].days, self.configs[parent]))
             parent = self.rows[parent]['tags']['parent_case_id']
         if m['kind'] == 'checkpoint':
             item, index = m['sealed']['item'], m['sealed']['index']
@@ -561,6 +603,17 @@ class Collector:
             require(envelope['state']['day'] >= origin_expected['parent_day'], 'child checkpoint precedes assigned parent')
             require(canonical(envelope['state']['history'][:origin_expected['parent_day']])
                     == canonical(parent_history), 'collector child shared saved history differs')
+            if self.archive is not None and m['kind'] == 'final':
+                # Exact original _stage paired-prefix predicate, not a hash-only
+                # substitute. validate_case intentionally does not run _stage.
+                from itertools import islice, zip_longest
+                from research_tools.validate_longitudinal import iter_timeseries
+                before_parent_csv = identity(parent_csv.stat()); before_child_csv = identity((attempt / 'timeseries.csv').stat())
+                prefix = iter_timeseries(parent_csv)
+                child_prefix = islice(iter_timeseries(attempt / 'timeseries.csv'), origin_expected['parent_day'])
+                require(not any(a != b for a, b in zip_longest(prefix, child_prefix)), 'branch rewrites observed pre-adoption trajectory')
+                require(identity(parent_csv.stat()) == before_parent_csv and identity((attempt / 'timeseries.csv').stat()) == before_child_csv,
+                        'archive paired-prefix CSV changed')
             # Native append-only journal lexical rows preserve the exact shared
             # prehistory. Hash labels alone do not certify this prefix.
             child_ledger = attempt / envelope['ledger']['file']
@@ -626,6 +679,8 @@ class Collector:
         Metadata must already have been reserved with reserve_metadata_attempt.
         ACK is never sent over a network by this provider-free module.
         """
+        if self.archive is not None:
+            return self.archive.collect(manifest_raw, seal_raw, fetch, metadata_tickets=metadata_tickets, parent_generations=parent_generations)
         self.check(); m, seal = self._validate_group(manifest_raw, seal_raw)
         parent_generations = {} if parent_generations is None else parent_generations
         require(isinstance(parent_generations, dict), 'collector parent generation map differs')
@@ -715,6 +770,8 @@ class Collector:
     def close(self):
         if not self.closed:
             self.closed = True
+            if self.archive is not None:
+                for group, _, _ in self.archive.leases: group.close()
             for d in reversed(self.opened):
                 d.close()
 

@@ -26,9 +26,9 @@ MAX_IO=32*1024**2
 def finite(n,maxvalue):require(type(n)is int and 0<n<=maxvalue,'explicit lifecycle bound');return n
 
 class Live:
-    def __init__(self,entry,options,*,g=None,popen=subprocess.Popen):
+    def __init__(self,entry,options,*,g=None,popen=subprocess.Popen,archive_backends=None):
         self.entry=entry;self.c=entry.c;self.s=entry.stage;self.o=options;self.raw=blob(options);self.stack=ExitStack();self.popen=popen
-        self.g=g;self.vm=None;self.disk=None;self.remote_context=None;self.runtime=None;self.closed=False
+        self.g=g;self.vm=None;self.disk=None;self.remote_context=None;self.runtime=None;self.closed=False;self.collector=None
         try:
             require(isinstance(options,dict) and set(options)==FIELDS and options['schema']==SCHEMA and options['phase']in PHASES,'live lifecycle exact options')
             require(self.c.get('paid_actions_authorized')is True,'root original paid authorization required')
@@ -65,9 +65,7 @@ class Live:
                 and all(admission[k]==self.s[k] for k in ('assignment_sha256','spec_sha256','inventory_sha256')),'original Collector/assigned source pins')
             require(cc.utc(admission['deadline_utc'])<=entry.termination,'Collector cannot extend node expiry')
             minimum=None if options['minimum_head']is None else parse(entry.reference(options['minimum_head']))
-            self.collector=self.stack.enter_context(Collector(options['collector_admission']['path'],admission_sha256=options['collector_admission']['sha256'],assignment_raw=assignment,minimum_head=minimum))
             self.retained=self.stack.enter_context(_directory(options['head_receipt_dir']))
-            require(self.collector.head['sequence']==0 or minimum is not None,'existing Collector requires externally retained latest floor')
             self.key_dir=self.stack.enter_context(_directory(Path(options['ssh_key_file']).parent))
             self.key_name=Path(options['ssh_key_file']).name;self.key_anchors={}
             for n in (self.key_name,self.key_name+'.pub'):
@@ -78,15 +76,45 @@ class Live:
                 self.host_raw=entry.reference(options['known_hosts']);self.host_path=options['known_hosts']['path']
                 require(self.host_raw and b'PRIVATE KEY'not in self.host_raw,'enrolled host-key receipt is empty/wrong')
             self.events=self.stack.enter_context(_directory(entry.state.path))
+            from research_tools.compute_only_control import ARCHIVE_COLLECTOR_SCHEMA, COLLECTOR_SCHEMA
+            archive = admission.get('schema') == ARCHIVE_COLLECTOR_SCHEMA
+            if options['phase']=='launch':
+                require(admission.get('schema')==COLLECTOR_SCHEMA and archive_backends is None
+                    and entry.options.get('archive_backend_factory') is None and entry.options.get('phase_continuation') is None
+                    and options['runtime'] is None and options['transfer'] is None,
+                    'launch needs its original metadata pool, with no invented runtime/archive identity')
+            elif archive:
+                # Local retained provider/host/doctor/runtime evidence is checked
+                # before factory construction or any backend authentication/I/O.
+                self._load_provider()
+                if self.host_path is None:self.load_host_enrollment()
+                self.load_runtime()
+                continuation=entry.phase_continuation(options['collector_admission'],assignment)
+                require(continuation.runtime_sha==digest(blob(self.runtime))
+                    and continuation.provider_sha==digest(blob({'vm':self.vm,'disk':self.disk}))
+                    and continuation.value['approval']==options['approval']
+                    and continuation.value['ledger_path']==options['ledger_path'],
+                    'lifecycle continuation differs from actual provider/runtime/hold')
+                entry.lifecycle_admitted=options['collector_admission']['sha256']
+                if archive_backends is None:archive_backends=entry.archive_backends(options['collector_admission'])
+            self.collector=self.stack.enter_context(Collector(options['collector_admission']['path'],admission_sha256=options['collector_admission']['sha256'],assignment_raw=assignment,minimum_head=minimum,archive_backends=archive_backends))
+            require(self.collector.archive is None or self.collector.archive.p['mode']=='external-persistent','live lifecycle cannot use fixture backups')
+            require(self.collector.head['sequence']==0 or minimum is not None,'existing Collector requires externally retained latest floor')
+            if archive:
+                require(self.collector.archive.p['job']['runtime_sha256']==digest(blob(self.runtime))
+                    and self.collector.archive.p['job']['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk})),
+                    'archive closure differs from actual lifecycle provider/runtime')
             if self.g is None:self.g=cc.Gcloud(self.c,entry.state.path/'provider-commands')
-            if options['phase']!='launch':
+            if options['phase']!='launch' and not archive:
                 self._load_provider()
                 if self.host_path is None:self.load_host_enrollment()
             self.check()
         except BaseException:self.stack.close();raise
 
     def check(self):
-        self.entry.check();require(blob(self.o)==self.raw,'live options changed');self.collector.check();self.retained.check();self.key_dir.check()
+        self.entry.check();require(blob(self.o)==self.raw,'live options changed')
+        if self.collector is not None:self.collector.check()
+        self.retained.check();self.key_dir.check()
         for n,a in self.key_anchors.items():
             i=os.stat(n,dir_fd=self.key_dir.fd,follow_symlinks=False);require((i.st_dev,i.st_ino,i.st_size,i.st_mtime_ns,i.st_ctime_ns)==a,'enrolled key replaced')
         require(self.o['phase']=='closeout' or time.time()<cc.utc(self.e['termination_utc']).timestamp(),'fixed node expiry reached')
@@ -343,6 +371,12 @@ class Live:
         self.load_runtime();g=self.o['ack_generation'];require(isinstance(g,str)and re.fullmatch('[0-9a-f]{64}',g),'exact ACK generation')
         raw=read(self.collector.state,g+'.ACK.json')[0];a=parse(raw)
         require(a['stage_id']==self.s['id']and a['source_sha256']==source_hash()and a['generation']==g,'accepted ACK differs')
+        if self.collector.archive is not None:
+            require(self.collector.archive.p['job']['runtime_sha256']==digest(blob(self.runtime))
+                and self.collector.archive.p['job']['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk})),
+                'archive ACK actual runtime/provider differs')
+            self.collector.archive.ack_guard(g)
+            return parse(self.exchange('ack',raw))
         # Retained two receipts are read back before upload; no fabricated caller ACK.
         for d,copy in zip(self.collector.copies,a['copies']):
             with _directory(d.path/g)as group:
@@ -351,6 +385,7 @@ class Live:
                 self.collector._guard_files(group.path/'cases'/m['case_id']/m['attempt'],retained['files'])
         return parse(self.exchange('ack',raw))
     def pull_terminal(self):
+        if self.collector.archive is not None:return self._pull_archive_terminal()
         self.load_runtime();roster_raw=self.exchange('terminal-roster');roster=parse(roster_raw)
         require(roster['source_sha256']==source_hash()and roster['runtime_sha256']==digest(blob(self.runtime))and roster['case_payloads_require_original_collector']is True,'terminal inventory binding')
         require(roster['terminal']['owned_pipeline_group_verification']['owned_pipeline_group_absent']is True,'terminal group not absent')
@@ -443,6 +478,58 @@ class Live:
                     self._terminal_parents[ancestor]=(i.st_dev,i.st_ino);ancestor=ancestor.parent
         return self.event('terminal-preserved',{'storage_engineering_version':TERMINAL_STORAGE_VERSION,'reused_raw_file_count':sum(locations[f['path']][0]!=f['path']for f in roster['files']),'additional_raw_bytes_per_copy':sum(f['bytes']for f in roster['files']if locations[f['path']][0]==f['path']),'roster_sha256':digest(original),'two_physical_copies_verified':True,'case_census_present':any(f['path'].endswith('/case_census.json')for f in roster['files']),
             'case_payloads_separately_require_original_collector':True,'full_study_gate':False,'science_complete':False})
+    def _pull_archive_terminal(self):
+        # Case payloads are held by the immutable, two-backend full-decode index;
+        # only the bounded non-case census/control JSON is copied physically.
+        self.load_runtime();roster_raw=self.exchange('terminal-roster');roster=parse(roster_raw)
+        require(roster['source_sha256']==source_hash()and roster['runtime_sha256']==digest(blob(self.runtime))
+            and roster['case_payloads_require_original_collector'] is True,'archive terminal original job inventory')
+        require(len(roster['files'])<=self.o['max_terminal_files'] and sum(f['bytes']for f in roster['files'])<=self.o['max_terminal_bytes'],'archive terminal admitted full roster bound')
+        def ranges(file,offset,length):return self.exchange('terminal-read',blob({'file':file,'offset':offset,'length':length}),bound=length)
+        a=self.collector.archive;a.terminal_archive(roster_raw,ranges)
+        require(self.exchange('terminal-roster')==roster_raw,'archive closed guest inventory changed')
+        written={};locations={};parents={}
+        from dams_sim._committed_pages import Directory,identity
+        from research_tools.compute_only_control import leaf,file_hash
+        noncase=[f for f in roster['files'] if not f['path'].startswith('cases/')]
+        require(all(f['bytes']<=MAX_IO for f in noncase),'archive terminal non-case metadata bound')
+        required=sum(f['bytes']for f in noncase)+len(noncase)*8192+len(roster_raw)+MAX_IO
+        for root in self.terminal_copies:
+            self.collector.codec.require_capacity(root.path,required,self.collector.config['min_free_bytes'])
+        for f in noncase:
+            n=f['path'];locations[n]=[n,n];h=hashlib.sha256();raw=bytearray();offset=0
+            while offset<f['bytes']:
+                length=min(4*1024**2,f['bytes']-offset);part=ranges(f,offset,length)
+                require(isinstance(part,bytes)and len(part)==length,'archive terminal metadata range differs')
+                h.update(part);raw.extend(part);offset+=length
+            require(h.hexdigest()==f['sha256'],'archive terminal full census metadata SHA differs')
+            observations=[]
+            for root in self.terminal_copies:
+                d,name,opened=leaf(root,n)
+                try:
+                    d.write_new(name,bytes(raw));actual,obs=file_hash(d,name,f['bytes'],self.check)
+                    require(actual==f['sha256'],'archive terminal census physical readback differs')
+                    written[(str(root.path),n)]=obs;observations.append(obs[:2])
+                finally:
+                    for sub in reversed(opened):sub.close()
+            require(observations[0]!=observations[1],'archive terminal census copies share inode')
+        require(self.exchange('terminal-roster')==roster_raw,'archive terminal source changed after metadata copy')
+        location_raws={}
+        for root in self.terminal_copies:
+            root.write_new('terminal-roster.json',roster_raw)
+            lr=blob({'schema':'dams-terminal-archive-backed-v1','roster_sha256':digest(roster_raw),
+                'archive_index_sha256':digest(read(self.collector.state,'terminal-archive-index.json')[0]),
+                'files':{f['path']:{'relative_path':f['path'],'bytes':f['bytes'],'sha256':f['sha256']}for f in noncase}})
+            root.write_new('terminal-file-locations.json',lr);location_raws[str(root.path)]=lr
+            for f in noncase:
+                path=(root.path/f['path']).parent
+                while path!=root.path:
+                    info=path.lstat();require(stat.S_ISDIR(info.st_mode),'archive terminal metadata ancestor changed')
+                    parents[path]=(info.st_dev,info.st_ino);path=path.parent
+        self._terminal_files=written;self._terminal_roster=roster_raw;self._terminal_locations=locations
+        self._terminal_location_raws=location_raws;self._terminal_parents=parents
+        return self.event('terminal-preserved',a.terminal_guard())
+
     def _terminal_copy_guard(self):
         require(hasattr(self,'_terminal_files'),'closeout has no completed two-copy readback')
         from dams_sim._committed_pages import identity
@@ -451,6 +538,7 @@ class Live:
             require(read(root,'terminal-file-locations.json')[0]==self._terminal_location_raws[str(root.path)],'terminal location receipt changed before delete')
             for (base,n),old in self._terminal_files.items():
                 if base==str(root.path):require(identity((root.path/self._terminal_locations[n][self.terminal_copies.index(root)]).lstat())==old,'terminal bytes changed before delete')
+        if self.collector.archive is not None:self.collector.archive.terminal_guard()
         for p,old in self._terminal_parents.items():
             i=p.lstat();require(stat.S_ISDIR(i.st_mode)and(i.st_dev,i.st_ino)==old,'terminal ancestor changed before delete')
 
@@ -483,6 +571,13 @@ class Live:
             'compute_and_disk_absence_verified':True,'holds_released':False,'project_closed':False,'science_complete':False})
     def _preservation_ack_closure(self,snapshot):
         """Require EVERY original reserved generation and current two-copy ACK."""
+        if self.collector.archive is not None:
+            a=self.collector.archive
+            require(a.p['job']['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk})), 'archive terminal actual provider differs')
+            manifests=a.terminal_closure(snapshot,source_sha256=source_hash(),runtime_sha256=digest(blob(self.runtime)))
+            def guard():
+                self.check();a.terminal_closure(snapshot,source_sha256=source_hash(),runtime_sha256=digest(blob(self.runtime)))
+            return manifests,guard
         require(snapshot.get('schema')=='dams-compute-live-poll-v1' and snapshot.get('science_complete')is False
             and snapshot.get('source_sha256')==source_hash() and snapshot.get('runtime_sha256')==digest(blob(self.runtime)), 'closeout poll binding')
         ids=snapshot.get('reservation_generations');sealed=snapshot.get('sealed_generations');head=snapshot.get('spool_high_water')
@@ -585,6 +680,8 @@ class Live:
                 require(key not in classifications or classifications[key]==kind,'closeout overlapping stage classification differs')
                 classifications[key]=kind
                 matches=[m for m in manifests.values()if m['case_id']==key]
+                if self.collector.archive is not None:
+                    matches=[m for m in matches if self.collector.archive.native_roster_matches(m,files)]
                 record=records[key]
                 if kind=='complete':
                     require(any(m['kind']=='final' and ('attempt'not in record or record['attempt']=='cases/'+key+'/'+m['attempt'])for m in matches),'closeout complete case lacks accepted final raw')
@@ -626,8 +723,8 @@ class Live:
     def __enter__(self):return self
     def __exit__(self,*args):self.close()
 
-def execute(entry,options):
+def execute(entry,options,*,archive_backends=None):
     try:
-        with Live(entry,options)as live:return live.run()
+        with Live(entry,options,archive_backends=archive_backends)as live:return live.run()
     except RuntimeError as error:
         raise ValueError('compute lifecycle refused:'+type(error).__name__) from None
