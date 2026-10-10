@@ -196,8 +196,36 @@ class Clock:
         return max(time.time(), self.wall + time.monotonic() - self.monotonic)
 
 
+def reap_timeout(clock, hard):
+    """An owned-child wait never receives time beyond the original hard stop."""
+    return max(0., min(2., hard - clock.now()))
+
+
+def install_original_limits(work, runtime):
+    """Preservation-only: pass retained original RuntimeLimits bytes unchanged."""
+    raw, original_anchor = work.read('original-runtime-limits.json', bound=65536)
+    require(sha(raw) == runtime['preservation_profile']['original_runtime_limits_sha256']
+            and parse(raw) == runtime['runtime_limits'], 'original runtime full bytes differ')
+    fd = os.open('runtime-limits.json', os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                 0o600, dir_fd=work.fd)
+    with os.fdopen(fd, 'wb') as stream:
+        stream.write(raw); stream.flush(); os.fsync(stream.fileno())
+    os.fsync(work.fd)
+    work.check()
+    installed, installed_anchor = work.read('runtime-limits.json', bound=65536)
+    require(installed == raw, 'installed original runtime bytes differ')
+    return raw, original_anchor, installed_anchor
+
+
+def guard_original_limits(work, retained):
+    raw, original_anchor, installed_anchor = retained
+    require(work.read('original-runtime-limits.json', bound=65536) == (raw, original_anchor)
+            and work.read('runtime-limits.json', bound=65536) == (raw, installed_anchor),
+            'retained or installed original runtime bytes changed')
+
+
 def validate_runtime(value):
-    require(isinstance(value, dict) and set(value) == RUNTIME_FIELDS
+    require(isinstance(value, dict) and set(value) in (RUNTIME_FIELDS, RUNTIME_FIELDS | {'preservation_profile'})
             and value['schema'] == SCHEMA, 'unsupported compute-only runtime')
     for key in ('source_manifest_sha256', 'provider_identity_sha256', 'transfer_config_sha256'):
         require(isinstance(value[key], str) and re.fullmatch('[a-f0-9]{64}', value[key]),
@@ -221,14 +249,40 @@ def validate_runtime(value):
             and type(identity['boot_disk_bytes_min']) is int and identity['boot_disk_bytes_min'] > 0,
             'invalid frozen guest identity')
     limits = RuntimeLimits.from_dict(value['runtime_limits'])
+    if 'preservation_profile' in value:
+        from research_tools.frozen_science_cloud import validate_profile
+        profile = validate_profile(value['preservation_profile'], value['runtime_limits'])
+        require(profile['lease_timeout_seconds'] == value['controller_lease_timeout_seconds'],
+                'preservation/controller lease differs')
+        from dams_sim.spec import resolve_spec
+        require(resolve_spec(value['spec'], value['scale']).sha256 == profile['spec_sha256'],
+                'original scientific specification selection differs')
+        require(utc(value['deadline_utc']) <= utc(profile['cleanup_deadline_utc']),
+                'node expiry exceeds retained cleanup deadline')
     soft, hard = limits.deadline, limits.stop_cutoff
     watchdog, expiry = utc(value['watchdog_shutdown_utc']).timestamp(), utc(value['deadline_utc']).timestamp()
+    if 'preservation_profile' in value:
+        require(soft + value['pipeline_stop_grace_seconds'] <= hard,
+                'original scientific maximum stop gap differs')
+        soft = utc(profile['operational_soft_stop_utc']).timestamp()
+        hard = utc(profile['operational_hard_stop_utc']).timestamp()
+        require(watchdog == expiry - 30, 'operational watchdog must retain node expiry minus 30s')
     require(soft + value['pipeline_stop_grace_seconds'] <= hard < watchdog <= expiry,
             'compute stop bounds cannot extend node expiry')
-    require(limits.cooperative_stop_grace_seconds + 5 <= value['pipeline_stop_grace_seconds'],
-            'pipeline grace cannot cover cooperative stop and reaping')
+    if 'preservation_profile' in value:
+        # Original Scheduler clips both cooperative stop and reaping to this
+        # one absolute cutoff. Include guest reaping in the available gap;
+        # do not require a new five seconds after the original hard stop.
+        required_grace = min(limits.cooperative_stop_grace_seconds + 5, hard - soft)
+        require(3 <= value['pipeline_stop_grace_seconds'] and
+                required_grace <= value['pipeline_stop_grace_seconds'],
+                'pipeline grace must cover available original stop/reap time')
+    else:
+        require(limits.cooperative_stop_grace_seconds + 5 <= value['pipeline_stop_grace_seconds'],
+                'pipeline grace cannot cover cooperative stop and reaping')
     require(bool(value['expected_guest']), 'compute-only requires full guest hardware expectations')
-    require(limits.batch_max_output_bytes > 0 and limits.batch_max_output_files > 0,
+    require(limits.batch_max_output_bytes > 0 and
+            (limits.batch_max_output_files > 0 or 'preservation_profile' in value),
             'compute-only requires bounded raw bytes and files')
     return value
 
@@ -243,6 +297,15 @@ def validate_package(root, runtime):
     required = {'run.sh', 'uv.lock', 'pyproject.toml', 'research_tools/compute_only_worker.py',
                 'research_tools/cloud_worker.py', 'research_tools/cloud_control.py',
                 'research_tools/cloud_archive.py', 'cloud/compute-only-services.sh'}
+    if 'preservation_profile' in runtime:
+        required.add('research_tools/frozen_science_cloud.py')
+        from research_tools.frozen_science_cloud import CORE, DRIVER, ENTRY, CODEC
+        from dams_sim.storage import source_hash
+        from dams_sim.longitudinal_pipeline import driver_hash
+        require(source_hash() == CORE and driver_hash() == DRIVER
+                and sha(root.read('run.sh')[0]) == ENTRY
+                and sha(root.read('research_tools/cloud_archive.py', 64 * 1024**2)[0]) == CODEC,
+                'actual original core/driver/entry/full-raw codec changed')
     core = {p.relative_to(root.path).as_posix() for p in (root.path / 'dams_sim').glob('*.py')}
     require(isinstance(files, dict) and core and required | core <= set(files), 'source package omits runtime files')
     observations = {'source-manifest.json': (sha(data), manifest_anchor)}
@@ -338,6 +401,9 @@ def run_compute(runtime_path, root_path, work_path):
         runtime_sha = sha(data)
         soft = utc(runtime['runtime_limits']['deadline_utc']).timestamp()
         hard = utc(runtime['runtime_limits']['stop_cutoff_utc']).timestamp()
+        if 'preservation_profile' in runtime:
+            soft = utc(runtime['preservation_profile']['operational_soft_stop_utc']).timestamp()
+            hard = utc(runtime['preservation_profile']['operational_hard_stop_utc']).timestamp()
         require(clock.now() < soft, 'scientific deadline already elapsed')
         with single_run(work):
             package = validate_package(root, runtime)
@@ -351,18 +417,53 @@ def run_compute(runtime_path, root_path, work_path):
                 'instance_id': verification['instance_id'], 'zone': verification['zone'],
                 'machine_type': verification['machine_type'], 'packaged_commit': runtime['source_commit'],
                 'environment': 'GCP'}}
-            work.write('runtime-limits.json', limits, exclusive=True)
+            preservation = runtime.get('preservation_profile')
+            if preservation is not None:
+                # Explicit same-science legacy contract, not guest hardware attestation.
+                # Fresh provider/image/runtime identity remains in cloud-execution.json.
+                limits['provenance'] = preservation['legacy_scientific_provenance']
+            if preservation is not None:
+                original_limits = install_original_limits(work, runtime)
+            else:
+                work.write('runtime-limits.json', limits, exclusive=True)
             output = work.path / 'output'
-            require(not os.path.lexists(output), 'existing raw output requires explicit root reconciliation')
-            os.mkdir('output', 0o700, dir_fd=work.fd)
+            phase=None
+            if limits.get('phase_max_output_bytes',0):
+                from dams_sim.phase_storage import PhaseGuard,ENV
+                phase_path=work.path/'phase-storage-config.json';phase=PhaseGuard(phase_path)
+                require(phase.root==output and phase.value['raw_bytes']==limits['phase_max_output_bytes']
+                        and phase.value['spool_bytes']==limits['phase_spool_bytes'],'guest bounded storage/runtime differs')
+                require({p.name for p in output.iterdir()}=={'.phase-metadata-reserve'},'bounded output contains prior evidence; no restart')
+            else:
+                migration = None
+                if preservation is not None and os.path.lexists(output):
+                    from research_tools.frozen_science_cloud import prepare_existing_output
+                    migration = prepare_existing_output(work.path, preservation)
+                else:
+                    require(not os.path.lexists(output), 'existing raw output requires explicit root reconciliation')
+                    require(preservation is None or preservation['handoff_receipt_sha256'] is None,
+                            'declared original handoff output is missing')
+                    os.mkdir('output', 0o700, dir_fd=work.fd)
             with directory(output) as out:
                 execution = {'schema': 'DAMS-compute-only-execution-1', 'runtime_sha256': runtime_sha,
                              'source_commit': runtime['source_commit'], 'source_manifest_sha256': runtime['source_manifest_sha256'],
                              'transfer_config_sha256': runtime['transfer_config_sha256'], 'start_utc': stamp(),
                              'deadline_utc': runtime['deadline_utc'], 'guest_hardware_verification': verification,
                              'science_complete': False}
+                if preservation is not None:
+                    execution['preservation_profile_sha256'] = sha(canonical(preservation))
+                    execution['original_runtime_limits_sha256'] = preservation['original_runtime_limits_sha256']
+                    execution['operational_stop_clock'] = {k: preservation[k] for k in
+                        ('operational_soft_stop_utc', 'operational_hard_stop_utc')}
+                    execution['original_migration'] = migration
+                    execution['legacy_scientific_provenance_is_not_guest_attestation'] = True
+                    execution['current_guest_execution_provenance'] = verification
+                    from research_tools.frozen_science_cloud import check_output_capacity
+                    check_output_capacity(output, preservation)
                 out.write('cloud-execution.json', execution, exclusive=True)
                 check_files(root, package)
+                if preservation is not None:
+                    guard_original_limits(work, original_limits)
                 require(work.read(runtime_path.name) == (data, initial)
                         and work.read('transfer-config.json') == (transfer, transfer_anchor), 'guest input changed before launch')
                 control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], clock.now(), control)
@@ -374,6 +475,10 @@ def run_compute(runtime_path, root_path, work_path):
                            DAMS_SOURCE_MANIFEST=str(root.path / 'source-manifest.json'),
                            DAMS_TRANSFER_CONFIG=str(work.path / 'transfer-config.json'),
                            DAMS_OFFLINE_DEPENDENCIES='1')
+                if phase is not None:
+                    temporary=output/'.phase-tmp';temporary.mkdir(mode=0o700)
+                    env.update({ENV:str(phase_path),'TMPDIR':str(temporary),'TMP':str(temporary),
+                                'TEMP':str(temporary),'SQLITE_TMPDIR':str(temporary)})
                 command = [str(root.path / 'run.sh'), '--spec', runtime['spec'], '--scale', str(runtime['scale']),
                            '--output', str(output), '--runtime-limits', str(work.path / 'runtime-limits.json')]
                 logfd = os.open('pipeline.log', os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
@@ -401,6 +506,9 @@ def run_compute(runtime_path, root_path, work_path):
                                 try:
                                     check_files(root, package)
                                     work.check(); out.check()
+                                    if preservation is not None:
+                                        check_output_capacity(output, preservation)
+                                        guard_original_limits(work, original_limits)
                                     require(work.read(runtime_path.name) == (data, initial)
                                             and work.read('transfer-config.json') == (transfer, transfer_anchor),
                                             'frozen guest configuration changed')
@@ -410,7 +518,7 @@ def run_compute(runtime_path, root_path, work_path):
                                     reason = 'input_or_controller_guard'
                                     stop_requested = True
                                 if now >= soft:
-                                    reason = 'scientific_deadline'; stop_requested = True
+                                    reason = ('operational_deadline' if preservation is not None else 'scientific_deadline'); stop_requested = True
                                 elif stop_requested and reason == 'pipeline_exit':
                                     reason = 'service_signal'
                                 if stop_requested:
@@ -436,13 +544,16 @@ def run_compute(runtime_path, root_path, work_path):
                                     os.killpg(process.pid, signal.SIGKILL)
                                 except ProcessLookupError:
                                     pass
-                                process.wait(timeout=max(.01, min(2, hard - clock.now())))
+                                process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None
+                                                      else max(.01, min(2, hard - clock.now()))))
                                 break
                             if now >= hard:
                                 raise GuardError('owned pipeline did not stop before hard cutoff')
                             time.sleep(.1)
-                        code = process.wait(timeout=max(.01, min(2, hard - clock.now())))
-                        absent = wait_pipeline_group_absent(process.pid, runtime['runtime_limits']['stop_cutoff_utc'],
+                        code = process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None
+                                                     else max(.01, min(2, hard - clock.now()))))
+                        absent = wait_pipeline_group_absent(process.pid, (runtime['preservation_profile']['operational_hard_stop_utc']
+                                                             if preservation is not None else runtime['runtime_limits']['stop_cutoff_utc']),
                                                             max_wait_seconds=max(0, min(2, hard - clock.now())))
                     except BaseException:
                         # The direct parent may have exited while owned descendants remain.
@@ -450,7 +561,7 @@ def run_compute(runtime_path, root_path, work_path):
                             os.killpg(process.pid, signal.SIGKILL)
                         except ProcessLookupError:
                             pass
-                        process.wait(timeout=2)
+                        process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None else 2))
                         raise
                     finally:
                         if process.poll() is None:
@@ -458,22 +569,34 @@ def run_compute(runtime_path, root_path, work_path):
                                 os.killpg(process.pid, signal.SIGKILL)
                             except ProcessLookupError:
                                 pass
-                            process.wait(timeout=2)
+                            process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None else 2))
                         for sig, handler in previous_handlers.items():
                             signal.signal(sig, handler)
                 work.check(); out.check()
                 try:
                     check_files(root, package)
+                    if preservation is not None:
+                        guard_original_limits(work, original_limits)
                     require(work.read(runtime_path.name) == (data, initial)
                             and work.read('transfer-config.json') == (transfer, transfer_anchor),
                             'guest input changed at terminal cutoff')
                 except (GuardError, OSError, ValueError) as caught:
                     error = type(caught).__name__
                     reason = 'input_or_controller_guard'
+                phase_totals=None
+                if phase is not None:
+                    try:phase_totals=phase.check()
+                    except (OSError,ValueError,RuntimeError) as caught:
+                        error=type(caught).__name__;reason='bounded_storage_terminal_guard'
                 terminal = {**execution, 'end_utc': stamp(), 'exit_code': code, 'stop_reason': reason,
                             'guard_error_type': error, 'last_controller_sequence': control['sequence'],
                             'owned_pipeline_group_verification': absent, 'transfer_ack_verified': False,
                             'inputs_unchanged': error is None, 'science_complete': False}
+                if phase is not None:
+                    terminal['bounded_phase_storage']={'schema':'dams-bounded-phase-storage-v1',
+                        'logical_bytes':phase_totals,'raw_limit':phase.value['raw_bytes'],
+                        'encoded_limit':phase.value['spool_bytes'],'fully_allocated_quiescent_files':phase_totals is not None,
+                        'original_scientific_horizon_unchanged':True}
                 out.write('cloud-terminal.json', terminal, exclusive=True)
                 work.write('compute-terminal.json', terminal, exclusive=True)
                 return code if not error else 2
