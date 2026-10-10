@@ -99,7 +99,8 @@ def main():
     args=parser.parse_args(sys.argv[2:])
     require(re.fullmatch('[0-9a-f]{64}',args.bootstrap_sha256) and re.fullmatch('[0-9a-f]{64}',args.manifest_sha256)
             and re.fullmatch('[0-9a-f]{40}',args.source_commit))
-    require(args.spec in ('validation','historical-full-study','full-study','governance-scale','scale-confirmation','longitudinal-adoption-5y','longitudinal-adoption-10y')
+    require(args.spec in ('validation','historical-full-study','full-study','governance-scale','scale-confirmation','longitudinal-adoption-5y','longitudinal-adoption-10y','small-enterprise-5y')
+            and (args.spec!='small-enterprise-5y' or args.scale==300)
             and args.scale>=2 and 3<=args.max_seconds<=3600 and 1<=args.max_source_files<=32768
             and 1<=args.max_source_bytes<=1024**3 and 1<=args.max_log_bytes<=8*1024**2)
     require(not helper.is_symlink() and helper.is_file() and sha(helper.read_bytes())==args.bootstrap_sha256)

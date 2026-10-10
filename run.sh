@@ -47,9 +47,8 @@ if ((task_scale<2)); then echo 'Scale must be at least two people.' >&2; exit 2;
 if [[ "$task_spec" == small-enterprise-5y ]]; then
   [[ "$task_scale_explicit" == true ]] || { echo 'Small-enterprise study requires explicit --scale 30, 120 or 300.' >&2; exit 2; }
   case "$task_scale" in 30|120|300) ;; *) echo 'Small-enterprise population must be 30, 120 or 300.' >&2; exit 2;; esac
-  [[ -n "$task_output" ]] || { echo 'Small-enterprise study requires --output.' >&2; exit 2; }
-  [[ -n "$task_limits" ]] || { echo 'Small-enterprise study requires --runtime-limits.' >&2; exit 2; }
-  [[ -z "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]] || { echo 'Small-enterprise selector is local; private cloud execution requires a separately admitted coordinator.' >&2; exit 2; }
+  [[ -n "$task_output" || "$task_prepare" == true || -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]] || { echo 'Small-enterprise study requires --output.' >&2; exit 2; }
+  [[ -n "$task_limits" || "$task_prepare" == true || -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]] || { echo 'Small-enterprise study requires --runtime-limits.' >&2; exit 2; }
 fi
 if [[ -z "$task_output" ]]; then task_output="runs/${task_spec}-n${task_scale}"; fi
 is_pinned_uv_version() {
@@ -94,9 +93,24 @@ echo "Preparing locked dependencies; spec=$task_spec population=$task_scale outp
 task_sync_args=(sync --locked --extra analysis --python 3.14.2)
 if [[ "${DAMS_OFFLINE_DEPENDENCIES:-0}" == 1 ]]; then task_sync_args+=(--offline); fi
 "$task_uv" "${task_sync_args[@]}"
+if [[ "$task_prepare" != true ]]; then
+if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then
+  # Science arguments stay explicit; controller rejects conflicts with its frozen plan.
+  exec "$task_uv" run --no-sync python research_tools/cloud_control.py execute \
+    --private-config "$DAMS_CLOUD_PRIVATE_CONFIG" --state-dir "${DAMS_CLOUD_STATE_DIR:?private persistent state directory required}" \
+    --spec "$task_spec" --scale "$task_scale"
+fi
+fi
 if [[ "$task_spec" == small-enterprise-5y ]]; then
+  if [[ "$task_prepare" == true && -z "$task_limits" ]]; then
+    "$task_uv" run --no-sync python -c 'from research_tools.small_enterprise import spec; import sys; print(spec(int(sys.argv[1]))[1])' "$task_scale"
+    exec "$task_uv" run --no-sync python -m dams_sim doctor
+  fi
   task_args=(--population "$task_scale" --output "$task_output" --runtime-limits "$task_limits")
   if [[ "$task_prepare" == true ]]; then task_args+=(--prepare-only); fi
+  if [[ "$task_prepare" != true && -n "${DAMS_SMALL_ENTERPRISE_CLOUD_PROFILE:-}" ]]; then
+    exec "$task_uv" run --no-sync python -m research_tools.small_enterprise_cloud "${task_args[@]}"
+  fi
   exec "$task_uv" run --no-sync python -m research_tools.small_enterprise "${task_args[@]}"
 fi
 if [[ "$task_prepare" == true ]]; then
@@ -113,12 +127,6 @@ else:
     print(f'Prepared scientific specification: {spec.name}, N={spec.n}, days={spec.days}, SHA256={spec.sha256}')
 PY
   exec "$task_uv" run --no-sync python -m dams_sim doctor
-fi
-if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then
-  # Science arguments stay explicit; controller rejects conflicts with its frozen plan.
-  exec "$task_uv" run --no-sync python research_tools/cloud_control.py execute \
-    --private-config "$DAMS_CLOUD_PRIVATE_CONFIG" --state-dir "${DAMS_CLOUD_STATE_DIR:?private persistent state directory required}" \
-    --spec "$task_spec" --scale "$task_scale"
 fi
 task_args=(--spec "$task_spec" --scale "$task_scale" --output "$task_output")
 if [[ -n "$task_limits" ]]; then task_args+=(--runtime-limits "$task_limits"); fi

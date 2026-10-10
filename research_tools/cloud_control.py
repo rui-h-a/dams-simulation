@@ -134,6 +134,50 @@ def stage_termination_action(c, s, *, compute_only):
     action = s.get("termination_action", "DELETE")
     if action not in ("DELETE", "STOP"):
         raise GuardError("unsupported frozen instance termination action")
+    if action == "STOP" and "small_enterprise_profile" in s:
+        from research_tools.small_enterprise_cloud import validate_profile
+        try:
+            validate_profile(s["small_enterprise_profile"],s["runtime_limits"])
+        except (ValueError,KeyError,TypeError) as error:
+            raise GuardError(str(error)) from error
+        if (not compute_only or c.get("execution_mode")!="compute-only-iap"
+                or s.get("spec")!="small-enterprise-5y" or s.get("scale")!=300
+                or s.get("purchase_mode")!="STANDARD"):
+            raise GuardError("small-study STOP requires its exact no-SA Standard compute-only stage")
+        stage_capabilities(c,s)
+        return action
+    if action == "STOP" and "preservation_profile" in s:
+        from research_tools.frozen_science_cloud import validate_profile
+        if not compute_only or c.get("execution_mode") != "compute-only-iap":
+            raise GuardError("original-science STOP requires the no-SA compute-only lifecycle")
+        try:
+            validate_profile(s["preservation_profile"], s["runtime_limits"],
+                             global_deadline=c["global_deadline_utc"])
+            profile = s["preservation_profile"]
+            archive = stage_archive_options(s)
+            if (archive["transport_codec"] != "deflate-chunks-v1"
+                    or archive["archive_max_raw_bytes"] != profile["archive_max_raw_bytes"]
+                    or archive.get("archive_max_files") != profile["archive_max_files"]
+                    or archive["archive_min_free_bytes"] < profile["min_free_bytes"]):
+                raise ValueError("preservation profile differs from actual full-native archive capacity")
+            if profile["handoff_receipt_sha256"] is not None:
+                from research_tools.frozen_science_cloud import read_json, require_local_owner_closed
+                handoff_work = Path(s.get("root_handoff_work", ""))
+                if not handoff_work.is_absolute():
+                    raise ValueError("explicit root-owned migration work is required before provider command")
+                handoff = read_json(handoff_work / "handoff-receipt.json", profile["handoff_receipt_sha256"])
+                require_local_owner_closed(profile, handoff)
+            elif "root_handoff_work" in s:
+                raise ValueError("fresh entry cannot silently ignore a migration namespace")
+            from dams_sim.spec import resolve_spec
+            if resolve_spec(s["spec"], s["scale"]).sha256 != s["preservation_profile"]["spec_sha256"]:
+                raise ValueError("frozen original scientific specification differs")
+        except (ValueError, KeyError, TypeError) as error:
+            raise GuardError(str(error)) from error
+        stage_capabilities(c, s)
+        return action
+    if "preservation_profile" in s and action != "STOP":
+        raise GuardError("explicit preservation profile cannot silently use provider DELETE")
     if action == "STOP":
         limits = s.get("runtime_limits", {})
         fields = ("phase_max_output_bytes", "phase_spool_bytes",
@@ -286,10 +330,19 @@ def checked_config(c, now=None):
         stage_disk_rate(c, s)
         if not isinstance(s["max_seconds"], int) or s["max_seconds"] < 180:
             raise GuardError("stage time must include startup, compute, upload and shutdown")
-        if s["spec"] not in ("historical-full-study", "full-study", "validation", "governance-scale", "scale-confirmation", "longitudinal-adoption-5y", "longitudinal-adoption-10y") or not isinstance(s["scale"], int) or s["scale"] < 2:
+        if s["spec"] not in ("historical-full-study", "full-study", "validation", "governance-scale", "scale-confirmation", "longitudinal-adoption-5y", "longitudinal-adoption-10y", "small-enterprise-5y") or not isinstance(s["scale"], int) or s["scale"] < 2:
             raise GuardError("invalid scientific specification/scale")
         if not s.get("runtime_limits") or s["runtime_limits"].get("version") != 1:
             raise GuardError("each stage requires explicit versioned scientific resource limits")
+        if s['spec']=='small-enterprise-5y':
+            from research_tools.small_enterprise_cloud import validate_profile
+            if c.get('execution_mode')!='compute-only-iap' or 'preservation_profile' in s:
+                raise GuardError('small enterprise needs its explicit f9 compute-only profile')
+            profile=validate_profile(s.get('small_enterprise_profile'),s['runtime_limits'])
+            if s['scale']!=300 or (s.get('spec_sha256'),s.get('inventory_sha256'))!=(profile['study_sha256'],profile['pilot_inventory_sha256']):
+                raise GuardError('small enterprise literal full study/pilot assignment differs')
+        elif 'small_enterprise_profile' in s:
+            raise GuardError('small enterprise profile on another scientific specification')
         stage_archive_options(s)
         for field in ("max_result_gib", "max_egress_gib", "storage_operations_usd_upper", "other_usd_upper"):
             money(s[field])
@@ -343,9 +396,32 @@ def stage_stop_options(c, s):
     """Keep checkpoint grace and final persistence inside existing limits."""
     options = {}
     limits = s['runtime_limits']
-    if 'stop_cutoff_utc' in limits:
+    original_dates = ('preservation_profile' in s and
+                      any(k in limits for k in ('deadline_utc', 'stop_cutoff_utc')))
+    if original_dates:
+        from research_tools.frozen_science_cloud import validate_profile
+        from dams_sim.runtime import RuntimeLimits
+        if c.get('execution_mode') != 'compute-only-iap' or s.get('termination_action') != 'STOP':
+            raise GuardError('original dated science requires compute-only preservation STOP')
+        try:
+            validate_profile(s['preservation_profile'], limits,
+                             global_deadline=c['global_deadline_utc'])
+            original = RuntimeLimits.from_dict(limits)
+        except (ValueError, KeyError, TypeError) as error:
+            raise GuardError(str(error)) from error
+        grace = s.get('pipeline_stop_grace_seconds')
+        margin = s.get('shutdown_margin_seconds', 180)
+        gap = (utc(s['preservation_profile']['operational_hard_stop_utc']) -
+               utc(s['preservation_profile']['operational_soft_stop_utc'])).total_seconds()
+        if (type(grace) is not int or not 3 <= grace <= 86400
+                or not min(original.cooperative_stop_grace_seconds + 5, gap) <= grace <= gap
+                or type(margin) is not int or not 30 < margin <= 86400
+                or grace + margin >= s['max_seconds']):
+            raise GuardError('original pipeline stop/reap must fit unchanged hard cutoff and watchdog margin')
+        options['pipeline_stop_grace_seconds'] = grace
+    elif 'stop_cutoff_utc' in limits:
         raise GuardError('cloud stop cutoff is derived from the reserved server deadline')
-    if 'pipeline_stop_grace_seconds' in s:
+    elif 'pipeline_stop_grace_seconds' in s:
         grace = s['pipeline_stop_grace_seconds']
         cooperative = limits.get('cooperative_stop_grace_seconds', 10)
         margin = s.get('shutdown_margin_seconds', 180)
@@ -415,6 +491,23 @@ def stage_evidence_download_options(s):
 def stage_science_deadlines(s, termination_utc):
     deadline = utc(termination_utc)
     margin = s.get('shutdown_margin_seconds', 180)
+    original = s.get('runtime_limits', {})
+    if ('preservation_profile' in s and
+            any(k in original for k in ('deadline_utc', 'stop_cutoff_utc'))):
+        from research_tools.frozen_science_cloud import validate_profile
+        try:
+            validate_profile(s['preservation_profile'], original)
+            if deadline > utc(s['preservation_profile']['cleanup_deadline_utc']):
+                raise ValueError('original node expiry exceeds retained preservation cleanup')
+            if (s.get('termination_action') != 'STOP' or type(margin) is not int
+                    or not 30 < margin <= 86400
+                    or utc(s['preservation_profile']['operational_hard_stop_utc']) > deadline - timedelta(seconds=margin)):
+                raise ValueError('operational hard cutoff lacks reserved node/watchdog margin')
+        except (ValueError, KeyError, TypeError) as error:
+            raise GuardError(str(error)) from error
+        # Scientific maximum dates remain exact inputs. The explicit earlier
+        # operational clock is bounded by this finite node and cleanup expiry.
+        return {k: original[k] for k in ('deadline_utc', 'stop_cutoff_utc')}
     grace = s.get('pipeline_stop_grace_seconds', 60)
     limits = {'deadline_utc': stamp(deadline - timedelta(seconds=margin + grace))}
     if 'pipeline_stop_grace_seconds' in s:
