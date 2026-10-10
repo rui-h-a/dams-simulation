@@ -25,3 +25,13 @@ The dated closed-case snapshot records four pilot paired worlds and 38/66 confir
 The original frozen study remains 35/144 accepted cases, zero complete paired worlds. The dated independent metadata review confirms running storage lifecycle services; archive counts are separate from scientific sample counts. No scientific source, frozen precision rule or formal PDF changed in this update.
 
 [Full dated results and preservation evidence](research-observation-r31.json). Neither the complete research nor the final thesis is declared complete.
+
+
+## R32: continued five-year paired-world metadata snapshot
+
+This dated snapshot retains all 42 full R31 paired records exactly and adds 28 newly closed N30 confirmation pairs, for four pilot pairs and 66/66 confirmation pairs. Both arms, complete paired results and effects, frozen roster, source identities and typed normal producer exits are retained. Original raw validation belongs to the existing scientific gate; this snapshot only reads metadata. The original frozen study remains 35/144 accepted cases and zero complete paired worlds. The assigned confirmation roster has an actual terminal study result; its precision flag is reported separately. Neither the complete research nor the final thesis is declared complete.
+
+[Full dated results and antecedent preservation](research-observation-r32.json).
+
+
+The storage validation also restored one already validated 13-file case from a mounted CAS and GCS with exact full SHA-256. All 96 metered HTTP attempts closed, and the 22 remote test generations plus bucket were removed after successful readback. Originals remain intact. This engineering proof adds no scientific samples and does not claim an ongoing offsite backup or formal GCP study execution.
