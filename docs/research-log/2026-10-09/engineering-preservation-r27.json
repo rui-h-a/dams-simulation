@@ -1,0 +1,68 @@
+{
+  "current_integrity_preservation_status": {
+    "archive_copy_restore_or_new_cloud_execution_claimed": false,
+    "b225_drift_confirmed_by_complete_streams": true,
+    "canonical_final_sha256": "2f391f0bb32e17bd1611877ccc2aa5f5e35f850c449d553f25e85fe0e7432480",
+    "diagnostic_full_streams": 2,
+    "diagnostic_peak_RSS_bytes": 19087360,
+    "diagnostic_seconds": 25.422529958,
+    "drift_archive_and_resume_candidates_preparation_only": true,
+    "evidence": {
+      "bytes": 25768,
+      "sha256": "0e9f938b00e6a8530ed1640b08eebd32caa92e8f227f26c2b9ed32a9af3ba723"
+    },
+    "metadata_stat_stability_not_used_as_byte_integrity_proof": true,
+    "prior_working_different_from_canonical_final": true,
+    "working_bytes": 3679629312,
+    "working_current_sha256": "90cd2bfa8cde2d31d5f65a898bf13b0a688542aa370fd7dd2b227d52a1e3abb9",
+    "working_prior_expected_sha256": "2433fa30c79128e447cf30c2c76d7e235fcd88cb3b858afb98e592a5c7bbc713"
+  },
+  "new_paid_actions": false,
+  "r26_actual_local_hydration": {
+    "HEAD_index_config_non_target_refs_status_stats_and_full_named_guards_preserved": true,
+    "current_published_commit_blob_bytes_checked": true,
+    "documents_per_root": 3,
+    "evidence": {
+      "bytes": 5466,
+      "sha256": "9c626f942d490cc6b2ba9ed7bf258214e8cef823b0a0478f2b1666c3b330b192"
+    },
+    "new_JSON_records": 6,
+    "physical_documents": 9,
+    "physical_roots": 3,
+    "scope": "The exact three dated log files and publication main objects in three physical roots; no whole disk or whole study completion claim.",
+    "utc": "2026-10-10T02:15:01.752382+00:00"
+  },
+  "r26_actual_publication": {
+    "API_calls": 150,
+    "all_other_tree_leaf_modes_types_identities_retained": true,
+    "complete_new_Contents_readbacks": 6,
+    "complete_new_blob_readbacks": 6,
+    "dated_files_per_repository": 3,
+    "evidence": {
+      "bytes": 4629,
+      "sha256": "27c62b14e9740f181759f18803145984fd2a54e939fac5f3cc2064f3ab24ed7e"
+    },
+    "old_JSON_full_content_before_after_readbacks": 56,
+    "private_repository_visibility_retained": true,
+    "public_commit": "b1024b37321b7e69c4eb164372710864835c567b",
+    "public_tree": "996cbaad6acbf9ddfd28049f3961c558104aca7c",
+    "repositories": 2,
+    "single_exact_parent_and_no_force": true,
+    "utc": "2026-10-10T02:10:47.910851+00:00"
+  },
+  "r27_prepared_increment": {
+    "API_bound_calculation": "38 + 4*30",
+    "complete_previous_README_prefix_bytes": 62269,
+    "complete_previous_README_prefix_sha256": "5305ef9ebf60e7ffaee674d46fb3dfb010a6b6878be450644ec60710284aa3f8",
+    "documents_per_repository": 3,
+    "network_or_publication_execution": false,
+    "planned_API_ceiling": 158,
+    "previous_JSON_across_two_repositories": 60,
+    "previous_JSON_per_repository": 30,
+    "same_publisher_algorithm_with_finite_literals": true
+  },
+  "record_cutoff_utc": "2026-10-10T02:57:20.249677+00:00",
+  "schema": "DAMS-r27-dated-engineering-preservation-1",
+  "scientific_inputs_or_raw_modified_by_this_log_preparation": false,
+  "whole_goal_complete": false
+}
