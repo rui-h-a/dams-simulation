@@ -1,0 +1,1038 @@
+{
+  "schema": "DAMS-existing-entry-batch-public-bundle-v1",
+  "batch_id": "n10000-10y-r1",
+  "binding": {
+    "schema": "DAMS-existing-entry-scale-batch-binding-v1",
+    "registration_id": "frozen-schema3-longitudinal-adoption-10y-n10000-20261010-r1",
+    "version": 1,
+    "source_root": "RESEARCH_ROOT",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_commit": "not independently bound in this source-copy namespace; no invented release ID",
+    "source_full_file_guard": "docs/research-log/2026-10-10/formal-scale-batches-r38/frozen-source-byte-pins.json",
+    "name": "longitudinal-adoption-10y",
+    "initial_population": 10000,
+    "post_adoption_years": 10,
+    "calendar_start": "2020-01-01",
+    "latest_fixed_adoption_year": 5,
+    "common_end_day": 5479,
+    "full_calendar_days": 5569,
+    "settlement_tail_days": 90,
+    "observation_years": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "spec_sha256": "b40a170f137f515f7af0c76f52c8685c403dc6d5286e887ce828322996a18715",
+    "spec_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json#/payloads/spec_manifest.json",
+      "source_file_bytes": 7978,
+      "source_file_sha256": "525ab908846cec0388627d0760eb945221e19867495baa2d01baf4e680d493cf",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "b40a170f137f515f7af0c76f52c8685c403dc6d5286e887ce828322996a18715"
+    },
+    "mode": "metadata-registered-not-executed",
+    "state": "BLOCKED",
+    "state_basis": "metadata construction does not establish READY, RUNNING or COMPLETE",
+    "pilot_world_ids": [
+      20000,
+      20001,
+      20002,
+      20003
+    ],
+    "pilot_cases": 56,
+    "pilot_prefixes_per_world": 4,
+    "pilot_strategies_per_world": 10,
+    "pilot_complete_worlds": 0,
+    "formal_complete_cases": 0,
+    "confirmation_complete_worlds": 0,
+    "formal_groups_complete": 0,
+    "pilot_roster_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000-10y-r1.case_inventory.json",
+      "source_file_bytes": 440199,
+      "source_file_sha256": "9b19697f6f27e9d88d59a2d7f275c5d03296c89c5d513fa2ead1b8aed5db711c",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true
+    },
+    "base_config_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json#/payloads/base_config.metadata.json",
+      "source_file_bytes": 3271,
+      "source_file_sha256": "0947d43eca904be49b73ee9c1ab8755f7582705ffbf8d67b339481d1be44df8e",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "412c7d7f6e3418d52b0f958ace3c32082264681efd6ba3856d8c923820270bfb"
+    },
+    "assignment_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000-10y-r1.pilot_assignment.json",
+      "source_file_bytes": 490232,
+      "source_file_sha256": "6707c27bd538ec107dda5c666e77f8dec60e8443207e36790147969eda03b9ba",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true
+    },
+    "estimated_workload": {
+      "work_events": 78260000,
+      "creation_workdays": 3913,
+      "maximum_active_members": 20000,
+      "maximum_people_ever": 80000,
+      "estimated_peak_rss_bytes": 656115456,
+      "estimated_single_snapshot_bytes": 188117738752,
+      "estimated_output_bytes": 752470955008,
+      "estimate_status": "unvalidated conservative design estimate; pilot and actual guards remain mandatory",
+      "persisted_event_bytes_assumption": 2400,
+      "retained_generations_assumption": 4
+    },
+    "estimate_status": "unvalidated original conservative per-case planning estimate, not RAM/disk/throughput/cost certification",
+    "metadata_make_base_output_bound_satisfied": true,
+    "runtime_template_deliberately_expired": true,
+    "root_admitted_runtime_reference": null,
+    "root_paid_authority_bound": false,
+    "formal_run_performed": false,
+    "next_existing_command": {
+      "argv": [
+        "bash",
+        "RESEARCH_ROOT/run.sh",
+        "--spec",
+        "longitudinal-adoption-10y",
+        "--scale",
+        "10000",
+        "--output",
+        "OUTPUT_ROOT/n10000-10y-r1/formal-output-unadmitted",
+        "--runtime-limits",
+        "RUNTIME_LIMITS_ROOT/n10000-10y-r1.root-admitted.json"
+      ],
+      "argument_roots_are_literal_placeholders": true,
+      "execute_authorized": false,
+      "launch_admitted": false,
+      "existing_original_output_required": false,
+      "no_new_world_or_cloud_launch": true,
+      "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+      "expired_template_must_not_be_executed": true,
+      "original_source_spec_seed_and_complete_case_reuse_required": false,
+      "runtime_reference_is_not_new_permission": true
+    },
+    "blockers": [
+      {
+        "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+        "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+        "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+        "blocks_phase": "formal-launch"
+      },
+      {
+        "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+        "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+        "blocks_phase": "confirmation-only"
+      },
+      {
+        "code": "N10000_MEASUREMENT_PENDING_OTHER_OWNER",
+        "detail": "bounded actual profiling is owned by another agent; no throughput/ETA extrapolation here",
+        "evidence_path": null,
+        "blocks_phase": "formal-launch"
+      }
+    ],
+    "model_scope_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json#/payloads/model-and-comparison-scope.json",
+      "source_file_bytes": 8321,
+      "source_file_sha256": "70bf84362cc80390fa2749e2229f02cbf45180968b1f55624e21698c1ce2197d",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "2424a5fe6aa0986ff7ac4d2653aab4abb8191e02a7bf03467b2357e9158e413e"
+    },
+    "confirmation_rule_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json#/payloads/confirmation-rule-unselected.json",
+      "source_file_bytes": 1520,
+      "source_file_sha256": "4c88175d41a76410594fd318846841d7468d8aaa67f7a32f2c31117d36d01b42",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "00db91f1c3d5ca11aa645849fe037f9cb9fef791cceb0264e1cb49da5793fe10"
+    },
+    "pilot_incompleteness_is_not_a_blocker_to_pilot_execution": true
+  },
+  "payloads": {
+    "base_config.metadata.json": {
+      "n": 10000,
+      "days": 5569,
+      "guilds": 4,
+      "team_size": 5,
+      "sites": 2,
+      "seed": 20261008,
+      "world": 0,
+      "regime": "sublinear",
+      "alpha": 0.8,
+      "update_interval_days": 1,
+      "hierarchy_weights": [
+        1.0,
+        2.0,
+        4.0,
+        8.0
+      ],
+      "hierarchy_basis": "performance",
+      "decay_per_day": 0.01,
+      "review_capacity_per_member_day": 0.9,
+      "appeal_capacity_per_member_day": 0.1,
+      "appeal_delay_days": 3,
+      "review_error_sd": 0.2,
+      "decision_noise_sd": 0.8,
+      "shared_signal_sd": 0.2,
+      "cooperation_strength": 0.3,
+      "autonomy_response": 0.25,
+      "behavior_rule": "linear_response",
+      "learning_rate": 0.01,
+      "backend": "central",
+      "backend_review_multipliers": [
+        1.0,
+        1.2,
+        1.5
+      ],
+      "backend_settlement_days": [
+        1,
+        2,
+        3
+      ],
+      "administrative_censorship_exposure": [
+        1.0,
+        0.5,
+        0.0
+      ],
+      "quorum_unavailable_start_day": 0,
+      "quorum_unavailable_stop_day": 0,
+      "attack": "none",
+      "attack_budget_hours_per_day": 2.0,
+      "attack_cohort_fraction": 0.5,
+      "attack_start_day": 15,
+      "attack_stop_day": 25,
+      "fault_start_day": 25,
+      "fault_stop_day": 30,
+      "trace_every_days": 1,
+      "max_wall_seconds": 3600.0,
+      "max_output_mb": 752470.955008,
+      "max_rss_mb": 625.720458984375,
+      "max_events": 78260000,
+      "longitudinal": {
+        "schema_version": 1,
+        "world_context": null,
+        "calendar_start": "2020-01-01",
+        "work_weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "holidays": [],
+        "fiscal_year_start_month": 1,
+        "organization_initial_age_years": 0.0,
+        "history_mode": "conditional-synthetic-state",
+        "initial_memory": 0.2,
+        "initial_routine_strength": 0.2,
+        "historical_verified_credit_per_member": 0.0,
+        "initial_age_min_years": 25.0,
+        "initial_age_max_years": 60.0,
+        "entrant_age_years": 25.0,
+        "retirement_age_years": 65.0,
+        "annual_exit_probability": 0.12,
+        "annual_vacancy_fill_probability": 0.99,
+        "annual_leave_workdays": 0.0,
+        "credit_half_life_days": 730.0,
+        "skill_forgetting_half_life_days": 730.0,
+        "skill_learning_per_work_year": 1.0,
+        "memory_half_life_days": 3650.0,
+        "memory_transfer_fraction": 0.4,
+        "memory_learning_per_work_year": 0.2,
+        "routine_adjustment_half_life_days": 180.0,
+        "max_active_members": 20000,
+        "max_people_ever": 80000,
+        "workforce_targets": [],
+        "exit_schedule": [],
+        "guild_moves": [],
+        "guild_mergers": [],
+        "demand_schedule": [],
+        "pre_adoption_regime": "hierarchy",
+        "pre_adoption_backend": "central",
+        "adoption_mode": "fixed",
+        "adoption_day": 0,
+        "guild_adoption_days": [],
+        "observable_trigger": "review_backlog_per_active_member",
+        "trigger_threshold": 2.0,
+        "trigger_not_before_day": 0,
+        "transition_days": 90,
+        "training_hours_per_workday": 0.1,
+        "migration_resource_units_per_member": 2.0,
+        "dual_run_resource_units_per_member_workday": 0.05,
+        "maintenance_resource_units_per_member_workday": 0.01,
+        "initial_cash_per_member": 100.0,
+        "payroll_resource_units_per_member_workday": 0.5,
+        "revenue_resource_units_per_work_unit": 1.0,
+        "recruitment_resource_units_per_person": 1.0,
+        "closure_after_unfunded_workdays": 20,
+        "closure_day": null,
+        "suspension_day": null,
+        "work_creation_stop_day": 5479
+      }
+    },
+    "confirmation-rule-unselected.json": {
+      "pilot_world_ids": [
+        20000,
+        20001,
+        20002,
+        20003
+      ],
+      "pilot_world_count": 4,
+      "confirmation_min": 16,
+      "confirmation_max": 128,
+      "confirmation_world_start_reserved_by_original_spec": 30000,
+      "confirmation_count_selected": null,
+      "confirmation_ids_generated": false,
+      "confirmation_seed_selection": "no additional selection; original fixed seed20261008 retained",
+      "precision_rule": "Bonferroni Student-t continuous planning and exact-binomial paired closure planning; disjoint pilot; fixed confirmation roster",
+      "family_alpha": 0.05,
+      "primary_endpoints": [
+        {
+          "name": "work_per_present_member_workday",
+          "target_halfwidth": 0.01,
+          "unit": "synthetic work units / actual present-member workday"
+        },
+        {
+          "name": "decision_regret_per_decision",
+          "target_halfwidth": 0.02,
+          "unit": "synthetic regret units / actual decisions"
+        },
+        {
+          "name": "net_resource_gain_per_present_member_workday",
+          "target_halfwidth": 0.05,
+          "unit": "synthetic resource units / actual present-member workday"
+        },
+        {
+          "name": "closed_by_common_end",
+          "target_halfwidth": 0.1,
+          "unit": "probability, world-level indicator"
+        }
+      ],
+      "required_next_gate": "all4 complete paired pilot worlds and original full raw/stage validation, then unchanged freeze_precision",
+      "pilot_excluded_from_confirmation": true,
+      "independent_unit": "world ID, paired within context; years, guilds, branches and machines are not independent samples"
+    },
+    "event-and-output-estimate.json": {
+      "work_events": 78260000,
+      "creation_workdays": 3913,
+      "maximum_active_members": 20000,
+      "maximum_people_ever": 80000,
+      "estimated_peak_rss_bytes": 656115456,
+      "estimated_single_snapshot_bytes": 188117738752,
+      "estimated_output_bytes": 752470955008,
+      "estimate_status": "unvalidated conservative design estimate; pilot and actual guards remain mandatory",
+      "persisted_event_bytes_assumption": 2400,
+      "retained_generations_assumption": 4
+    },
+    "model-and-comparison-scope.json": {
+      "model": "frozen schema3 calendar-linked synthetic adoption ABM",
+      "initial_population_unit": "individual people per generated organization/context and independent world, not population per guild or total across arms",
+      "initial_n": 10000,
+      "max_active_members": 20000,
+      "max_people_ever": 80000,
+      "growth_rule": "externally declared context workforce_targets; not endogenous enterprise growth or calibrated forecasts",
+      "guild_count": 4,
+      "sites_count": 2,
+      "team_size": 5,
+      "initial_average_guild_size": 2500.0,
+      "management_depth": "not an independently configurable multilevel management hierarchy in this frozen design",
+      "fixed_structure_scope": "4 guilds and2 sites; no modeled dynamically created business groups, departments, sites or full target enterprises",
+      "context_count": 3,
+      "contexts": {
+        "federation": {
+          "age": 20,
+          "memory": 0.6,
+          "routine": 0.6,
+          "verified_credit": 6.0,
+          "exit": 0.1,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.1,
+            1.2,
+            1.2
+          ],
+          "initial_n": 10000,
+          "workforce_targets": [
+            [
+              0,
+              10000
+            ],
+            [
+              366,
+              11000
+            ],
+            [
+              1096,
+              12000
+            ],
+            [
+              1827,
+              12000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "listed": {
+          "age": 30,
+          "memory": 0.7,
+          "routine": 0.75,
+          "verified_credit": 10.0,
+          "exit": 0.08,
+          "initial_cash": 300.0,
+          "growth": [
+            1.0,
+            1.0,
+            1.1,
+            1.1
+          ],
+          "initial_n": 10000,
+          "workforce_targets": [
+            [
+              0,
+              10000
+            ],
+            [
+              366,
+              10000
+            ],
+            [
+              1096,
+              11000
+            ],
+            [
+              1827,
+              11000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "startup": {
+          "age": 0,
+          "memory": 0.1,
+          "routine": 0.1,
+          "verified_credit": 0.0,
+          "exit": 0.16,
+          "initial_cash": 200.0,
+          "growth": [
+            1.0,
+            1.25,
+            1.5,
+            1.5
+          ],
+          "initial_n": 10000,
+          "workforce_targets": [
+            [
+              0,
+              10000
+            ],
+            [
+              366,
+              12500
+            ],
+            [
+              1096,
+              15000
+            ],
+            [
+              1827,
+              15000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        }
+      },
+      "arms": [
+        {
+          "arm_id": "startup-existing",
+          "context": "startup",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-dams",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-existing",
+          "context": "listed",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-dams",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-existing",
+          "context": "federation",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-dams",
+          "context": "federation",
+          "strategy": "staged-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-founding",
+          "context": "startup",
+          "strategy": "founding",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-fixed-5y",
+          "context": "startup",
+          "strategy": "fixed-5y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-witness",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "witness"
+        },
+        {
+          "arm_id": "listed-process",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "process-improvement",
+          "regime": "hierarchy",
+          "backend": "central"
+        }
+      ],
+      "contrasts": [
+        {
+          "contrast_id": "startup-dams--existing",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "listed-dams--existing",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "federation-dams--existing",
+          "treatment_arm": "federation-dams",
+          "reference_arm": "federation-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-founding--existing",
+          "treatment_arm": "startup-founding",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-fixed-5y--existing",
+          "treatment_arm": "startup-fixed-5y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-witness--existing",
+          "treatment_arm": "startup-witness",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "listed-process--existing",
+          "treatment_arm": "listed-process",
+          "reference_arm": "listed-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "listed-dams--listed-process",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-process",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-dams--startup-witness",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-witness",
+          "primary": false
+        }
+      ],
+      "allocation_regimes": [
+        "hierarchy",
+        "sublinear"
+      ],
+      "evidence_backends": [
+        "central",
+        "witness"
+      ],
+      "implemented_effective_mechanisms": [
+        "skill, autonomy, reciprocity, learning, fatigue and aggregate trust acting on participation/effort/cooperation",
+        "birth/age, exits/retirements, recruitment/retained history, guild memory transfer",
+        "observed recognition, contribution allocation, review/appeal queues, time budgets and governance costs",
+        "fixed/staged/observable adoption with training, migration, dual-run and maintenance costs",
+        "synthetic demand schedule, payroll/recruitment/operating costs, output-times-fixed-unit-value revenue and cash closure",
+        "explicit full agent/events/SQLite history; no representative-agent population aggregation"
+      ],
+      "not_implemented_or_not_calibrated_in_this_frozen_study": [
+        "organic operating-state-driven workforce and business-group creation",
+        "full two-enterprise M&A history/assets/liabilities/workers/knowledge/pending obligations and paid integration",
+        "multinational country/culture/language/regulation/supply-chain/product-market/customer/ESG mechanisms",
+        "independently controlled reporting/collaboration/verification multilayer enterprise networks and management depth",
+        "independent public-enterprise empirical calibration, held-out external validation and cross-company predictive acceptance"
+      ],
+      "calibration_status": "none; conditional synthetic assumptions, no empirical claim",
+      "source_locations": [
+        "dams_sim/model.py:33",
+        "dams_sim/longitudinal.py:55",
+        "dams_sim/longitudinal_model.py:140",
+        "dams_sim/longitudinal_model.py:396",
+        "dams_sim/longitudinal_model.py:449",
+        "dams_sim/longitudinal_design.py:131"
+      ]
+    },
+    "runtime-limits.template.json": {
+      "version": 1,
+      "workers_auto": false,
+      "max_workers": 1,
+      "cpu_budget": 1,
+      "memory_budget_bytes": 656115456,
+      "per_world_rss_bytes": 656115456,
+      "max_events": 78260000,
+      "max_output_bytes": 752470955008,
+      "batch_max_output_bytes": 10000000000000,
+      "batch_max_output_files": 0,
+      "per_world_output_files": 0,
+      "min_free_disk_bytes": 85899345920,
+      "world_timeout_seconds": 3600.0,
+      "deadline_utc": "1970-01-01T00:00:00+00:00",
+      "checkpoint_interval_days": 90,
+      "checkpoint_interval_seconds": 60.0,
+      "max_retries": 1,
+      "cooperative_stop_grace_seconds": 10.0,
+      "stop_cutoff_utc": "1970-01-01T00:00:10+00:00",
+      "provenance": {}
+    },
+    "spec_manifest.json": {
+      "name": "longitudinal-adoption-10y",
+      "n": 10000,
+      "post_adoption_years": 10,
+      "calendar_start": "2020-01-01",
+      "latest_fixed_adoption_year": 5,
+      "followup_calendar_days": 90,
+      "pilot_worlds": 4,
+      "confirmation_min": 16,
+      "confirmation_max": 128,
+      "seed": 20261008,
+      "guilds": 4,
+      "sites": 2,
+      "team_size": 5,
+      "family_alpha": 0.05,
+      "pilot_world_start": 20000,
+      "confirmation_world_start": 30000,
+      "schema_version": 3,
+      "precision_rule": "Bonferroni Student-t continuous planning and exact-binomial paired closure planning; disjoint pilot; fixed confirmation roster",
+      "inferential_scope": "conditional fixed-model paired-world strategy comparison; no empirical calibration",
+      "history_mode": "conditional-synthetic-state; organization age is not simulated prehistory",
+      "calendar_scope": "Gregorian weekdays; January 1 and December 25 are declared synthetic nonwork holidays",
+      "tail_scope": "common 90-calendar-day settlement followup; no new work/claims/votes; unfinished stocks retained",
+      "days": 5569,
+      "common_end_day": 5479,
+      "observation_years": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "stages": [
+        "precision-pilot",
+        "confirmation",
+        "longitudinal-analysis",
+        "publication"
+      ],
+      "arms": [
+        {
+          "arm_id": "startup-existing",
+          "context": "startup",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-dams",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-existing",
+          "context": "listed",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-dams",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-existing",
+          "context": "federation",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-dams",
+          "context": "federation",
+          "strategy": "staged-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-founding",
+          "context": "startup",
+          "strategy": "founding",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-fixed-5y",
+          "context": "startup",
+          "strategy": "fixed-5y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-witness",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "witness"
+        },
+        {
+          "arm_id": "listed-process",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "process-improvement",
+          "regime": "hierarchy",
+          "backend": "central"
+        }
+      ],
+      "contexts": {
+        "federation": {
+          "age": 20,
+          "memory": 0.6,
+          "routine": 0.6,
+          "verified_credit": 6.0,
+          "exit": 0.1,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.1,
+            1.2,
+            1.2
+          ],
+          "initial_n": 10000,
+          "workforce_targets": [
+            [
+              0,
+              10000
+            ],
+            [
+              366,
+              11000
+            ],
+            [
+              1096,
+              12000
+            ],
+            [
+              1827,
+              12000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "listed": {
+          "age": 30,
+          "memory": 0.7,
+          "routine": 0.75,
+          "verified_credit": 10.0,
+          "exit": 0.08,
+          "initial_cash": 300.0,
+          "growth": [
+            1.0,
+            1.0,
+            1.1,
+            1.1
+          ],
+          "initial_n": 10000,
+          "workforce_targets": [
+            [
+              0,
+              10000
+            ],
+            [
+              366,
+              10000
+            ],
+            [
+              1096,
+              11000
+            ],
+            [
+              1827,
+              11000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "startup": {
+          "age": 0,
+          "memory": 0.1,
+          "routine": 0.1,
+          "verified_credit": 0.0,
+          "exit": 0.16,
+          "initial_cash": 200.0,
+          "growth": [
+            1.0,
+            1.25,
+            1.5,
+            1.5
+          ],
+          "initial_n": 10000,
+          "workforce_targets": [
+            [
+              0,
+              10000
+            ],
+            [
+              366,
+              12500
+            ],
+            [
+              1096,
+              15000
+            ],
+            [
+              1827,
+              15000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        }
+      },
+      "contrasts": [
+        {
+          "contrast_id": "startup-dams--existing",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "listed-dams--existing",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "federation-dams--existing",
+          "treatment_arm": "federation-dams",
+          "reference_arm": "federation-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-founding--existing",
+          "treatment_arm": "startup-founding",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-fixed-5y--existing",
+          "treatment_arm": "startup-fixed-5y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-witness--existing",
+          "treatment_arm": "startup-witness",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "listed-process--existing",
+          "treatment_arm": "listed-process",
+          "reference_arm": "listed-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "listed-dams--listed-process",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-process",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-dams--startup-witness",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-witness",
+          "primary": false
+        }
+      ],
+      "primary_endpoints": [
+        {
+          "name": "work_per_present_member_workday",
+          "target_halfwidth": 0.01,
+          "unit": "synthetic work units / actual present-member workday"
+        },
+        {
+          "name": "decision_regret_per_decision",
+          "target_halfwidth": 0.02,
+          "unit": "synthetic regret units / actual decisions"
+        },
+        {
+          "name": "net_resource_gain_per_present_member_workday",
+          "target_halfwidth": 0.05,
+          "unit": "synthetic resource units / actual present-member workday"
+        },
+        {
+          "name": "closed_by_common_end",
+          "target_halfwidth": 0.1,
+          "unit": "probability, world-level indicator"
+        }
+      ],
+      "exposure_rule": "actual recorded member-time; no N*days denominator; zero exposure is undefined and retained",
+      "missing_rule": "no world is discarded; unavailable post windows and closed/not-adopted cases remain explicit",
+      "independent_unit": "world ID, paired within context; years, guilds, branches and machines are not independent samples"
+    }
+  },
+  "payload_source_references": {
+    "base_config.metadata.json": {
+      "source_file_bytes": 3271,
+      "source_file_sha256": "0947d43eca904be49b73ee9c1ab8755f7582705ffbf8d67b339481d1be44df8e",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "412c7d7f6e3418d52b0f958ace3c32082264681efd6ba3856d8c923820270bfb",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "confirmation-rule-unselected.json": {
+      "source_file_bytes": 1520,
+      "source_file_sha256": "4c88175d41a76410594fd318846841d7468d8aaa67f7a32f2c31117d36d01b42",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "00db91f1c3d5ca11aa645849fe037f9cb9fef791cceb0264e1cb49da5793fe10",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "event-and-output-estimate.json": {
+      "source_file_bytes": 451,
+      "source_file_sha256": "c2131d67897eea67f8a281dcc4040ac9008008876c9c7cbd3f878e07874a7c3e",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "432509f4dfc3847f642f1daf431981b713f9dd8090d9b2fc7895fff8c69690ae",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "model-and-comparison-scope.json": {
+      "source_file_bytes": 8321,
+      "source_file_sha256": "70bf84362cc80390fa2749e2229f02cbf45180968b1f55624e21698c1ce2197d",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "2424a5fe6aa0986ff7ac4d2653aab4abb8191e02a7bf03467b2357e9158e413e",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "runtime-limits.template.json": {
+      "source_file_bytes": 648,
+      "source_file_sha256": "437cd0bea8bdb28fae968047535a36eabd095fc7a4b1665a4906f99aa41536b8",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "2847c7f441ce98e3d40f9cbd097fa37a8b444d0f59d0f9b3b6a9281477c02dab",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "spec_manifest.json": {
+      "source_file_bytes": 7978,
+      "source_file_sha256": "525ab908846cec0388627d0760eb945221e19867495baa2d01baf4e680d493cf",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "b40a170f137f515f7af0c76f52c8685c403dc6d5286e887ce828322996a18715",
+      "source_hash_is_not_bundled_public_file_hash": true
+    }
+  },
+  "roster": {
+    "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000-10y-r1.case_inventory.json",
+    "source_file_bytes": 440199,
+    "source_file_sha256": "9b19697f6f27e9d88d59a2d7f275c5d03296c89c5d513fa2ead1b8aed5db711c",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": true
+  },
+  "existing_assignment": {
+    "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000-10y-r1.pilot_assignment.json",
+    "source_file_bytes": 490232,
+    "source_file_sha256": "6707c27bd538ec107dda5c666e77f8dec60e8443207e36790147969eda03b9ba",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": true
+  },
+  "source_version_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "driver_version_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "metadata_is_not_formal_execution": true,
+  "all_launch_gates_admitted": false,
+  "original144_linked_existing_roster_not_rebuilt": false
+}

@@ -1,0 +1,57 @@
+{
+  "UTC": "2026-10-10T14:20:18.963171+00:00",
+  "actual_paid_provider_calls": 0,
+  "author_source_manifest": {
+    "bytes": 7151,
+    "sha256": "87267f394629c57a1a8a62c586dc4c664bde50265ec55252f4cdaa3b53d4e2f3"
+  },
+  "formal_worlds_added": 0,
+  "heavy_caches_tmp_venv_managed_python_all_in_owned_namespace": true,
+  "helper_sha256": "2732dc6ff3d73e9848c022522e02a744ca0e77b775d472227585e8229784494a",
+  "independent_fault_domain_verified": false,
+  "inherited_private_credential_environment": false,
+  "installed_locked_distributions": 12,
+  "managed_python_version": "3.14.2",
+  "models_instantiated": 0,
+  "original68_native_sha_unchanged": true,
+  "owned68_native_sha_unchanged": true,
+  "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+  "research_complete": false,
+  "resource_observations": {
+    "free_floor_bytes": 103079215104,
+    "instantaneous_os_quota": false,
+    "max_owned_logical_bytes": 244403144,
+    "max_owned_summed_st_blocks_bytes": 262799360,
+    "min_free_bytes": 117735739392,
+    "owned_limit_bytes": 2147483648,
+    "samples": 45,
+    "sampling_interval_seconds": 0.5,
+    "wall_limit_seconds": 600
+  },
+  "restore_or_case_runtime_verified": false,
+  "run_sh_sha256": "49e7bd70958000d2327e2859ac80d13d1edfbd6d202cfe561d5c153cdfa6487a",
+  "schema": "DAMS-small-enterprise-clean-macos-prepare-only-1",
+  "science_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+  "scientific_cases_executed": 0,
+  "source_writer_stopped": true,
+  "sqlite_version": "3.50.4",
+  "status": "PASS_CLEAN_MACOS_PREPARE_ONLY_SCOPED",
+  "study_json": {
+    "bytes": 32047,
+    "days": 1917,
+    "pilot_cases": 8,
+    "pilot_worlds": 4,
+    "population": 30,
+    "seed": 20261008,
+    "sha256": "7d95f0967577c497af6492852a8afd2c6026888ad5382f135b10355a8e74793a"
+  },
+  "uv_binary": {
+    "bytes": 44512976,
+    "sha256": "c860cbcbb4c8ab101284c06fdcc050726bb7a681a154fcfe285ae0b7c3af8630",
+    "tar_sha256_checked_by_original_bootstrap": "fcf0a9ea6599c6ae28a4c854ac6da76f2c889354d7c36ce136ef071f7ab9721f",
+    "version": "uv 0.9.26 (ee4f00362 2026-01-15)"
+  },
+  "uv_lock_sha256": "ba061682fb1b67f1c91beeccf9f36352dd68a912020662d9b74b376f4239e00c",
+  "original_receipt_sha256": "9e2cc97b7a282b5825c9f6197c47c382bf8d070e6418518eeaf3fd1de5bf44f1",
+  "scope": "Actual clean macOS locked prepare-only. No model execution, case, raw validation, restoration or formal world."
+}

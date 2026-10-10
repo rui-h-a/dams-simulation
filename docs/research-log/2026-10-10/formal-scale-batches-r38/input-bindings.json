@@ -1,0 +1,840 @@
+{
+  "schema": "DAMS-existing-entry-scale-input-mapping-v1",
+  "source_root": "RESEARCH_ROOT",
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "source_functions": [
+    "dams_sim.spec.resolve_spec",
+    "dams_sim.spec.case_key",
+    "dams_sim.spec.scientific_config",
+    "dams_sim.spec.workload",
+    "dams_sim.longitudinal_pipeline.stage_inventory",
+    "dams_sim.pipeline.make_base",
+    "dams_sim.runtime.RuntimeLimits.from_dict"
+  ],
+  "pure_metadata_only": true,
+  "original144_stage_inventory_never_called": true,
+  "original_study_inputs": {
+    "artifact": "artifact:existing-scale-metadata/original-n1000-before.json",
+    "source_file_bytes": 3748,
+    "source_file_sha256": "6c5013387abf776468fe01d4aa2ab72aa636051ebe237d481b440e1673f69fc6",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": false
+  },
+  "original_accepted_evidence": {
+    "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/original-n1000-linked-evidence.json",
+    "source_file_bytes": 8830,
+    "source_file_sha256": "83d12b9b6819030ed454186c00b2114f365cc2b86ea2a93d8c75a2a4ee578f1d",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": true
+  },
+  "by_batch": [
+    {
+      "id": "frozen-schema3-longitudinal-adoption-5y-n1000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-5y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 17054,
+        "source_file_sha256": "a4c8e0df71b4cebb266c28cbf13be4873dfeb26ff5f08d585b40b2a018f4c395",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+      },
+      "base": null,
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-5y-r1.case_inventory.json",
+        "source_file_bytes": 531034,
+        "source_file_sha256": "3c971b2650311612146eaf8d7fac5fc2064a1e707c8c286a3516a0a094d48706",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": null,
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-5y",
+          "--scale",
+          "1000",
+          "--output",
+          "OUTPUT_ROOT/original-n1000-5y",
+          "--runtime-limits",
+          "ORIGINAL_RUNTIME_LIMITS_JSON"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": true,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "first resolve measured complete-case capacity, native current35 accepted working references/origins, live owner/lock and independent-backup/budget admission; retain original locked runtime and source. Do not execute a fresh output or replay accepted cases.",
+        "expired_template_must_not_be_executed": false,
+        "original_source_spec_seed_and_complete_case_reuse_required": true,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "OBSERVED_ORIGINAL_COMPLETE_OUTPUT_CAPACITY_REFUSAL",
+          "detail": "insufficient disk for the declared complete world outputs",
+          "evidence": {
+            "artifact": "artifact:original-n1000-5y/output/pipeline_manifest.json",
+            "source_file_bytes": 16060,
+            "source_file_sha256": "070342aee2205e41efbe63aceabc79b4fd70bd56e8346d3a0bdb2a88f1afaa22",
+            "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+            "payload_in_this_export": false
+          },
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "RECOVERED_ACCEPTANCE_ORIGINAL_NATIVE_ALIAS_BINDING_UNBOUND",
+          "detail": "accepted recovered0388 is evidenced under a distinct recovery-output root; this task has not bound how the original Scheduler._inspect can resolve that accepted native working alias and parent origin without replay. The difference between32 stage references and35 raw acceptance is an evidence-cut difference, not itself a blocker or proof of raw loss.",
+          "missing_selected_reference_case_ids": [
+            "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+            "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+            "03881442fe89f4834676bcf1feaa65386ed7a1db165d3dbc1a0c7e84ff15cd37"
+          ],
+          "evidence": {
+            "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/original-n1000-linked-evidence.json",
+            "source_file_bytes": 8830,
+            "source_file_sha256": "83d12b9b6819030ed454186c00b2114f365cc2b86ea2a93d8c75a2a4ee578f1d",
+            "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+            "payload_in_this_export": true
+          },
+          "selected_reference_gap_not_independently_a_blocker": true,
+          "recovered_case_id": "03881442fe89f4834676bcf1feaa65386ed7a1db165d3dbc1a0c7e84ff15cd37",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "NO_CURRENT_STORAGE_COST_LAUNCH_ADMISSION",
+          "detail": "original runtime exists and remains locked; current available storage, backup hold, exact validated continuation references and global budget are not established by this metadata-only task",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "0/4 full paired pilot worlds; keep original16–128 precision rule and wait for exact original full pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-10y-n1000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-10y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 7962,
+        "source_file_sha256": "6a6ff52f6a347c9065ce655042ba77e6fd51ce72260fb2ff64b64d1427deb03b",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "af01c42de71d3a3798b0dabc36740865431939474d585bb00b75e009beb484d9"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-10y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3267,
+        "source_file_sha256": "6700a51eadbec957cf401cd185e519a637223d0b224d9cc903d92999bd466568",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "4a0ffe81023622ca314209a5f5f72866fd0e3c9b1ae933b6e6afd77a2a1182ac"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-10y-r1.case_inventory.json",
+        "source_file_bytes": 439671,
+        "source_file_sha256": "d2e356e81b8aa8aa860cd4ab5c95121617341a55d8bb8aebb2385f81077ffc37",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n1000-10y-r1.pilot_assignment.json",
+        "source_file_bytes": 489688,
+        "source_file_sha256": "35261e6ab672244dbf317ebd868ea5271f294f36837d4908a3f4bcf8b9ac7f83",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-10y",
+          "--scale",
+          "1000",
+          "--output",
+          "OUTPUT_ROOT/n1000-10y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n1000-10y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-5y-n10000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-5y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 17090,
+        "source_file_sha256": "00984bc28447f86ec57ca9fce4bfe2466d905820ec73b8b4a65745c5d27241b5",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "940b8051b858d97fc62c04a6baf0d1c11009690d34d79283db98c7ec24b02360"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-5y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3271,
+        "source_file_sha256": "bce3543b3580058f0b0246a0b07f96bd548bff5a52d125588a118095cb0f65ac",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "764df717bc8927c0a3a6635da7ad4ffe66d75a0513f9430f66bb39d5e3ef80f4"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000-5y-r1.case_inventory.json",
+        "source_file_bytes": 992935,
+        "source_file_sha256": "9f72fb5cc545627f139da2c5f6c1db89feaf7a6c79be75cd91f8cb1c810234a5",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000-5y-r1.pilot_assignment.json",
+        "source_file_bytes": 1099486,
+        "source_file_sha256": "fa794250aebe18ff0714a7d91a5eea3baf6fe5197eaa506d9ffd3c6147b9caf6",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-5y",
+          "--scale",
+          "10000",
+          "--output",
+          "OUTPUT_ROOT/n10000-5y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n10000-5y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        },
+        {
+          "code": "N10000_MEASUREMENT_PENDING_OTHER_OWNER",
+          "detail": "bounded actual profiling is owned by another agent; no throughput/ETA extrapolation here",
+          "evidence_path": null,
+          "blocks_phase": "formal-launch"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-10y-n10000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 7978,
+        "source_file_sha256": "525ab908846cec0388627d0760eb945221e19867495baa2d01baf4e680d493cf",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "b40a170f137f515f7af0c76f52c8685c403dc6d5286e887ce828322996a18715"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3271,
+        "source_file_sha256": "0947d43eca904be49b73ee9c1ab8755f7582705ffbf8d67b339481d1be44df8e",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "412c7d7f6e3418d52b0f958ace3c32082264681efd6ba3856d8c923820270bfb"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000-10y-r1.case_inventory.json",
+        "source_file_bytes": 440199,
+        "source_file_sha256": "9b19697f6f27e9d88d59a2d7f275c5d03296c89c5d513fa2ead1b8aed5db711c",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000-10y-r1.pilot_assignment.json",
+        "source_file_bytes": 490232,
+        "source_file_sha256": "6707c27bd538ec107dda5c666e77f8dec60e8443207e36790147969eda03b9ba",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-10y",
+          "--scale",
+          "10000",
+          "--output",
+          "OUTPUT_ROOT/n10000-10y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n10000-10y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        },
+        {
+          "code": "N10000_MEASUREMENT_PENDING_OTHER_OWNER",
+          "detail": "bounded actual profiling is owned by another agent; no throughput/ETA extrapolation here",
+          "evidence_path": null,
+          "blocks_phase": "formal-launch"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-5y-n100000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n100000-5y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 17126,
+        "source_file_sha256": "11a877b4e5a184c3be1520418e38cec605a14229653efac6ec3fa46f5a96085d",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "df78b2ac6617e9002bda9ed9f4a55563a7221f6f23cf8d831c711d166253bd93"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n100000-5y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3276,
+        "source_file_sha256": "8d138886c206d57135c8271230afaa5251b0011adfafb674e4f1d8f21483abcf",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "374390aac77e56e3f79bd8fb7a9b3bd8da68e0d6996be5c3979a865e76387361"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n100000-5y-r1.case_inventory.json",
+        "source_file_bytes": 994435,
+        "source_file_sha256": "7ae253e328b36c1755591e72b0c31c6969a7a93a30d15d999bc539d6768de814",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n100000-5y-r1.pilot_assignment.json",
+        "source_file_bytes": 1101022,
+        "source_file_sha256": "2d4a84c944e87832328cbf09b51e89d8cc2bc86e7bb99e8a575e01b7f8062103",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-5y",
+          "--scale",
+          "100000",
+          "--output",
+          "OUTPUT_ROOT/n100000-5y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n100000-5y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-10y-n100000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n100000-10y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 7994,
+        "source_file_sha256": "8457757a26f98208a8897df8b3863a072ee6f6f8cc05191a8aa8debfe7716dfe",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "6d8913b7381685c8b3631f060a4179a3cea23cf156f01cf148c57c742fe68811"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n100000-10y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3276,
+        "source_file_sha256": "a7856a4cca77930b72e4cff1b9670a55d1d527e095c9afaa97c4b35bb0cc6473",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "5926e33263d770687e009273f93efd8d97e318f047078b990e3165d7e71a0759"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n100000-10y-r1.case_inventory.json",
+        "source_file_bytes": 440783,
+        "source_file_sha256": "351ec072fb1e5be730a67633dc44b2649a2d21b86e205431867f2c9fa0f34a18",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n100000-10y-r1.pilot_assignment.json",
+        "source_file_bytes": 490832,
+        "source_file_sha256": "de44b9bbc3ee18c9bcb16765ac36d4a8fc720722ad7c323c24b3b8494bffb24f",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-10y",
+          "--scale",
+          "100000",
+          "--output",
+          "OUTPUT_ROOT/n100000-10y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n100000-10y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-5y-n1000000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000000-5y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 17162,
+        "source_file_sha256": "91ab5a4eb96bbf71d75182e40d03bb8ce1fd44395cf68e491abecc52e3732ae7",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "aa5bafade4a1e7176ed2f061fd3dba13d6ef8cd0323ef40fa888fd90c344b571"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000000-5y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3276,
+        "source_file_sha256": "50bd822cf5fc6462d460f43d72557b5f2a016033be351013f1e05649fb5859e8",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "d47d13ffb47ce90e2f4c37886ad72730f57ba52d4b0b33e3b4bc4386c92c53dd"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000000-5y-r1.case_inventory.json",
+        "source_file_bytes": 995215,
+        "source_file_sha256": "9494d7d5f11c0a2b017cbe8f59cac4e530b2b4c9061c90c7f8d68c96eff7e7fa",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n1000000-5y-r1.pilot_assignment.json",
+        "source_file_bytes": 1101838,
+        "source_file_sha256": "a0c2182a5b2b534dae05ce6052d942339aefec3d30b46365670dbe2794c5fa3f",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-5y",
+          "--scale",
+          "1000000",
+          "--output",
+          "OUTPUT_ROOT/n1000000-5y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n1000000-5y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "EXISTING_PER_CASE_CAP_REFUSAL",
+          "detail": "original request and largest legal10TB cap cannot satisfy make_base original output estimate",
+          "actual_refusals": [
+            {
+              "operation": "RuntimeLimits.from_dict(original estimated request) then make_base",
+              "error_type": "ValueError",
+              "error": "max_output_bytes outside permitted integer range",
+              "formal_run": false
+            },
+            {
+              "operation": "make_base with largest existing legal output cap",
+              "error_type": "RuntimeError",
+              "error": "declared world output below checkpoint/final-state preflight bound",
+              "formal_run": false
+            }
+          ],
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-10y-n1000000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000000-10y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 8010,
+        "source_file_sha256": "b634517ca096f15fe20dd240d5c6d22f28ae991fd2010c058f384eb287db64d9",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "e6842820ebed33ee1a71b18bbbc88db7cdf132de70bc5958da4ecc507acfdb88"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000000-10y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3276,
+        "source_file_sha256": "6548acc4fe131763e3d93c5b8ea1e51c850cc82770d15a2190950410a0a0f8af",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "c2143b4c7ecd617f546a6115319f1d5a4b4dd32ab91ff830662a4d01f4a23a2b"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000000-10y-r1.case_inventory.json",
+        "source_file_bytes": 441087,
+        "source_file_sha256": "5dd70145b7c600a144ff59d1ff7a901024d43cc043f6c2027a9cd206f47a42e0",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n1000000-10y-r1.pilot_assignment.json",
+        "source_file_bytes": 491152,
+        "source_file_sha256": "0da117915e1e69c9266c978bdf9e8590825687eeceb82c0178f0c5a5463e40b9",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-10y",
+          "--scale",
+          "1000000",
+          "--output",
+          "OUTPUT_ROOT/n1000000-10y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n1000000-10y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "EXISTING_PER_CASE_CAP_REFUSAL",
+          "detail": "original request and largest legal10TB cap cannot satisfy make_base original output estimate",
+          "actual_refusals": [
+            {
+              "operation": "RuntimeLimits.from_dict(original estimated request) then make_base",
+              "error_type": "ValueError",
+              "error": "max_output_bytes outside permitted integer range",
+              "formal_run": false
+            },
+            {
+              "operation": "make_base with largest existing legal output cap",
+              "error_type": "RuntimeError",
+              "error": "declared world output below checkpoint/final-state preflight bound",
+              "formal_run": false
+            }
+          ],
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-5y-n10000000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000000-5y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 17198,
+        "source_file_sha256": "b5b8f7da59b3c2964bdef067142e612d82281ae8e5efa5d8b34e1d9b14e23210",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "fce4d6055cda64a4e3f23ae4cde755b618713fa9fedd65da5ea07ec1a600a973"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000000-5y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3280,
+        "source_file_sha256": "5090d7638e9f58e703283285b5eb223a7013d220f492332f753baacfc9b2c1e7",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "eac61172c49f1a3d9dbae49f95b28805f7003317466aac3cd755cfd316827f45"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000000-5y-r1.case_inventory.json",
+        "source_file_bytes": 996571,
+        "source_file_sha256": "f8bdcd34679bc68bf114f694c85510927651971ecb50d8b2f7cf6e31c3dab8be",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000000-5y-r1.pilot_assignment.json",
+        "source_file_bytes": 1103230,
+        "source_file_sha256": "7e08bc98c9358ab602f877020e1cb51001bb03267bcd682d0e1630ea38d34bbb",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-5y",
+          "--scale",
+          "10000000",
+          "--output",
+          "OUTPUT_ROOT/n10000000-5y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n10000000-5y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "EXISTING_PER_CASE_CAP_REFUSAL",
+          "detail": "original request and largest legal10TB cap cannot satisfy make_base original output estimate",
+          "actual_refusals": [
+            {
+              "operation": "RuntimeLimits.from_dict(original estimated request) then make_base",
+              "error_type": "ValueError",
+              "error": "max_output_bytes outside permitted integer range",
+              "formal_run": false
+            },
+            {
+              "operation": "make_base with largest existing legal output cap",
+              "error_type": "RuntimeError",
+              "error": "declared world output below checkpoint/final-state preflight bound",
+              "formal_run": false
+            }
+          ],
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    },
+    {
+      "id": "frozen-schema3-longitudinal-adoption-10y-n10000000-20261010-r1",
+      "state": "BLOCKED",
+      "spec": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000000-10y-r1.json#/payloads/spec_manifest.json",
+        "source_file_bytes": 8026,
+        "source_file_sha256": "ec13e7ba985beb100ee43b59772287ea02b96dae30ab2dc40125fbd80c49e930",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "56ee06a2e77848d54c40fff3c951f2f14c37294eb7577cdce4b83b25eb90f551"
+      },
+      "base": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000000-10y-r1.json#/payloads/base_config.metadata.json",
+        "source_file_bytes": 3280,
+        "source_file_sha256": "043ff2288d83169f767468205856581f627268d7e696067b5a93d66d3c62c42a",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true,
+        "public_payload_canonical_sha256": "9c834b0eae46f98c159d770e94b8a19a12dfa1e6b1e1e131d6c210b95ac7b37a"
+      },
+      "pilot_roster": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000000-10y-r1.case_inventory.json",
+        "source_file_bytes": 441615,
+        "source_file_sha256": "a47271f69bc5f1493c3f50faf4159159285944341ed00862adfef2867fb1462e",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "assignment": {
+        "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000000-10y-r1.pilot_assignment.json",
+        "source_file_bytes": 491696,
+        "source_file_sha256": "dc215567c6841e8ad3850529bd3e6bcba425d7344eba2f22fba555976b20c828",
+        "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+        "payload_in_this_export": true
+      },
+      "existing_entry_next_command": {
+        "argv": [
+          "bash",
+          "RESEARCH_ROOT/run.sh",
+          "--spec",
+          "longitudinal-adoption-10y",
+          "--scale",
+          "10000000",
+          "--output",
+          "OUTPUT_ROOT/n10000000-10y-r1/formal-output-unadmitted",
+          "--runtime-limits",
+          "RUNTIME_LIMITS_ROOT/n10000000-10y-r1.root-admitted.json"
+        ],
+        "argument_roots_are_literal_placeholders": true,
+        "execute_authorized": false,
+        "launch_admitted": false,
+        "existing_original_output_required": false,
+        "no_new_world_or_cloud_launch": true,
+        "required_root_action": "bind actual authorized runtime/storage/hold/global deadline in existing source format; never execute expired template",
+        "expired_template_must_not_be_executed": true,
+        "original_source_spec_seed_and_complete_case_reuse_required": false,
+        "runtime_reference_is_not_new_permission": true
+      },
+      "blocks": [
+        {
+          "code": "EXISTING_PER_CASE_CAP_REFUSAL",
+          "detail": "original request and largest legal10TB cap cannot satisfy make_base original output estimate",
+          "actual_refusals": [
+            {
+              "operation": "RuntimeLimits.from_dict(original estimated request) then make_base",
+              "error_type": "ValueError",
+              "error": "max_output_bytes outside permitted integer range",
+              "formal_run": false
+            },
+            {
+              "operation": "make_base with largest existing legal output cap",
+              "error_type": "RuntimeError",
+              "error": "declared world output below checkpoint/final-state preflight bound",
+              "formal_run": false
+            }
+          ],
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "NO_COMPLETE_ROOT_RUNTIME_STORAGE_COST_ADMISSION",
+          "detail": "no genuinely approved whole-case host CPU/RAM/I/O/time/storage/restore/budget/deadline input is bound for this registration",
+          "evidence": "this metadata operation never runs a case or a hardware/provider admission",
+          "blocks_phase": "formal-launch"
+        },
+        {
+          "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+          "detail": "confirmation count/roster must be selected only after original full4 paired-pilot gate",
+          "blocks_phase": "confirmation-only"
+        }
+      ]
+    }
+  ],
+  "confirmation_count_or_seed_selection": null,
+  "source_commit_release_unbound_in_source_copy": true
+}

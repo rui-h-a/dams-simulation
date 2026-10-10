@@ -1,0 +1,192 @@
+{
+  "schema": "DAMS-public-scale-batch-file-index-v1",
+  "files": [
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n1000-10y-r1.pilot_assignment.json",
+      "bytes": 489688,
+      "sha256": "35261e6ab672244dbf317ebd868ea5271f294f36837d4908a3f4bcf8b9ac7f83"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000-10y-r1.pilot_assignment.json",
+      "bytes": 490232,
+      "sha256": "6707c27bd538ec107dda5c666e77f8dec60e8443207e36790147969eda03b9ba"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000-5y-r1.pilot_assignment.json",
+      "bytes": 1099486,
+      "sha256": "fa794250aebe18ff0714a7d91a5eea3baf6fe5197eaa506d9ffd3c6147b9caf6"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n100000-10y-r1.pilot_assignment.json",
+      "bytes": 490832,
+      "sha256": "de44b9bbc3ee18c9bcb16765ac36d4a8fc720722ad7c323c24b3b8494bffb24f"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n100000-5y-r1.pilot_assignment.json",
+      "bytes": 1101022,
+      "sha256": "2d4a84c944e87832328cbf09b51e89d8cc2bc86e7bb99e8a575e01b7f8062103"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n1000000-10y-r1.pilot_assignment.json",
+      "bytes": 491152,
+      "sha256": "0da117915e1e69c9266c978bdf9e8590825687eeceb82c0178f0c5a5463e40b9"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n1000000-5y-r1.pilot_assignment.json",
+      "bytes": 1101838,
+      "sha256": "a0c2182a5b2b534dae05ce6052d942339aefec3d30b46365670dbe2794c5fa3f"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000000-10y-r1.pilot_assignment.json",
+      "bytes": 491696,
+      "sha256": "dc215567c6841e8ad3850529bd3e6bcba425d7344eba2f22fba555976b20c828"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/assignments/n10000000-5y-r1.pilot_assignment.json",
+      "bytes": 1103230,
+      "sha256": "7e08bc98c9358ab602f877020e1cb51001bb03267bcd682d0e1630ea38d34bbb"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-10y-r1.json",
+      "bytes": 36384,
+      "sha256": "fb0600736e358f45f8eb60f1898fd486bffabc874d383eea37a7443f401fb268"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-5y-r1.json",
+      "bytes": 55635,
+      "sha256": "9746694e22b78fb5a5ec44484b7ab81ec6c658269518ee973cc75c3a13754ee6"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-10y-r1.json",
+      "bytes": 36705,
+      "sha256": "6b2a7d134384352c1b4b2017267abd85f3d173872987f35ae6a3fff6d6855b11"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000-5y-r1.json",
+      "bytes": 58105,
+      "sha256": "67a29431bc1f83513822edb04cf2eeffd554f4e6834c66f9c45d3ae09b508b64"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n100000-10y-r1.json",
+      "bytes": 36519,
+      "sha256": "75655f7f82829677e2db1029238000b1b6c7e10572a0acd0141da6d232835bea"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n100000-5y-r1.json",
+      "bytes": 57959,
+      "sha256": "bd709738b645c775ebeb4aa5e30715775beb13fdcf658623d3b251ca7d009900"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000000-10y-r1.json",
+      "bytes": 39524,
+      "sha256": "30932d470faaf5652a5483f77819cdf67c3b6eda07ac91451250a72a4cfb6670"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000000-5y-r1.json",
+      "bytes": 61004,
+      "sha256": "0a730d74c5d5fcdc04f37d12139e0154e360f415fcba6cd5b89fe57de23a0dd5"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000000-10y-r1.json",
+      "bytes": 39597,
+      "sha256": "145f5647dfc5ec0d4ade5a4770ed01c1b7f4ea966b14bcb5f8f7aca068ee11ed"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n10000000-5y-r1.json",
+      "bytes": 61117,
+      "sha256": "57650fc24a55ed4cafccfbb524f04eb1d0e1027f005af41a6e2b1922ec10ef44"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/exact-event-output-contracts.json",
+      "bytes": 11087,
+      "sha256": "4ecafa1dbec0873b7f3d9ea048fd80d0aa00e8eb718b3b64e816c1ae8e01d254"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/frozen-source-byte-pins.json",
+      "bytes": 10708,
+      "sha256": "d86ad9786d225d11607d733bd7f8d942c6a13753cfac29d8bfc4af3b2ab19163"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/input-bindings.json",
+      "bytes": 43994,
+      "sha256": "cb52d91489e9487b390af3703b2beb8c24c87cbef8def183d1052039081978fb"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/original-n1000-linked-evidence.json",
+      "bytes": 8806,
+      "sha256": "0294b38ab7ccb9e1aceedf3a17cf7ff272f38434c5e885b2d7af4a8f6074e4fe"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/registry.json",
+      "bytes": 84755,
+      "sha256": "90db78723eb2b3f396c2be487fc3d7863a6681191aa32d150a24ca85768974e1"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-10y-r1.case_inventory.json",
+      "bytes": 439671,
+      "sha256": "d2e356e81b8aa8aa860cd4ab5c95121617341a55d8bb8aebb2385f81077ffc37"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-5y-r1.case_inventory.json",
+      "bytes": 531034,
+      "sha256": "3c971b2650311612146eaf8d7fac5fc2064a1e707c8c286a3516a0a094d48706"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000-10y-r1.case_inventory.json",
+      "bytes": 440199,
+      "sha256": "9b19697f6f27e9d88d59a2d7f275c5d03296c89c5d513fa2ead1b8aed5db711c"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000-5y-r1.case_inventory.json",
+      "bytes": 992935,
+      "sha256": "9f72fb5cc545627f139da2c5f6c1db89feaf7a6c79be75cd91f8cb1c810234a5"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n100000-10y-r1.case_inventory.json",
+      "bytes": 440783,
+      "sha256": "351ec072fb1e5be730a67633dc44b2649a2d21b86e205431867f2c9fa0f34a18"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n100000-5y-r1.case_inventory.json",
+      "bytes": 994435,
+      "sha256": "7ae253e328b36c1755591e72b0c31c6969a7a93a30d15d999bc539d6768de814"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000000-10y-r1.case_inventory.json",
+      "bytes": 441087,
+      "sha256": "5dd70145b7c600a144ff59d1ff7a901024d43cc043f6c2027a9cd206f47a42e0"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000000-5y-r1.case_inventory.json",
+      "bytes": 995215,
+      "sha256": "9494d7d5f11c0a2b017cbe8f59cac4e530b2b4c9061c90c7f8d68c96eff7e7fa"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000000-10y-r1.case_inventory.json",
+      "bytes": 441615,
+      "sha256": "a47271f69bc5f1493c3f50faf4159159285944341ed00862adfef2867fb1462e"
+    },
+    {
+      "path": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n10000000-5y-r1.case_inventory.json",
+      "bytes": 996571,
+      "sha256": "f8bdcd34679bc68bf114f694c85510927651971ecb50d8b2f7cf6e31c3dab8be"
+    }
+  ],
+  "state": "BLOCKED",
+  "batch_count": 10,
+  "original144_roster_included_without_rebuild": true,
+  "new_roster_metadata_rows": 856,
+  "linked_existing_roster_rows": 144,
+  "new_formal_worlds": 0,
+  "cloud_launches": 0,
+  "confirmation_worlds_not_selected": true,
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "file_hash_scope": "actual public file bytes; each bundle separately retains original source-file and canonical payload hashes",
+  "self_hash_included": false,
+  "manifest_self_hash_available_in_private_export_dict": true,
+  "runtime_paths_are_literal_placeholders": true,
+  "runtime_templates_deliberately_expired": true,
+  "output_and_rss_formulas_are_conservative_unvalidated_estimates_not_measurements": true,
+  "original_case_native_device_account_paths_not_published": true
+}

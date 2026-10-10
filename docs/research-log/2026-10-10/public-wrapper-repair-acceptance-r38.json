@@ -1,0 +1,16 @@
+{
+  "UTC": "2026-10-10T14:47:07.259021+00:00",
+  "status": "PASS_ACTUAL_PUBLIC_WRAPPER_R2_FULL13_AND_DIFFERENT_OWNER_WINDOW_CONTROLS",
+  "source_sha256": "99839f8cee28dcd04c2631619e15d1bdd3dcf1aee5a5840afad5f50a32ce4efd",
+  "root_full13_result_sha256": "a85f80eee12156324e1aa063ba1f52e9f9f476d2402d92ba6a08866240efb345",
+  "independent_repaired_window_review_sha256": "2c352dcd72b505048c97534ce5094187aa1eb56817a3ca397e8c98beac7a8e22",
+  "independent_v1_failed_review_sha256": "b8f0af88dc74c22be285550fb5ed8194491c531c9da3e04715812f04d09d4e22",
+  "two_rounds_of_six_independent_fixture_controls_expected": true,
+  "all13_actual_complete_binary_reconstruction": true,
+  "unique_original_data_changed": false,
+  "frozen_model_changed": false,
+  "formal_worlds_added": 0,
+  "independent_economic_validation": false,
+  "off_device_backup": false,
+  "raw_retirement_authority": false
+}

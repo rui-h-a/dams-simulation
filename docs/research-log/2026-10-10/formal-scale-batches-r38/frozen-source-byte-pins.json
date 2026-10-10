@@ -1,0 +1,217 @@
+{
+  "created_utc": "2026-10-10T13:41:55.000533+00:00",
+  "core": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "science25": [
+    {
+      "artifact": "research-source/dams_sim/__init__.py",
+      "source_file_bytes": 104,
+      "source_file_sha256": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/__main__.py",
+      "source_file_bytes": 79,
+      "source_file_sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/_committed_pages.py",
+      "source_file_bytes": 44163,
+      "source_file_sha256": "6e6f3cc05678e89910dbc9f1c518ae2642be65962b501b58cf4cc64c2353e9e6",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/authority.py",
+      "source_file_bytes": 4951,
+      "source_file_sha256": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/cli.py",
+      "source_file_bytes": 21188,
+      "source_file_sha256": "8f4033155f543a6d0f92413224666f99302ae8692ddeb3c37c08afe26d3dc462",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/config.py",
+      "source_file_bytes": 7950,
+      "source_file_sha256": "ab69e75cf2fd43e2dcef629f6031dfeaf0d39db7958e5e6656b7a742dfe32114",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/design.py",
+      "source_file_bytes": 4887,
+      "source_file_sha256": "93eb321819c39ea4e4e3844ef8dd507f9edf90a01e30813d439767778c7944eb",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal.py",
+      "source_file_bytes": 15471,
+      "source_file_sha256": "494ebb7cdbf5a8d99593d29ae0edb45ef6a87d4a233a588f5225f5cdad7f18b8",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal_design.py",
+      "source_file_bytes": 18859,
+      "source_file_sha256": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal_model.py",
+      "source_file_bytes": 70932,
+      "source_file_sha256": "4ffa4dc683fc740d25d0b2cb4e5b3f5be2ae24b0b1bb26f6b29abdc03a19ed7a",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal_outputs.py",
+      "source_file_bytes": 11272,
+      "source_file_sha256": "7b2437afa00ef7c987f4b31d10c8e164d06b5255c230aa9e1a53d431ae2b1300",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal_pipeline.py",
+      "source_file_bytes": 27782,
+      "source_file_sha256": "b24d7df0eb2f22eeee6de17af450b6a03a0c58c755629c871a8c953592d9d65a",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal_statistics.py",
+      "source_file_bytes": 6556,
+      "source_file_sha256": "0eb080ea1890f5cfe7087ddf6afd073a5e89356da87e427582c43961e42f442f",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/longitudinal_storage.py",
+      "source_file_bytes": 24477,
+      "source_file_sha256": "89e7e25da46d14bb2ba2af418a03d6a447ba35e25d4f6b83a4fcc037967a27ac",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/model.py",
+      "source_file_bytes": 31028,
+      "source_file_sha256": "b2f51a094088fbf49fec8673c64b121ac9d21c73cad810d8ae515e802d9cf990",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/native_checkpoint_owner.py",
+      "source_file_bytes": 9141,
+      "source_file_sha256": "425b7bd8bea6aa582389743c6c13a8fb9cc41301a42bed813b10a1e6f826b79d",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/native_page_backend.py",
+      "source_file_bytes": 20537,
+      "source_file_sha256": "a7f5581e8156a876219c97e8cee6fba56b9b1a075ee0654f5c3406147a127faa",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/pipeline.py",
+      "source_file_bytes": 21958,
+      "source_file_sha256": "fe4b3323e6cf352e815a552120412741afca7050903ac5041d2117c2efa64057",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/randomness.py",
+      "source_file_bytes": 2428,
+      "source_file_sha256": "94c69aeb3dbfcab213ab92b5c271ee38ea4c946ade214d31867c5ab693644e7e",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/report.py",
+      "source_file_bytes": 4268,
+      "source_file_sha256": "004596067efd0e90876fef1f6a77a536f71d6c16cff95b8474df3f309840fe14",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/runtime.py",
+      "source_file_bytes": 5677,
+      "source_file_sha256": "a658e57904a72a25e0713eaeb88a5059836027c8e516eb8eaa9d4eb3239f61e6",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/scheduler.py",
+      "source_file_bytes": 26598,
+      "source_file_sha256": "5f8c4606de59f039b42fe99a8c6ea9bc868f6ce439ff5d1885a725941f97d9bc",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/spec.py",
+      "source_file_bytes": 4927,
+      "source_file_sha256": "c54615aa41d7a9132adc4b9af9b7e1314ec35551f19ae090b3794ed057e2e02d",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/storage.py",
+      "source_file_bytes": 6767,
+      "source_file_sha256": "ce3dba71799e61230d7ec67c05262e8c6cb7cda9509011900e6d5350f23d3226",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/dams_sim/transfer_spool.py",
+      "source_file_bytes": 31069,
+      "source_file_sha256": "74db5223da09cff39cd0777d7657386e39783fc12587dc7b1e979a33c5a2f236",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    }
+  ],
+  "operation": [
+    {
+      "artifact": "research-source/run.sh",
+      "source_file_bytes": 5596,
+      "source_file_sha256": "ec747003cbed9503470e9ccc2b56ed2ba399c8309fe68459ff0cc9d10e07bee8",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    {
+      "artifact": "research-source/research_tools/cloud_control.py",
+      "source_file_bytes": 64902,
+      "source_file_sha256": "ff680fd3213359fbb2da0cc4e80b46179e2ab03e6dc8a969e95c468a8dd13bc4",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    }
+  ],
+  "known_35_reconciliation": {
+    "artifact": "artifact:external-evidence/5d7572cb37a82b93e5feae6d/current-35-reconciliation.json",
+    "source_file_bytes": 6789,
+    "source_file_sha256": "5494d7f9fdfd179494768c63402ca9cb5be0a7745577aeb1bd339f332f93b0af",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": false
+  },
+  "operational_components_absent": [
+    "research_tools/frozen_science_cloud.py"
+  ],
+  "actual_failed_attempts": [
+    {
+      "operation": "source-before read nonexistent research_tools/frozen_science_cloud.py",
+      "exit_code": 1,
+      "reason": "FileNotFoundError",
+      "response": "preserve absence, do not add or invent source"
+    }
+  ],
+  "scope": "metadata artifacts only; no models, engines, SQLite, network, paid, source or original-case writes",
+  "source_preservation_scope": "original read-only full-byte guards; native/device tuple fields excluded from public metadata"
+}

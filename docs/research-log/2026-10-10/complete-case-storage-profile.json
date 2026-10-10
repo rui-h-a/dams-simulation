@@ -1,0 +1,204 @@
+{
+  "actual_final_state_restore": {
+    "config_sha256": "1fd7ec8f46608e87a43553731134e3d4cec37bce48e0aaf2ff86db3059657374",
+    "cpu_seconds": 45.316070999999994,
+    "day": 1917,
+    "full_state_semantic_sha256": "93ccb9c3496020478cd785022e41ee08f7e6de8921c560deaf067069eb6c9e3a",
+    "ledger_semantic_sha256": "55e25b921ea7aff6e63643f080f026aaee95b3155a36c557996978fc7cfb54d8",
+    "wall_seconds": 49.99005487500108,
+    "working_byte_SHA_equals_final_image": true
+  },
+  "case_id": "627c56435de957b99c4d5b89fad5d8bb5c6c2098e4a3386b07b6b3bd04301f48",
+  "chunk_references": 60,
+  "core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+  "days": 1917,
+  "driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+  "encoded_referenced_bytes": 156563686,
+  "independent_binary_receipt_sha256": "1d694035a3cdce33db9cddb593905011a4aa14e6c555d60933fe8137b28ede55",
+  "independent_binary_scope": "All original 13 files, all 60 references, independent stdlib zlib/hashlib full SHA and strict EOF; not independent model semantics or off-device backup.",
+  "limits": {
+    "different_fault_domain": false,
+    "extra_formal_worlds": 0,
+    "independent_model_reexecution": false,
+    "larger_scale_capacity_or_cost_admitted": false,
+    "originals_retired": false,
+    "storage_ratio_extrapolated": false
+  },
+  "n": 120,
+  "per_file": [
+    {
+      "chunk_references": 12,
+      "encoded_referenced_bytes": 38573859,
+      "full_raw_sha256": "cfba56570f01ef22b2d07a7c64a81a93fc38fa95d963637eeb7ee1a3964f0b70",
+      "name": ".longitudinal-working.sqlite",
+      "raw_bytes": 47882240
+    },
+    {
+      "chunk_references": 2,
+      "encoded_referenced_bytes": 636693,
+      "full_raw_sha256": "df4d6913ca821629b0e157d96daceab181be3a20599e4b5fd895836e0db00148",
+      "name": "checkpoint-day-001890.json",
+      "raw_bytes": 5304631
+    },
+    {
+      "chunk_references": 12,
+      "encoded_referenced_bytes": 38506767,
+      "full_raw_sha256": "483605b84818b33031fb0e6f6e6646ecb3df3dbcf5f8773a18c74fa8fcf15f57",
+      "name": "checkpoint-day-001890.sqlite",
+      "raw_bytes": 47861760
+    },
+    {
+      "chunk_references": 2,
+      "encoded_referenced_bytes": 644179,
+      "full_raw_sha256": "960b489b2127a84c8725e0f4ae113a796e575dc7c50c5eb3d8e422ef78808f10",
+      "name": "checkpoint-day-001917.json",
+      "raw_bytes": 5382042
+    },
+    {
+      "chunk_references": 12,
+      "encoded_referenced_bytes": 38573821,
+      "full_raw_sha256": "64558f01dad87eabde36b1301c8d4462038f49a2630d412047b434f594cf96b1",
+      "name": "checkpoint-day-001917.sqlite",
+      "raw_bytes": 47882240
+    },
+    {
+      "chunk_references": 1,
+      "encoded_referenced_bytes": 606,
+      "full_raw_sha256": "8b5d53c07eb810417c515210852c2ead6ff66b2b286628f4d5e1fe8a54f6e2c1",
+      "name": "checkpoint-index.json",
+      "raw_bytes": 1684
+    },
+    {
+      "chunk_references": 2,
+      "encoded_referenced_bytes": 644183,
+      "full_raw_sha256": "c7123eaadac232f7649149595c74326d1f636fd587298a7fd3bc37c68940f7ac",
+      "name": "final_state.json",
+      "raw_bytes": 5382032
+    },
+    {
+      "chunk_references": 12,
+      "encoded_referenced_bytes": 38573821,
+      "full_raw_sha256": "64558f01dad87eabde36b1301c8d4462038f49a2630d412047b434f594cf96b1",
+      "name": "final_state.sqlite",
+      "raw_bytes": 47882240
+    },
+    {
+      "chunk_references": 1,
+      "encoded_referenced_bytes": 3124,
+      "full_raw_sha256": "c5163d7a24d41c17659f0ae03efce9bd71732ce51e7ad8b0677d0313eba98685",
+      "name": "manifest.json",
+      "raw_bytes": 6508
+    },
+    {
+      "chunk_references": 1,
+      "encoded_referenced_bytes": 856,
+      "full_raw_sha256": "685bad522bfe48729b9c46354b61675a8de0e3e2820c4406996fba9a813db4e1",
+      "name": "report.md",
+      "raw_bytes": 1562
+    },
+    {
+      "chunk_references": 1,
+      "encoded_referenced_bytes": 26658,
+      "full_raw_sha256": "60e16b93e020111f147f33cd59a600cf21536c9d32eb4943b2d2d878ffd39904",
+      "name": "report.svg",
+      "raw_bytes": 62073
+    },
+    {
+      "chunk_references": 1,
+      "encoded_referenced_bytes": 1100,
+      "full_raw_sha256": "f2435fa2455dafd76599f867ef9e1a1be01242bd244d48bc7692882a6aa1a578",
+      "name": "summary.json",
+      "raw_bytes": 2362
+    },
+    {
+      "chunk_references": 1,
+      "encoded_referenced_bytes": 378019,
+      "full_raw_sha256": "e3b54725d75bc0cd40cef8f52228888776b1358c12d90816e512bce89d5d09ae",
+      "name": "timeseries.csv",
+      "raw_bytes": 1401880
+    }
+  ],
+  "profile_result_sha256": "320831bc7df18ffede5dc5549f4b3a1fd9a7f40497f6bbc214be1df15f5b5dce",
+  "raw_allocated_bytes": 209653760,
+  "raw_logical_bytes": 209053254,
+  "source_commit_declared": "f9b8740bd21735ac9962d382fdf0ca652e07e917",
+  "stream_counter": {
+    "chunk_reads": 60,
+    "decoded_raw_bytes": 209053254,
+    "encoded_payload_bytes": 156563686,
+    "remote_requests": 0
+  },
+  "unique_encoded_bytes": 82676816,
+  "unique_objects": 37,
+  "working_SQL_and_original_5_tables": {
+    "exact_ordered_logical_semantics": {
+      "row_counts": {
+        "credits": 283,
+        "delays": 396,
+        "journal": 747144,
+        "pending": 12355,
+        "seen": 167916
+      },
+      "schema_version": 2,
+      "semantic_sha256": "55e25b921ea7aff6e63643f080f026aaee95b3155a36c557996978fc7cfb54d8"
+    },
+    "freelist_pages": 14,
+    "journal_chunks": {
+      "archived_row_ends": 747144,
+      "chunk_count": 1918,
+      "encoded_fragment_bytes": 33420777,
+      "raw_fragment_bytes": 203195802
+    },
+    "journal_first": [
+      1,
+      0,
+      "entry",
+      "initial:0"
+    ],
+    "journal_kinds": {
+      "appeal": 3280,
+      "commit": 167916,
+      "day_end": 1917,
+      "decision": 5196,
+      "demand": 21,
+      "entry": 304,
+      "exit": 125,
+      "retirement": 2,
+      "review": 181325,
+      "vote": 193527,
+      "work": 193527,
+      "workforce_target": 4
+    },
+    "journal_last": [
+      747144,
+      1916,
+      "day_end",
+      "day:1916"
+    ],
+    "journal_logical_rows": 747144,
+    "journal_original_payload_UTF8_bytes": 150802806,
+    "page_count": 11690,
+    "page_size": 4096,
+    "physical_SQL_rows": {
+      "credits": 283,
+      "delays": 396,
+      "journal": 0,
+      "journal_chunk_config": 1,
+      "journal_chunks": 1918,
+      "pending": 12355,
+      "seen": 167916,
+      "sqlite_sequence": 2
+    },
+    "schema_version": 2,
+    "sqlite_sequence": [
+      [
+        "journal",
+        747144
+      ],
+      [
+        "pending",
+        364876
+      ]
+    ]
+  }
+}

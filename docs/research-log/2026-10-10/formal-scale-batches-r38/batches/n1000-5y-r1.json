@@ -1,0 +1,1711 @@
+{
+  "schema": "DAMS-existing-entry-batch-public-bundle-v1",
+  "batch_id": "n1000-5y-r1",
+  "binding": {
+    "schema": "DAMS-existing-entry-scale-batch-binding-v1",
+    "registration_id": "frozen-schema3-longitudinal-adoption-5y-n1000-20261010-r1",
+    "version": 1,
+    "source_root": "RESEARCH_ROOT",
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "source_commit": "not independently bound in this source-copy namespace; no invented release ID",
+    "source_full_file_guard": "docs/research-log/2026-10-10/formal-scale-batches-r38/frozen-source-byte-pins.json",
+    "name": "longitudinal-adoption-5y",
+    "initial_population": 1000,
+    "post_adoption_years": 5,
+    "calendar_start": "2020-01-01",
+    "latest_fixed_adoption_year": 5,
+    "common_end_day": 3653,
+    "full_calendar_days": 3743,
+    "settlement_tail_days": 90,
+    "observation_years": [
+      1,
+      3,
+      5
+    ],
+    "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e",
+    "spec_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-5y-r1.json#/payloads/spec_manifest.json",
+      "source_file_bytes": 17054,
+      "source_file_sha256": "a4c8e0df71b4cebb266c28cbf13be4873dfeb26ff5f08d585b40b2a018f4c395",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e"
+    },
+    "mode": "linked-existing",
+    "state": "BLOCKED",
+    "state_basis": "linked existing failed pipeline; current35 accepted raw is retained without substituting stale producer/census counts; no complete launch admission or live-process evidence",
+    "pilot_world_ids": [
+      20000,
+      20001,
+      20002,
+      20003
+    ],
+    "pilot_cases": 144,
+    "pilot_prefixes_per_world": 9,
+    "pilot_strategies_per_world": 27,
+    "pilot_complete_worlds": 0,
+    "formal_complete_cases": 35,
+    "confirmation_complete_worlds": 0,
+    "formal_groups_complete": 0,
+    "pilot_roster_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-5y-r1.case_inventory.json",
+      "source_file_bytes": 531034,
+      "source_file_sha256": "3c971b2650311612146eaf8d7fac5fc2064a1e707c8c286a3516a0a094d48706",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true
+    },
+    "base_config_reference": null,
+    "assignment_reference": null,
+    "estimated_workload": {
+      "work_events": 5218000,
+      "creation_workdays": 2609,
+      "maximum_active_members": 2000,
+      "maximum_people_ever": 8000,
+      "estimated_peak_rss_bytes": 307203456,
+      "estimated_single_snapshot_bytes": 12574852352,
+      "estimated_output_bytes": 50299409408,
+      "estimate_status": "unvalidated conservative design estimate; pilot and actual guards remain mandatory",
+      "persisted_event_bytes_assumption": 2400,
+      "retained_generations_assumption": 4
+    },
+    "estimate_status": "unvalidated original conservative per-case planning estimate, not RAM/disk/throughput/cost certification",
+    "metadata_make_base_output_bound_satisfied": true,
+    "runtime_template_deliberately_expired": false,
+    "root_admitted_runtime_reference": null,
+    "root_paid_authority_bound": false,
+    "formal_run_performed": false,
+    "next_existing_command": {
+      "argv": [
+        "bash",
+        "RESEARCH_ROOT/run.sh",
+        "--spec",
+        "longitudinal-adoption-5y",
+        "--scale",
+        "1000",
+        "--output",
+        "OUTPUT_ROOT/original-n1000-5y",
+        "--runtime-limits",
+        "ORIGINAL_RUNTIME_LIMITS_JSON"
+      ],
+      "argument_roots_are_literal_placeholders": true,
+      "execute_authorized": false,
+      "launch_admitted": false,
+      "existing_original_output_required": true,
+      "no_new_world_or_cloud_launch": true,
+      "required_root_action": "first resolve measured complete-case capacity, native current35 accepted working references/origins, live owner/lock and independent-backup/budget admission; retain original locked runtime and source. Do not execute a fresh output or replay accepted cases.",
+      "expired_template_must_not_be_executed": false,
+      "original_source_spec_seed_and_complete_case_reuse_required": true,
+      "runtime_reference_is_not_new_permission": true
+    },
+    "blockers": [
+      {
+        "code": "OBSERVED_ORIGINAL_COMPLETE_OUTPUT_CAPACITY_REFUSAL",
+        "detail": "insufficient disk for the declared complete world outputs",
+        "evidence": {
+          "artifact": "artifact:original-n1000-5y/output/pipeline_manifest.json",
+          "source_file_bytes": 16060,
+          "source_file_sha256": "070342aee2205e41efbe63aceabc79b4fd70bd56e8346d3a0bdb2a88f1afaa22",
+          "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+          "payload_in_this_export": false
+        },
+        "blocks_phase": "formal-launch"
+      },
+      {
+        "code": "RECOVERED_ACCEPTANCE_ORIGINAL_NATIVE_ALIAS_BINDING_UNBOUND",
+        "detail": "accepted recovered0388 is evidenced under a distinct recovery-output root; this task has not bound how the original Scheduler._inspect can resolve that accepted native working alias and parent origin without replay. The difference between32 stage references and35 raw acceptance is an evidence-cut difference, not itself a blocker or proof of raw loss.",
+        "missing_selected_reference_case_ids": [
+          "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+          "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+          "03881442fe89f4834676bcf1feaa65386ed7a1db165d3dbc1a0c7e84ff15cd37"
+        ],
+        "evidence": {
+          "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/original-n1000-linked-evidence.json",
+          "source_file_bytes": 8830,
+          "source_file_sha256": "83d12b9b6819030ed454186c00b2114f365cc2b86ea2a93d8c75a2a4ee578f1d",
+          "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+          "payload_in_this_export": true
+        },
+        "selected_reference_gap_not_independently_a_blocker": true,
+        "recovered_case_id": "03881442fe89f4834676bcf1feaa65386ed7a1db165d3dbc1a0c7e84ff15cd37",
+        "blocks_phase": "formal-launch"
+      },
+      {
+        "code": "NO_CURRENT_STORAGE_COST_LAUNCH_ADMISSION",
+        "detail": "original runtime exists and remains locked; current available storage, backup hold, exact validated continuation references and global budget are not established by this metadata-only task",
+        "blocks_phase": "formal-launch"
+      },
+      {
+        "code": "PILOT_INCOMPLETE_CONFIRMATION_UNSELECTED",
+        "detail": "0/4 full paired pilot worlds; keep original16–128 precision rule and wait for exact original full pilot gate",
+        "blocks_phase": "confirmation-only"
+      }
+    ],
+    "model_scope_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-5y-r1.json#/payloads/model-and-comparison-scope.json",
+      "source_file_bytes": 17472,
+      "source_file_sha256": "c8f3434280723f6c960fb9dae7e53e5f823d49576115085cbcca21ae7642fa86",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "5ec5e8e7793a38ecd9bfa4bde250f0d5d7ac1a1256dd5c023e42e0d48f0459d6"
+    },
+    "confirmation_rule_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/batches/n1000-5y-r1.json#/payloads/confirmation-rule-unselected.json",
+      "source_file_bytes": 1520,
+      "source_file_sha256": "4c88175d41a76410594fd318846841d7468d8aaa67f7a32f2c31117d36d01b42",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true,
+      "public_payload_canonical_sha256": "00db91f1c3d5ca11aa645849fe037f9cb9fef791cceb0264e1cb49da5793fe10"
+    },
+    "original_study_reference": {
+      "artifact": "artifact:original-n1000-5y/output/spec_manifest.json",
+      "source_file_bytes": 11722,
+      "source_file_sha256": "6c68ebf8d819799a15c5435b39345beab1343eeef454170302fd3d844e4b066f",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "original_runtime_reference": {
+      "artifact": "artifact:original-n1000-5y/runtime-limits.json",
+      "source_file_bytes": 789,
+      "source_file_sha256": "5bb350b3400482da8a9e5f27eb6eac5b75a673f25b36b7d68219b5e9e8bb2c8c",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "linked_existing_evidence_reference": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/original-n1000-linked-evidence.json",
+      "source_file_bytes": 8830,
+      "source_file_sha256": "83d12b9b6819030ed454186c00b2114f365cc2b86ea2a93d8c75a2a4ee578f1d",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true
+    },
+    "progress_units": {
+      "raw_accepted": 35,
+      "raw_accepted_prefixes": 28,
+      "raw_accepted_full_single_strategies": 7,
+      "producer_status_complete": 34,
+      "prior_stage_census_complete": 33,
+      "prior_stage_selected_references": 32,
+      "complete_paired_pilot_worlds": 0,
+      "pilot_worlds_required": 4,
+      "confirmation_complete_worlds": 0,
+      "formal_groups_complete": 0,
+      "remaining_nonaccepted_original_cases": 109,
+      "raw_accepted_by_world": {
+        "20000": 8,
+        "20001": 10,
+        "20002": 9,
+        "20003": 8
+      },
+      "units_must_not_be_substituted": "producer labels, historical census/references and current raw acceptance are distinct evidence cuts; none is a paired world",
+      "selected_reference_case_ids_missing_current_raw_acceptance": [
+        "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+        "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+        "03881442fe89f4834676bcf1feaa65386ed7a1db165d3dbc1a0c7e84ff15cd37"
+      ],
+      "missing_reference_is_not_proof_of_raw_loss": true
+    },
+    "pilot_incompleteness_is_not_a_blocker_to_pilot_execution": true
+  },
+  "payloads": {
+    "confirmation-rule-unselected.json": {
+      "pilot_world_ids": [
+        20000,
+        20001,
+        20002,
+        20003
+      ],
+      "pilot_world_count": 4,
+      "confirmation_min": 16,
+      "confirmation_max": 128,
+      "confirmation_world_start_reserved_by_original_spec": 30000,
+      "confirmation_count_selected": null,
+      "confirmation_ids_generated": false,
+      "confirmation_seed_selection": "no additional selection; original fixed seed20261008 retained",
+      "precision_rule": "Bonferroni Student-t continuous planning and exact-binomial paired closure planning; disjoint pilot; fixed confirmation roster",
+      "family_alpha": 0.05,
+      "primary_endpoints": [
+        {
+          "name": "work_per_present_member_workday",
+          "target_halfwidth": 0.01,
+          "unit": "synthetic work units / actual present-member workday"
+        },
+        {
+          "name": "decision_regret_per_decision",
+          "target_halfwidth": 0.02,
+          "unit": "synthetic regret units / actual decisions"
+        },
+        {
+          "name": "net_resource_gain_per_present_member_workday",
+          "target_halfwidth": 0.05,
+          "unit": "synthetic resource units / actual present-member workday"
+        },
+        {
+          "name": "closed_by_common_end",
+          "target_halfwidth": 0.1,
+          "unit": "probability, world-level indicator"
+        }
+      ],
+      "required_next_gate": "all4 complete paired pilot worlds and original full raw/stage validation, then unchanged freeze_precision",
+      "pilot_excluded_from_confirmation": true,
+      "independent_unit": "world ID, paired within context; years, guilds, branches and machines are not independent samples"
+    },
+    "event-and-output-estimate.json": {
+      "work_events": 5218000,
+      "creation_workdays": 2609,
+      "maximum_active_members": 2000,
+      "maximum_people_ever": 8000,
+      "estimated_peak_rss_bytes": 307203456,
+      "estimated_single_snapshot_bytes": 12574852352,
+      "estimated_output_bytes": 50299409408,
+      "estimate_status": "unvalidated conservative design estimate; pilot and actual guards remain mandatory",
+      "persisted_event_bytes_assumption": 2400,
+      "retained_generations_assumption": 4
+    },
+    "model-and-comparison-scope.json": {
+      "model": "frozen schema3 calendar-linked synthetic adoption ABM",
+      "initial_population_unit": "individual people per generated organization/context and independent world, not population per guild or total across arms",
+      "initial_n": 1000,
+      "max_active_members": 2000,
+      "max_people_ever": 8000,
+      "growth_rule": "externally declared context workforce_targets; not endogenous enterprise growth or calibrated forecasts",
+      "guild_count": 4,
+      "sites_count": 2,
+      "team_size": 5,
+      "initial_average_guild_size": 250.0,
+      "management_depth": "not an independently configurable multilevel management hierarchy in this frozen design",
+      "fixed_structure_scope": "4 guilds and2 sites; no modeled dynamically created business groups, departments, sites or full target enterprises",
+      "context_count": 7,
+      "contexts": {
+        "century": {
+          "age": 100,
+          "memory": 0.9,
+          "routine": 0.9,
+          "verified_credit": 15.0,
+          "exit": 0.05,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1000
+            ],
+            [
+              1096,
+              1000
+            ],
+            [
+              1827,
+              1000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "federation": {
+          "age": 20,
+          "memory": 0.6,
+          "routine": 0.6,
+          "verified_credit": 6.0,
+          "exit": 0.1,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.1,
+            1.2,
+            1.2
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1100
+            ],
+            [
+              1096,
+              1200
+            ],
+            [
+              1827,
+              1200
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "financing": {
+          "age": 4,
+          "memory": 0.3,
+          "routine": 0.35,
+          "verified_credit": 3.0,
+          "exit": 0.18,
+          "initial_cash": 100.0,
+          "growth": [
+            1.0,
+            1.5,
+            1.25,
+            1.0
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1500
+            ],
+            [
+              1096,
+              1250
+            ],
+            [
+              1827,
+              1000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "growth": {
+          "age": 2,
+          "memory": 0.25,
+          "routine": 0.25,
+          "verified_credit": 2.0,
+          "exit": 0.2,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.5,
+            2.0,
+            2.0
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1500
+            ],
+            [
+              1096,
+              2000
+            ],
+            [
+              1827,
+              2000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "listed": {
+          "age": 30,
+          "memory": 0.7,
+          "routine": 0.75,
+          "verified_credit": 10.0,
+          "exit": 0.08,
+          "initial_cash": 300.0,
+          "growth": [
+            1.0,
+            1.0,
+            1.1,
+            1.1
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1000
+            ],
+            [
+              1096,
+              1100
+            ],
+            [
+              1827,
+              1100
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "startup": {
+          "age": 0,
+          "memory": 0.1,
+          "routine": 0.1,
+          "verified_credit": 0.0,
+          "exit": 0.16,
+          "initial_cash": 200.0,
+          "growth": [
+            1.0,
+            1.25,
+            1.5,
+            1.5
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1250
+            ],
+            [
+              1096,
+              1500
+            ],
+            [
+              1827,
+              1500
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "traditional": {
+          "age": 50,
+          "memory": 0.8,
+          "routine": 0.85,
+          "verified_credit": 12.0,
+          "exit": 0.06,
+          "initial_cash": 200.0,
+          "growth": [
+            1.0,
+            1.0,
+            0.9,
+            0.9
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1000
+            ],
+            [
+              1096,
+              900
+            ],
+            [
+              1827,
+              900
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        }
+      },
+      "arms": [
+        {
+          "arm_id": "startup-existing",
+          "context": "startup",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-dams",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "growth-existing",
+          "context": "growth",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "growth-dams",
+          "context": "growth",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "financing-existing",
+          "context": "financing",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "financing-dams",
+          "context": "financing",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-existing",
+          "context": "listed",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-dams",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "traditional-existing",
+          "context": "traditional",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "traditional-dams",
+          "context": "traditional",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "century-existing",
+          "context": "century",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "century-dams",
+          "context": "century",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-existing",
+          "context": "federation",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-dams",
+          "context": "federation",
+          "strategy": "staged-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-founding",
+          "context": "startup",
+          "strategy": "founding",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-fixed-3y",
+          "context": "startup",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-fixed-5y",
+          "context": "startup",
+          "strategy": "fixed-5y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-staged-1y",
+          "context": "startup",
+          "strategy": "staged-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-growth-trigger",
+          "context": "startup",
+          "strategy": "growth-trigger",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-crisis-trigger",
+          "context": "startup",
+          "strategy": "crisis-trigger",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-equal",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "allocation-control",
+          "regime": "equal",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-linear",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "allocation-control",
+          "regime": "linear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-hierarchy_tenure",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "allocation-control",
+          "regime": "hierarchy_tenure",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-process",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "process-improvement",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-process",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "process-improvement",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-witness",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "witness"
+        },
+        {
+          "arm_id": "startup-consensus",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "consensus"
+        }
+      ],
+      "contrasts": [
+        {
+          "contrast_id": "startup-dams--existing",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "growth-dams--existing",
+          "treatment_arm": "growth-dams",
+          "reference_arm": "growth-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "financing-dams--existing",
+          "treatment_arm": "financing-dams",
+          "reference_arm": "financing-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "listed-dams--existing",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "traditional-dams--existing",
+          "treatment_arm": "traditional-dams",
+          "reference_arm": "traditional-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "century-dams--existing",
+          "treatment_arm": "century-dams",
+          "reference_arm": "century-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "federation-dams--existing",
+          "treatment_arm": "federation-dams",
+          "reference_arm": "federation-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-founding--existing",
+          "treatment_arm": "startup-founding",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-fixed-3y--existing",
+          "treatment_arm": "startup-fixed-3y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-fixed-5y--existing",
+          "treatment_arm": "startup-fixed-5y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-staged-1y--existing",
+          "treatment_arm": "startup-staged-1y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-growth-trigger--existing",
+          "treatment_arm": "startup-growth-trigger",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-crisis-trigger--existing",
+          "treatment_arm": "startup-crisis-trigger",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-equal--existing",
+          "treatment_arm": "startup-equal",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-linear--existing",
+          "treatment_arm": "startup-linear",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-hierarchy_tenure--existing",
+          "treatment_arm": "startup-hierarchy_tenure",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-process--existing",
+          "treatment_arm": "startup-process",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "listed-process--existing",
+          "treatment_arm": "listed-process",
+          "reference_arm": "listed-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-witness--existing",
+          "treatment_arm": "startup-witness",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-consensus--existing",
+          "treatment_arm": "startup-consensus",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-dams--startup-linear",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-linear",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-dams--startup-process",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-process",
+          "primary": true
+        },
+        {
+          "contrast_id": "listed-dams--listed-process",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-process",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-dams--startup-witness",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-witness",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-dams--startup-consensus",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-consensus",
+          "primary": false
+        }
+      ],
+      "allocation_regimes": [
+        "equal",
+        "hierarchy",
+        "hierarchy_tenure",
+        "linear",
+        "sublinear"
+      ],
+      "evidence_backends": [
+        "central",
+        "consensus",
+        "witness"
+      ],
+      "implemented_effective_mechanisms": [
+        "skill, autonomy, reciprocity, learning, fatigue and aggregate trust acting on participation/effort/cooperation",
+        "birth/age, exits/retirements, recruitment/retained history, guild memory transfer",
+        "observed recognition, contribution allocation, review/appeal queues, time budgets and governance costs",
+        "fixed/staged/observable adoption with training, migration, dual-run and maintenance costs",
+        "synthetic demand schedule, payroll/recruitment/operating costs, output-times-fixed-unit-value revenue and cash closure",
+        "explicit full agent/events/SQLite history; no representative-agent population aggregation"
+      ],
+      "not_implemented_or_not_calibrated_in_this_frozen_study": [
+        "organic operating-state-driven workforce and business-group creation",
+        "full two-enterprise M&A history/assets/liabilities/workers/knowledge/pending obligations and paid integration",
+        "multinational country/culture/language/regulation/supply-chain/product-market/customer/ESG mechanisms",
+        "independently controlled reporting/collaboration/verification multilayer enterprise networks and management depth",
+        "independent public-enterprise empirical calibration, held-out external validation and cross-company predictive acceptance"
+      ],
+      "calibration_status": "none; conditional synthetic assumptions, no empirical claim",
+      "source_locations": [
+        "dams_sim/model.py:33",
+        "dams_sim/longitudinal.py:55",
+        "dams_sim/longitudinal_model.py:140",
+        "dams_sim/longitudinal_model.py:396",
+        "dams_sim/longitudinal_model.py:449",
+        "dams_sim/longitudinal_design.py:131"
+      ]
+    },
+    "spec_manifest.json": {
+      "name": "longitudinal-adoption-5y",
+      "n": 1000,
+      "post_adoption_years": 5,
+      "calendar_start": "2020-01-01",
+      "latest_fixed_adoption_year": 5,
+      "followup_calendar_days": 90,
+      "pilot_worlds": 4,
+      "confirmation_min": 16,
+      "confirmation_max": 128,
+      "seed": 20261008,
+      "guilds": 4,
+      "sites": 2,
+      "team_size": 5,
+      "family_alpha": 0.05,
+      "pilot_world_start": 20000,
+      "confirmation_world_start": 30000,
+      "schema_version": 3,
+      "precision_rule": "Bonferroni Student-t continuous planning and exact-binomial paired closure planning; disjoint pilot; fixed confirmation roster",
+      "inferential_scope": "conditional fixed-model paired-world strategy comparison; no empirical calibration",
+      "history_mode": "conditional-synthetic-state; organization age is not simulated prehistory",
+      "calendar_scope": "Gregorian weekdays; January 1 and December 25 are declared synthetic nonwork holidays",
+      "tail_scope": "common 90-calendar-day settlement followup; no new work/claims/votes; unfinished stocks retained",
+      "days": 3743,
+      "common_end_day": 3653,
+      "observation_years": [
+        1,
+        3,
+        5
+      ],
+      "stages": [
+        "precision-pilot",
+        "confirmation",
+        "longitudinal-analysis",
+        "publication"
+      ],
+      "arms": [
+        {
+          "arm_id": "startup-existing",
+          "context": "startup",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-dams",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "growth-existing",
+          "context": "growth",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "growth-dams",
+          "context": "growth",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "financing-existing",
+          "context": "financing",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "financing-dams",
+          "context": "financing",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-existing",
+          "context": "listed",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-dams",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "traditional-existing",
+          "context": "traditional",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "traditional-dams",
+          "context": "traditional",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "century-existing",
+          "context": "century",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "century-dams",
+          "context": "century",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-existing",
+          "context": "federation",
+          "strategy": "never",
+          "intervention": "existing",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "federation-dams",
+          "context": "federation",
+          "strategy": "staged-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-founding",
+          "context": "startup",
+          "strategy": "founding",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-fixed-3y",
+          "context": "startup",
+          "strategy": "fixed-3y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-fixed-5y",
+          "context": "startup",
+          "strategy": "fixed-5y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-staged-1y",
+          "context": "startup",
+          "strategy": "staged-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-growth-trigger",
+          "context": "startup",
+          "strategy": "growth-trigger",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-crisis-trigger",
+          "context": "startup",
+          "strategy": "crisis-trigger",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-equal",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "allocation-control",
+          "regime": "equal",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-linear",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "allocation-control",
+          "regime": "linear",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-hierarchy_tenure",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "allocation-control",
+          "regime": "hierarchy_tenure",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-process",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "process-improvement",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "listed-process",
+          "context": "listed",
+          "strategy": "fixed-3y",
+          "intervention": "process-improvement",
+          "regime": "hierarchy",
+          "backend": "central"
+        },
+        {
+          "arm_id": "startup-witness",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "witness"
+        },
+        {
+          "arm_id": "startup-consensus",
+          "context": "startup",
+          "strategy": "fixed-1y",
+          "intervention": "dams",
+          "regime": "sublinear",
+          "backend": "consensus"
+        }
+      ],
+      "contexts": {
+        "century": {
+          "age": 100,
+          "memory": 0.9,
+          "routine": 0.9,
+          "verified_credit": 15.0,
+          "exit": 0.05,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1000
+            ],
+            [
+              1096,
+              1000
+            ],
+            [
+              1827,
+              1000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "federation": {
+          "age": 20,
+          "memory": 0.6,
+          "routine": 0.6,
+          "verified_credit": 6.0,
+          "exit": 0.1,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.1,
+            1.2,
+            1.2
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1100
+            ],
+            [
+              1096,
+              1200
+            ],
+            [
+              1827,
+              1200
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "financing": {
+          "age": 4,
+          "memory": 0.3,
+          "routine": 0.35,
+          "verified_credit": 3.0,
+          "exit": 0.18,
+          "initial_cash": 100.0,
+          "growth": [
+            1.0,
+            1.5,
+            1.25,
+            1.0
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1500
+            ],
+            [
+              1096,
+              1250
+            ],
+            [
+              1827,
+              1000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "growth": {
+          "age": 2,
+          "memory": 0.25,
+          "routine": 0.25,
+          "verified_credit": 2.0,
+          "exit": 0.2,
+          "initial_cash": 250.0,
+          "growth": [
+            1.0,
+            1.5,
+            2.0,
+            2.0
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1500
+            ],
+            [
+              1096,
+              2000
+            ],
+            [
+              1827,
+              2000
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "listed": {
+          "age": 30,
+          "memory": 0.7,
+          "routine": 0.75,
+          "verified_credit": 10.0,
+          "exit": 0.08,
+          "initial_cash": 300.0,
+          "growth": [
+            1.0,
+            1.0,
+            1.1,
+            1.1
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1000
+            ],
+            [
+              1096,
+              1100
+            ],
+            [
+              1827,
+              1100
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "startup": {
+          "age": 0,
+          "memory": 0.1,
+          "routine": 0.1,
+          "verified_credit": 0.0,
+          "exit": 0.16,
+          "initial_cash": 200.0,
+          "growth": [
+            1.0,
+            1.25,
+            1.5,
+            1.5
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1250
+            ],
+            [
+              1096,
+              1500
+            ],
+            [
+              1827,
+              1500
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        },
+        "traditional": {
+          "age": 50,
+          "memory": 0.8,
+          "routine": 0.85,
+          "verified_credit": 12.0,
+          "exit": 0.06,
+          "initial_cash": 200.0,
+          "growth": [
+            1.0,
+            1.0,
+            0.9,
+            0.9
+          ],
+          "initial_n": 1000,
+          "workforce_targets": [
+            [
+              0,
+              1000
+            ],
+            [
+              366,
+              1000
+            ],
+            [
+              1096,
+              900
+            ],
+            [
+              1827,
+              900
+            ]
+          ],
+          "initial_member_age_years": [
+            25.0,
+            60.0
+          ],
+          "history_mode": "conditional-synthetic-state",
+          "listing_and_financing": "context assumptions; no modelled IPO, valuation or unicorn probability"
+        }
+      },
+      "contrasts": [
+        {
+          "contrast_id": "startup-dams--existing",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "growth-dams--existing",
+          "treatment_arm": "growth-dams",
+          "reference_arm": "growth-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "financing-dams--existing",
+          "treatment_arm": "financing-dams",
+          "reference_arm": "financing-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "listed-dams--existing",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "traditional-dams--existing",
+          "treatment_arm": "traditional-dams",
+          "reference_arm": "traditional-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "century-dams--existing",
+          "treatment_arm": "century-dams",
+          "reference_arm": "century-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "federation-dams--existing",
+          "treatment_arm": "federation-dams",
+          "reference_arm": "federation-existing",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-founding--existing",
+          "treatment_arm": "startup-founding",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-fixed-3y--existing",
+          "treatment_arm": "startup-fixed-3y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-fixed-5y--existing",
+          "treatment_arm": "startup-fixed-5y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-staged-1y--existing",
+          "treatment_arm": "startup-staged-1y",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-growth-trigger--existing",
+          "treatment_arm": "startup-growth-trigger",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-crisis-trigger--existing",
+          "treatment_arm": "startup-crisis-trigger",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-equal--existing",
+          "treatment_arm": "startup-equal",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-linear--existing",
+          "treatment_arm": "startup-linear",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-hierarchy_tenure--existing",
+          "treatment_arm": "startup-hierarchy_tenure",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-process--existing",
+          "treatment_arm": "startup-process",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "listed-process--existing",
+          "treatment_arm": "listed-process",
+          "reference_arm": "listed-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-witness--existing",
+          "treatment_arm": "startup-witness",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-consensus--existing",
+          "treatment_arm": "startup-consensus",
+          "reference_arm": "startup-existing",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-dams--startup-linear",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-linear",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-dams--startup-process",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-process",
+          "primary": true
+        },
+        {
+          "contrast_id": "listed-dams--listed-process",
+          "treatment_arm": "listed-dams",
+          "reference_arm": "listed-process",
+          "primary": true
+        },
+        {
+          "contrast_id": "startup-dams--startup-witness",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-witness",
+          "primary": false
+        },
+        {
+          "contrast_id": "startup-dams--startup-consensus",
+          "treatment_arm": "startup-dams",
+          "reference_arm": "startup-consensus",
+          "primary": false
+        }
+      ],
+      "primary_endpoints": [
+        {
+          "name": "work_per_present_member_workday",
+          "target_halfwidth": 0.01,
+          "unit": "synthetic work units / actual present-member workday"
+        },
+        {
+          "name": "decision_regret_per_decision",
+          "target_halfwidth": 0.02,
+          "unit": "synthetic regret units / actual decisions"
+        },
+        {
+          "name": "net_resource_gain_per_present_member_workday",
+          "target_halfwidth": 0.05,
+          "unit": "synthetic resource units / actual present-member workday"
+        },
+        {
+          "name": "closed_by_common_end",
+          "target_halfwidth": 0.1,
+          "unit": "probability, world-level indicator"
+        }
+      ],
+      "exposure_rule": "actual recorded member-time; no N*days denominator; zero exposure is undefined and retained",
+      "missing_rule": "no world is discarded; unavailable post windows and closed/not-adopted cases remain explicit",
+      "independent_unit": "world ID, paired within context; years, guilds, branches and machines are not independent samples"
+    }
+  },
+  "payload_source_references": {
+    "confirmation-rule-unselected.json": {
+      "source_file_bytes": 1520,
+      "source_file_sha256": "4c88175d41a76410594fd318846841d7468d8aaa67f7a32f2c31117d36d01b42",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "00db91f1c3d5ca11aa645849fe037f9cb9fef791cceb0264e1cb49da5793fe10",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "event-and-output-estimate.json": {
+      "source_file_bytes": 446,
+      "source_file_sha256": "b24d65bb7ac4cb95b351ce215eb349968e24c86d57d82c0ef6233c337224b1fb",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "cc512452f864a758becf4be5a175ed33108d01779c03670f5fb4eba533033420",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "model-and-comparison-scope.json": {
+      "source_file_bytes": 17472,
+      "source_file_sha256": "c8f3434280723f6c960fb9dae7e53e5f823d49576115085cbcca21ae7642fa86",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "5ec5e8e7793a38ecd9bfa4bde250f0d5d7ac1a1256dd5c023e42e0d48f0459d6",
+      "source_hash_is_not_bundled_public_file_hash": true
+    },
+    "spec_manifest.json": {
+      "source_file_bytes": 17054,
+      "source_file_sha256": "a4c8e0df71b4cebb266c28cbf13be4873dfeb26ff5f08d585b40b2a018f4c395",
+      "original_json_payload_preserved": true,
+      "public_payload_canonical_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e",
+      "source_hash_is_not_bundled_public_file_hash": true
+    }
+  },
+  "roster": {
+    "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-5y-r1.case_inventory.json",
+    "source_file_bytes": 531034,
+    "source_file_sha256": "3c971b2650311612146eaf8d7fac5fc2064a1e707c8c286a3516a0a094d48706",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": true
+  },
+  "existing_assignment": null,
+  "source_version_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "driver_version_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "metadata_is_not_formal_execution": true,
+  "all_launch_gates_admitted": false,
+  "original144_linked_existing_roster_not_rebuilt": true
+}

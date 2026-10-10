@@ -1,0 +1,38 @@
+{
+  "UTC": "2026-10-10T13:37:13.324505+00:00",
+  "instance_count": 0,
+  "disk_count": 0,
+  "global_quotas": [
+    {
+      "limit": 384.0,
+      "metric": "CPUS_ALL_REGIONS",
+      "usage": 0.0
+    }
+  ],
+  "regional_quotas": [
+    {
+      "limit": 200.0,
+      "metric": "CPUS",
+      "usage": 0.0
+    },
+    {
+      "limit": 4.0,
+      "metric": "PREEMPTIBLE_CPUS",
+      "usage": 0.0
+    },
+    {
+      "limit": 200.0,
+      "metric": "N2_CPUS",
+      "usage": 0.0
+    },
+    {
+      "limit": 248.0,
+      "metric": "M3_CPUS",
+      "usage": 0.0
+    }
+  ],
+  "new_paid_resources": 0,
+  "quota_is_not_actual_capacity": true,
+  "catalogue_is_not_VM_creation": true,
+  "config_prepost_unchanged": true
+}

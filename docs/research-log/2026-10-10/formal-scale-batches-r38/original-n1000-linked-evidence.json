@@ -1,0 +1,158 @@
+{
+  "schema": "DAMS-linked-existing-original-pilot-metadata-v1",
+  "original_root": "artifact:original-n1000-5y",
+  "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "spec_sha256": "40eb532978a81a9aa0e7ee82acf7ae477622fbe7f84b2a2d8ef00d5a4107353e",
+  "source_copy_release_not_bound": true,
+  "original_pipeline_git_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+  "original_runtime_packaged_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+  "original_metadata": {
+    "runtime-limits.json": {
+      "artifact": "artifact:original-n1000-5y/runtime-limits.json",
+      "source_file_bytes": 789,
+      "source_file_sha256": "5bb350b3400482da8a9e5f27eb6eac5b75a673f25b36b7d68219b5e9e8bb2c8c",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "output/pipeline_manifest.json": {
+      "artifact": "artifact:original-n1000-5y/output/pipeline_manifest.json",
+      "source_file_bytes": 16060,
+      "source_file_sha256": "070342aee2205e41efbe63aceabc79b4fd70bd56e8346d3a0bdb2a88f1afaa22",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "output/spec_manifest.json": {
+      "artifact": "artifact:original-n1000-5y/output/spec_manifest.json",
+      "source_file_bytes": 11722,
+      "source_file_sha256": "6c68ebf8d819799a15c5435b39345beab1343eeef454170302fd3d844e4b066f",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "output/case_statuses.json": {
+      "artifact": "artifact:original-n1000-5y/output/case_statuses.json",
+      "source_file_bytes": 5889,
+      "source_file_sha256": "395bf0ec16121b2438312be28c6f794cc95ac1a8a2772d36d0c0e3351c9a4698",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "output/precision-pilot/case_inventory.json": {
+      "artifact": "docs/research-log/2026-10-10/formal-scale-batches-r38/rosters/n1000-5y-r1.case_inventory.json",
+      "source_file_bytes": 531034,
+      "source_file_sha256": "3c971b2650311612146eaf8d7fac5fc2064a1e707c8c286a3516a0a094d48706",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": true
+    },
+    "output/precision-pilot/case_references.json": {
+      "artifact": "artifact:original-n1000-5y/output/precision-pilot/case_references.json",
+      "source_file_bytes": 8290,
+      "source_file_sha256": "34c2f2e2ce458517b6788b3258b6c43d7908df0d179ba6a062db67f159564b6f",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "output/precision-pilot/case_census.json": {
+      "artifact": "artifact:original-n1000-5y/output/precision-pilot/case_census.json",
+      "source_file_bytes": 39411,
+      "source_file_sha256": "dbd1a0378b89876ed03c74e26210b9ba4cd41a0971924f0b77d921279e9eb797",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "output/precision-pilot/manifest.json": {
+      "artifact": "artifact:original-n1000-5y/output/precision-pilot/manifest.json",
+      "source_file_bytes": 8183,
+      "source_file_sha256": "4128a40ebb750e08027ccbe62d2fb64d401fcd88857b10b806d73b18475689dc",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    }
+  },
+  "current_raw_acceptance": {
+    "artifact": "artifact:external-evidence/5d7572cb37a82b93e5feae6d/current-35-reconciliation.json",
+    "source_file_bytes": 6789,
+    "source_file_sha256": "5494d7f9fdfd179494768c63402ca9cb5be0a7745577aeb1bd339f332f93b0af",
+    "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+    "payload_in_this_export": false
+  },
+  "current_raw_acceptance_evidence": {
+    "accepted_recovered_reference": {
+      "artifact": "artifact:external-evidence/bafb34fc1131e963054c115d/accepted-reference.json",
+      "source_file_bytes": 272,
+      "source_file_sha256": "478c0fbfb80a47ea5d15f8d5bb742dfd71c2bef6a835cc2dceb1d2f33d3d4133",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "actual_complete_case_acceptance": {
+      "artifact": "artifact:external-evidence/8e8cfda0ac61693f01bf85d4/result.json",
+      "source_file_bytes": 22170,
+      "source_file_sha256": "c2e05d50d59918aedead79ace4b2148d1051360dbc74fec2feb7bf59e8977145",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "case_manifest": {
+      "artifact": "artifact:external-evidence/04d70274035159536ae95e24/manifest.json",
+      "source_file_bytes": 11822,
+      "source_file_sha256": "55308d8d2661cc1243959a91777087d91eecb1b9ecb73aa6a55753d1825a9f76",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "independent_review": {
+      "artifact": "artifact:external-evidence/b8b4ccd6b18e29d50ac2b7d0/receipt.json",
+      "source_file_bytes": 28404,
+      "source_file_sha256": "438bf6f056a5f966c1dc38c77f868d7219846d783e4e8ff3dedd2e20a0c86444",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    },
+    "prior34_acceptance": {
+      "artifact": "artifact:external-evidence/af52001d16e91cc513d5352b/parent-current-34-reconciliation.json",
+      "source_file_bytes": 4012,
+      "source_file_sha256": "5b86c33443848572e577818211e7a9165254813e91060403a6e443e70d95e9f7",
+      "hash_scope": "original source-file bytes; public file and JSON payload hashes are separately declared",
+      "payload_in_this_export": false
+    }
+  },
+  "progress_units": {
+    "raw_accepted": 35,
+    "raw_accepted_prefixes": 28,
+    "raw_accepted_full_single_strategies": 7,
+    "producer_status_complete": 34,
+    "prior_stage_census_complete": 33,
+    "prior_stage_selected_references": 32,
+    "complete_paired_pilot_worlds": 0,
+    "pilot_worlds_required": 4,
+    "confirmation_complete_worlds": 0,
+    "formal_groups_complete": 0,
+    "remaining_nonaccepted_original_cases": 109,
+    "raw_accepted_by_world": {
+      "20000": 8,
+      "20001": 10,
+      "20002": 9,
+      "20003": 8
+    },
+    "units_must_not_be_substituted": "producer labels, historical census/references and current raw acceptance are distinct evidence cuts; none is a paired world",
+    "selected_reference_case_ids_missing_current_raw_acceptance": [
+      "01ae1ad8afe0e71ed0fdb0b91519f0e67b788b0ccb44770864ca5dc7270dd2e0",
+      "0214b234b1a992a4c99ac74029de28f77d57fc1830e3c02c26878aed2b8d6173",
+      "03881442fe89f4834676bcf1feaa65386ed7a1db165d3dbc1a0c7e84ff15cd37"
+    ],
+    "missing_reference_is_not_proof_of_raw_loss": true
+  },
+  "original_pipeline_observed_status": "failed",
+  "original_error_type": "RuntimeError",
+  "original_error": "insufficient disk for the declared complete world outputs",
+  "live_process_claim": false,
+  "new_roster_generated": false,
+  "new_seed_selected": false,
+  "original_metadata_written": false,
+  "raw_gate_rerun": false,
+  "original_runtime_deadline_utc": "2026-10-15T08:54:46.960873+00:00",
+  "original_deadline_elapsed_at_read": false,
+  "source_resume_contract": "same output and same locked runtime; _limits rejects silent changes. Scheduler._inspect reads actual cases under original output, not case_references labels. The accepted recovered0388 receipt points to a different recovery output; its original-output native working alias and parent-origin admission are unbound by this metadata task. A missing stage reference alone is not a launch blocker or proof of data loss.",
+  "source_resume_locations": [
+    "dams_sim/longitudinal_pipeline.py:324",
+    "dams_sim/longitudinal_pipeline.py:338",
+    "dams_sim/longitudinal_pipeline.py:256",
+    "dams_sim/scheduler.py:198",
+    "dams_sim/scheduler.py:312"
+  ],
+  "selected_reference_gap_not_independently_a_blocker": true,
+  "recovered_case_original_output_working_alias_status": "UNBOUND in this metadata-only task; no raw path existence or inspection inferred"
+}

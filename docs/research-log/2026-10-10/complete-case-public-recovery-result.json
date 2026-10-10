@@ -1,0 +1,162 @@
+{
+  "schema": "DAMS-complete-archive-public-binary-check-1",
+  "manifest_sha256": "2439c270a79ae428e280d82da5bc4288dc7858913bb1d862d6d4e8817cf1b383",
+  "scope": "Complete byte reconstruction only; no independent model semantics, off-device backup, retirement authority or new world.",
+  "status": "PASS",
+  "files": [
+    {
+      "name": ".longitudinal-working.sqlite",
+      "raw_bytes": 47882240,
+      "raw_sha256": "cfba56570f01ef22b2d07a7c64a81a93fc38fa95d963637eeb7ee1a3964f0b70",
+      "encoded_reference_bytes": 38573859,
+      "chunk_references": 12,
+      "status": "PASS"
+    },
+    {
+      "name": "checkpoint-day-001890.json",
+      "raw_bytes": 5304631,
+      "raw_sha256": "df4d6913ca821629b0e157d96daceab181be3a20599e4b5fd895836e0db00148",
+      "encoded_reference_bytes": 636693,
+      "chunk_references": 2,
+      "status": "PASS"
+    },
+    {
+      "name": "checkpoint-day-001890.sqlite",
+      "raw_bytes": 47861760,
+      "raw_sha256": "483605b84818b33031fb0e6f6e6646ecb3df3dbcf5f8773a18c74fa8fcf15f57",
+      "encoded_reference_bytes": 38506767,
+      "chunk_references": 12,
+      "status": "PASS"
+    },
+    {
+      "name": "checkpoint-day-001917.json",
+      "raw_bytes": 5382042,
+      "raw_sha256": "960b489b2127a84c8725e0f4ae113a796e575dc7c50c5eb3d8e422ef78808f10",
+      "encoded_reference_bytes": 644179,
+      "chunk_references": 2,
+      "status": "PASS"
+    },
+    {
+      "name": "checkpoint-day-001917.sqlite",
+      "raw_bytes": 47882240,
+      "raw_sha256": "64558f01dad87eabde36b1301c8d4462038f49a2630d412047b434f594cf96b1",
+      "encoded_reference_bytes": 38573821,
+      "chunk_references": 12,
+      "status": "PASS"
+    },
+    {
+      "name": "checkpoint-index.json",
+      "raw_bytes": 1684,
+      "raw_sha256": "8b5d53c07eb810417c515210852c2ead6ff66b2b286628f4d5e1fe8a54f6e2c1",
+      "encoded_reference_bytes": 606,
+      "chunk_references": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "final_state.json",
+      "raw_bytes": 5382032,
+      "raw_sha256": "c7123eaadac232f7649149595c74326d1f636fd587298a7fd3bc37c68940f7ac",
+      "encoded_reference_bytes": 644183,
+      "chunk_references": 2,
+      "status": "PASS"
+    },
+    {
+      "name": "final_state.sqlite",
+      "raw_bytes": 47882240,
+      "raw_sha256": "64558f01dad87eabde36b1301c8d4462038f49a2630d412047b434f594cf96b1",
+      "encoded_reference_bytes": 38573821,
+      "chunk_references": 12,
+      "status": "PASS"
+    },
+    {
+      "name": "manifest.json",
+      "raw_bytes": 6508,
+      "raw_sha256": "c5163d7a24d41c17659f0ae03efce9bd71732ce51e7ad8b0677d0313eba98685",
+      "encoded_reference_bytes": 3124,
+      "chunk_references": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "report.md",
+      "raw_bytes": 1562,
+      "raw_sha256": "685bad522bfe48729b9c46354b61675a8de0e3e2820c4406996fba9a813db4e1",
+      "encoded_reference_bytes": 856,
+      "chunk_references": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "report.svg",
+      "raw_bytes": 62073,
+      "raw_sha256": "60e16b93e020111f147f33cd59a600cf21536c9d32eb4943b2d2d878ffd39904",
+      "encoded_reference_bytes": 26658,
+      "chunk_references": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "summary.json",
+      "raw_bytes": 2362,
+      "raw_sha256": "f2435fa2455dafd76599f867ef9e1a1be01242bd244d48bc7692882a6aa1a578",
+      "encoded_reference_bytes": 1100,
+      "chunk_references": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "timeseries.csv",
+      "raw_bytes": 1401880,
+      "raw_sha256": "e3b54725d75bc0cd40cef8f52228888776b1358c12d90816e512bce89d5d09ae",
+      "encoded_reference_bytes": 378019,
+      "chunk_references": 1,
+      "status": "PASS"
+    }
+  ],
+  "formal_worlds_added": 0,
+  "materialized_large_restoration_bytes": 0,
+  "controls": [
+    {
+      "name": "valid stream spanning bounded decoded buffers",
+      "status": "PASS",
+      "result": {
+        "encoded_bytes": 523,
+        "encoded_sha256": "5c2df06427fc2b849b95c93e904e165d0de5c52e609bab291bff3281d2eacd93",
+        "raw_bytes": 160000,
+        "raw_sha256": "019dcf728f321a9e5bb6415ed0074735cfc9a1b4410764731770ff8d8d5a22c3",
+        "zlib_eof": true,
+        "unused_tail_bytes": 0
+      }
+    },
+    {
+      "name": "truncated encoded stream",
+      "status": "REJECTED_AS_REQUIRED",
+      "reason": "truncated zlib stream without EOF"
+    },
+    {
+      "name": "wrong encoded SHA",
+      "status": "REJECTED_AS_REQUIRED",
+      "reason": "encoded chunk SHA-256 differs"
+    },
+    {
+      "name": "wrong raw SHA",
+      "status": "REJECTED_AS_REQUIRED",
+      "reason": "decoded chunk SHA-256 differs"
+    },
+    {
+      "name": "appended encoded tail with updated outer hash",
+      "status": "REJECTED_AS_REQUIRED",
+      "reason": "unused tail after zlib EOF"
+    },
+    {
+      "name": "wrong declared decoded length",
+      "status": "REJECTED_AS_REQUIRED",
+      "reason": "decoded length exceeds pinned chunk length"
+    }
+  ],
+  "all13files_verified": true,
+  "decoded_raw_bytes": 209053254,
+  "chunk_references": 60,
+  "unique_objects": 37,
+  "unique_encoded_bytes": 82676816,
+  "wall_seconds": 0.9521038329985458,
+  "peak_rss_bytes": 26836992,
+  "minimum_free_bytes": 116853788672,
+  "sampled_limits_are_not_os_isolation": true
+}

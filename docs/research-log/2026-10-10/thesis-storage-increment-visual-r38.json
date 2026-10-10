@@ -1,0 +1,33 @@
+{
+  "UTC": "2026-10-10T14:48:30.881283+00:00",
+  "status": "STOP_FULL_83_PAGE_VISUAL_REVIEW_NO_NEW_BLOCKER_C1_REMAINS",
+  "pdf_sha256": "c25d4706cd455063bb4e6b621763b3dbef6a0ee36ab132409fd77557423aeaed",
+  "pdf_bytes": 840283,
+  "all_pages_rendered": 83,
+  "all_pages_individually_viewed": 83,
+  "prior_acceptance_not_inherited": true,
+  "source_full_sha_native_unchanged": true,
+  "blocking_findings": [],
+  "nonblocking_whitespace_C1": [
+    {
+      "id": "C1",
+      "severity": "nonblocking",
+      "pdf_page": 47,
+      "printed_page": 46,
+      "summary": "Original table-only severe V1 gap is reduced by two following paragraphs; approximately half-page whitespace remains before a full-height figure. All whitespace has not disappeared.",
+      "context_pages": [
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54
+      ]
+    }
+  ],
+  "source_receipt_sha256": "d0be9ba8948932fbe68c0932f6af3e959719b36bd6663761a0c2d50b892db8e1",
+  "both_physical_thesis_roots_byte_equal": true,
+  "no_claim_of_100_percent_design_or_research_completion": true
+}

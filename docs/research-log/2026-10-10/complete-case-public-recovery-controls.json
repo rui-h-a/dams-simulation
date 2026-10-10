@@ -1,0 +1,18 @@
+{
+  "UTC": "2026-10-10T14:44:24.669984+00:00",
+  "status": "ROOT_REPAIRED_WRAPPER_ACTUAL_FULL13_BINARY_PASS",
+  "source_sha256": "99839f8cee28dcd04c2631619e15d1bdd3dcf1aee5a5840afad5f50a32ce4efd",
+  "all13_complete_original_bytes": 209053254,
+  "chunk_references": 60,
+  "unique_objects": 37,
+  "unique_encoded_bytes": 82676816,
+  "five_corrupt_stream_controls_rejected": true,
+  "external_wrong_manifest_pin_rejected": true,
+  "manifest_read_window_and_end_all_object_fences_added": true,
+  "original_wrapper_sha256": "9a8043596bc5cf9e0b607660c5e588caf99888582052cf4a66add57f9a3529f2",
+  "independent_v1_counterexamples_preserved": true,
+  "original_codec_or_frozen_model_changed": false,
+  "formal_worlds_added": 0,
+  "independent_r2_controls_pending": true,
+  "result_sha256": "a85f80eee12156324e1aa063ba1f52e9f9f476d2402d92ba6a08866240efb345"
+}
