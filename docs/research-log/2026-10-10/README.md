@@ -1,3 +1,17 @@
+## Latest actual observation: 2026-10-10T12:32:55.426176+00:00 (R36)
+
+N30 remains four pilot plus66 confirmation pairs with adverse work/resource endpoints retained. N120 original frozen CLI has4 pilot plus9 confirmation pairs (13/70);57 confirmation pairs remain. New pairs passed the original complete raw gate. Original adoption inventory remains35/144 accepted cases and0/4 paired pilot worlds.
+
+N30 remote full13 generation/EOF/SHA proof units total49/140 at this cutoff, including the immutable original29. Auth-resume is active; original401 expiry is not asserted. No primary or unique raw evidence was deleted.
+
+Thirty redundant historical payload representations were retired after canonical full restoration, current raw SHA fencing, independent durability review and actual root admission. Fifty-four metadata files, all eight failed-case files and2871 native archive generations remain. Observed free-space delta:14928707584 bytes, without exclusive reclaim attribution.
+
+Three r3 operational semantic counterexamples have9 finite controls and preserve the source; these are not formal enterprise results. Independent operations and M&A repairs remain candidates. The incrementally revised thesis compiles at83pages with zero build-health errors and full raster coverage; independent visual acceptance is pending. No new compute VM or increased budget authorization is inferred.
+
+[R36 complete observation](research-observation-r36.json) · [r3 finite semantic controls](../../model-coverage/2026-10-10/enterprise-r3-counterexamples.public.json).
+
+All lower headings are dated historical observations, not live instructions.
+
 # Current verified research snapshot
 
 As of 2026-10-10T11:39:34.867693+00:00: N30 retains four pilot and 66 confirmation paired worlds. N120 retains four pilot and 7/66 confirmation pairs. Its original frozen producer has resumed and was observed live at the dated cutoff. Process activity does not imply a new validated case or completed study.

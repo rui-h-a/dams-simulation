@@ -1,0 +1,229 @@
+{
+  "actual_exit_code": 0,
+  "actual_reaped": true,
+  "empirical_calibration": false,
+  "findings": [
+    {
+      "actual_evidence": [
+        {
+          "arrivals": 30.0,
+          "backlog": 22.0,
+          "calendar_fraction": 1.0,
+          "export_allowed": true,
+          "order_fields": [
+            "created_day",
+            "expiry_day",
+            "price",
+            "remaining"
+          ],
+          "product_units": 8.0,
+          "productive_effort": 1.0
+        },
+        {
+          "arrivals": 30.0,
+          "backlog": 30.0,
+          "calendar_fraction": 0.0,
+          "export_allowed": false,
+          "order_fields": [
+            "created_day",
+            "expiry_day",
+            "price",
+            "remaining"
+          ],
+          "product_units": 0.0,
+          "productive_effort": 0.0
+        }
+      ],
+      "classification": "actual productive-effort gating; export/domestic trade semantics not represented",
+      "id": "export_calendar_shutdown",
+      "interpretation": "False zeroes site productive effort on an otherwise normal local workday. It does not clear or prohibit arrivals; orders become backlog and have no origin/destination/export-required field. Existing two published engineering profiles both set True, so this control is not proof those engineering runs encountered the False branch.",
+      "minimal_r4_semantic_route": "Keep local calendar independent of export eligibility. Introduce explicit order market/destination or export-required classification and reject only ineligible cross-border fulfillment while retaining domestic work. Freeze declared synthetic domestic/export composition separately; validate zero-export/positive-domestic and blocked-export backlog/expiry tests. If no trade classification is implemented, label False only as full-site productive shutdown, not export-control realism.",
+      "source": [
+        {
+          "file": "dams_sim/enterprise_operations.py",
+          "lines": [
+            28,
+            29,
+            158,
+            160,
+            175,
+            182
+          ]
+        },
+        {
+          "file": "dams_sim/longitudinal_model.py",
+          "lines": [
+            432,
+            473,
+            527
+          ]
+        }
+      ]
+    },
+    {
+      "actual_evidence": [
+        {
+          "active": 400,
+          "departments": 1,
+          "full_Config_validate": true,
+          "guilds": 4,
+          "raw_required_fraction": 0.48000000000000004,
+          "served_fraction": 0.4,
+          "sites": 1,
+          "unrepresented_excess_fraction": 0.08000000000000002
+        },
+        {
+          "active": 800,
+          "departments": 1,
+          "full_Config_validate": true,
+          "guilds": 4,
+          "raw_required_fraction": 0.98,
+          "served_fraction": 0.4,
+          "sites": 1,
+          "unrepresented_excess_fraction": 0.58
+        }
+      ],
+      "classification": "bounded behavioral reservation, not merely numerical overflow validation",
+      "id": "coordination_saturation",
+      "interpretation": "The bounded time reservation can be a deliberate capacity assumption. However, requested cost above .4 disappears from operational consequences: the method returns only the capped fraction and no unmet coordination backlog/service loss. This masks further marginal scale/structure cost for saturated configurations; it does not imply every larger organization saturates, because guild inventory/report span and communication also matter.",
+      "minimal_r4_semantic_route": "Retain a feasible day budget, expose requested/served/unmet coordination separately, and give unmet coordination an explicit validated operational consequence (queue/delay or service loss) in a separately frozen candidate. Removing min(.4) alone is not evidence of realistic coordination. Until such a mechanism is validated, limit claims to a saturating coordination reservation rather than unrestricted large-scale coordination-cost realism.",
+      "source": [
+        {
+          "file": "dams_sim/enterprise_operations.py",
+          "lines": [
+            184,
+            185,
+            186,
+            187,
+            188,
+            189
+          ]
+        },
+        {
+          "file": "dams_sim/longitudinal_model.py",
+          "lines": [
+            432,
+            433,
+            463,
+            464,
+            496,
+            527,
+            528,
+            572,
+            573,
+            574,
+            584
+          ]
+        }
+      ]
+    },
+    {
+      "actual_evidence": {
+        "actual_output": 0.1,
+        "actual_paid": 0.1,
+        "backlog_before": 100,
+        "capacity": 100,
+        "cash": 10,
+        "cash_unused": 9.9,
+        "global_fraction": 0.01,
+        "limit_one_site": 10.0,
+        "limit_two_sites": 0.1,
+        "material_per_unit": 1,
+        "potentials_by_site": {
+          "0": 10.0,
+          "1": 0.0
+        },
+        "settlement": {
+          "inputs": {
+            "arrivals": 100.0,
+            "backlog": 100.0,
+            "borrowed": 0.0,
+            "capacity": 100,
+            "cash_before": 10,
+            "creating": true,
+            "day": 0,
+            "delivered": 0.0,
+            "demand_multiplier": 1,
+            "expired": 0.0,
+            "interest_due": 0.0,
+            "noise": 0,
+            "operating": true,
+            "quoted_price": 1.0,
+            "received": 0.0,
+            "working": true,
+            "year_days": 365
+          },
+          "interest_paid": 0,
+          "logistics": 0.0,
+          "material": 0.1,
+          "price_next": 1.0,
+          "produced_by_site": [
+            [
+              0,
+              0.1
+            ],
+            [
+              1,
+              0.0
+            ]
+          ],
+          "shipments_created": [
+            {
+              "dispatch_day": 0,
+              "ready_day": 1,
+              "revenue": 0.1,
+              "site": 0,
+              "units": 0.1
+            }
+          ]
+        },
+        "site_logistics_per_unit": [
+          0,
+          99
+        ]
+      },
+      "classification": "conservative cash-safe output allocation used as actual production policy",
+      "id": "idle_site_max_cost",
+      "interpretation": "Max-site unit cost is safe against overspending, and the finite-arithmetic configuration envelope at 104\u2013109 legitimately uses a conservative bound. But the same max at 201 is behaviorally applied to all production. A costly installed site with zero productive potential can suppress output at a cheap site despite an available feasible allocation. This is underutilization, not a demonstrated ledger conservation failure.",
+      "minimal_r4_semantic_route": "Compute per-site potential p_s before allocation and its actual unit cost c_s=material+logistics_s. For a declared uniform scaling policy use f=min(1,backlog/sum(p_s),capacity*units_per_seat/sum(p_s),cash/sum(p_s*c_s)), with explicit zero-denominator handling; scale each p_s by the same f, so idle sites contribute zero cost. Preserve strict finish_day actual-cost and stock-conservation gates. Keep the maximum-context cost for numerical representability/preflight bounds only; alternative site-priority allocation would require a separately declared policy.",
+      "source": [
+        {
+          "file": "dams_sim/enterprise_operations.py",
+          "lines": [
+            104,
+            105,
+            200,
+            201,
+            202,
+            205,
+            206,
+            207,
+            208
+          ]
+        },
+        {
+          "file": "dams_sim/longitudinal_model.py",
+          "lines": [
+            491,
+            492,
+            493,
+            494,
+            495,
+            514,
+            515,
+            540
+          ]
+        }
+      ]
+    }
+  ],
+  "finite_controls": 9,
+  "formal_worlds_added": 0,
+  "private_receipt_sha256": "f20f062b1f52884aa628457f7a387eeb62c7c991feafd09ed13dfa2eda22d409",
+  "public_source_commit": "71b6a8b385730d8fa2a0f46b0f26e73067d046af",
+  "schema": "dams-enterprise-r3-semantics-finite-public-v1",
+  "source_core": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b",
+  "source_driver": "e91539f4bacfef633568ba88ddf312017355b037e33c08ca88583066c749d2f3",
+  "source_unchanged": true,
+  "trajectory_frequency_claimed": false
+}
