@@ -1,3 +1,15 @@
+## Latest actual observation: 2026-10-10T13:22:27.490279+00:00 (R37)
+
+N120 has four pilot and 15 confirmation paired worlds (19/70), with 51 assigned confirmation worlds remaining. Counts refer to complete original raw-validation receipts, not process activity. N30 retains all four pilot and 66 confirmation pairs and its adverse results. N30 independent backup has 72/140 distinct complete 13-file generation-bound SHA/EOF restore proofs at this cutoff. The original adoption study retains 35/144 accepted cases and zero complete pilot paired worlds.
+
+The existing 10,000, 100,000, 1,000,000 and 10,000,000 population five-/ten-year designs retain four pilot worlds and the predefined 16–128 confirmation rule. Executable assignments and full-world resource/cost admission for all these scales are not complete; no overall finish date is supported. Direct default base() event-limit refusals must not be confused with formal-entry refusal: the formal pipeline already derives its event limit from the planned workload. Complete output capacity remains a separate gate.
+
+The existing per-case output contract is capped at 10 TB. Its conservative four-generation estimate exceeds that cap for the million and ten-million designs. Existing archive chunking preserves complete files and still requires complete raw restoration; it does not remove the active SQLite or per-case admission constraint. These are source-contract arithmetic findings, not measured physical storage requirements.
+
+The complete 82-page thesis passed a separate all-page visual review, with N30 adverse effects retained. R5 M&A narrow contract controls passed independent review; R6 cloud operational controls passed twice and await deployment review. These are bounded engineering evidence, not new formal worlds or external validation.
+
+[R37 complete dated evidence](research-observation-r37.json). Every older observation below is retained as dated history.
+
 ## Latest actual observation: 2026-10-10T12:32:55.426176+00:00 (R36)
 
 N30 remains four pilot plus66 confirmation pairs with adverse work/resource endpoints retained. N120 original frozen CLI has4 pilot plus9 confirmation pairs (13/70);57 confirmation pairs remain. New pairs passed the original complete raw gate. Original adoption inventory remains35/144 accepted cases and0/4 paired pilot worlds.
