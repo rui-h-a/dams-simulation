@@ -11,12 +11,14 @@ import csv
 import io
 import json
 import math
+from statistics import NormalDist
 from collections import Counter, defaultdict
 from pathlib import Path
 
 from dams_sim.config import Config
 from dams_sim.enterprise_growth import EnterpriseGrowthState
 from dams_sim.enterprise_operations import EnterpriseOperatingState
+from dams_sim.enterprise_acquisition import EnterpriseAcquisitionState
 from dams_sim.randomness import WorldRandom
 from dams_sim.longitudinal import GregorianClock
 from dams_sim.longitudinal_design import PRIMARY_ENDPOINTS,resolve_longitudinal_spec,freeze_precision,declared_contrasts
@@ -90,6 +92,47 @@ def _csv_bytes(rows):
     return out.getvalue().encode()
 
 
+def _verify_joint_entry(config, rng, event, initial, witness, agent):
+    """Independent scalar reconstruction of entry sampling, no Model transition.
+
+    Shares the declared RNG/key and parameter schema, not the producer's draw
+    function. This validates code/evidence consistency, not external validity.
+    """
+    c = config.joint_population
+    if c is None:
+        if witness is not None: raise ValueError('unexpected raw joint population witness')
+        return
+    normal = NormalDist()
+    def inverse(u):
+        if not math.isfinite(u) or not 0 <= u <= 1:
+            raise ValueError('raw joint quantile input invalid')
+        return normal.inv_cdf(math.nextafter(0.,1.) if u == 0. else math.nextafter(1.,0.) if u == 1. else u)
+    st, sc, tc = c.correlations()
+    z = rng.normal('skill', event)
+    tenure = rng.uniform('tenure', event) if initial else 0.
+    care = rng.uniform('care', event)
+    if (st, sc, tc) != (0., 0., 0.):
+        care_latent = inverse(care)
+        if initial:
+            independent_tenure = inverse(tenure)
+            tenure_residual = math.sqrt(1-st*st)
+            cross = (tc-st*sc)/tenure_residual
+            care = normal.cdf(sc*z + cross*independent_tenure + math.sqrt(1-sc*sc-cross*cross)*care_latent)
+            tenure = normal.cdf(st*z + tenure_residual*independent_tenure)
+        else:
+            care = normal.cdf(sc*z + math.sqrt(1-sc*sc)*care_latent)
+    traits = {'skill': math.exp(.4*z), 'tenure': tenure, 'care_hours': .3*care,
+              'autonomy': rng.uniform('autonomy', event), 'reciprocity': rng.uniform('reciprocity', event)}
+    expected = {'schema_version': 1, 'algorithm': 'conditional-gaussian-copula-entry-1',
+                'configuration_sha256': digest(canonical(c.to_dict())),
+                'initial': initial, 'entry_traits': traits}
+    if canonical(witness) != canonical(expected):
+        raise ValueError('raw joint entry witness differs from source/configuration/person stream')
+    for field in ('skill','care_hours','autonomy','reciprocity'):
+        if agent[field] != traits[field]:
+            raise ValueError('raw joint generated immutable trait differs: '+field)
+
+
 class _RawDailyAccounting:
     """Event-to-day accounting, not a rerun or a claim of empirical truth.
 
@@ -115,8 +158,10 @@ class _RawDailyAccounting:
         self.config=config;self.state=state;self.config_history=config_history
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
         self.operations=EnterpriseOperatingState(config) if config.enterprise_operations is not None else None
+        self.acquisitions=EnterpriseAcquisitionState(config) if config.enterprise_acquisition is not None else None
+        if self.acquisitions is not None:self.supported=self.supported|{'acquired_people','acquisition_cash_received_resource_units','acquisition_consideration_resource_units','acquisition_transaction_resource_units','acquisition_integration_resource_units','acquisition_evidence_review_resource_units'}
         self.market_rng=WorldRandom(config.seed,config.world,world_context=config.longitudinal.world_context)
-        if self.operations is not None:self.supported=self.supported | {"financing_inflow_resource_units","enterprise_legal_and_interest_resource_units","enterprise_material_and_logistics_resource_units","enterprise_coordination_hours","orders_arrived_units","orders_expired_units","delivered_product_units"}
+        if self.operations is not None:self.supported=self.supported | {"financing_inflow_resource_units","enterprise_legal_and_interest_resource_units","enterprise_material_and_logistics_resource_units","enterprise_coordination_hours","orders_arrived_units","orders_expired_units","delivered_product_units","enterprise_coordination_requested_workdays","enterprise_coordination_served_workdays"}
         self.supported = self.supported | ({'infrastructure_setup_resource_units',
             'infrastructure_maintenance_resource_units'} if self.enterprise is not None else set())
         self.people={p['id']:p for p in state['people']}
@@ -132,6 +177,12 @@ class _RawDailyAccounting:
 
     def at(self,day):
         return next((config for end,config in self.config_history if day<end),self.config)
+
+    def policy(self,guild,p):
+        if self.acquisitions is not None:
+            value=self.acquisitions.policy(guild)
+            if value is not None:return value
+        return (p.regime,p.backend) if self.adoption[str(guild)] is not None else (p.longitudinal.pre_adoption_regime,p.longitudinal.pre_adoption_backend)
 
     @staticmethod
     def number(value,label,low=0.,high=math.inf):
@@ -157,6 +208,35 @@ class _RawDailyAccounting:
         if l.closure_day==day:self.closed=day
         if l.suspension_day==day:self.suspended=day
         operating=self.closed is None and self.suspended is None
+        acquisition_cost=0.
+        if self.acquisitions is not None:
+            effects,expected=self.acquisitions.begin_day(day,working=working,operating=operating,
+                cash=self.cash,growth=self.enterprise,debt=self.operations.debt,
+                ever_people=p.n if day==0 else len(self.seen_people),active=p.n if day==0 else len(self.members),
+                tokens=[self.people[i]['token'] for i in self.seen_people] if day else [f'initial:{i}' for i in range(p.n)],
+                people_cap=l.max_people_ever,unmet_orders=self.operations.expansion_allowed(self.enterprise),
+                exit_draw=lambda target,person:self.market_rng.uniform('acquisition_exit',day,target,person))
+            expected=[(kind,f'acquisition:{day}:{index}',value) for index,(kind,value) in enumerate(expected)]
+            actual=[(k,e,v) for k,e,v in events if k.startswith('acquisition_') and k!='acquisition_entry']
+            if actual!=expected:raise ValueError('raw acquisition decision/ownership/integration differs')
+            self.cash+=effects['cash_delta'];acquisition_cost=effects['transaction_cost']+effects['integration_cost']+effects['evidence_cost']
+            self.operations.borrowed+=effects['financing'];self.operations.debt+=effects['financing']+effects['assumed_debt'];self.operations.assumed_acquisition_debt+=effects['assumed_debt']
+            for key,value in (('financing_inflow_resource_units',effects['financing']),('acquisition_cash_received_resource_units',effects['target_cash']),('acquisition_consideration_resource_units',effects['consideration']),('acquisition_transaction_resource_units',effects['transaction_cost']),('acquisition_integration_resource_units',effects['integration_cost']),('acquisition_evidence_review_resource_units',effects['evidence_cost'])):self.metrics[key]+=value
+            expected_entries=[]
+            for transfer in effects['transfers']:
+                s=self.acquisitions.targets[transfer['target']];first_guild=self.enterprise.guilds;first_site=self.enterprise.sites;first_slot=self.enterprise.target
+                self.enterprise.capacity+=transfer['seats'];self.enterprise.guilds+=transfer['guilds'];self.enterprise.departments+=transfer['departments'];self.enterprise.sites+=transfer['sites'];self.enterprise.target+=len(transfer['employees'])
+                s['guilds']=list(range(first_guild,self.enterprise.guilds))
+                for g in s['guilds']:self.alias[g]=g;self.adoption[str(g)]=None
+                for index,profile in enumerate(transfer['employees']):
+                    token=f"acquired:{transfer['target']}:{profile['key']}";person=self.tokens.get(token)
+                    if person is None:raise ValueError('raw acquired employee source identity missing')
+                    i=person['id'];g=first_guild+index%transfer['guilds'];site=first_site+index%transfer['sites'];slot=first_slot+index
+                    retention=1. if transfer['mode']=='preserve-autonomy' else self.acquisitions.c.centralization_learning_retention
+                    expected_entries.append(('acquisition_entry',token,{'person':i,'slot':slot,'guild':g,'site':site,'target':transfer['target'],'source_person':profile['key'],'historical_credit_added':0.,'profile':profile,'learning_retention':retention}))
+                    s['employee_status'][profile['key']]='parent';s['employee_ids'][profile['key']]=i;self.members[i]=g
+            if [(k,e,v) for k,e,v in events if k=='acquisition_entry']!=expected_entries:raise ValueError('raw acquisition employee transfer differs')
+            self.operations.acquired_orders_per_workday=self.acquisitions.demand_addition()
         operation_received=operation_borrowed=0.
         if self.operations is not None:
             demand=next((v for when,v in reversed(l.demand_schedule) if when<=day),1.)
@@ -177,7 +257,7 @@ class _RawDailyAccounting:
             setup,expected_growth=self.enterprise.begin_day(day,self.cash,
                 active=p.n if day==0 else len(self.members),operating=operating,
                 payroll_per_member=l.payroll_resource_units_per_member_workday,
-                expansion_allowed=self.operations.expansion_allowed(self.enterprise) if self.operations is not None else True)
+                expansion_allowed=(self.operations.expansion_allowed(self.enterprise) if self.operations is not None else True) and not (self.acquisitions is not None and any(s['status']=='integrating' for s in self.acquisitions.targets.values())))
             self.cash-=setup;self.metrics['infrastructure_setup_resource_units']+=setup
             for g in range(previous_guilds,self.enterprise.guilds):
                 self.alias[g]=g;self.adoption[str(g)]=None
@@ -197,13 +277,23 @@ class _RawDailyAccounting:
                 if k=='entry' and not v['initial'] and not ready.get(v['slot'],False):raise ValueError('raw recruitment bypasses talent lead time')
         work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False
         for kind,event,value in events:
-            if kind=='entry':
+            if kind=='acquisition_entry':
+                i=value['person'];person=self.people.get(i)
+                if person is None or i in self.seen_people or person['entered_day']!=day or person['token']!=event or person['slot']!=value['slot'] or person.get('source_company')!=value['target'] or person.get('source_person')!=value['source_person']:
+                    raise ValueError('raw acquired person lifecycle differs')
+                profile=value['profile'];a=self.agents[i]
+                for field in ('skill','care_hours','autonomy','reciprocity'):
+                    if a[field]!=profile[field]:raise ValueError('raw acquired immutable trait differs')
+                if person['birth_date']!=profile['birth_date']:raise ValueError('raw acquired birth identity differs')
+                self.seen_people.add(i);self.members[i]=value['guild'];self.metrics['acquired_people']+=1
+            elif kind=='entry':
                 i=value['person'];person=self.people.get(i)
                 if i in self.seen_people or person is None or person['entered_day']!=day or person['token']!=event:
                     raise ValueError('raw entry/person lifecycle differs')
                 initial=i<p.n
                 if type(value['initial']) is not bool or value['initial']!=initial or initial and (day!=0 or event!=f'initial:{i}') or value['slot']!=person['slot']:
                     raise ValueError('raw entry initial identity/slot differs')
+                _verify_joint_entry(p,self.market_rng,event,initial,value.get('joint_population'),self.agents[i])
                 self.seen_people.add(i)
                 self.members[i]=self.alias[value['guild']]
                 if not value['initial']:
@@ -228,7 +318,7 @@ class _RawDailyAccounting:
                 self.members[i]=value['new']
             elif kind=='adoption':
                 g=value['guild'];cost=sum(v==g for v in self.members.values())*l.migration_resource_units_per_member
-                if self.adoption[str(g)] is not None or value['migration_cost']!=cost:
+                if self.adoption[str(g)] is not None or value['migration_cost']!=cost or self.acquisitions is not None and self.acquisitions.policy(g) is not None:
                     raise ValueError('raw adoption migration cost differs')
                 self.adoption[str(g)]=day;self.cash-=cost;self.metrics['migration_resource_units']+=cost
             elif kind=='closure':
@@ -331,6 +421,31 @@ class _RawDailyAccounting:
         expected_guilds={g for g in self.alias if self.alias[g]==g} if decision_day else set()
         if set(decisions)!=expected_guilds or set(votes)!=(set(active) if decision_day else set()):
             raise ValueError('raw vote/decision daily roster differs')
+        coordination_service={};coordination_readiness={};coordination_inputs={}
+        if self.operations is not None:
+            phases=[v for k,e,v in events if k=='enterprise_coordination_begin']
+            if len(phases)!=1 or funding is None:raise ValueError('raw coordination phase missing or unbounded')
+            phase=phases[0]
+            if set(phase)!={'inputs','plan'} or not isinstance(phase['inputs'],list):raise ValueError('raw coordination phase shape differs')
+            post=[] if auto_closure else present or []
+            if [v.get('person') for v in phase['inputs']]!=sorted(post):raise ValueError('raw coordination present roster differs')
+            people=[]
+            for value in phase['inputs']:
+                if set(value)!={'person','site','morning_trust','morning_fatigue','service_capacity'}:raise ValueError('raw coordination inputs differ')
+                i=value['person'];agent=self.agents[i]
+                trust=self.number(value['morning_trust'],'coordination morning trust',high=1.)
+                fatigue=self.number(value['morning_fatigue'],'coordination morning fatigue',high=1.)
+                cooperation=max(0.,min(1.,agent['reciprocity']*trust*(1-fatigue)))
+                other=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation+training[i]+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)
+                capacity=self.operations.coordination_capacity(agent['care_hours'],other)
+                if value['site']!=agent['site'] or value['service_capacity']!=capacity:raise ValueError('raw coordination actual available time differs')
+                coordination_inputs[i]=value;people.append((i,agent['site'],capacity))
+            coordination_service,coordination_readiness,coordination_plan=self.operations.prepare_coordination(day,
+                active=len(active),guilds=self.enterprise.guilds,departments=self.enterprise.departments,sites=self.enterprise.sites,
+                people=people,funding=funding)
+            if phase['plan']!=coordination_plan:raise ValueError('raw requested/served/unmet coordination differs')
+            self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
+            self.metrics['enterprise_coordination_served_workdays']+=math.fsum(v['served'] for v in coordination_plan['sites'])
         losses=[]
         for g,decision in sorted(decisions.items()):
             domain=[votes[i] for i in active if self.members[i]==g];effective=[];ballots=[];flags=[]
@@ -379,9 +494,14 @@ class _RawDailyAccounting:
                 original_cooperation=max(0.,min(1.,agent['reciprocity']*morning['trust']*(1-morning['fatigue'])))
                 expected_cooperation=0. if attack_active and p.attack=='freeride' and i in attackers else original_cooperation
                 if value['cooperation']!=expected_cooperation:raise ValueError('raw cooperation differs from morning evidence')
-                coordination=self.operations.coordination(len(active),self.enterprise.guilds,self.enterprise.departments,self.enterprise.sites,agent['site']) if self.operations is not None else 0.
+                coordination=(coordination_service.get(i,0.) if self.operations is not None else 0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)
                 if self.operations is not None:
-                    if value['enterprise_coordination']!=coordination*funding or value['enterprise_calendar_fraction']!=self.operations.calendar_fraction(clock,agent['site'],day):raise ValueError('raw context/coordination reservation differs')
+                    ci=coordination_inputs[i]
+                    if morning['trust']!=ci['morning_trust'] or morning['fatigue']!=ci['morning_fatigue']:raise ValueError('raw coordination/work morning state differs')
+                    if (value['enterprise_coordination']!=coordination*funding
+                            or value['enterprise_calendar_fraction']!=self.operations.calendar_fraction(clock,agent['site'],day)
+                            or value['enterprise_coordination_readiness_fraction']!=coordination_readiness.get(agent['site'],1.)):
+                        raise ValueError('raw context/coordination reservation differs')
                     if not 0<=value['enterprise_production_fraction']<=1:raise ValueError('raw production constraint fraction invalid')
                 reservations=coordination+.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*original_cooperation+training[i]
                 governance[i]=.05 if (1-agent['care_hours']-reservations)*funding>=.05 else 0.
@@ -391,7 +511,7 @@ class _RawDailyAccounting:
                 if attack!=(attack_time if i in attackers else 0.):raise ValueError('raw work attack reservation differs from cohort/window')
                 reserved=reservations*funding+governance[i]
                 limit=max(0.,(1-agent['care_hours'])*funding-reserved)
-                if attack>limit+1e-12 or value['effort']>limit-attack+1e-12 or agent['care_hours']+reserved+value['effort']+attack>1+1e-12:
+                if attack>limit+1e-12 or value['effort']>max(0.,limit-attack)+1e-12 or agent['care_hours']+reserved+value['effort']+attack>1+1e-12:
                     raise ValueError('raw work exceeds funded individual time capacity')
                 if value['effort']==0 and value['produced_research_only']!=0:raise ValueError('raw zero-effort work produces output')
             self.metrics['work_events']+=1
@@ -409,16 +529,38 @@ class _RawDailyAccounting:
         revenue=output*l.revenue_resource_units_per_work_unit
         material_cost=0.
         if self.operations is not None:
-            by_site=defaultdict(float)
-            for v in work:by_site[self.agents[v['person']]['site']]+=v['produced_research_only']
-            if output>self.operations.productive_limit(self.enterprise.capacity,self.cash,self.enterprise.sites)+1e-8:raise ValueError('raw production exceeds contract/capital/installed plant')
+            by_site=defaultdict(list)
+            for v in work:by_site[self.agents[v['person']]['site']].append(v['produced_research_only'])
+            by_site={site:math.fsum(values) for site,values in by_site.items()}
+            phases=[v for k,e,v in events if k=='enterprise_production_plan']
+            if len(phases)!=1:raise ValueError('raw production allocation phase missing')
+            plan=phases[0]
+            if set(plan)!={'capacity','cash_available','potentials_by_site','allocated_by_site'} or plan['capacity']!=self.enterprise.capacity or plan['cash_available']!=self.cash:
+                raise ValueError('raw production available capacity/cash differs')
+            potentials=dict(plan['potentials_by_site'])
+            if plan['potentials_by_site']!=[[s,v] for s,v in sorted(potentials.items())]:raise ValueError('raw production potential roster differs')
+            allocated=self.operations.allocate_production(potentials,self.enterprise.capacity,self.cash,self.enterprise.sites)
+            if plan['allocated_by_site']!=[[s,v] for s,v in sorted(allocated.items())]:raise ValueError('raw site cost/capital allocation differs')
+            observed_potentials=defaultdict(float);person_potentials={};person_sites={}
+            for value in work:
+                person=value['person'];site=self.agents[person]['site']
+                potential=self.number(value['enterprise_unconstrained_potential'],'unconstrained production potential')
+                observed_potentials[site]+=potential;person_potentials[person]=potential;person_sites[person]=site
+            if dict(observed_potentials)!=potentials:raise ValueError('raw individual/site potential sums differ')
+            allocated_people=self.operations.allocate_people(person_potentials,person_sites,allocated)
+            for value in work:
+                person=value['person'];potential=person_potentials[person]
+                fraction=allocated_people[person]/potential if potential else 1.
+                if value['enterprise_production_fraction']!=fraction or value['produced_research_only']!=allocated_people[person]:
+                    raise ValueError('raw person/site production allocation differs')
+            if output>self.enterprise.capacity*self.operations.c.productive_units_per_installed_seat_workday+1e-8:raise ValueError('raw production exceeds installed plant')
             interest_paid=operation_begin['interest_due']*(funding if funding is not None else 0.)
             material_cost,operation_end=self.operations.finish_day(day,by_site,self.cash,interest_paid=interest_paid)
             if [(k,e,v) for k,e,v in events if k=='enterprise_market_end']!=[('enterprise_market_end',f'market:end:{day}',operation_end)]:raise ValueError('raw production/delivery/settlement phase differs')
             self.cash-=material_cost;self.metrics['operating_resource_units']+=material_cost
             self.metrics['enterprise_material_and_logistics_resource_units']+=material_cost
             self.metrics['orders_arrived_units']+=operation_begin['arrivals'];self.metrics['orders_expired_units']+=operation_begin['expired'];self.metrics['delivered_product_units']+=operation_begin['delivered']
-            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(self.operations.coordination(len(active),self.enterprise.guilds,self.enterprise.departments,self.enterprise.sites,self.agents[i]['site']) for i in ([] if auto_closure else present))*funding
+            if present is not None:self.metrics['enterprise_coordination_hours']+=(math.fsum(coordination_service.values())+math.fsum(self.acquisitions.coordination(i) for i in ([] if auto_closure else present)) if self.acquisitions is not None else math.fsum(coordination_service.values()))*funding
             if record.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw operating stock differs from actual complete history')
             revenue=operation_received
         else:
@@ -432,7 +574,7 @@ class _RawDailyAccounting:
         review_counts=Counter();appeal_counts=Counter()
         for event,value in reviews:
             source,_person=self.source_domain(event,day);domain=self.alias[source];review_counts[domain]+=1
-            backend=p.backend if self.adoption[str(domain)] is not None else l.pre_adoption_backend
+            backend=self.policy(domain,p)[1]
             if value['backend']!=backend:raise ValueError('raw review backend differs from source domain policy')
             if type(value['accepted']) is not bool or type(value['audit_detected']) is not bool:
                 raise ValueError('raw review boolean differs')
@@ -450,7 +592,7 @@ class _RawDailyAccounting:
         if present is not None:
             for domain in set(review_counts)|set(appeal_counts):
                 size=sum(self.members[i]==domain for i in post_present)
-                backend=p.backend if self.adoption[str(domain)] is not None else l.pre_adoption_backend
+                backend=self.policy(domain,p)[1]
                 unit=p.backend_review_multipliers[('central','witness','consensus').index(backend)]
                 if review_counts[domain]>int(size*p.review_capacity_per_member_day*funding/unit) or appeal_counts[domain]>int(size*p.appeal_capacity_per_member_day*funding):
                     raise ValueError('raw review/appeal exceeds funded domain capacity')
@@ -461,10 +603,11 @@ class _RawDailyAccounting:
             self.metrics['confirmed_records']+=1;self.metrics['fraudulent_records_accepted']+=int(value['fraudulent'])
             if value['correction']:self.metrics['corrections']+=1
         if self.enterprise is not None:
-            self.enterprise.observe(day,revenue,paid+material_cost,working=working and operating)
+            self.enterprise.observe(day,revenue,paid+material_cost+acquisition_cost,working=working and operating)
             if record.get('enterprise_growth_state')!=self.enterprise.to_dict():
                 raise ValueError('raw enterprise state differs from full decision/cash history')
         elif 'enterprise_growth_state' in record:raise ValueError('unexpected raw enterprise state')
+        if self.acquisitions is not None and record.get('enterprise_acquisition_state')!=self.acquisitions.to_dict():raise ValueError('raw acquisition state differs from complete transaction history')
         if record['output']!=output or record['cash']!=self.cash:raise ValueError('raw work/resource balance differs from day end')
         unsupported=set()
         if present is None:
@@ -482,6 +625,7 @@ class _RawDailyAccounting:
         self.previous_reported=dict(reported)
 
     def finish(self):
+        if self.acquisitions is not None and self.state.get('enterprise_acquisition_state')!=self.acquisitions.to_dict():raise ValueError('raw final acquisition state differs')
         if self.operations is not None and self.state.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw final operating stock differs')
         if self.enterprise is not None and self.state.get('enterprise_growth_state')!=self.enterprise.to_dict():
             raise ValueError('raw final enterprise stock differs from persisted state')
@@ -544,7 +688,7 @@ def verify_daily_evidence(path,config,state,database,*,config_history=()):
                     'department_count':accounting.enterprise.departments,'site_count':accounting.enterprise.sites}
                 if any(row.get(k)!=v for k,v in direct_growth.items()):raise ValueError('daily enterprise stock differs from journal')
             if accounting.operations is not None:
-                expected={'market_price_resource_units':accounting.operations.price,'order_backlog_units':accounting.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in accounting.operations.shipments),'credit_debt_resource_units':accounting.operations.debt}
+                expected={'market_price_resource_units':accounting.operations.price,'order_backlog_units':accounting.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in accounting.operations.shipments),'credit_debt_resource_units':accounting.operations.debt,'coordination_pending_workdays':math.fsum(accounting.operations.coordination_pending.values())}
                 if any(row.get(k)!=v for k,v in expected.items()):raise ValueError('daily market stock differs from complete event history')
             last=row
         if count!=config.days or state['day']!=config.days:raise ValueError('daily evidence incomplete/oversized horizon')
@@ -576,6 +720,7 @@ def verify_summary_evidence(summary,config,state,database):
             'workforce_target_final':growth['target'],'guild_count_final':growth['guilds'],
             'department_count_final':growth['departments'],'site_count_final':growth['sites']})
     if config.enterprise_operations is not None:expected['enterprise_operating_state_final']=state['enterprise_operating_state']
+    if config.enterprise_acquisition is not None:expected['enterprise_acquisition_state_final']=state['enterprise_acquisition_state']
     for key,value in expected.items():
         if summary.get(key)!=value:raise ValueError('summary identity/lifecycle differs from retained state: '+key)
     connection=sqlite3.connect(f'file:{Path(database).resolve()}?mode=ro',uri=True)

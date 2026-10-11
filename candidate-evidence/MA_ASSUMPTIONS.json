@@ -1,0 +1,61 @@
+{
+  "candidate": "longitudinal-enterprise-ma-candidate-2",
+  "corrections": {
+    "D1": "unchanged installed-stock contract shared by transaction admission and persistence; explicit refusal before payment; no clamp",
+    "D2": "independent chronological cash/debt across original journal events, including earlier same-day review payments"
+  },
+  "empirical_calibration_completed": false,
+  "external_validity_established": false,
+  "formal_study_admitted": false,
+  "implemented_paths": {
+    "demand": "declared future contract flow affects actual arrivals after integration",
+    "evidence": "original units/quality preserved; pending claim review and quarantine; zero automatic historical parent credit",
+    "financial": "treasury/consideration/loan/assumed financial debt/interest/fees and realized growth costs",
+    "governance": "prior target policy/backend retained under autonomy; centralized parent adoption under integration",
+    "knowledge": "parent guild memory and retained learning differ by integration mode",
+    "ownership": "source seller and one-time parent ownership, paid delayed usable asset transfer, idle assets on failure",
+    "workforce": "retained source profiles -> unique parent IDs -> actual work/lifecycle; departure never destroys historical evidence"
+  },
+  "independent_scope": "journal financial/inventory reconciliation only; extended main raw gate reuses M&A transition",
+  "not_implemented": [
+    "two complete independent enterprise ABMs before transaction",
+    "inherited orders/receivables/nonfinancial liabilities",
+    "empirically identified valuation/synergies",
+    "negotiation/competing bidders/legal process",
+    "cultural or demographic behavioral coefficients",
+    "international consolidation/IFRS reporting",
+    "cross-company identity adjudication from real evidence",
+    "real-company calibration and held-out external validation"
+  ],
+  "organizational_knowledge_scope": {
+    "current_behavior": "same declared memory intensity copied per acquired guild, even after all target employee departures",
+    "not_established": [
+      "tacit/codified distinction",
+      "conserved total knowledge across guild counts",
+      "empirical knowledge retention when all target staff depart"
+    ],
+    "original_r4_ambiguity_preserved": true,
+    "r5_interpretation": "uncalibrated per-domain persistent artifact intensity, not conserved extensive knowledge"
+  },
+  "parameter_status": "All numeric acquisition decision, reserve, price, financing, integration, departure, coordination, retention and review parameters are declared assumptions, not inferred from the cited abstracts. They must be frozen and independently calibrated/validated before empirical claims.",
+  "scientific_separation": "engineering controls and any candidate trajectories are excluded from existing pilot/confirmation worlds and results",
+  "source_read_scope": "publisher abstracts and official IFRS overview only; no full-paper reading claimed",
+  "sources": [
+    {
+      "claim_scope": "conditional integration/autonomy tradeoff",
+      "doi": "10.5465/amj.2006.20786062",
+      "read_scope": "publisher abstract"
+    },
+    {
+      "claim_scope": "heterogeneous cultural mechanisms; no universal negative coefficient",
+      "doi": "10.1287/orsc.1070.0270",
+      "read_scope": "publisher abstract"
+    },
+    {
+      "claim_scope": "distinct consideration, identifiable assets and liabilities",
+      "read_scope": "official overview",
+      "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-3-business-combinations/"
+    }
+  ],
+  "target_inputs": "explicit synthetic conditional initial states; not observed enterprise datasets"
+}

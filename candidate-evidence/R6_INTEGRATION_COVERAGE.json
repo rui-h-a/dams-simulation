@@ -1,0 +1,669 @@
+{
+  "schema": "DAMS-enterprise-integrated-r6-coverage-addendum-2",
+  "observed_utc": "2026-10-11T19:07:01.556033+00:00",
+  "candidate_model": "longitudinal-enterprise-integrated-6-joint-1 (opt-in; disabled remains prior versions)",
+  "formal_study_admitted": false,
+  "formal_worlds_added": 0,
+  "empirical_calibration_completed": false,
+  "external_validation_completed": false,
+  "parent_matrix": {
+    "relative_path": "docs/model-coverage/2026-10-10/coverage-matrix.public.json",
+    "sha256": "36c861102e8f2f6f1911da192819606f8322ffd939bc49b685b69cd95d3e216e",
+    "scope_versions": [
+      "f9",
+      "r2",
+      "r3"
+    ],
+    "attribute_count": 239,
+    "atomic_factor_count": 69,
+    "r4_r5_r6_not_part_of_parent_matrix": true
+  },
+  "integration_rows": [
+    {
+      "mechanism": "M&A plus persistent operations coordination",
+      "status": "candidate_behavior_implemented_engineering_tested",
+      "units": "person-workdays; product units; resource units; calendar/workdays",
+      "paths": [
+        "dams_sim/longitudinal_model.py:_step",
+        "dams_sim/enterprise_operations.py:prepare_coordination",
+        "dams_sim/enterprise_acquisition.py:coordination"
+      ],
+      "observables": [
+        "coordination_requested_units",
+        "coordination_served_units",
+        "coordination_pending",
+        "max_individual_time_booked_hours",
+        "acquired_people",
+        "produced_work_units"
+      ],
+      "test": "tests/test_enterprise_integrated_r6.py:test_acquisition_and_persisted_coordination_debt_share_real_person_time",
+      "source_files_sha256": {
+        "dams_sim/enterprise_acquisition.py": "bd58d0d0dbde2cefb82018764cd510d57ec2346da059011368e3c65e5a018454",
+        "dams_sim/enterprise_operations.py": "de184c99496c631b5b8999b53dc792665daebb0171847568659db11474bc9891",
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08"
+      }
+    },
+    {
+      "mechanism": "destination constraints and actual site/person production after acquisition",
+      "status": "candidate_behavior_implemented_engineering_tested",
+      "units": "destination share; product units; resource units per product",
+      "paths": [
+        "dams_sim/enterprise_operations.py:allocate_production",
+        "dams_sim/enterprise_operations.py:_dispatch",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "observables": [
+        "order_backlog_units",
+        "produced_work_units",
+        "acquisition_integration_resource_units"
+      ],
+      "test": "tests/test_enterprise_integrated_r6.py:test_acquired_idle_restricted_site_does_not_stop_parent_domestic_work",
+      "source_files_sha256": {
+        "dams_sim/enterprise_operations.py": "de184c99496c631b5b8999b53dc792665daebb0171847568659db11474bc9891",
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08"
+      }
+    },
+    {
+      "mechanism": "endogenous organic growth",
+      "status": "inherited_candidate_behavior_implemented_engineering_tested_not_calibrated",
+      "paths": [
+        "dams_sim/enterprise_growth.py:begin_day",
+        "dams_sim/enterprise_growth.py:observe",
+        "dams_sim/longitudinal_model.py:_enterprise_begin_day",
+        "dams_sim/longitudinal_model.py:_lifecycle"
+      ],
+      "units": "resource units; seats; persons; guilds; departments; sites; workday signals",
+      "tests": [
+        "tests/test_enterprise_growth.py",
+        "tests/test_enterprise_operations.py:test_growth_above_twice_initial_is_delayed_and_paid"
+      ],
+      "limit": "parameters are synthetic; not a completed new formal five-year study",
+      "source_files_sha256": {
+        "dams_sim/enterprise_growth.py": "1c833ad245eee387a6fa46a00ddbfe1ad68b9718f06417525420f22f04f89cfb",
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08"
+      }
+    },
+    {
+      "mechanism": "representative acquisition inheritance and failure",
+      "status": "finite_target_capsule_candidate_behavior_implemented_engineering_tested",
+      "paths": [
+        "dams_sim/enterprise_acquisition.py:AcquisitionTarget",
+        "dams_sim/enterprise_acquisition.py:begin_day",
+        "dams_sim/longitudinal_model.py:_acquisition_begin_day",
+        "research_tools/validate_acquisition_accounts.py:verify_acquisition_accounts"
+      ],
+      "units": "resource units; product units; persons; per-guild replicable knowledge intensity; source contribution units",
+      "tests": [
+        "tests/test_enterprise_acquisition.py",
+        "tests/test_acquisition_correction.py",
+        "tests/test_enterprise_integrated_r6.py:test_joint_queue_and_target_history_checkpoint_recovery_is_exact"
+      ],
+      "limit": "target is a bounded immutable history/evidence capsule with finances, personnel, installed assets, source knowledge and pending evidence; not two complete independently evolving enterprise ABMs, not general unresolved projects/tasks, and not empirically identified cultural integration",
+      "source_files_sha256": {
+        "dams_sim/enterprise_acquisition.py": "bd58d0d0dbde2cefb82018764cd510d57ec2346da059011368e3c65e5a018454",
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08",
+        "research_tools/validate_acquisition_accounts.py": "5e12eab35dad80909c46ceb38882e127add845d13523c19612ef71a18111ff5d"
+      }
+    },
+    {
+      "mechanism": "correlated individual heterogeneity",
+      "status": "optional_candidate_behavior_implemented_engineering_tested_not_calibrated",
+      "paths": [
+        "dams_sim/joint_population.py:draw_entry_traits",
+        "dams_sim/longitudinal_model.py:_enter",
+        "dams_sim/joint_population.py:verify_joint_person_state",
+        "research_tools/validate_longitudinal.py:_verify_joint_entry"
+      ],
+      "actual_scope": "Conditional Gaussian-copula dependence of existing latent skill multiplier, initial observed appointment tenure and care-time constraint; recruits appointment tenure remains zero; autonomy/reciprocity retain independent streams; M&A profiles remain inherited",
+      "units": "dimensionless latent correlations and skill multiplier; calendar-year appointment tenure; fraction of a person-workday care time",
+      "joint_distribution": "candidate-evidence/JOINT_POPULATION_MECHANISM.md",
+      "default": "disabled Config.joint_population=None; explicit coefficient defaults all zero",
+      "coefficient_evidence": "synthetic research hypotheses; no empirical identification or fit",
+      "information_available": "appointment tenure observed; care time enters availability/effort; skill remains research-only and not disclosed to voting",
+      "tests": [
+        "tests/test_joint_population_r6.py"
+      ],
+      "observables": [
+        "entry.joint_population",
+        "available_member_work_hours",
+        "effort_hours",
+        "produced_work_units",
+        "agents[].tenure"
+      ],
+      "limit": "sampling diagnostics and recovery controls are engineering evidence only; no calibration/OOS/parameter recovery/new formal worlds",
+      "source_files_sha256": {
+        "dams_sim/joint_population.py": "bf89850780c9424258e38bf59b469f6fe3f6f4f3f12cdcc9dfc1538f5d822aa9",
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08",
+        "research_tools/validate_longitudinal.py": "c93f1209245edf5c703a5001d5ea8366a8a97d7edc8b13b7dfb64f7b2c595ae9"
+      }
+    },
+    {
+      "mechanism": "distinct reporting/collaboration/verification multilayer networks",
+      "status": "not_implemented_full_construct",
+      "paths": [
+        "dams_sim/longitudinal_model.py:_topology",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "actual_scope": "teams/group membership and next-active-person ring cooperation; no separate graph-driven reporting/collaboration/verification",
+      "source_files_sha256": {
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08"
+      }
+    },
+    {
+      "mechanism": "task dependencies and departmental goal conflicts",
+      "status": "not_implemented",
+      "paths": [
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "actual_scope": "one common latent proposal value per guild/day, order expiry and scalar workload; no task dependency DAG or departmental utility conflict",
+      "source_files_sha256": {
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08"
+      }
+    },
+    {
+      "mechanism": "joint state, raw events and recovery",
+      "status": "candidate_engineering_tested",
+      "paths": [
+        "dams_sim/longitudinal_model.py:restore",
+        "dams_sim/longitudinal_model.py:validate_semantics",
+        "research_tools/validate_longitudinal.py:_RawDailyAccounting",
+        "research_tools/validate_acquisition_accounts.py:verify_acquisition_accounts"
+      ],
+      "tests": [
+        "tests/test_enterprise_integrated_r6.py:test_joint_queue_and_target_history_checkpoint_recovery_is_exact",
+        "tests/test_enterprise_integrated_r6.py:test_coherent_joint_stock_edits_cannot_replace_committed_original_events"
+      ],
+      "independence_limit": "whole-model raw replay shares transitions; chronological M&A account reconstruction does not call acquisition transition, and Decimal controls address scalar feasibility only",
+      "source_files_sha256": {
+        "dams_sim/longitudinal_model.py": "c47b8847501d60a0a260847e4434a6751991aeb9e5956a03258cda8fa0c35b08",
+        "research_tools/validate_acquisition_accounts.py": "5e12eab35dad80909c46ceb38882e127add845d13523c19612ef71a18111ff5d",
+        "research_tools/validate_longitudinal.py": "c93f1209245edf5c703a5001d5ea8366a8a97d7edc8b13b7dfb64f7b2c595ae9"
+      }
+    }
+  ],
+  "functions": {
+    "dams_sim/longitudinal_model.py": {
+      "age_at": {
+        "line": 34,
+        "end_line": 39
+      },
+      "verify_native_image": {
+        "line": 958,
+        "end_line": 971
+      },
+      "load_snapshot_envelope": {
+        "line": 974,
+        "end_line": 1001
+      },
+      "verify_snapshot": {
+        "line": 1004,
+        "end_line": 1060
+      },
+      "write_recovery_receipt": {
+        "line": 1063,
+        "end_line": 1084
+      },
+      "validate_persisted_state": {
+        "line": 1087,
+        "end_line": 1162
+      },
+      "__init__": {
+        "line": 44,
+        "end_line": 86
+      },
+      "check_disk": {
+        "line": 88,
+        "end_line": 94
+      },
+      "guild_count": {
+        "line": 97,
+        "end_line": 98
+      },
+      "site_count": {
+        "line": 101,
+        "end_line": 102
+      },
+      "_enterprise_begin_day": {
+        "line": 104,
+        "end_line": 119
+      },
+      "_acquisition_begin_day": {
+        "line": 121,
+        "end_line": 169
+      },
+      "_enter": {
+        "line": 171,
+        "end_line": 193
+      },
+      "_exit": {
+        "line": 195,
+        "end_line": 206
+      },
+      "_topology": {
+        "line": 208,
+        "end_line": 218
+      },
+      "_lifecycle": {
+        "line": 220,
+        "end_line": 280
+      },
+      "policy": {
+        "line": 282,
+        "end_line": 287
+      },
+      "_adopt": {
+        "line": 289,
+        "end_line": 306
+      },
+      "_authority": {
+        "line": 308,
+        "end_line": 330
+      },
+      "_commit": {
+        "line": 332,
+        "end_line": 350
+      },
+      "_review": {
+        "line": 352,
+        "end_line": 378
+      },
+      "_review_one": {
+        "line": 380,
+        "end_line": 390
+      },
+      "_appeal_one": {
+        "line": 391,
+        "end_line": 397
+      },
+      "step": {
+        "line": 400,
+        "end_line": 410
+      },
+      "_step": {
+        "line": 412,
+        "end_line": 669
+      },
+      "summary": {
+        "line": 671,
+        "end_line": 691
+      },
+      "header": {
+        "line": 693,
+        "end_line": 706
+      },
+      "semantic_digest": {
+        "line": 708,
+        "end_line": 709
+      },
+      "_semantic_digest_with_ledger": {
+        "line": 711,
+        "end_line": 717
+      },
+      "state": {
+        "line": 719,
+        "end_line": 721
+      },
+      "write_snapshot": {
+        "line": 723,
+        "end_line": 789
+      },
+      "restore": {
+        "line": 792,
+        "end_line": 832
+      },
+      "validate_semantics": {
+        "line": 834,
+        "end_line": 905
+      },
+      "fork": {
+        "line": 907,
+        "end_line": 955
+      },
+      "pairs": {
+        "line": 983,
+        "end_line": 988
+      },
+      "writer": {
+        "line": 763,
+        "end_line": 779
+      }
+    },
+    "dams_sim/enterprise_operations.py": {
+      "floor_binary64": {
+        "line": 19,
+        "end_line": 22
+      },
+      "from_dict": {
+        "line": 71,
+        "end_line": 78
+      },
+      "validate": {
+        "line": 424,
+        "end_line": 449
+      },
+      "__init__": {
+        "line": 133,
+        "end_line": 159
+      },
+      "backlog": {
+        "line": 161,
+        "end_line": 161
+      },
+      "expansion_allowed": {
+        "line": 163,
+        "end_line": 165
+      },
+      "start_day": {
+        "line": 167,
+        "end_line": 204
+      },
+      "context": {
+        "line": 206,
+        "end_line": 206
+      },
+      "calendar_fraction": {
+        "line": 208,
+        "end_line": 215
+      },
+      "coordination_required": {
+        "line": 217,
+        "end_line": 224
+      },
+      "coordination": {
+        "line": 226,
+        "end_line": 229
+      },
+      "coordination_capacity": {
+        "line": 231,
+        "end_line": 233
+      },
+      "prepare_coordination": {
+        "line": 235,
+        "end_line": 285
+      },
+      "training": {
+        "line": 287,
+        "end_line": 288
+      },
+      "recruit_ready": {
+        "line": 290,
+        "end_line": 292
+      },
+      "filled": {
+        "line": 294,
+        "end_line": 294
+      },
+      "productive_limit": {
+        "line": 296,
+        "end_line": 299
+      },
+      "allocate_production": {
+        "line": 301,
+        "end_line": 334
+      },
+      "allocate_people": {
+        "line": 336,
+        "end_line": 352
+      },
+      "validate_sites": {
+        "line": 354,
+        "end_line": 357
+      },
+      "_dispatch": {
+        "line": 359,
+        "end_line": 380
+      },
+      "finish_day": {
+        "line": 382,
+        "end_line": 413
+      },
+      "to_dict": {
+        "line": 415,
+        "end_line": 415
+      },
+      "restore": {
+        "line": 418,
+        "end_line": 422
+      }
+    },
+    "dams_sim/enterprise_growth.py": {
+      "validate_installed_inventory": {
+        "line": 18,
+        "end_line": 35
+      },
+      "from_dict": {
+        "line": 64,
+        "end_line": 68
+      },
+      "validate": {
+        "line": 240,
+        "end_line": 271
+      },
+      "__init__": {
+        "line": 120,
+        "end_line": 136
+      },
+      "inventory_for": {
+        "line": 138,
+        "end_line": 142
+      },
+      "maintenance_due": {
+        "line": 144,
+        "end_line": 145
+      },
+      "begin_day": {
+        "line": 147,
+        "end_line": 201
+      },
+      "observe": {
+        "line": 203,
+        "end_line": 226
+      },
+      "to_dict": {
+        "line": 228,
+        "end_line": 229
+      },
+      "restore": {
+        "line": 232,
+        "end_line": 238
+      }
+    },
+    "dams_sim/enterprise_acquisition.py": {
+      "number": {
+        "line": 21,
+        "end_line": 24
+      },
+      "identifier": {
+        "line": 27,
+        "end_line": 28
+      },
+      "from_dict": {
+        "line": 104,
+        "end_line": 119
+      },
+      "validate": {
+        "line": 309,
+        "end_line": 334
+      },
+      "__init__": {
+        "line": 188,
+        "end_line": 200
+      },
+      "to_dict": {
+        "line": 202,
+        "end_line": 202
+      },
+      "demand_addition": {
+        "line": 204,
+        "end_line": 205
+      },
+      "policy": {
+        "line": 207,
+        "end_line": 212
+      },
+      "coordination": {
+        "line": 214,
+        "end_line": 216
+      },
+      "begin_day": {
+        "line": 218,
+        "end_line": 307
+      },
+      "restore": {
+        "line": 337,
+        "end_line": 340
+      }
+    },
+    "research_tools/validate_acquisition_accounts.py": {
+      "close": {
+        "line": 20,
+        "end_line": 22
+      },
+      "verify_acquisition_accounts": {
+        "line": 25,
+        "end_line": 203
+      }
+    },
+    "research_tools/validate_longitudinal.py": {
+      "iter_journal_rows": {
+        "line": 37,
+        "end_line": 49
+      },
+      "_require_current_validator": {
+        "line": 52,
+        "end_line": 58
+      },
+      "_unique_json_object": {
+        "line": 61,
+        "end_line": 66
+      },
+      "_adoption_csv": {
+        "line": 69,
+        "end_line": 79
+      },
+      "_publication_tree": {
+        "line": 82,
+        "end_line": 84
+      },
+      "_csv_bytes": {
+        "line": 87,
+        "end_line": 91
+      },
+      "verify_daily_evidence": {
+        "line": 598,
+        "end_line": 657
+      },
+      "verify_summary_evidence": {
+        "line": 660,
+        "end_line": 689
+      },
+      "validate_longitudinal_output": {
+        "line": 1057,
+        "end_line": 1061
+      },
+      "main": {
+        "line": 1064,
+        "end_line": 1068
+      },
+      "__init__": {
+        "line": 1015,
+        "end_line": 1033
+      },
+      "at": {
+        "line": 136,
+        "end_line": 137
+      },
+      "policy": {
+        "line": 139,
+        "end_line": 143
+      },
+      "number": {
+        "line": 146,
+        "end_line": 149
+      },
+      "source_domain": {
+        "line": 151,
+        "end_line": 161
+      },
+      "verify": {
+        "line": 163,
+        "end_line": 582
+      },
+      "finish": {
+        "line": 584,
+        "end_line": 595
+      },
+      "file": {
+        "line": 744,
+        "end_line": 747
+      },
+      "read_hash": {
+        "line": 749,
+        "end_line": 750
+      },
+      "read_json": {
+        "line": 752,
+        "end_line": 753
+      },
+      "exact_csv": {
+        "line": 755,
+        "end_line": 757
+      },
+      "_verify_snapshot": {
+        "line": 759,
+        "end_line": 782
+      },
+      "_case": {
+        "line": 784,
+        "end_line": 850
+      },
+      "_stage": {
+        "line": 852,
+        "end_line": 907
+      },
+      "_publication": {
+        "line": 909,
+        "end_line": 959
+      },
+      "_derived_publication": {
+        "line": 961,
+        "end_line": 978
+      },
+      "iter_timeseries": {
+        "line": 980,
+        "end_line": 980
+      },
+      "read_snapshot": {
+        "line": 982,
+        "end_line": 985
+      },
+      "iter_journal": {
+        "line": 987,
+        "end_line": 992
+      },
+      "select": {
+        "line": 994,
+        "end_line": 995
+      },
+      "result": {
+        "line": 1051,
+        "end_line": 1054
+      },
+      "validate_case": {
+        "line": 1035,
+        "end_line": 1049
+      },
+      "prefix_configs": {
+        "line": 864,
+        "end_line": 870
+      },
+      "retain_floor": {
+        "line": 771,
+        "end_line": 775
+      }
+    }
+  },
+  "scientific_admission": "not READY for full enterprise N10k/N50k until missing core mechanisms, independent integration review, own formal design, full-calendar measurements and preservation/resource gates are completed",
+  "literature_status": "inherited mechanisms and sources retained in candidate-evidence/MA_MECHANISMS.md and MA_ASSUMPTIONS.json; this derivative does not add or claim empirical evidence",
+  "runtime_core_sha256": "236c52d299676bf18f1f73b31a3c566e40ee5773a5ef8da92d05e266f7cbbec5"
+}

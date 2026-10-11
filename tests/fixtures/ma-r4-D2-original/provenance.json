@@ -1,0 +1,20 @@
+{
+  "files": {
+    "chronological-cash-oracle.json": {
+      "bytes": 851,
+      "sha256": "4e3cc29879c79543db1cda293c8c437215ab398351902db71c8b476414213bcd"
+    },
+    "serial-final.json": {
+      "bytes": 55319,
+      "sha256": "d4cb78c1d4c927f081189f56b7204fdea770bf0ae8f55d2f4f7f057b49290655"
+    },
+    "serial-final.sqlite": {
+      "bytes": 176128,
+      "sha256": "9a73bfb1305a195b3932f1f9abe8f69a64206ef99c713b3b69344c8d0bfac826"
+    }
+  },
+  "never_restore_model_under_new_source": true,
+  "pure_chronological_financial_reconciliation_only": true,
+  "scope": "exact synthetic engineering D2 original frozen evidence; partial 11-day trajectory, zero formal worlds",
+  "source_core_sha256": "34e8169d6eceabb372fa48d9f011ab5a01486af034c6c05ac3baea64e7d44723"
+}

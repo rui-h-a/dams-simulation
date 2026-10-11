@@ -15,6 +15,26 @@ import math
 MODEL_VERSION = 'longitudinal-endogenous-growth-1'
 
 
+def validate_installed_inventory(config, *, capacity, guilds, departments, sites, target):
+    """One unchanged installed-stock contract for admission and recovery.
+
+    Department support depends on the actual resulting guild inventory, not
+    on the largest population that the resource envelope could eventually hold.
+    This rejects unsupported target structures; it never clamps acquired assets.
+    """
+    c=config.enterprise_growth
+    for key,value in {'capacity':capacity,'guilds':guilds,'departments':departments,'sites':sites,'target':target}.items():
+        if type(value) is not int or value<0:raise ValueError('enterprise integer stock invalid: '+key)
+    if not c.initial_organization_capacity<=capacity<=c.maximum_organization_capacity or not c.minimum_target_members<=target<=capacity:
+        raise ValueError('enterprise seat/target bounds differ')
+    if not config.guilds<=guilds<=max(config.guilds,math.ceil(c.maximum_organization_capacity/c.members_per_guild)) or not config.sites<=sites<=max(config.sites,math.ceil(c.maximum_organization_capacity/c.members_per_site)):
+        raise ValueError('enterprise domain/site bounds differ')
+    if not c.initial_departments<=departments<=max(c.initial_departments,math.ceil(guilds/c.guilds_per_department)):
+        raise ValueError('enterprise department bounds differ')
+    if capacity>guilds*c.members_per_guild or capacity>sites*c.members_per_site or guilds>departments*c.guilds_per_department:
+        raise ValueError('enterprise installed units cannot support capacity')
+
+
 @dataclass(frozen=True)
 class EnterpriseGrowthConfig:
     schema_version: int = 1
@@ -222,14 +242,7 @@ class EnterpriseGrowthState:
         for key in ('capacity','guilds','departments','sites','target','observed_workdays'):
             if type(getattr(self,key)) is not int or getattr(self,key)<0:
                 raise ValueError('enterprise integer stock invalid: '+key)
-        if not c.initial_organization_capacity <= self.capacity <= c.maximum_organization_capacity or not c.minimum_target_members <= self.target <= self.capacity:
-            raise ValueError('enterprise seat/target bounds differ')
-        if not config.guilds <= self.guilds <= max(config.guilds,math.ceil(c.maximum_organization_capacity/c.members_per_guild)) or not config.sites <= self.sites <= max(config.sites,math.ceil(c.maximum_organization_capacity/c.members_per_site)):
-            raise ValueError('enterprise domain/site bounds differ')
-        if not c.initial_departments <= self.departments <= max(c.initial_departments,math.ceil(self.guilds/c.guilds_per_department)):
-            raise ValueError('enterprise department bounds differ')
-        if self.capacity > self.guilds*c.members_per_guild or self.capacity > self.sites*c.members_per_site or self.guilds > self.departments*c.guilds_per_department:
-            raise ValueError('enterprise installed units cannot support capacity')
+        validate_installed_inventory(config,capacity=self.capacity,guilds=self.guilds,departments=self.departments,sites=self.sites,target=self.target)
         for key in ('revenue_signal','cost_signal'):
             v=getattr(self,key)
             if isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or v<0:raise ValueError('enterprise resource signal invalid')

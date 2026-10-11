@@ -1,0 +1,29 @@
+{
+  "scope": "scalar chronological source-event oracle; standard library only; never calls producer transition",
+  "day": 8,
+  "previous_day_cash": 1814.2083733547265,
+  "steps": [
+    {
+      "event": "acquisition_evidence_quarantined",
+      "target": "A",
+      "cash_before": 1814.2083733547265,
+      "cash_after": 814.2083733547265
+    },
+    {
+      "event": "acquisition_close",
+      "target": "B",
+      "cash_before": 814.2083733547265,
+      "cash_after": 18.60000000000082
+    },
+    {
+      "event": "acquisition_integration_paid",
+      "target": "B",
+      "cash_before": 18.60000000000082,
+      "cash_after": 17.40000000000082
+    }
+  ],
+  "correct_lender_advance": 9202.391626645274,
+  "incorrect_previous_day_only_advance": 8202.391626645274,
+  "difference": 1000.0,
+  "acquisition_cash_balance_before_market": 17.40000000000082
+}

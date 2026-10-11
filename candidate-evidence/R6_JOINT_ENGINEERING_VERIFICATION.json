@@ -1,0 +1,105 @@
+{
+  "schema": "DAMS-r6-joint-engineering-verification-1",
+  "observed_utc": "2026-10-11T19:07:01.553253+00:00",
+  "candidate_model_version": "longitudinal-enterprise-integrated-6-joint-1",
+  "runtime_core_sha256": "236c52d299676bf18f1f73b31a3c566e40ee5773a5ef8da92d05e266f7cbbec5",
+  "previous_r6_core_sha256": "7e0a4ce10547c55c81d0ff818cab588b63dfe08eb259aa0fd1a0d5fdeaa6c179",
+  "engineering_only": true,
+  "formal_worlds_added": 0,
+  "formal_cases_added": 0,
+  "scientific_admission": false,
+  "empirical_calibration_completed": false,
+  "external_validation_completed": false,
+  "paid_calls": 0,
+  "regression_rounds": [
+    {
+      "utc_start": "2026-10-11T19:00:39.415031+00:00",
+      "utc_end": "2026-10-11T19:00:57.554873+00:00",
+      "wall_seconds": 18.133482459001243,
+      "tests_passed": 105,
+      "reaped": true,
+      "exit_code": 0,
+      "core_before_after_equal": true
+    },
+    {
+      "utc_start": "2026-10-11T19:02:45.477756+00:00",
+      "utc_end": "2026-10-11T19:03:02.703121+00:00",
+      "wall_seconds": 17.224305875017308,
+      "tests_passed": 105,
+      "reaped": true,
+      "exit_code": 0,
+      "core_before_after_equal": true
+    }
+  ],
+  "syntax_ast_inmemory_compile_files": 79,
+  "last_runtime_research_test_sha_before_after_count": 79,
+  "last_runtime_research_test_sha_before_after_equal": true,
+  "repo_local_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:tests python3 -B -m unittest test_joint_population_r6 test_enterprise_integrated_r6 test_enterprise_operations_r4 test_enterprise_acquisition test_acquisition_correction test_enterprise_operations test_enterprise_growth test_enterprise_causal_recovery -v",
+  "controls": {
+    "old_operations_acquisition_growth_recovery": 93,
+    "new_joint_population": 12,
+    "legacy_disabled_exact_reference": "tests/fixtures/integrated-r6-pre-joint-reference/fixture-manifest.json",
+    "meaningful_tests_include": [
+      "conditional_sample_correlations_and_marginals",
+      "person_world_context_order_determinism",
+      "explicit_zero_draw_bit_equality",
+      "disabled_complete_trajectory_equality",
+      "recruit_entry_and_complete_raw_recovery",
+      "actual_time_effort_production_effect",
+      "coherent_immutable_trait_tenure_and_entry_witness_forgery_refusal",
+      "acquired_target_profiles_history_conserved",
+      "Gregorian_year_boundary_closure_recovery"
+    ]
+  },
+  "short_engineering_case": {
+    "short_case_calendar_days": 30,
+    "initial_people": 8,
+    "ever_people": 13,
+    "entrants": 1.0,
+    "acquired_people": 4.0,
+    "joint_entry_witness_count": 9,
+    "exact_checkpoint_resume": true,
+    "state_semantic_sha256": "3734c46c420af097dbbb0acdb827861fab589c7539be3e953a62ab2f55d16c92",
+    "timings": {
+      "full_init_and_run_seconds": 0.18303658301010728,
+      "full_raw_validation_seconds": 0.07310470897937194,
+      "checkpoint_restore_seconds": 0.0759167909855023,
+      "resumed_raw_validation_seconds": 0.07232987496536225
+    },
+    "retained_logical_bytes": 2775366
+  },
+  "sampling_diagnostics": [
+    {
+      "cohort": "initial",
+      "draw_count": 12000,
+      "latent_skill_care_sample_correlation": -0.34537032526534084,
+      "mean_care_person_workdays": 0.15131800549674002,
+      "mean_skill_latent": -0.0013092722735141354,
+      "stdev_skill_latent": 0.9850332176864016,
+      "recruit_tenure_zero": null,
+      "latent_skill_tenure_sample_correlation": 0.5500220903345215,
+      "latent_tenure_care_sample_correlation": 0.08940202922097958,
+      "mean_appointment_tenure_years": 0.49959648830751024
+    },
+    {
+      "cohort": "recruit",
+      "draw_count": 12000,
+      "latent_skill_care_sample_correlation": -0.34675103011163755,
+      "mean_care_person_workdays": 0.15163802753532127,
+      "mean_skill_latent": -0.020582396562048695,
+      "stdev_skill_latent": 1.0021935792440164,
+      "recruit_tenure_zero": true
+    }
+  ],
+  "sampling_parameters_are_stress_assumptions": true,
+  "original_source_files_preserved": 415,
+  "pre_joint_manifest_files_preserved": 248,
+  "limitations": [
+    "Gaussian copula is a conditional synthetic sampling assumption, not psychological mechanism completeness or observed population fit",
+    "Raw entry expression is independently reconstructed but shares RNG and declared parameter schema",
+    "Whole raw ABM validation still shares some production transitions",
+    "M&A retains a bounded history/evidence target capsule, not two independently evolving full historical companies",
+    "Distinct reporting/collaboration/verification networks, task dependencies and department goal conflicts remain missing",
+    "Not 10k-ready; no formal long-term result added"
+  ]
+}

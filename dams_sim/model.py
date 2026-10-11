@@ -227,7 +227,7 @@ class Model:
             attack_time = p.attack_budget_hours_per_day/attack_n if active and i < attack_n else 0.0
             if attack_time > time_limit + 1e-12:
                 raise ValueError("attack budget is infeasible under the individual daily time constraint")
-            time_limit -= attack_time
+            time_limit = max(0.0, time_limit-attack_time)
             if p.behavior_rule == "linear_response":
                 chosen_effort = 0.5 + 0.35*trust + autonomy - 0.4*fatigue - a.care_hours
             elif p.behavior_rule == "satisficing":
@@ -450,7 +450,7 @@ class Model:
 
     @classmethod
     def restore(cls, value: dict, *, storage_dir=None) -> Model:
-        if value.get('model_version') in ('longitudinal-1', 'longitudinal-endogenous-growth-1', 'longitudinal-enterprise-causal-3'):
+        if value.get('model_version') in ('longitudinal-1', 'longitudinal-endogenous-growth-1', 'longitudinal-enterprise-causal-3','longitudinal-enterprise-ma-candidate-1','longitudinal-enterprise-ma-candidate-2','longitudinal-enterprise-operations-4','longitudinal-enterprise-integrated-6','longitudinal-enterprise-integrated-6-joint-1'):
             from .longitudinal_model import LongitudinalEngine
             obj = cls.__new__(cls)
             obj._long = LongitudinalEngine.restore(value, storage_dir=storage_dir)

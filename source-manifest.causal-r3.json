@@ -1,7 +1,6 @@
 {
   "adopted_into_original_study": false,
   "commit": null,
-  "derived_from_candidate": "longitudinal-enterprise-causal-2",
   "derived_from_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
   "derived_from_source_sha256": "7fbb59c199433bdf2414d8e859ef69013d89275980948ce1dbd76cb9220529b7",
   "empirical_calibration_completed": false,
@@ -16,16 +15,6 @@
     "dams_sim/model.py"
   ],
   "pipeline_driver_sha256": "e91539f4bacfef633568ba88ddf312017355b037e33c08ca88583066c749d2f3",
-  "publication_refinement": {
-    "ancestor_source_freeze_sha256": "05f6836f69d874cd486ba179f34f87316a1f6ad45eaedd1da9e9c2b92fe1628f",
-    "ancestor_source_roster_count": 112,
-    "documentation_files_sha256": {
-      "README.md": "02ec7d0750ab9ab597711919325939b7a1e5af8b82e4f57bb716a05282ab7ece",
-      "candidate-evidence/CAUSAL_COVERAGE.json": "edb4103948f59193843fead3e97bc628b6d96f14ca87b3a742b7ca0589541435",
-      "candidate-evidence/independent-review.json": "db5257a29882053870330fa26cfd8b692f061927d35dd38ed4cbea54bb90a9b7"
-    },
-    "scope": "Documentation-only public export; runtime source/configuration/fixture unchanged from immutable r3."
-  },
   "source_files_modes": {
     "cloud/compute-only-services.sh": 420,
     "cloud/compute-only-wait-source.sh": 493,
@@ -168,5 +157,6 @@
     "run.sh": "51e44f906773eba33daab3b7f9758a994f72636c7d9b38065346350ae6e57302",
     "uv.lock": "ba061682fb1b67f1c91beeccf9f36352dd68a912020662d9b74b376f4239e00c"
   },
-  "source_sha256": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b"
+  "source_sha256": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b",
+  "derived_from_candidate": "longitudinal-enterprise-causal-2"
 }

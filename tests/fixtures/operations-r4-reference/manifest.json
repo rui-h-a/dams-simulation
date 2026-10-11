@@ -1,0 +1,122 @@
+{
+  "role": "immutable original candidate runtime fixture; no model execution implicit",
+  "source_root": "dams-simulation-enterprise-operations-r4-candidate",
+  "files": {
+    "dams_sim/config.py": {
+      "sha256": "08bc1c125ea5ffe64543e69ac9ffede1eade714cc9d7eba39b674fd768e0fbe2",
+      "bytes": 9183
+    },
+    "dams_sim/longitudinal_outputs.py": {
+      "sha256": "612fb5e269b35c83b8a0a413b92a66ada9f0176ebc82bd6ae4074de83e33ca98",
+      "bytes": 11636
+    },
+    "dams_sim/longitudinal_design.py": {
+      "sha256": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2",
+      "bytes": 18859
+    },
+    "dams_sim/native_page_backend.py": {
+      "sha256": "a7f5581e8156a876219c97e8cee6fba56b9b1a075ee0654f5c3406147a127faa",
+      "bytes": 20537
+    },
+    "dams_sim/randomness.py": {
+      "sha256": "94c69aeb3dbfcab213ab92b5c271ee38ea4c946ade214d31867c5ab693644e7e",
+      "bytes": 2428
+    },
+    "dams_sim/longitudinal_statistics.py": {
+      "sha256": "0eb080ea1890f5cfe7087ddf6afd073a5e89356da87e427582c43961e42f442f",
+      "bytes": 6556
+    },
+    "dams_sim/design.py": {
+      "sha256": "93eb321819c39ea4e4e3844ef8dd507f9edf90a01e30813d439767778c7944eb",
+      "bytes": 4887
+    },
+    "dams_sim/enterprise_growth.py": {
+      "sha256": "24e3821e6923cf57d7757d54ee331c51b56dd1d47d7cc89895b6b4e545056286",
+      "bytes": 17289
+    },
+    "dams_sim/__init__.py": {
+      "sha256": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44",
+      "bytes": 104
+    },
+    "dams_sim/spec.py": {
+      "sha256": "c54615aa41d7a9132adc4b9af9b7e1314ec35551f19ae090b3794ed057e2e02d",
+      "bytes": 4927
+    },
+    "dams_sim/journal_chunks.py": {
+      "sha256": "50a38b20a49c4c0231256df11199da3375242b82cf7471b3860780e4baf6618f",
+      "bytes": 13287
+    },
+    "dams_sim/longitudinal_storage.py": {
+      "sha256": "74540ba541c451ce9dc5d1dafa2a2b741af24c8e5f8d91b3fda21e9358d0de4c",
+      "bytes": 29649
+    },
+    "dams_sim/runtime.py": {
+      "sha256": "d5ff49535da4cfa6cffcc2e1525f2245a22f38f2aa1a5ca5eb2a056be8a83577",
+      "bytes": 6743
+    },
+    "dams_sim/model.py": {
+      "sha256": "783977bbf52b515df469568738cbc84defc6e539b10cb95b3b3408342ab8136a",
+      "bytes": 31355
+    },
+    "dams_sim/longitudinal_model.py": {
+      "sha256": "019264cf27b7dd93f21381b8e88e71de87fab047986e6ed952f9d9f4b2cd14c4",
+      "bytes": 88954
+    },
+    "dams_sim/longitudinal.py": {
+      "sha256": "2da0220adbe306e6298ddfb0bde9130bf385042624d4f166eb1b37cf09f0a664",
+      "bytes": 15644
+    },
+    "dams_sim/cli.py": {
+      "sha256": "5c2afacaecd50c8259636a3408a096db10c18f9ffaf5d418b9b183c15d2c3d9d",
+      "bytes": 23921
+    },
+    "dams_sim/enterprise_operations.py": {
+      "sha256": "e1ffafb39c64cfb573279ce44bbb3cf3fc7049605869d9af6a3da4cdb7140eba",
+      "bytes": 31459
+    },
+    "dams_sim/pipeline.py": {
+      "sha256": "fe4b3323e6cf352e815a552120412741afca7050903ac5041d2117c2efa64057",
+      "bytes": 21958
+    },
+    "dams_sim/native_checkpoint_owner.py": {
+      "sha256": "425b7bd8bea6aa582389743c6c13a8fb9cc41301a42bed813b10a1e6f826b79d",
+      "bytes": 9141
+    },
+    "dams_sim/authority.py": {
+      "sha256": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+      "bytes": 4951
+    },
+    "dams_sim/_committed_pages.py": {
+      "sha256": "6e6f3cc05678e89910dbc9f1c518ae2642be65962b501b58cf4cc64c2353e9e6",
+      "bytes": 44163
+    },
+    "dams_sim/storage.py": {
+      "sha256": "ce3dba71799e61230d7ec67c05262e8c6cb7cda9509011900e6d5350f23d3226",
+      "bytes": 6767
+    },
+    "dams_sim/phase_storage.py": {
+      "sha256": "6d1268e8d0f81658d295f56fd8829b828ea4cd2bb807d27f159c319a7aa9cde8",
+      "bytes": 7781
+    },
+    "dams_sim/longitudinal_pipeline.py": {
+      "sha256": "9a12123ed513077e79d03253d183fa187d37ace5bdab51def63cb2449c101873",
+      "bytes": 28105
+    },
+    "dams_sim/scheduler.py": {
+      "sha256": "114cddf6beda055868f0f24d93bfc5c4e2965ff3ecd4a4c1faccb9d6ee163ed2",
+      "bytes": 27403
+    },
+    "dams_sim/__main__.py": {
+      "sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+      "bytes": 79
+    },
+    "dams_sim/report.py": {
+      "sha256": "004596067efd0e90876fef1f6a77a536f71d6c16cff95b8474df3f309840fe14",
+      "bytes": 4268
+    },
+    "dams_sim/transfer_spool.py": {
+      "sha256": "2c14d5524c94c4c79371bb80dd8558ac030c6ba6c912e919b3908923857d5ce0",
+      "bytes": 32196
+    }
+  }
+}

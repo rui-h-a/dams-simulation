@@ -6,6 +6,8 @@ import math
 from .longitudinal import LongitudinalConfig
 from .enterprise_growth import EnterpriseGrowthConfig
 from .enterprise_operations import EnterpriseOperatingConfig
+from .enterprise_acquisition import EnterpriseAcquisitionConfig
+from .joint_population import JointPopulationConfig
 
 
 @dataclasses.dataclass(frozen=True)
@@ -54,6 +56,8 @@ class Config:
     longitudinal: LongitudinalConfig | None = None
     enterprise_growth: EnterpriseGrowthConfig | None = None
     enterprise_operations: EnterpriseOperatingConfig | None = None
+    enterprise_acquisition: EnterpriseAcquisitionConfig | None = None
+    joint_population: JointPopulationConfig | None = None
 
     def validate(self) -> Config:
         if self.longitudinal is not None and not isinstance(self.longitudinal, LongitudinalConfig):
@@ -65,6 +69,13 @@ class Config:
         if self.enterprise_operations is not None:
             if not isinstance(self.enterprise_operations, EnterpriseOperatingConfig):raise ValueError("enterprise_operations must be typed")
             self.enterprise_operations.validate(self)
+        if self.enterprise_acquisition is not None:
+            if not isinstance(self.enterprise_acquisition,EnterpriseAcquisitionConfig):raise ValueError('enterprise_acquisition must be typed')
+            self.enterprise_acquisition.validate(self)
+        if self.joint_population is not None:
+            if not isinstance(self.joint_population,JointPopulationConfig):raise ValueError('joint_population must be typed')
+            if self.longitudinal is None:raise ValueError('joint_population requires the longitudinal engine')
+            self.joint_population.validate()
         horizon_limit = 50_000 if self.longitudinal is not None else 3650
         integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
         if self.longitudinal is not None:
@@ -125,6 +136,8 @@ class Config:
         if self.enterprise_growth is None:
             value.pop('enterprise_growth')
         if self.enterprise_operations is None:value.pop('enterprise_operations')
+        if self.enterprise_acquisition is None:value.pop('enterprise_acquisition')
+        if self.joint_population is None:value.pop('joint_population')
         return value
 
     @classmethod
@@ -138,6 +151,8 @@ class Config:
         if value.get('enterprise_growth') is not None:
             value['enterprise_growth'] = EnterpriseGrowthConfig.from_dict(value['enterprise_growth'])
         if value.get('enterprise_operations') is not None:value['enterprise_operations']=EnterpriseOperatingConfig.from_dict(value['enterprise_operations'])
+        if value.get('enterprise_acquisition') is not None:value['enterprise_acquisition']=EnterpriseAcquisitionConfig.from_dict(value['enterprise_acquisition'])
+        if value.get('joint_population') is not None:value['joint_population']=JointPopulationConfig.from_dict(value['joint_population'])
         for name in ("hierarchy_weights", "backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             if name in value:
                 value[name] = tuple(value[name])

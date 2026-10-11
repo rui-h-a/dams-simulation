@@ -61,7 +61,7 @@
     {
       "mechanism": "persistence and raw scientific verification",
       "before": "full existing state/ledger/history/CSV/source gate",
-      "after": "all order/shipment/debt/vacancy/price state in committed header; raw event reconstruction checks consistency of market/credit/growth/attendance/settlements and final summary using shared model transition methods. Separate independent arithmetic and adversarial controls test the three reproduced repair paths, not a second complete economic implementation; exact checkpoint resume and policy fork retain operating state",
+      "after": "all order/shipment/debt/vacancy/price state in committed header; raw accounting independently reconstructs market/credit/growth/attendance/settlements and final summary; exact checkpoint resume and policy fork retain operating state",
       "path": "longitudinal_model.write_snapshot/restore/validate_persisted_state + research_tools.validate_longitudinal._RawDailyAccounting",
       "observables": "source/config/ledger semantic hashes, raw journal, all daily history, complete raw summary checks"
     }
