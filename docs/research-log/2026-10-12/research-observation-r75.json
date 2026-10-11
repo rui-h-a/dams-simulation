@@ -1,0 +1,112 @@
+{
+  "schema": "DAMS-research-observation-r75-1",
+  "observed_UTC": "2026-10-11T17:23:57.609925+00:00",
+  "evidence_scope": "Actual Root issuance and supervisor start, not a claim of completed retirement or new science",
+  "formal_research": {
+    "N30": {
+      "pilot_pairs": 4,
+      "confirmation_pairs": 66,
+      "validated_pairs": 70,
+      "planned_pairs": 70,
+      "precision_acceptance": true,
+      "independent_full_case_restores": 140,
+      "raw_retirements_last_verified": 113
+    },
+    "N120": {
+      "pilot_pairs": 4,
+      "confirmation_pairs": 66,
+      "validated_pairs": 70,
+      "planned_pairs": 70,
+      "precision_acceptance": true,
+      "independent_full_case_restores": 140,
+      "raw_retirements_last_verified": 3
+    },
+    "N300": {
+      "pilot_pairs": 4,
+      "confirmation_pairs": 7,
+      "validated_pairs": 11,
+      "planned_pairs": 70,
+      "remaining_confirmation_pairs": 59,
+      "state": "STOPPED_CAPACITY_ADMISSION",
+      "complete_strategy_arms": 23,
+      "unpaired_arm_excluded": true
+    },
+    "original_N1000": {
+      "validated_cases": 35,
+      "planned_pilot_cases": 144,
+      "prehistory_or_intermediate_cases": 28,
+      "complete_single_strategy_cases": 7,
+      "complete_paired_pilot_worlds": 0,
+      "planned_pilot_worlds": 4,
+      "confirmation_worlds": 0
+    },
+    "large_scale_registry": {
+      "registered_five_or_ten_year_designs": 10,
+      "accepted_new_complete_worlds": 0,
+      "state": "BLOCKED_RESOURCE_AND_FULL_WORKLOAD_ADMISSION"
+    }
+  },
+  "active_execution": {
+    "kind": "ALREADY_COMPLETED_N120_CASE_STORAGE_LIFECYCLE",
+    "state_at_snapshot": "ROOT_SUPERVISOR_RUNNING",
+    "root_start_UTC": "2026-10-11T17:19:40.502900+00:00",
+    "producer_pid": 98335,
+    "source_sha256": "a291cb6e2143e7c0c0859e60a2c5e3ce5f646a6a40a6b7255a798855ec46027f",
+    "issued_grant_sha256": "b915e1c217a18da004e40c32d4b380286a5db1961d79fc412e238cb9d96810df",
+    "finite_phase_seconds": 7200,
+    "original_scientific_Model_started": false,
+    "cumulative_same_case_meter_tickets_at_snapshot": 1101,
+    "original_1089_ticket_prefix_and_9_auth_records_retained": true,
+    "new_completed_worlds": 0,
+    "raw_retirement_success_not_yet_claimed": true
+  },
+  "cloud": {
+    "latest_actual_inventory_UTC": "2026-10-11T16:09:40+00:00",
+    "VMs": 0,
+    "disks": 0,
+    "inventory_is_historical_snapshot_not_forever_claim": true,
+    "historical_GCP_compute_used": true,
+    "historical_partial_N1000_five_year_execution": true,
+    "accepted_complete_cloud_paired_worlds": 0,
+    "new_N300_confirmation_source_commit": "8a6c84be2a45e8809a4e5b4900bf027cf1247e57",
+    "source_branch": "research/small-enterprise-cloud-confirmation-n300-20261012-r1",
+    "selected_uncompleted_world": 52008,
+    "one_arm_per_existing_entry_invocation": true,
+    "complete_calendar_days_per_arm": 1917,
+    "full_original_confirmation_roster": 66,
+    "source_controls_passed": 10,
+    "source_files_full_pin_checked": 72,
+    "new_VM_created_by_this_phase": false,
+    "cost_IAM_capacity_collector_and_runtime_admission": "PENDING",
+    "source_package_is_not_formal_completion": true
+  },
+  "budget": {
+    "cumulative_cap_USD": 100,
+    "retained_cleanup_safety_USD": 20,
+    "current_total_holds_USD": 84.55,
+    "current_unallocated_USD": 15.45,
+    "original39_future_scope_closed_remaining_conservative_hold_USD": 24,
+    "original39_historical_reservation_preserved": true,
+    "unallocated_is_not_refund_or_supplier_invoice": true,
+    "supplier_full_account_invoice_reconciliation": "INCOMPLETE",
+    "Master_sha256": "6efa84f1ac8ffc40a8b4950adb71c21e5f4b74ee57dcb515eae792bb1d706056"
+  },
+  "paper": {
+    "pages": 86,
+    "state": "INTERIM",
+    "PDF_sha256": "bab5bfe16ad83cf5aee8383734d083bdd66d42218a5f94847b7d201995974990",
+    "PR1_merged_commit": "91e868da7c3d06ce9d7c538deaa520ff2cc95e22",
+    "published_PDF_commit": "e821bf7035eb66950e8d9baaa9c8bf887988be6a",
+    "actual_latex_build_passed": true,
+    "all_86_pages_visually_inspected": true,
+    "formal_completion_claim": false
+  },
+  "timing": {
+    "N300_remaining_59_pairs_conditional_minutes": 1793.6,
+    "assumption": "59 times measured approximately 30.4 minutes per complete pair, only if continuous operation resumes without admission, transfer or validation interruption",
+    "whole_goal_ETA": "NOT_ESTABLISHED"
+  },
+  "scientific_model_or_frozen_sample_changed": false,
+  "negative_null_failed_and_incomplete_evidence_preserved": true,
+  "whole_goal_complete": false
+}

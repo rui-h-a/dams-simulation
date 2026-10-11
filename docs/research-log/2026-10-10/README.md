@@ -1,3 +1,9 @@
+# R75 — actual storage continuation and published cloud confirmation entry
+
+Observed 2026-10-11T17:23:57.609925+00:00. N30 and N120 retain 4 pilot plus 66 confirmation pairs each. N300 remains 11/70 pairs; original N1000 remains 35/144 cases with zero complete paired pilot worlds. The same-third N120 storage operator R12 is now actually started under a finite Root supervisor, separate from science. The uncompleted N300 world52008 entry is published in an independent source branch; no new VM is claimed. Current conservative holds are US$84.55 with US$15.45 unallocated; these are reservations, not a reconciled invoice. PR1 is merged and the 86-page interim PDF has been compiled and visually reviewed.
+
+See [actual observation](../2026-10-12/research-observation-r75.json), [storage and cloud controls](../2026-10-12/storage-and-cloud-source-controls-r75.json), and [published cloud source](https://github.com/rui-h-a/dams-simulation/commit/8a6c84be2a45e8809a4e5b4900bf027cf1247e57). Earlier timestamped observations below remain history.
+
 # Latest verified observation: R59
 
 Dated 2026-10-11T05:17:46.847926+00:00. N30 and N120 retain four pilot and 66 accepted confirmation paired worlds each. N300 retains one complete five-year pilot pair; its next case remains at day 1,205 of 1,917 under the unchanged capacity guard. Original1000 remains 35/144 accepted cases and zero complete paired worlds.

@@ -1,0 +1,29 @@
+{
+  "schema": "DAMS-storage-cloud-operation-controls-r75-1",
+  "observed_UTC": "2026-10-11T17:23:57.609925+00:00",
+  "R11_true_failure": "Closed-process census parser rejected a long process argument row; original row not retained. A controlled long-argv counterexample reproduced the refusal. No token-expiry diagnosis claimed.",
+  "R12_fix": "Bounded native Darwin birth and argument census preserves original role and zero-writer checks; current fiscal and 2178 ticket/result prefix binding independently checked.",
+  "R12_current_source_sha256": "a291cb6e2143e7c0c0859e60a2c5e3ce5f646a6a40a6b7255a798855ec46027f",
+  "R12_original_protected_case": "Only same third already-completed N120 case; no repeat or restart of a scientific trajectory.",
+  "original_full_download_passes_retained": 2,
+  "proof_reuse": "NOT_IMPLEMENTED_IN_ACTIVE_R12",
+  "retirement_gate": "Full source, SHA-256, integrity, independent restore, result, closed owner and named Root authority remain mandatory. No unique evidence deletion.",
+  "budget_change": "Actual Root closed only unused future original collector namespace and retained original conservative uncertainty, requests, disk, compute, storage, egress and archive envelopes. Historical39 was not an invoice or refund.",
+  "cloud_package": {
+    "commit": "8a6c84be2a45e8809a4e5b4900bf027cf1247e57",
+    "manifest_sha256": "e915a7ffde4adc5fab493eea1a4ed457befa5babd7b98f27d1f3e64ba105144b",
+    "new_helper_sha256": "cd3e8a8b22d92f99e0e80d441912725dd37a8e052a72821d6b21b101d43ac156",
+    "unchanged_other_source_files": 71,
+    "confirmation_seed": 20261008,
+    "confirmation_roster_sha256": "4a20d2f1d9f2bea4ea1f8bed3982773252c9deae12609ac5a428901d812c79f2",
+    "world52008_hierarchy_case": "5b81f32894f84d6030257b0f07c4dfc0d78069562c4b8531b1f2a7dede76fcca",
+    "world52008_DAMS_case": "0cf5a17cc45a8c3439f497b58d1742ebb6736e9a5c1e03792cb5d505270de6d7",
+    "completed_worlds_are_refused": true,
+    "one_completed_arm_is_not_one_paired_world": true
+  },
+  "current_cloud_cost_check": "Includes cumulative checkpoint transfer, final output, complete readbacks, IAP, storage lifetime, all requests, compute, disk and cleanup. No claim that final16GiB alone bounds lifetime transfer.",
+  "storage_safety_floors_not_lowered": true,
+  "scientific_years_population_detail_samples_precision_and_outputs_not_reduced": true,
+  "latest_user_attachment_sha256": "2a9175f5f1d41307b3e898468ea992f447ad99555ddb5765f461220c8008fac9",
+  "new_formal_samples": 0
+}
