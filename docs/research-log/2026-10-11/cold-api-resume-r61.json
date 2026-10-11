@@ -1,0 +1,64 @@
+{
+  "schema": "dams-actual-cold-api-resume-r61-v1",
+  "observation_utc": "2026-10-11T05:31:53.120647+00:00",
+  "status": "ACTUALLY_RUNNING_EXISTING_API_SCOPE",
+  "actual_root_start_utc": "2026-10-11T05:27:43.078967+00:00",
+  "root_pid_confirmed_alive": true,
+  "source_sha256": {
+    "root_wrapper": "e9c6a20cf65d3befc2e0a920facec7928b0ea8cf8f2a1103fb65b8e3a2a7ecb2",
+    "consumer": "2f3731b736ac677c3c2b11ce4b856300a16802bfe25150804f8824ea2bcf9907",
+    "meter_implementation": "6b29a6ab542f5c5c9e793a4ae873ce63c34971eb8e848ee8b3b387470e9562d3"
+  },
+  "two_stable_offline_control_rounds": 34,
+  "independent_source_review": "No new blocking defect in bounded delta; actual full scope not yet complete.",
+  "actually_completed_cases": [
+    {
+      "case_id": "291bf5b92606b9a79ba9ad704f3b070a619a8f4b83115ea0e91b627554a5e3c3",
+      "receipt_bytes": 2936,
+      "receipt_sha256": "2a3931b2fcc9cf8ca747af7c5f6352f4d9b3c1e346f78e493e88354fe00cfa74",
+      "completed_utc": "2026-10-11T05:28:51.113725+00:00",
+      "raw_paths_evicted": 12,
+      "logical_redundant_bytes_retired": 80086393,
+      "within_operation_free_before": 103165399040,
+      "within_operation_free_after": 103245479936,
+      "scientific_content_deleted": false
+    },
+    {
+      "case_id": "42a2c4134510dca97acfaf92b34d5df3e269cc04d0d401de6bc37709df74d756",
+      "receipt_bytes": 3596,
+      "receipt_sha256": "06ee141787921bb59b793e17d9e27bc1656253d415c37681ea76343c4393252b",
+      "completed_utc": "2026-10-11T05:31:48.585795+00:00",
+      "raw_paths_evicted": 12,
+      "logical_redundant_bytes_retired": 80022464,
+      "within_operation_free_before": 103244656640,
+      "within_operation_free_after": 103325675520,
+      "scientific_content_deleted": false
+    }
+  ],
+  "previous_unique_cold_cases": 72,
+  "current_unique_cold_cases": 74,
+  "full_remote_13file_case_proofs": 140,
+  "new_scientific_worlds": 0,
+  "current_scope": {
+    "selected": 41,
+    "explicit_deferred": 1,
+    "original_remaining_at_entry": 42,
+    "planned_request_upper": 9939,
+    "request_cap": 10000,
+    "source_samples_model_calendar_precision_changed": false
+  },
+  "accounting_observation": {
+    "requests": 6544,
+    "completed_results": 6544,
+    "pending": 0,
+    "scope": "observational head while live; not a closed full-journal acceptance",
+    "charged_prefix_reset": false
+  },
+  "physical_reclaim_scope": "within-operation working-volume observations; no backing-volume reclaim assertion",
+  "case1_admission_and_promotion_reused": true,
+  "case1_eviction_fresh_full13_readback_retained": true,
+  "automatic_retry": false,
+  "new_VM_created_by_action": false,
+  "whole_selected_scope_complete": false,
+  "whole_research_complete": false
+}

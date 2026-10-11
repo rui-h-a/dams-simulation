@@ -1,3 +1,11 @@
+# Latest verified observation: R61
+
+Dated 2026-10-11T05:31:53.120647+00:00. The strict custody ABI repair is now actually running. 2 previously unfinished case has completed the unchanged eviction API after its mandatory fresh full13 restore. Its preserved admission and promotion steps were reused; no original scientific content or world was deleted or rerun. N30 cold lifecycle is now 74/140, separate from its already complete140/140 full remote case proofs and70 scientific paired worlds.
+
+The selected custody scope covers41 cases, with1 of the exact42 original remaining units explicitly deferred; the planned cumulative request upper remains9,939 under the unchanged10,000 cap. Completion is recorded per actual immutable API receipt. Neither the whole41case scope nor the whole research is declared complete. N300 remains1 complete five-year pilot pair with the next case checkpointed at day1,205; original1000 retains35/144 cases and zero complete paired worlds.
+
+[Actual running custody and recovered case](cold-api-resume-r61.json) · [Scientific observation](research-observation-r61.json). The86-page interim PDF and all frozen scientific definitions are unchanged.
+
 # Latest verified observation: R60
 
 Dated 2026-10-11T05:19:16.945639+00:00. N30 and N120 retain four pilot and 66 accepted confirmation paired worlds each. N300 retains one complete five-year pilot pair; its next case is paused at day 1,205 of 1,917 under the unchanged capacity guard. Original1000 remains 35/144 accepted cases and zero complete paired worlds.
