@@ -1,0 +1,118 @@
+{
+  "SQLite_version": "3.53.4",
+  "actual_log_sha256": "d99f7493eb5ccd340f58c5c845a019f8d3b65ec2515a47f0940ea5f2c7542d67",
+  "actual_platform": "Darwin",
+  "actual_portable_execution_receipt_sha256": "acc1a104f92a0805aeab63f5f265f31ba19e85389555c449c94caa7a0418aeb6",
+  "earlier_portable_failure": {
+    "does_not_erase_old_static_only_record": true,
+    "failure_class": "NameError",
+    "failure_log_sha256": "4033a1685eb049a84806cabfe3a551e961a1d890a70eecb8f07a89e102fd1da3",
+    "model_source_bug": false,
+    "reason": "missing sqlite3 import in test header",
+    "retained": true
+  },
+  "fixture": {
+    "days": 90,
+    "initial_n": 30,
+    "path": "tests/fixtures/r7-organic-acquisition-checkpoint-integration.json",
+    "same_original_config_seed_and_horizon": true,
+    "seed": 42,
+    "sha256": "bb74e4380df5f4617ebd4086af4dbd57a524854f7031ac85114b2438f0dae0cf",
+    "world": 0
+  },
+  "limitations": [
+    "Same-model restart equivalence is internal correctness; independent accountants do not establish whole-ABM empirical validation.",
+    "Inherited acquisition target remains an immutable conditional capsule, not a second independently evolved firm.",
+    "Initial wrapper failure and old static-only test record remain preserved; only this new invocation proves actual portable execution."
+  ],
+  "observables": {
+    "acquired_entry_days": [
+      63
+    ],
+    "acquired_orders_per_workday": 10.0,
+    "acquired_people": 4,
+    "acquired_policy_preserved": true,
+    "acquired_source_pending_resolved": 1,
+    "assumed_acquisition_debt": 2.0,
+    "distinct_organic_and_acquired_identities": true,
+    "final_active": 39,
+    "final_ever": 39,
+    "guilds": 7,
+    "initial_people": 30,
+    "installed_capacity": 39,
+    "installed_departments": 4,
+    "organic_entrants": 5,
+    "organic_entry_days": [
+      50
+    ],
+    "paid_acquisition_integration": 3.6000000000000005,
+    "paid_infrastructure_setup": 50.0,
+    "paid_organic_recruitment": 5.0,
+    "sites": 4,
+    "task_departments": 2
+  },
+  "prior_engineering_record_preserved_sha256": "6a24ca28ad75146d7be2de4b2c4230693270d9bd27e0738d033759c6614fdb8f",
+  "results": [
+    {
+      "RSS_peak_bytes_process_lifetime_cumulative_sequential_rounds": 127664128,
+      "cpu_seconds": 12.897596,
+      "final_semantic_sha256": "099f346a301d7feabfb8b5651eb585449ea2a5d427b1c9fcc0e90ecd02cf745f",
+      "full_Model_state_sha256": "108faaf56a94509a14d2264673325ad7d1b31bd3acfb69b7d64acc3dbda60c38",
+      "round": 1,
+      "wall_seconds": 13.349516666959971
+    },
+    {
+      "RSS_peak_bytes_process_lifetime_cumulative_sequential_rounds": 142311424,
+      "cpu_seconds": 12.982652000000002,
+      "final_semantic_sha256": "099f346a301d7feabfb8b5651eb585449ea2a5d427b1c9fcc0e90ecd02cf745f",
+      "full_Model_state_sha256": "108faaf56a94509a14d2264673325ad7d1b31bd3acfb69b7d64acc3dbda60c38",
+      "round": 2,
+      "wall_seconds": 13.431815291987732
+    }
+  ],
+  "retained_raw_logical_bytes": 25865803,
+  "schema": "r7-portable-retained-engineering-incremental-1",
+  "scope": {
+    "accepted_native_baselines": 2,
+    "accepted_restored_tails": 4,
+    "accepted_rounds": 2,
+    "additional_scientific_worlds": 0,
+    "calibration_or_OOS_complete": false,
+    "one_actual_portable_unittest_PASS_invocation": true,
+    "provider_calls": 0,
+    "second_independently_evolving_target_firm": false
+  },
+  "source": {
+    "all291_frozen_model_source_entries_unchanged": true,
+    "core_sha256": "f2ce5ba098f199dd71cac4cb9ffb34e85a76d0a8e4c4396d33a31072586bc108",
+    "manifest_sha256": "b009417cba9ede52edd8184f557baafdab284fe7be3a5de7e4b2091defa2a7db"
+  },
+  "supersedes_test_artifact_sha256": "62e87fd6d333cc99100c1f3053a6909da5cee949a751d7a42695c012cd543552",
+  "test": {
+    "default_CI_temp_path_resolved": true,
+    "missing_standard_library_sqlite3_import_corrected": true,
+    "native_control_functions_unchanged": 10,
+    "path": "tests/test_r7_organic_acquisition_checkpoint_integration.py",
+    "retained_option_does_not_auto_delete": true,
+    "retained_option_requires_absolute_existing_empty_directory": true,
+    "retained_output_option": "DAMS_R7_ENGINEERING_OUTPUT_DIR",
+    "sha256": "2c706ea3953c6aee87c29cba5b3064d2a25bdd71f0a0935a2e6642cea1dc0411",
+    "wrapper_controls_without_Model_calls": 3,
+    "wrapper_independent_static_review_pass": true
+  },
+  "validation": {
+    "all_checkpoint_initial_and_final_full_state_and_semantic_hashes_exact": true,
+    "checkpoint_days": [
+      45,
+      60
+    ],
+    "full_private_raw_retained": true,
+    "journal_chunk_target_bytes": 1048576,
+    "journal_schema": 2,
+    "matches_prior_native_engineering_states_exactly": true,
+    "offsite_preservation_claimed": false,
+    "public_record_contains_full_raw_dataset": false,
+    "six_complete_raw_daily_summary_acquisition_organization_SQLite_checks": true,
+    "whole_model_replay_is_independent_ABM": false
+  }
+}
