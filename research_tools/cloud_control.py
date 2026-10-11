@@ -34,12 +34,13 @@ class GuardError(RuntimeError):
 def stage_capabilities(c, s):
     """Resolve a frozen single-VM profile; never infer a purchase fallback.
 
-    Missing mode retains the historical C4D Spot contract. M3/C4N Standard is an
+    Missing mode retains the historical C4D Spot contract. Standard is an
     explicit opt-in with catalog-bound guest expectations and quota dimensions.
     The catalog is a planning input, not evidence of capacity or guest hardware.
     """
     mode = s.get("purchase_mode", "SPOT")
     machine = s["machine_type"]
+    disk_interface = "NVME"
     if mode == "SPOT" and machine in ("c4d-highmem-4", "c4d-highmem-96", "c4d-highmem-192", "c4d-highmem-384"):
         allowed_disks = ("hyperdisk-balanced",)
         quota = {"metric": "PREEMPTIBLE_CPUS", "info_id": "PREEMPTIBLE-CPUS-per-project-region",
@@ -62,6 +63,31 @@ def stage_capabilities(c, s):
                 or not 0 < money(expected["memory_gib_min"]) < money(expected["memory_gib_max"])
                 or money(expected["memory_gib_max"]) != 31):
             raise GuardError("Standard C4D4 requires exact CPU/architecture and usable/catalog RAM bounds")
+    elif mode == "STANDARD" and machine == "n2-highmem-4":
+        allowed_disks = ("pd-balanced", "pd-ssd")
+        disk_interface = "SCSI"
+        quota = {"metric": "N2_CPUS", "info_id": "N2-CPUS-per-project-region",
+                 "dimensions": {"region": c["region"]}}
+        if "disk_type" not in s or s.get("quota") != quota:
+            raise GuardError("Standard N2 requires explicit Persistent Disk and its exact regional N2 quota")
+        catalog = c["price_snapshot"].get("machines", {}).get(machine, {})
+        # The machine API may omit architecture. This explicit upstream planning
+        # declaration never substitutes for the actual image and guest doctor.
+        if (type(catalog.get("vcpus")) is not int or catalog["vcpus"] != 4
+                or money(catalog.get("memory_gib", 0)) != 32
+                or catalog.get("architecture") not in (None, "X86_64")
+                or s.get("architecture_declaration") != "official-n2-x86_64"
+                or not catalog.get("zone") or c["zones"] != [catalog["zone"]]
+                or not catalog["zone"].startswith(c["region"] + "-")):
+            raise GuardError("Standard N2 catalog CPU/RAM/zone or explicit architecture declaration differs")
+        expected = s.get("expected_guest", {})
+        if (not isinstance(expected, dict)
+                or set(expected) != {"architecture", "vcpus", "memory_gib_min", "memory_gib_max"}
+                or expected["architecture"] != "x86_64" or type(expected["vcpus"]) is not int
+                or expected["vcpus"] != 4
+                or not 0 < money(expected["memory_gib_min"]) < money(expected["memory_gib_max"])
+                or money(expected["memory_gib_max"]) != 32):
+            raise GuardError("Standard N2 requires exact CPU/architecture and usable/catalog RAM bounds")
     elif mode == "STANDARD" and machine in ("m3-ultramem-32", "m3-ultramem-64", "m3-ultramem-128"):
         allowed_disks = ("pd-balanced", "pd-ssd", "hyperdisk-balanced")
         quota = {"metric": "M3_CPUS", "info_id": "M3-CPUS-per-project-region",
@@ -120,7 +146,7 @@ def stage_capabilities(c, s):
             raise GuardError("this controller prices only baseline Hyperdisk performance")
     elif "disk_iops" in s or "disk_throughput_mibps" in s:
         raise GuardError("Persistent Disk must not inherit Hyperdisk performance provisioning")
-    return {"purchase_mode": mode, "disk_type": disk, "disk_interface": "NVME", "quota": quota}
+    return {"purchase_mode": mode, "disk_type": disk, "disk_interface": disk_interface, "quota": quota}
 
 
 
@@ -782,7 +808,7 @@ def _validate_instance(c, s, e, vm, *, compute_only):
     if len(vm.get("disks", [])) != 1 or not vm["disks"][0].get("boot") or not vm["disks"][0].get("autoDelete"):
         raise GuardError("unexpected unmanaged/retained extra disk")
     if caps["purchase_mode"] == "STANDARD" and vm["disks"][0].get("interface") != caps["disk_interface"]:
-        raise GuardError("Standard boot disk must use the frozen NVMe interface")
+        raise GuardError("Standard boot disk must use the frozen profile interface")
     return vm
 
 
@@ -818,7 +844,7 @@ def preflight_quotas(g, c, stage=None):
     targets = {}
     for s in planned:
         caps = stage_capabilities(c, s)
-        key = "C4D_STANDARD" if caps["quota"]["dimensions"].get("vm_family") == "C4D" else "C4N_STANDARD" if caps["quota"]["dimensions"].get("vm_family") == "C4N" else caps["purchase_mode"]
+        key = "N2_STANDARD" if caps["quota"]["metric"] == "N2_CPUS" else "C4D_STANDARD" if caps["quota"]["dimensions"].get("vm_family") == "C4D" else "C4N_STANDARD" if caps["quota"]["dimensions"].get("vm_family") == "C4N" else caps["purchase_mode"]
         target = c["price_snapshot"]["machines"][s["machine_type"]]["vcpus"]
         if type(target) is not int or target < 1:
             raise GuardError("actual machine catalog CPU count is missing/invalid")
@@ -841,6 +867,24 @@ def preflight_quotas(g, c, stage=None):
         if (info.get("name") != c["region"] or len(q) != 1
                 or money(q[0]["limit"]) - money(q[0]["usage"]) < targets["SPOT"]):
             raise GuardError("requested Spot stage lacks unused preemptible CPU headroom")
+    if "N2_STANDARD" in targets:
+        r = g.run(["gcloud", "beta", "quotas", "info", "describe", "N2-CPUS-per-project-region",
+                   "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
+        info = json.loads(r["stdout"]) if r["exit"] == 0 else {}
+        if (r["exit"] != 0 or info.get("quotaId") != "N2-CPUS-per-project-region"
+                or info.get("metric") != "compute.googleapis.com/n2_cpus"
+                or quota_value(info, {"region": c["region"]}) < targets["N2_STANDARD"]):
+            raise GuardError("requested Standard N2 stage lacks an effective exact regional N2 CPU grant")
+        r = g.run(["gcloud", "compute", "regions", "describe", c["region"],
+                   "--project=" + c["project"], "--format=json"])
+        if r["exit"] != 0:
+            raise GuardError("Standard N2 regional usage is unverified")
+        info = json.loads(r["stdout"])
+        q = [x for x in info.get("quotas", []) if x.get("metric") == "N2_CPUS"]
+        if (info.get("name") != c["region"] or len(q) != 1
+                or money(q[0]["limit"]) < 0 or money(q[0]["usage"]) < 0
+                or money(q[0]["limit"]) - money(q[0]["usage"]) < targets["N2_STANDARD"]):
+            raise GuardError("requested Standard N2 stage lacks unused N2 CPU headroom; other pools cannot substitute")
     if "STANDARD" in targets:
         r = g.run(["gcloud", "beta", "quotas", "info", "describe", "M3-CPUS-per-project-region",
                    "--service=compute.googleapis.com", "--project=" + c["project"], "--format=json"])
@@ -938,6 +982,8 @@ def preflight_quotas(g, c, stage=None):
     q = [x for x in json.loads(r["stdout"]).get("quotas", []) if x["metric"] == "CPUS_ALL_REGIONS"]
     if len(q) != 1 or money(q[0]["limit"]) - money(q[0]["usage"]) < max(targets.values()):
         raise GuardError("requested stage lacks global CPU headroom")
+    if "N2_STANDARD" in targets and (money(q[0]["limit"]) < 0 or money(q[0]["usage"]) < 0):
+        raise GuardError("Standard N2 global CPU usage/headroom readback is invalid")
 
 
 def preflight_environment(g, c):
