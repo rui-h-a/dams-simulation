@@ -1,0 +1,29 @@
+{
+  "schema": "dams-actual-storage-custody-controls-r64",
+  "observed_utc": "2026-10-11T07:22:27.697114+00:00",
+  "selected_existing_archive_cases": 52,
+  "original_files_full_EOF_SHA_size_native_checked": 676,
+  "actual_raw_bytes_streamed": 11279767593,
+  "custody_receipt_sha256": "6e9ba2245aaadd66438128f8a67e52d99f656e5ef72aa0432f272b8bb6c2c93c",
+  "custody_elapsed_seconds": 336.56891499998164,
+  "custody_peak_RSS_bytes": 38223872,
+  "original_files_moved_or_deleted_by_custody_check": false,
+  "independent_source_review_sha256": "6265b92c2078d77e489dbb32e18297b3295d4511e90bbeca3a00ee43726893dc",
+  "root_entry_source_sha256": "77c7e592a383a73836929df85540255479e38ee10cdd1a01d9edd9d17bfd6c5c",
+  "owned_cleanup_source_sha256": "3a07653054909b04f158a00b3ad3807f53df226e31034e0985bcf01a289ca12d",
+  "reproduced_and_repaired_source_defects": [
+    "An explicit false paid-operation flag was accepted; the corrected entry requires typed True before imports or callbacks.",
+    "A verified source path was reopened for execution; the corrected loader executes the verified bytes.",
+    "A cleanup grant could expire after its initial check; the corrected helper rechecks its pinned grant immediately before every unlink or rmdir."
+  ],
+  "new_tiny_delta_controls": 13,
+  "stable_control_rounds": 2,
+  "actual_provider_auth_original_unlink_SQL_Model_operations_in_delta_controls": 0,
+  "new_operational_grant_issued": false,
+  "new_paid_batch_started": false,
+  "full140_current_owner_scope_and_new_callbacks_pending": true,
+  "remaining87_new_archive_cases_deferred": true,
+  "both_volume_capacity_admission_required": true,
+  "physical_free_space_not_inferred_from_logical_retirement": true,
+  "scope": "Actual original-byte custody plus versioned operational source repairs. Neither source controls nor current selected52 custody constitutes 52 completed archival cases or final financial/resource admission."
+}

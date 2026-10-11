@@ -1,0 +1,70 @@
+{
+  "schema": "dams-actual-research-observation-r64",
+  "observed_utc": "2026-10-11T07:22:27.697114+00:00",
+  "N30": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "full13_offdevice_restore_cases": 140,
+    "cold_lifecycle_complete_cases": 105,
+    "custody_process_alive_at_capture": true
+  },
+  "N120": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "fixed_precision_endpoints_pass": 4,
+    "complete_cold_cases": 1
+  },
+  "N300": {
+    "complete_pilot_pairs": 3,
+    "planned_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 0,
+    "calendar_days": 1917,
+    "initial_population": 300,
+    "accepted_pair_final_populations": [
+      436,
+      433,
+      433
+    ],
+    "frozen_formal_CLI_alive_at_capture": true,
+    "third_pair_independent_full13_and_scalar_checks": true
+  },
+  "original_N1000": {
+    "accepted_cases": 35,
+    "planned_pilot_cases": 144,
+    "complete_pilot_worlds": 0,
+    "confirmation_worlds": 0
+  },
+  "N10000_and_larger": {
+    "complete_formal_five_or_ten_year_worlds": 0
+  },
+  "candidate": {
+    "published_source_commit": "72cf8d3105bc87153f692772a2d2971d916bc829",
+    "engineering_tests_per_successful_round": 59,
+    "successful_rounds": 2,
+    "formal_adoption": false
+  },
+  "storage_engineering": {
+    "selected52_original_files_full_byte_verified": 676,
+    "selected52_original_bytes_streamed": 11279767593,
+    "operational_security_source_repairs_independently_checked": 3,
+    "new_batch_authorized_or_launched": false,
+    "active_N30_meter_and_scientific_sources_unchanged": true,
+    "physical_backing_free_space_not_inferred_from_logical_retirement": true,
+    "operational_source_and_root_live_input_admission_incomplete": true
+  },
+  "paper": {
+    "pages": 86,
+    "status": "INTERIM_NOT_FINAL",
+    "pdf_sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81"
+  },
+  "new_compute_VM_created": false,
+  "provider_invoice_fully_reconciled": false,
+  "whole_goal_complete": false,
+  "local_public_history_fetch": {
+    "physical_repositories": 3,
+    "user_HEAD_index_config_unchanged": true,
+    "research_candidate_ref_fetched": true,
+    "receipt_sha256": "f19f73715011d225646805a2a77e2cd247495d3ced2221d406769417d8f4ef70",
+    "checkout_or_reset_performed": false
+  }
+}
