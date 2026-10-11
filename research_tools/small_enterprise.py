@@ -128,7 +128,9 @@ def pair_effects(template, cases, n, stage):
     return observations, effects
 
 
-def execute_pair(root, n, world, stage, limits, declaration, component_sha):
+def execute_pair(root, n, world, stage, limits, declaration, component_sha, *, producer_wave_width=2):
+    if type(producer_wave_width) is not int or producer_wave_width not in (1, 2):
+        raise ValueError("producer wave width must be one or two")
     guard(component_sha)
     roster = rows(n, world, limits)
     pair = root / stage / f"world-{world}"
@@ -145,20 +147,32 @@ def execute_pair(root, n, world, stage, limits, declaration, component_sha):
     pair_limits = dataclasses.replace(limits, max_output_bytes=CAPS[n],
                                      batch_max_output_bytes=bound)
     pair_limits = RuntimeLimits.from_dict(pair_limits.to_dict())
-    if shutil.disk_usage(pair).free < limits.min_free_disk_bytes + 2 * CAPS[n]:
-        raise RuntimeError("actual free storage cannot reserve both complete cases")
     scheduler = Scheduler(pair, pair_limits, DRIVER)
-    scheduler.run([Config.from_dict(row["config"]) for row in roster])
-    if not scheduler.owned_workers_absent:
-        raise RuntimeError("paired producer ownership has not closed")
-    guard(component_sha)
     reader = CheckedLongitudinalCases(pair, identity)
     cases = []
-    for row in roster:
-        attempt = sorted((pair / "cases" / row["case_id"]).glob("attempt-*"))
-        attempt = [p for p in attempt if p.is_dir()][-1]
-        cases.append(reader.validate_case(row, attempt,
-                     expected_provenance=limits.provenance))
+    if producer_wave_width == 2:
+        # Preserve the existing parallel admission and execution path.
+        if shutil.disk_usage(pair).free < limits.min_free_disk_bytes + 2 * CAPS[n]:
+            raise RuntimeError("actual free storage cannot reserve both complete cases")
+    # The same Scheduler reserves the FULL case cap against real current
+    # free space and retained pair bytes before each producer wave.
+    # No capacity is inferred from compression, logical unlink or COW.
+    waves = [roster] if producer_wave_width == 2 else [[row] for row in roster]
+    for wave in waves:
+        references = scheduler.run([Config.from_dict(row["config"]) for row in wave])
+        if not scheduler.owned_workers_absent:
+            raise RuntimeError("paired producer ownership has not closed")
+        guard(component_sha)
+        if len(references) != len(wave):
+            raise ValueError("scheduler selected case references differ")
+        for row, reference in zip(wave, references):
+            attempt = pair / reference["attempt"]
+            if attempt.parent != pair / "cases" / row["case_id"] or not attempt.name.startswith("attempt-"):
+                raise ValueError("scheduler selected attempt is outside planned case")
+            if file_digest(attempt / "manifest.json") != reference["manifest_sha256"]:
+                raise ValueError("scheduler selected manifest changed")
+            cases.append(reader.validate_case(row, attempt,
+                         expected_provenance=limits.provenance))
     if reader.result()["unique_complete_cases"] != 2:
         raise ValueError("paired raw closure differs")
     template, _ = spec(n)
@@ -175,7 +189,8 @@ def execute_pair(root, n, world, stage, limits, declaration, component_sha):
                          "state_semantic_sha256": c["state_semantic_sha256"],
                          "summary": c["summary"]} for c in cases],
               "effects": effects, "producer_workers_absent": True,
-              "complete_study": False, "empirical_validation": False}
+              "complete_study": False, "empirical_validation": False,
+              "operations": {"schema": "producer-wave-v1", "producer_wave_width": producer_wave_width}}
     atomic_json(pair / "paired-result.json", result)
     print(json.dumps({k: result[k] for k in ("status", "world", "stage", "initial_n", "days")}), flush=True)
     return effects
@@ -187,6 +202,8 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--runtime-limits", type=Path, required=True)
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--producer-wave-width", type=int, choices=(1, 2), default=2,
+                        help="one preserves full case caps while running paired arms sequentially")
     args = parser.parse_args()
     limits = RuntimeLimits.from_dict(json.loads(args.runtime_limits.read_text()))
     if limits.journal_chunk_bytes != 1048576 or limits.per_world_rss_bytes is None:
@@ -201,7 +218,8 @@ def main():
     frozen = {"declaration": declaration, "entry_sha256": component_sha,
               "source_sha256": CORE, "pipeline_driver_sha256": DRIVER,
               "runtime_sha256": file_digest(args.runtime_limits),
-              "pilot_inventory": [r for w in declaration["pilot_world_ids"]
+              "operations": {"schema": "producer-wave-v1", "producer_wave_width": args.producer_wave_width},
+        "pilot_inventory": [r for w in declaration["pilot_world_ids"]
                                   for r in rows(args.population, w, limits)]}
     marker = root / "study.json"
     if marker.exists() and json.loads(marker.read_text()) != json.loads(canonical(frozen)):
@@ -219,7 +237,8 @@ def main():
     try:
         effects = []
         for world in declaration["pilot_world_ids"]:
-            effects += execute_pair(root, args.population, world, "pilot", limits, declaration, component_sha)
+            effects += execute_pair(root, args.population, world, "pilot", limits, declaration, component_sha,
+                                    producer_wave_width=args.producer_wave_width)
         requests = []
         for name, epsilon, unit in PRIMARY_ENDPOINTS:
             values = [r["effect"] for r in effects if r["endpoint"] == name]
@@ -242,7 +261,8 @@ def main():
             raise ValueError("predeclared precision requires more than 128 worlds; no significance stopping or sample reduction")
         confirmed = []
         for world in confirmation["world_ids"]:
-            confirmed += execute_pair(root, args.population, world, "confirmation", limits, declaration, component_sha)
+            confirmed += execute_pair(root, args.population, world, "confirmation", limits, declaration, component_sha,
+                                      producer_wave_width=args.producer_wave_width)
         intervals = [dict(endpoint=name, **paired_interval(
             [r["effect"] for r in confirmed if r["endpoint"] == name], name,
             family_alpha=.05, primary_tests=12, target_halfwidth=epsilon))
