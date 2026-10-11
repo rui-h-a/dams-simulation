@@ -1,3 +1,17 @@
+## R56 — exact N300 checkpoint closure and completed cold-receipt reconciliation
+
+Observation: 2026-10-11T03:45:24.599050+00:00. N30 and N120 each retain **4 excluded pilot +66 confirmation pairs**; N120's four fixed precision targets pass and its adverse/null results remain in the accepted **86-page** interim paper. N30 retains **140/140 full13 off-device restoration proofs**.
+
+The earlier-receipt audit has now actually finished: **30 prior +38 new disjoint closed-case receipts =68 distinct cold retirements**. This subsequent evidence supports68; the R55 withdrawal and historical commits remain preserved. This is a receipt/case-ID audit, not fresh payload, model or provider validation, and not completion of all140 cold lifecycles.
+
+N300 retains **1/4 complete pilot paired worlds,2 complete strategies,0 confirmation worlds**. Its second pilot's hierarchy strategy reached **day1,205/1,917**, then stopped on the unchanged remaining-capacity guard. The producer and worker were reaped. Both newest checkpoint files were independently hashed through EOF and matched their fixed index. The partial case adds no completed world. Existing96GiB entry and80GiB floor/16GiB case-cap rules remain unchanged; the scheduler reserves remaining capacity after actual used bytes. At the capture the working volume had95.797GiB, so no capacity bypass or speculative restart was performed. The next action is validated cold-data retirement, then checkpoint continuation of the same frozen study.
+
+Original N1000 remains **35/144 validated cases,0/4 complete paired pilot worlds**, blocked by its unchanged capacity and compatible archive-consumption prerequisites. No10,000-plus complete five-year world has finished. Enterprise/M&A candidates remain separate; external empirical validity and final paid-resource closeout are unfinished. No new compute VM or additional budget authority was created.
+
+[Exact observation](research-observation-r56.json) · [Unique-receipt reconciliation](cold-receipt-reconciliation-r56.json) · [Day1205 producer closure and checkpoint pins](n300-second-pilot-day1205-interruption-r56.json). Earlier observations below preserve their original timestamps and scopes.
+
+---
+
 ## R55 — cumulative cold-retirement count correction
 
 Correction at2026-10-11T03:31:25.904903+00:00: R54 stated68 cumulative cold retirements without a complete unique-receipt reconciliation. That total is withdrawn. The latest R7 segment has38 verified successful cases; this is the supported count for that segment. The aggregate total is not asserted pending completion of the separate earlier-receipt audit. N30's140/140 full13 remote restoration proofs, N30/N120 formal pair counts, N300's first complete pilot pair, and all scientific results are unchanged. The previous Git commit and source observation hash remain in history.

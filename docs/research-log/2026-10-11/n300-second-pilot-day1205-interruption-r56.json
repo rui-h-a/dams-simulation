@@ -1,0 +1,44 @@
+{
+  "CPU_system_seconds": 7.572118,
+  "CPU_user_seconds": 739.31939,
+  "UTC": "2026-10-11T03:44:05.475002+00:00",
+  "capacity_math": "Scheduler reserves only remaining active-case cap after actual-used bytes; the observed guard failure is not evidence of double counting. No admission gate was lowered.",
+  "checkpoint_index_sha256": "5d09679547c45299fa7861aab0d89d782aab5229f067c5327b1fc280ecaee03f",
+  "complete_pilot_pairs": 1,
+  "complete_strategy_cases": 2,
+  "completed_day": 1205,
+  "confirmation_worlds": 0,
+  "creation_days": 1827,
+  "manifest_sha256": "4cd0812c1ab477e53ca9b45b1e47e7322ef81982b9779f48062a126314393af2",
+  "max_RSS_bytes": 90636288,
+  "next_action": "finish closed cold-data retirement then resume same frozen study from existing day1205 checkpoint; do not rerun completed pair",
+  "original_capacity_gate_bytes": 103079215104,
+  "owned_process_group_absent": true,
+  "partial_case_id": "fc80f4a7435199ad0e90e9e6c33c4ec4456f0951ee6340da6332fb20b77e6b2e",
+  "partial_case_not_counted_complete": true,
+  "partial_regime": "hierarchy",
+  "partial_world": 42001,
+  "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+  "producer_exit_code": 1,
+  "producer_reaped": true,
+  "scope": "full checkpoint file SHA, original metadata and producer closure only; not checkpoint Model.load or allraw scientific revalidation",
+  "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+  "status": "ACTUAL_N300_SAFE_INTERRUPTION_CHECKPOINT_PRESERVED",
+  "stderr_sha256": "6b83f881350db6e3828c8741b3290a65e03e71d3031f80723126d2adb9e4c008",
+  "target_pilot_pairs": 4,
+  "terminal_sha256": "1859e0580db922e854bfbacf664f0a7e05eabae8e6624aa3af896f19afb8e556",
+  "total_days": 1917,
+  "unchanged_full_case_cap_bytes": 17179869184,
+  "unchanged_minimum_floor_bytes": 85899345920,
+  "verified_newest_checkpoint_files": [
+    {
+      "bytes": 3659895,
+      "sha256": "69bae02f76b3a26b0be367c8a0b0c4b47e461ae744b150810147aa720c50f0be"
+    },
+    {
+      "bytes": 67674112,
+      "sha256": "fccb45ccbf2cc326e89da837c16f8b2f50367450894e5f4c84465dea9ab4d3f0"
+    }
+  ],
+  "wall_seconds": 776.5546861660259
+}

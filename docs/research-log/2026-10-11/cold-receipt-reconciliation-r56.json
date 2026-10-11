@@ -1,0 +1,16 @@
+{
+  "R7_new_unique_completed_cases": 38,
+  "UTC": "2026-10-11T03:31:54.697056+00:00",
+  "input_receipt_bytes": 25909,
+  "input_receipt_sha256": "9dfb25186c4ababdbae5e080a70c884ef95f3763a026ac1edb85a02e4e4c0287",
+  "new_Model_SQL_calls": 0,
+  "new_provider_calls": 0,
+  "new_raw_payload_reads": 0,
+  "not_whole140_lifecycle_completion": true,
+  "previous_R55_withdrawal_retained": true,
+  "prior_unique_completed_cases": 30,
+  "scope": "Prior30 individually reviewed success receipts; R7new38 from pinned completed_case_ids and exact current admission prefix. No raw/state/Model/scientific recomputation or provider calls.",
+  "statement": "Subsequent audit now supports68 through unique primary receipts. R55 was correct to withdraw the earlier unsupported aggregate pending this audit.",
+  "status": "PASS_RECEIPT_CASE_ID_DEDUP_ONLY",
+  "total_distinct_closed_case_retirements": 68
+}

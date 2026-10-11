@@ -1,0 +1,78 @@
+{
+  "GCP": {
+    "SQLite_directly_on_object_storage": false,
+    "budget_authority_unchanged": true,
+    "final_resource_closeout_complete": false,
+    "new_compute_VM": 0,
+    "object_storage_in_use": true,
+    "provider_invoices_reconciled": false
+  },
+  "N120": {
+    "all_four_fixed_precision_checks_pass": true,
+    "complete_pairs": 70,
+    "complete_raw_cases": 140,
+    "confirmation_pairs": 66,
+    "one_cold_case_actual_full13_GCS_preservation_promotion_raw_retirement": true,
+    "pilot_pairs": 4,
+    "whole140_off_device_cold_lifecycle_complete": false
+  },
+  "N30": {
+    "confirmation_pairs": 66,
+    "distinct_closed_case_retirements_supported": 68,
+    "full13_off_device_recovery_proofs": 140,
+    "pilot_pairs": 4,
+    "raw_strategy_cases": 140
+  },
+  "N300": {
+    "actual_physical_backing_free_bytes_at_capture": 111065169920,
+    "actual_working_free_bytes_at_capture": 102861103104,
+    "complete_cases": 2,
+    "complete_pilot_pairs": 1,
+    "confirmation_worlds": 0,
+    "first_pair_final_population_each_regime": 436,
+    "initial_population": 300,
+    "original_gate_bytes": 103079215104,
+    "partial_second_world_days": 1205,
+    "scheduler_remaining_case_reserve_unchanged": true,
+    "status": "STOPPED_CAPACITY_GUARD_CHECKPOINT_RETAINED",
+    "target_pilot_pairs": 4,
+    "total_calendar_days": 1917
+  },
+  "UTC": "2026-10-11T03:45:24.599050+00:00",
+  "candidate_models": {
+    "endogenous_MA_scientific_integration": false,
+    "external_validation_complete": false,
+    "frozen_samples_modified": false
+  },
+  "custody": {
+    "N300_interruption": "n300-second-pilot-day1205-interruption-r56.json",
+    "cold_count_receipt": "cold-receipt-reconciliation-r56.json",
+    "existing_cold_batch_reaped_exit1_after38_successes": true,
+    "next_minimal_API_consumer_is_not_yet_issued_at_this_snapshot": true,
+    "no_closed_scientific_cases_restarted": true,
+    "no_unique_original_evidence_deleted": true
+  },
+  "larger_five_ten_year_studies": {
+    "READY_designs": 0,
+    "complete_10000_plus_formal_worlds": 0,
+    "registered_designs": 10
+  },
+  "original_N1000": {
+    "capacity_gate_bytes": 153378624512,
+    "complete_pilot_pairs": 0,
+    "confirmation_worlds": 0,
+    "status": "BLOCKED_UNCHANGED_CAPACITY_AND_ARCHIVE_CONSUMPTION_PREREQUISITES",
+    "target_cases": 144,
+    "target_pilot_pairs": 4,
+    "validated_cases": 35
+  },
+  "paper": {
+    "PDF_sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81",
+    "accepted_N30_N120_results_integrated": true,
+    "pages": 86,
+    "unchanged_since_R53": true,
+    "whole_final_paper_delivery_complete": false
+  },
+  "revision": "R56",
+  "whole_goal_complete": false
+}
