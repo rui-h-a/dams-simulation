@@ -170,7 +170,7 @@ class Live:
         # durably recorded by the existing wrapper; fixed prepare/D bound remains.
         until=min(cc.utc(self.entry.options['prepare']['deadline_utc']).timestamp(),time.time()+self.o['max_command_seconds'],cc.utc(self.e['termination_utc']).timestamp())
         data=None
-        for _ in range(6):
+        for _ in range(30):
             self.check();remaining=until-time.time();require(remaining>2,'host enrollment fixed readiness bound')
             r=self.g.run(args,timeout=max(1,min(15,int(remaining-1))))
             if r.get('exit')==0:
