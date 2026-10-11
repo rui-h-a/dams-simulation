@@ -1,0 +1,18 @@
+{
+  "schema": "dams-existing-enterprise-operations-r4-bounded-audit-r62",
+  "audit_receipt_sha256": "66f978d1508e858a043e4e3f783f0a56584336ac9e6d61403d95f86ef4f3a2a4",
+  "observed_utc": "2026-10-11T05:36:22.913212+00:00",
+  "status": "EXISTING_STOPPED_R4_THREE_COUNTEREXAMPLES_CLOSED_WITHIN_TESTED_ENGINEERING_SCOPE",
+  "existing_candidate_used_no_new_model_created": true,
+  "independent_scalar_controls_per_round": 36,
+  "rounds": 2,
+  "original_r3_counterexamples_retained": 9,
+  "scope": "Export eligibility, requested versus served coordination, and site-weighted logistics.",
+  "independent_controls_Model_SQL_provider_formal_samples": 0,
+  "historical_59_tiny_model_checks_rerun_by_this_audit": false,
+  "candidate_model_source_git_publication_completed": false,
+  "full_longitudinal_scientific_admission": false,
+  "empirical_calibration_or_out_of_sample_validity_established": false,
+  "M_and_A_integrated_into_formal_study": false,
+  "frozen_N30_N120_N300_samples_modified": false
+}

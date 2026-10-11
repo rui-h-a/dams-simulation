@@ -1,3 +1,13 @@
+# R62 — Actual N300 checkpoint resumption (2026-10-11T06:08:00.030334+00:00)
+
+The unchanged N300 formal study CLI has actually resumed after both-volume capacity and exact source/checkpoint admission. It retains the completed first pilot pair and resumes the interrupted trajectory from day 1,205 of 1,917. The running CLI does not itself add a completed pair or confirmation sample.
+
+N30 cold lifecycle has reached 85/140 cases; full independent offdevice restoration remains 140/140. N30 and N120 each retain four pilot and 66 accepted confirmation pairs, including adverse and null results. Original N1000 remains 35/144 cases and zero complete pilot worlds; no complete five- or ten-year world at N10000 or above is claimed.
+
+An independent bounded audit of the existing enterprise-operations r4 candidate passed 36 scalar controls in each of two rounds for three prior counterexamples. This does not establish full longitudinal validation, M&A integration, calibration, or external validity, and does not alter frozen samples. These candidate corrections have not yet been published as a complete research source version. The 86-page PDF remains an interim manuscript.
+
+---
+
 # Latest verified observation: R61
 
 Dated 2026-10-11T05:31:53.120647+00:00. The strict custody ABI repair is now actually running. 2 previously unfinished case has completed the unchanged eviction API after its mandatory fresh full13 restore. Its preserved admission and promotion steps were reused; no original scientific content or world was deleted or rerun. N30 cold lifecycle is now 74/140, separate from its already complete140/140 full remote case proofs and70 scientific paired worlds.

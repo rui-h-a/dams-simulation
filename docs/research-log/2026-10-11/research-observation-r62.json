@@ -1,0 +1,44 @@
+{
+  "schema": "dams-actual-research-observation-r62",
+  "observed_utc": "2026-10-11T06:08:00.030334+00:00",
+  "N30": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "full13_offdevice_restore_cases": 140,
+    "cold_lifecycle_complete_cases": 85
+  },
+  "N120": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "fixed_precision_endpoints_pass": 4,
+    "complete_cold_cases": 1
+  },
+  "N300": {
+    "complete_pilot_pairs_at_admitted_resume": 1,
+    "planned_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 0,
+    "initial_population": 300,
+    "first_complete_pair_final_population": 436,
+    "calendar_days": 1917,
+    "retained_checkpoint_resume_day": 1205,
+    "status": "EXISTING_FROZEN_FORMAL_CLI_ACTUALLY_RUNNING_AFTER_EXACT_RESUME_ADMISSION",
+    "source_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+    "running_CLI_is_not_an_additional_completed_world": true
+  },
+  "original_N1000": {
+    "accepted_cases": 35,
+    "planned_pilot_cases": 144,
+    "complete_pilot_worlds": 0,
+    "confirmation_worlds": 0
+  },
+  "N10000_and_larger": {
+    "complete_formal_five_or_ten_year_worlds": 0
+  },
+  "paper": {
+    "pages": 86,
+    "status": "INTERIM_NOT_FINAL",
+    "pdf_sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81"
+  },
+  "new_compute_VM_created": false,
+  "whole_goal_complete": false
+}

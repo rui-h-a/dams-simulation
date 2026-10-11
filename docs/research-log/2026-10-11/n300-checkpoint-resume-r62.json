@@ -1,0 +1,87 @@
+{
+  "schema": "dams-actual-n300-resume-r62",
+  "observed_utc": "2026-10-11T06:08:00.030334+00:00",
+  "actual_start_utc": "2026-10-11T06:07:16.202119+00:00",
+  "actual_start_receipt_sha256": "4ac068359183c5dd76950a99bbca399690cf73482049f9633a6a0d7dd9ab573b",
+  "admission_receipt_sha256": "98de1c02c308fc96bf8d08f3691c16e1b7fd4cc270a76d07147bf47292460126",
+  "producer_wave_width": 1,
+  "calendar_days": 1917,
+  "retained_checkpoint_day": 1205,
+  "initial_population": 300,
+  "complete_pilot_pairs_before": 1,
+  "frozen_source_seed_model_runtime_unchanged": true,
+  "previous_complete_pair_preserved": true,
+  "completed_cases_restarted": false,
+  "source_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+  "root_entry_sha256": "a16baa65769622af0c45017ecbf79a5a0e860d3d81718a4cc838f42139931b88",
+  "cold_lifecycle_actual_closed_successes_since_prior_base72": [
+    {
+      "case_id": "291bf5b92606b9a79ba9ad704f3b070a619a8f4b83115ea0e91b627554a5e3c3",
+      "receipt_sha256": "2a3931b2fcc9cf8ca747af7c5f6352f4d9b3c1e346f78e493e88354fe00cfa74",
+      "closed_utc": "2026-10-11T05:28:51.113725+00:00"
+    },
+    {
+      "case_id": "42a2c4134510dca97acfaf92b34d5df3e269cc04d0d401de6bc37709df74d756",
+      "receipt_sha256": "06ee141787921bb59b793e17d9e27bc1656253d415c37681ea76343c4393252b",
+      "closed_utc": "2026-10-11T05:31:48.585795+00:00"
+    },
+    {
+      "case_id": "442d54d8f0dceb0704b8c2a524d0d719c2b050a6253acd283c6c43d5fd260b9e",
+      "receipt_sha256": "d82ab4a7896a76593fe8a95b6e2123eac4bdd8a3e0ae3413a5e551b58fe355f2",
+      "closed_utc": "2026-10-11T05:34:43.245694+00:00"
+    },
+    {
+      "case_id": "20206bf5bd4317723754c437be76b72cc2449a8316b46bc0bc0482d94fad9bee",
+      "receipt_sha256": "ebd70f0ec8139399bdc8d3eea800d6b35b43a432382d922ec5c6db68e9ab7d87",
+      "closed_utc": "2026-10-11T05:37:43.708073+00:00"
+    },
+    {
+      "case_id": "4046afd942ae965a873bdf28cec2c4160abe0ffb87076336d72ab7ecee022767",
+      "receipt_sha256": "263a1e0cb46a26cab1d05a8a4c9ad4144fb0f23f2f5531b22a15c52fad1e8ca8",
+      "closed_utc": "2026-10-11T05:40:46.036158+00:00"
+    },
+    {
+      "case_id": "7338b8dabfc28d70f82fc79239d9ec1c97c1857f03914f67f99f58af6d7d7cfd",
+      "receipt_sha256": "d718f2e0684b99dc61c590848fd585b95e439bae86f61d8a715cc294b21c3263",
+      "closed_utc": "2026-10-11T05:44:05.724141+00:00"
+    },
+    {
+      "case_id": "b672c1cc29c07e87bfe337e3739b589f2193db23c1489a0d2cd04e7bbd8f3edf",
+      "receipt_sha256": "24de7024bf0a8731906762a76aa753145d2c4555e6fd341e7aaef57cf6a321bb",
+      "closed_utc": "2026-10-11T05:47:13.447818+00:00"
+    },
+    {
+      "case_id": "bc00c2505c9984314eea486e34434e0ad8e22ef9c0f5a6372a66cdaaea40322c",
+      "receipt_sha256": "1a7b164f1784aaedee8647703e05b550c7bba37202aa5294d42cf629860e89c1",
+      "closed_utc": "2026-10-11T05:50:18.317615+00:00"
+    },
+    {
+      "case_id": "ac11a9b4eaccd781392ed64edf363db768a9715d9aab56e819d362c582650394",
+      "receipt_sha256": "04d41366f83a945f48aa7e33f1c485a3d86fba01ee00a09e933c90351c0be7dd",
+      "closed_utc": "2026-10-11T05:53:19.786671+00:00"
+    },
+    {
+      "case_id": "ccfbebc266c4e49d4f2063f6d29b9112f64cbf1d5ea5d69076ac33d643faefb8",
+      "receipt_sha256": "65c6006d36b856341bba93500d13f877d5f54d471c5d717a49dd1ad92f3a0b2e",
+      "closed_utc": "2026-10-11T05:56:45.738238+00:00"
+    },
+    {
+      "case_id": "c52690d4c399caa528b47e938a8e2455242389012fa0bcd56b21dd8d61022004",
+      "receipt_sha256": "fcb6a5c9e282e8f5710e9c8f8b92332afeb17315bc76e6f69d357bdb139cfd02",
+      "closed_utc": "2026-10-11T06:00:28.330033+00:00"
+    },
+    {
+      "case_id": "da58caca8b908247cf5dfc90dd1c52a3da4be93acc7304ab75743be02d36ec7a",
+      "receipt_sha256": "0c87f3800533c60c22100cd48f78c59b7077f8d1c5348809ceceff82ea62d9d9",
+      "closed_utc": "2026-10-11T06:03:44.310626+00:00"
+    },
+    {
+      "case_id": "21f26b14f122154f758404b648920e9a17927ad05214e67dd2eb7610bbf7c524",
+      "receipt_sha256": "e99fbabf1d17ee1899860a682cfd9d0a5a5be60165d4c2ecde1dfd53bd9cda64",
+      "closed_utc": "2026-10-11T06:07:12.129309+00:00"
+    }
+  ],
+  "new_completed_scientific_worlds_claimed_by_cold_lifecycle": 0,
+  "remaining_N300_precision_rule_unchanged": true,
+  "paired_result_or_full_study_completion_claimed": false
+}
