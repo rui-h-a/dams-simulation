@@ -1,0 +1,144 @@
+{
+  "schema": "dams-actual-research-observation-r66",
+  "observed_utc": "2026-10-11T09:15:32.455294+00:00",
+  "N30": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "full13_offdevice_restore_cases": 140,
+    "cold_lifecycle_complete_cases": 113,
+    "last_completed_cold_prefix_observed_utc": "2026-10-11T08:02:31.598480+00:00",
+    "last_completed_cold_prefix_exit_code": 0,
+    "last_completed_cold_prefix_cases": 41
+  },
+  "N120": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "fixed_precision_endpoints_pass": 4,
+    "complete_cold_cases": 1
+  },
+  "N300": {
+    "complete_pilot_pairs": 4,
+    "planned_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 3,
+    "calendar_days": 1917,
+    "initial_population": 300,
+    "confirmation_worlds_requested": 66,
+    "confirmation_worlds_complete": 3,
+    "confirmation_roster_sha256": "4a20d2f1d9f2bea4ea1f8bed3982773252c9deae12609ac5a428901d812c79f2",
+    "pilot_worlds_excluded_from_confirmation": true,
+    "producer_accepted_confirmation_pairs": 3,
+    "independently_verified_confirmation_pairs": 2,
+    "producer_confirmation_world_ids": [
+      52000,
+      52001,
+      52002
+    ],
+    "independent_confirmation_world_ids": [
+      52000,
+      52001
+    ],
+    "confirmation_stage_complete": false,
+    "precision_met_claimed": false,
+    "external_validity_claimed": false,
+    "science_count_cutoff_utc": "2026-10-11T09:10:04.171330+00:00",
+    "third_pilot_pair_independent_full13_and_scalar_checks": true,
+    "pilot_pair_final_populations": [
+      436,
+      433,
+      433,
+      433
+    ],
+    "confirmation_pair_final_populations": [
+      434,
+      430,
+      437
+    ],
+    "frozen_formal_CLI_alive_at_science_count_cutoff": true
+  },
+  "original_N1000": {
+    "accepted_cases": 35,
+    "planned_pilot_cases": 144,
+    "complete_pilot_worlds": 0,
+    "confirmation_worlds": 0,
+    "remaining_cases": 109,
+    "new_cases_or_worlds_from_engineering_restore": 0
+  },
+  "N10000_and_larger": {
+    "complete_formal_five_or_ten_year_worlds": 0,
+    "formal_execution_status": "BLOCKED_NO_ACCEPTED_COMPLETE_FIVE_OR_TEN_YEAR_WORLD"
+  },
+  "candidate": {
+    "published_source_commit": "72cf8d3105bc87153f692772a2d2971d916bc829",
+    "engineering_tests_per_successful_round": 59,
+    "successful_rounds": 2,
+    "formal_adoption": false
+  },
+  "storage_engineering": {
+    "selected52_original_files_full_byte_verified": 676,
+    "selected52_original_bytes_streamed": 11279767593,
+    "operational_security_source_repairs_independently_checked": 3,
+    "new_batch_authorized_or_launched": true,
+    "active_N30_meter_and_scientific_sources_unchanged": true,
+    "physical_backing_free_space_not_inferred_from_logical_retirement": true,
+    "actual_verified_transport_retirement_logical_bytes": 2005749760,
+    "observed_work_volume_available_change_bytes": 2005667840,
+    "observed_backing_available_change_bytes": 0,
+    "root_closed140_owner_scope": true,
+    "dated_initial_entry_admission_pass": true,
+    "initial_entry_admission_observed_utc": "2026-10-11T09:06:10.184069+00:00",
+    "raw_retirement_lifecycle_acceptance_incomplete": true,
+    "archive_operation_status": "STARTED_THEN_FAILED_SAFE_BEFORE_RAW_RETIREMENT",
+    "archive_operation_exit_code": 1,
+    "archive_operation_reaped": true,
+    "first_transfer_full13_restoration_pass_cases": 1,
+    "full_three_lifecycle_readbacks_completed": false,
+    "selected52_raw_retirements": 0,
+    "actual_archive_request_attempts_at_cut": 80,
+    "actual_completed_archive_responses_at_cut": 80,
+    "archive_pending_at_cut": 0
+  },
+  "paper": {
+    "pages": 86,
+    "status": "INTERIM_NOT_FINAL",
+    "pdf_sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81"
+  },
+  "new_compute_VM_created": false,
+  "provider_invoice_fully_reconciled": false,
+  "whole_goal_complete": false,
+  "local_public_history_fetch": {
+    "physical_repositories": 3,
+    "user_HEAD_index_config_unchanged": true,
+    "research_candidate_ref_fetched": true,
+    "receipt_sha256": "f19f73715011d225646805a2a77e2cd247495d3ced2221d406769417d8f4ef70",
+    "checkout_or_reset_performed": false
+  },
+  "antecedent_r65_sha256": "cec5c2ad67d2d70c185d61aa8ce7aac9c4fda4b2dc51116415eaad54e23724a5",
+  "original_N1000_engineering_restore": {
+    "result_sha256": "5a44bd3aa64560b9c6f25f877872579056a805e6643b503a920ae8fec762b171",
+    "terminal_sha256": "a361f4421f5fa2f33a760464af5669900f48d41e37a2181d16229ad6d0bcf572",
+    "status": "ACTUAL_CLONE_ENGINE_RESTORE_RETURNED_NORMAL_EXIT0_REAPED",
+    "restored_day": 3743,
+    "restored_journal_rows": 13228569,
+    "source_core_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "ledger_semantic_sha256": "5aeb47187a87251dfb99d7b1b55d46349e8ec8576d37eec2046d7ba164b60fe0",
+    "new_formal_worlds": 0,
+    "new_scientific_days": 0,
+    "formal_writer_resume_validated": false,
+    "original_raw_retirement_authorized": false,
+    "independent_backup": false,
+    "independent_formal_offdevice_backup_claimed": false,
+    "shared_case_ID_alone_is_not_formal_source_config_attempt_or_byte_identity": true
+  },
+  "financial": {
+    "cumulative_cap_usd": "100",
+    "global_held_usd": "99.55",
+    "held_is_actual_spend": false,
+    "new_nested_archive_reservation_usd": "18.50",
+    "existing_parent_reservation_usd": "34",
+    "new_nested_reservation_increases_global_held": false,
+    "reservation_refunded_or_epoch_reset": false,
+    "supplier_invoice_fully_reconciled": false
+  },
+  "storage_runtime_observation_sha256": "4779b0232a7e8cb936428769696f725e394a6d691f8205be73d416d22af02f1d"
+}
