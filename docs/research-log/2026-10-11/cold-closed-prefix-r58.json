@@ -1,0 +1,138 @@
+{
+  "UTC": "2026-10-11T04:31:42.782397+00:00",
+  "actual_exit_code": 1,
+  "actual_root_terminal_utc": "2026-10-11T04:22:19.876153+00:00",
+  "all_remaining_13_raw_natives_retained": true,
+  "charged_prefix": {
+    "complete_authentication_prefix_count": 23,
+    "completed_attempts": 6337,
+    "counters_reset": false,
+    "new_authentication_invocations": 1,
+    "new_reserved_requests": 343,
+    "pending_attempts": 0,
+    "predecessor_requests": 5994,
+    "provider_invoice": false,
+    "requests": 6337
+  },
+  "closed_prefix_SHA_count": 12676,
+  "closed_prefix_bytes": 5350740,
+  "closed_prefix_sha256": "e4b7fe9b3340db2d168920e4ea32c24822aa2881208ea6a21aa59ac3d7f9c987",
+  "closure_bytes": 342989,
+  "closure_sha256": "199394b20e4dd4f058ad3b64aa096f084ec62c41fba38e8ac5c78ef09b43e0b6",
+  "completed_segment_cases": 4,
+  "new_grant_issued_by_closure": false,
+  "new_scientific_samples": 0,
+  "no_unique_original_evidence_deleted": true,
+  "prior_distinct_closed_cases": 68,
+  "remaining_selected_cases": 42,
+  "root_owner_absent": true,
+  "schema": "dams-reaped-cold-prefix-saved-evidence-v1",
+  "scope_limit": "Full SHA/native closure checks cover HTTP metadata and remaining raw file identity, not raw content or Model replay. Each actual promotion records full13 strictEOF. The frozen eviction API PASS supplies the second readback gate; the closure audit did not independently repeat raw payload verification. The stopped fifth case has all13 originals retained and adds no completion.",
+  "segment_target_cases": 46,
+  "source_controlled_operation_not_whole_batch_PASS": true,
+  "status": "STOPPED_BOUNDED_GUARD_WITH_COMPLETED_PREFIX_RETAINED",
+  "successes": [
+    {
+      "archive_sha256": "4e75ee3fbecfd0f84860e9214b0fc046491cac14b5d2d48e3920647e7dea9757",
+      "case_id": "d97f522aaa972d847a8aaf9aabaf8e8ee2d8631caa521f3e30598f3b926a0deb",
+      "eviction": {
+        "free_after": 102941413376,
+        "free_before": 102859382784,
+        "logical_unlinked_bytes": 81200054,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T03:53:35.025979+00:00"
+      },
+      "promotion_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 52816025,
+        "files": 13,
+        "observed_utc": "2026-10-11T03:51:08.892376+00:00",
+        "raw_bytes": 81206538,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3017,
+      "success_receipt_sha256": "b1dbf9653d2aaa7a82996de84d31367cfc20dc1febf25f38cf38f24951f0b85a"
+    },
+    {
+      "archive_sha256": "367dbf18621505a71ab3e9c34df98f40a048baaec62ae7c93e2959614aed52f3",
+      "case_id": "4e79874386f77edb08dc85ec01ac1896aef78c18fcfd402544ed13e3098fa262",
+      "eviction": {
+        "free_after": 103022010368,
+        "free_before": 102940372992,
+        "logical_unlinked_bytes": 80718651,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T04:01:08.092335+00:00"
+      },
+      "promotion_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 52431147,
+        "files": 13,
+        "observed_utc": "2026-10-11T03:58:40.609332+00:00",
+        "raw_bytes": 80725134,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3545,
+      "success_receipt_sha256": "b5b098e087f8fb7f3cb7c94afee4dabb21ee9d04da04ccddedb68b89527f6a66"
+    },
+    {
+      "archive_sha256": "fde903184e9b12b8197fca4880949e06fb238c4c9d42d8a29020c28ee3ff7352",
+      "case_id": "35c45ff68e899fa38ee173da4bc1fc039ccba9f4c2dfe383410f4962c120ca94",
+      "eviction": {
+        "free_after": 103102849024,
+        "free_before": 103021363200,
+        "logical_unlinked_bytes": 80504606,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T04:09:49.197793+00:00"
+      },
+      "promotion_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 52618372,
+        "files": 13,
+        "observed_utc": "2026-10-11T04:06:24.816835+00:00",
+        "raw_bytes": 80511091,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3545,
+      "success_receipt_sha256": "cbe1184474196dd9679bca42fa26c9144039873a9f04f2fa9058f6f8039f53b3"
+    },
+    {
+      "archive_sha256": "f19e71ba739d26fec57204b08092e7c913487cf7f6622a295d72947633b2010f",
+      "case_id": "f60faae6421d81e80fdade3eddab4cc4d4cb7a487778d0dbf841e7d3831748e8",
+      "eviction": {
+        "free_after": 103183552512,
+        "free_before": 103102451712,
+        "logical_unlinked_bytes": 80093672,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T04:19:24.203865+00:00"
+      },
+      "promotion_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 51365217,
+        "files": 13,
+        "observed_utc": "2026-10-11T04:16:12.953537+00:00",
+        "raw_bytes": 80100158,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3545,
+      "success_receipt_sha256": "4f630f9cf073961dc6161f761284ed605f11ec3bb795b85488fbbf1bb31a088a"
+    }
+  ],
+  "total_distinct_closed_cases": 72,
+  "whole140_cold_lifecycle_complete": false
+}

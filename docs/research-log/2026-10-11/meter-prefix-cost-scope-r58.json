@@ -1,0 +1,12 @@
+{
+  "UTC": "2026-10-11T04:31:42.782397+00:00",
+  "actual_new_candidate_GCS_or_scientific_equivalence_proven": false,
+  "frozen_scientific_source_changed": false,
+  "input_receipt_bytes": 5805,
+  "input_receipt_sha256": "019f479882685035eb9db1d2b58d18156966b596104a4c256622b1b4bf714ed8",
+  "optimization_candidate_status": "SEPARATE_PRIVATE_OFFLINE_VALIDATION_ONLY",
+  "schema": "dams-meter-prefix-read-cost-scope-v1",
+  "single_native_sample": "One1-second/10ms sample contained file/JSON/list/Decimal/hash frame lines; frame-line counts overlap and are not CPU fractions or Python function attribution.",
+  "source_or_live_operation_modified": false,
+  "source_static_finding": "Existing HTTP before and after each replay all prior ticket/result JSON, hashes and cumulative arithmetic. At T=R=n, normal sequential request ticket/result file reads alone are approximately4n+1; at n6000 this is24001. This is a code-derived count, not a latency or CPU measurement."
+}
