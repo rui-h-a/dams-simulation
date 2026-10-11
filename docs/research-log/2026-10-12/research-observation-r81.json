@@ -1,0 +1,223 @@
+{
+  "schema": "DAMS-R81-actual-storage-and-frozen-local-resume-1",
+  "issued_by": "ROOT",
+  "observed_at_utc": "2026-10-11T23:39:19.741835+00:00",
+  "jst_date": "2026-10-12",
+  "previous_record": {
+    "path": "docs/research-log/2026-10-12/research-observation-r80.json",
+    "sha256": "aa6ece7301e3b510d9772c4c93b5974bfc1c035bd545b3c34b7ed39d165e5e27",
+    "bytes": 12714,
+    "retained_unchanged": true
+  },
+  "formal_progress": {
+    "N10000_and_larger_complete_formal_worlds": 0,
+    "N120": {
+      "confirmation": 66,
+      "pilot": 4,
+      "validated_pairs": 70
+    },
+    "N30": {
+      "confirmation": 66,
+      "pilot": 4,
+      "unfavorable_and_zero_results_retained": true,
+      "validated_pairs": 70
+    },
+    "N300": {
+      "confirmation": 7,
+      "pilot": 4,
+      "target_pairs": 70,
+      "validated_pairs": 11
+    },
+    "original_N1000": {
+      "pilot_target": 4,
+      "target_cases": 144,
+      "validated_cases": 35,
+      "validated_complete_paired_worlds": 0
+    }
+  },
+  "formal_counts_changed_by_this_operation": false,
+  "formal_execution": {
+    "state": "EXISTING_FROZEN_N300_CLI_ACTUALLY_RUNNING",
+    "producer_pid": 4563,
+    "supervisor_pid": 4562,
+    "start_utc": "2026-10-11T23:37:17.931995+00:00",
+    "observed_running_utc": "2026-10-11T23:39:19.741835+00:00",
+    "ps_observation": "4563  4562 100.0  0.4 02:02 Rs",
+    "initial_population": 300,
+    "calendar_days": 1917,
+    "source_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+    "study_sha256": "2daa18fc2d76a7b5f25317bde1b0cb632c1f57bddbb540f75d5ec2ed7687d9a1",
+    "runtime_sha256": "314279d30914fdc58fd7ed4f7d3823d0978ee550aab81aa1062a6bc09530bde2",
+    "old_completed_full_trajectories": 23,
+    "old_validated_pairs": 11,
+    "remaining_confirmation_pairs": 59,
+    "new_completed_pairs": 0,
+    "actual_scientific_Model_child_not_yet_attested": true,
+    "cached_case_revalidation_not_new_sample": true,
+    "original_global_deadline_unchanged": "2026-10-15T08:54:46.960873+00:00",
+    "new_paid_resources_started": false,
+    "local_admission_receipt": {
+      "sha256": "1c26c444fd9c0af13eedbd4730549a69d0946ffa44bba14a5a9c26296f247824",
+      "bytes": 1690
+    },
+    "existing_entry_preserved": true,
+    "no_restart_of_completed_cases_authorized": true
+  },
+  "storage": {
+    "selected_existing_N300_case_offdevice_backup": {
+      "case_id": "8aa5de6b0dcb71fd12aee34cdd8724703f3b7d9654b687c9a1bac1b8a0fdf44e",
+      "raw_files": 13,
+      "raw_bytes": 469628971,
+      "TAR_bytes": 169185280,
+      "TAR_sha256": "0957a55fea4dfc0f84f8c01e92f16101c30069c692817f66a9a454bd36f15736",
+      "two_fresh_remote_full13_decodes_pass": true,
+      "strict_raw_SHA_and_EOF_each_copy": true,
+      "native_existing_Lifecycle_admit_backups": true,
+      "remote_restore_receipt": {
+        "sha256": "9dae8f2084031bfcd1a4c6955e057b8d9b33ecf903c3e5408d9cb44950c8fb87",
+        "bytes": 2113
+      },
+      "two_remote_copies_same_provider_failure_domain": true,
+      "offdevice_failure_domain_differs_from_SSD": true,
+      "originals_retained": true,
+      "raw_retired_by_this_backup": false,
+      "new_samples": 0
+    },
+    "detached_historical_engineering_transition": {
+      "generation": "8f7ef5d1977a0a79f07771de98353b47b5bb5be7f45ec94ee93368f48b491c23",
+      "attempt": "attempt-003",
+      "is_formal_scientific_sample": false,
+      "exact12_durable_journal_done": true,
+      "original_manifest_retained": true,
+      "sealed_group_and_recovery_recipe_retained": true,
+      "complete_fresh_remote_TAR_SHA_EOF_and_all12_decode_pass": true,
+      "original_manifest_private_offdevice_fullbyte_verification": true,
+      "current_formal_same_CID_other_config_and_root_untouched": true,
+      "failed_attempts_000_to_002_retained": true,
+      "logical_retired_bytes": 14762983406,
+      "real_measured_free_delta_bytes_concurrent_not_exclusive": {
+        "APFS_workspace": 5697191936,
+        "ExFAT_backing": 0
+      },
+      "logical_not_physical_release_claim": true,
+      "result_receipt": {
+        "sha256": "cbcd2160fd4fe5cad76d7bed9895f02d1c2c4e8fbdc1554197e1ecd605389750",
+        "bytes": 2820
+      },
+      "base_source_sha256": "2a20f7bc5a6462e43fd3e66b46f8bed40bb3ff02a0d9b6b3042b432db371b804",
+      "one_helper_effective_repair_sha256": "4e66cbc644aa43d3c0e1d84bf644ee66f5009c484a1351cdf96273001c6a99d9",
+      "original_failure_retained": {
+        "sha256": "ccf9846b6f8514dca34d1ed5efd3235f84feece7750112c3067a6ba40566d6e8",
+        "bytes": 1299
+      },
+      "failure_before_any_raw_move_unlink": true,
+      "original_source_unchanged": true,
+      "real_filesystem_controls_two_rounds": {
+        "sha256": "afb8665d8e143daddf1c7be6e7f400e4293bbc22cb79703d446f29dc7e6c7159",
+        "bytes": 1191
+      },
+      "same_transaction_repair_exception": {
+        "sha256": "10304d000356979907e1650ed6738cf3c8efb6c7a777cc410b05891a3138e252",
+        "bytes": 2719
+      },
+      "original_admission_and_expiry_not_reissued_or_extended": true,
+      "no_blanket_deletion": true
+    },
+    "current_actual_free_bytes": {
+      "APFS_workspace": 105574739968,
+      "ExFAT_backing": 105574825984
+    },
+    "current_local_entry_minimum_free_bytes": 104152956928,
+    "entry_capacity_pass": true,
+    "APFS_and_ExFAT_share_one_physical_SSD": true,
+    "N30_complete_140_original13_independent_restores_verified_previously": true,
+    "N120_complete_140_independent_restores_not_established": true,
+    "selected_case_restore_not_whole_batch_restore": true
+  },
+  "cloud_resources_observation": {
+    "last_authenticated_absence_utc": "2026-10-11T23:18:33.092535+00:00",
+    "instances": 0,
+    "disks": 0,
+    "all_operations_DONE": true,
+    "GCP_has_been_actually_used_for_N2_and_GCS": true,
+    "cloud_formal_complete_worlds": 0,
+    "latest_N2_actual_original_pipeline_failed_before_Model": "8192 whole-pipeline file admission versus complete owned attempt plus metadata",
+    "N7_complete_offGCP_failure_files": 22,
+    "N7_complete_failure_bytes": 258815,
+    "no_paid_create_since_latest_absence": true,
+    "GCS_and_research_project_final_fee_closure": false,
+    "supplier_invoice_reconciled": false,
+    "absence_receipt": {
+      "sha256": "3f420e872af53700cb3d669e649a59069e5f602d6cefddb04d64b98c2c6f4cc9",
+      "bytes": 804
+    }
+  },
+  "operational_source_delivery": {
+    "existing_execution_branch": "research/small-enterprise-cloud-confirmation-n300-20261012-r1",
+    "actual_nonforce_commit": "702456b0d8909fe1a82e0f867d529dd2102bebce",
+    "original_parent": "2539e7431bd0a3171abb003fb8f754272f8d364f",
+    "full_runtime_source_files_readback": 73,
+    "portable_files_and_full_contents_readback": 46,
+    "frozen_science_files_unchanged": 27,
+    "publication_receipt": {
+      "sha256": "ccd65ef3af99893118b441def091969accf4777f1c9291df74076bb241aba355",
+      "bytes": 664
+    },
+    "genuine_source_package_manifest": {
+      "sha256": "027171b82a5c004dd115ad4a65b0eb58b591a57de9353f7effc464e0da0a6b67",
+      "bytes": 7800
+    },
+    "prospective_whole_Scheduler_tree_file_allowance": 32798,
+    "native_terminal_case_files_cap_remains": 8192,
+    "terminal_metadata_bytes_cap_remains": 8388608,
+    "terminal_control_bytes_cap_remains": 34359738368,
+    "native_live_closeout_real_fixture_controls_rounds": 2,
+    "real_fixture_raw_collector_spool_archive_full_decode": true,
+    "actual_provider_delete_is_mock_boundary_in_controls": true,
+    "new_paid_production_admission": false,
+    "existing_paid_retry_deadlines_or_create_counters_not_reset": true
+  },
+  "budget": {
+    "actual_aggregate_create_attempts": 10,
+    "actual_supplier_invoice_reconciled": false,
+    "all_current_provider_operations_DONE": true,
+    "all_research_paid_resources_project_billing_closed": false,
+    "current_research_VM_disk_absence_verified": true,
+    "effective_original_holds_usd": "99.95",
+    "no_new_paid_create_admitted": true,
+    "original_deadlines_unchanged": true,
+    "paid_failure_uncertain_upper_usd": "0.41",
+    "unused_child_is_refund_or_released_hold": false,
+    "unused_nonadditive_archive_child_usd": "1.10"
+  },
+  "paper": {
+    "main_pdf_pages": 86,
+    "main_pdf_sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "status": "INTERIM_ACCEPTED_RESULTS_ONLY_NOT_FINAL_GOAL",
+    "unchanged_by_this_observation": true
+  },
+  "effective_paper_scope": {
+    "primary_population": 10000,
+    "full_model_scale_comparison_population": 50000,
+    "conditional_predeclared_population": 100000,
+    "larger_population_studies": "future research, not current final-paper gate"
+  },
+  "research_quality_boundaries": {
+    "engineering_internal_correctness_is_not_empirical_validity": true,
+    "immutable_acquisition_capsule_is_not_two_full_company_histories": true,
+    "adverse_N30_and_N120_results_preserved": true,
+    "different_candidate_and_frozen_studies_not_pooled": true,
+    "no_new_fieldwork_or_personal_support_contacts": true
+  },
+  "remaining_work": [
+    "Complete59 N300 confirmation pairs and independent statistical acceptance",
+    "Restore original N1000 validated paired worlds without raw/specification loss",
+    "Complete a genuine N10000 five-year primary world with full persistence/recovery and paired independent inference",
+    "Independent full-batch backups beyond the selected N300 case, especially N120",
+    "Supplier invoice reconciliation and qualified cost/resource admission before any new paid execution",
+    "r7 causal enterprise, genuine two-history M&A, independent calibration and unseen-data validation remain separate from frozen results",
+    "Integrate newly accepted formal results and final PDF validation; preserve current interim PDF",
+    "Complete off-GCP safe preservation and final paid-resource closeout"
+  ],
+  "whole_goal_complete": false
+}
