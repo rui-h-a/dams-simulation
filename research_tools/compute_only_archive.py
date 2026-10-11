@@ -96,8 +96,12 @@ class DirectoryBackend:
 
 
 class ArchiveClosure:
-    def __init__(self, collector, profile_ref, backends):
+    def __init__(self, collector, profile_ref, backends, *, proof_reuse=None):
         self.c = collector; self.opened = []; self.leases = []
+        self.proof_reuse = proof_reuse
+        if proof_reuse is not None:
+            from research_tools.same_region_archive import ProofReuse
+            require(type(proof_reuse) is ProofReuse, 'explicit versioned regional proof policy required')
         self.in_collect = False; self.planned = {}
         self.source_raw = Path(__file__).read_bytes()
         require(digest(self.source_raw) == IMPORT_SHA, 'archive imported helper differs')
@@ -359,6 +363,9 @@ class ArchiveClosure:
             r=read(self.c.records,f'{pin["reservation"]:08d}.json')[0]
             require(parse(r)['object_sha256']==digest(ir),'archive gate/index durable reservation differs')
             require(parse(ir) == self.index(m, sr, gr), 'archive exact index differs')
+            if self.proof_reuse is not None:
+                reused = self.proof_reuse.try_reuse(self, group, m, mr, sr, gr, ir, gate)
+                if reused is not None: return m, reused
             requests=[]
             for backend in self.backends:
                 bid=backend.binding['backup_id']
@@ -396,6 +403,8 @@ class ArchiveClosure:
                                'group_sha256': m['group_sha256'], 'gate': gate['gate']})
             require(copies[0]['restoration_id'] != copies[1]['restoration_id'] and copies[0]['receipt_sha256'] != copies[1]['receipt_sha256'],
                     'archive independent restore receipts differ')
+            if self.proof_reuse is not None:
+                self.proof_reuse.record(self, group, m, mr, sr, gr, ir, copies)
             self.c.check(); return m, copies
 
     def _lease(self, m, *, backend=None):

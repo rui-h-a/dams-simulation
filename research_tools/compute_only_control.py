@@ -143,9 +143,12 @@ class Collector:
     Complete rollback of both this namespace AND all external pins is outside
     this contract. Two copies on the same device share a device failure domain.
     """
-    def __init__(self, admission_file, *, admission_sha256, assignment_raw, minimum_head=None, archive_backends=None):
+    def __init__(self, admission_file, *, admission_sha256, assignment_raw, minimum_head=None, archive_backends=None, proof_reuse=None, lifetime_check=None):
         self.closed = False; self.opened = []; self.archive = None
         self.archive_backends = archive_backends
+        self.proof_reuse = proof_reuse
+        require(lifetime_check is None or callable(lifetime_check), 'collector lifetime check differs')
+        self.lifetime_check = lifetime_check
         try:
             self._initialize(admission_file, admission_sha256, assignment_raw, minimum_head)
         except BaseException:
@@ -247,12 +250,13 @@ class Collector:
         if c['schema'] == ARCHIVE_COLLECTOR_SCHEMA:
             from research_tools.compute_only_archive import ArchiveClosure
             if callable(self.archive_backends): self.archive_backends = self.archive_backends()
-            self.archive = ArchiveClosure(self, c['storage_profile'], self.archive_backends)
+            self.archive = ArchiveClosure(self, c['storage_profile'], self.archive_backends, proof_reuse=self.proof_reuse)
         else:
-            require(self.archive_backends is None, 'legacy collector cannot silently enable archives')
+            require(self.archive_backends is None and self.proof_reuse is None, 'legacy collector cannot silently enable archives')
 
     def check(self):
         require(not self.closed, 'collector closed')
+        if self.lifetime_check is not None: self.lifetime_check()
         now = max(time.time(), self.clock_wall + time.monotonic() - self.clock_monotonic)
         if now >= self.deadline:
             raise TimeoutError('collector original absolute deadline reached')

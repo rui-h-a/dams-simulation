@@ -225,7 +225,50 @@ def operation(action,c,raw,get_identity=None):
         require(time.time()<w.utc(r['runtime_limits']['deadline_utc']).timestamp(),'science cutoff before activation')
         result=subprocess.run(['/bin/bash',str(root/'cloud/compute-only-services.sh')],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=min(30,max(1,w.utc(r['runtime_limits']['deadline_utc']).timestamp()-time.time())))
         require(result.returncode==0,'service activation unknown');return blob({'runtime_sha256':sha(blob(r)),'services_activated':True,'phase_storage':phase,'science_complete':False})
+    if action=='regional-capacity':
+        require(c.get('regional_capacity_plan_sha256')==sha(raw),'Root capacity plan exact SHA differs')
+        from research_tools.same_region_archive import native_capacity_plan
+        return blob(native_capacity_plan(raw,context=c))
+    if action=='regional-layout':
+        require(c.get('regional_workload_admission_sha256') is not None,'regional layout not enrolled')
+        base=work/'regional-archive'
+        for item in ('','metadata','state','cache','copy1','copy2','leases','cas','adapter-cas','adapter-gcs','auth','meter','results'):
+            p=base/item
+            if not os.path.lexists(p):os.mkdir(p,0o700)
+            require(path(p).is_dir(),'regional layout symlink/non-directory')
+        fs=os.statvfs(work);total=fs.f_frsize*fs.f_blocks;available=fs.f_frsize*fs.f_bavail
+        require(all((base/item).stat().st_dev==work.stat().st_dev for item in ('','metadata','state','cache','copy1','copy2','leases','cas','adapter-cas','adapter-gcs','auth','meter','results')),'regional archive workspaces differ in device')
+        return blob({'schema':'dams-regional-archive-layout-v1','directories':{item:list(anchor((base/item).stat()))for item in ('','metadata','state','cache','copy1','copy2','leases','cas','adapter-cas','adapter-gcs','auth','meter','results')},
+            'root_volume_anchor':list(anchor(Path('/').stat())),
+            'capacity_observation':{'total_bytes':total,'available_bytes':available,'used_bytes':total-available,'device':work.stat().st_dev},'same_VM_only':True,'science_complete':False})
+    if action=='regional-enroll':
+        require(c.get('regional_archive_bundle_sha256')==sha(raw),'Root archive enrollment bundle differs')
+        bundle=parse(raw)
+        require(set(bundle)=={'schema','config_path','config_sha256','files'} and bundle['schema']=='dams-regional-archive-enrollment-bundle-v1','regional bundle shape')
+        require(isinstance(bundle['files'],list) and 1<=len(bundle['files'])<=256,'regional enrollment file cap')
+        seen=set();total=0;base=work/'regional-archive'/'metadata'
+        for row in bundle['files']:
+            require(set(row)=={'path','sha256','base64'},'regional file shape')
+            p=Path(row['path']);require(p.parent==base and p.name not in seen,'regional private metadata path differs')
+            seen.add(p.name);data=base64.b64decode(row['base64'],validate=True);total+=len(data)
+            require(total<=8*1024**2 and sha(data)==row['sha256'],'regional metadata bound/hash')
+            if os.path.lexists(p):require(stable(p)==data,'existing enrollment differs')
+            else:write(p,data)
+        require(Path(bundle['config_path']).parent==base and sha(stable(bundle['config_path']))==bundle['config_sha256']==c['regional_archive_route_sha256'],'regional top config differs')
+        return blob({'schema':'dams-regional-archive-enrolled-v1','bundle_sha256':sha(raw),'config_sha256':bundle['config_sha256'],'files':len(seen),'science_complete':False})
     runtime=parse(stable(work/'compute-runtime.json'));require(sha(blob(runtime))==c['runtime_sha256'],'remote runtime drift')
+    if action in ('regional-archive-start','regional-archive-status'):
+        require(c.get('regional_archive_route_sha256') is not None,'regional archive not enrolled')
+        request=parse(raw)
+        require(set(request)=={'config_path','config_sha256'} and request['config_sha256']==c['regional_archive_route_sha256'],'regional archive request pin differs')
+        from research_tools.same_region_archive import background_operation
+        return blob(background_operation(action,request,context=c))
+    if action=='regional-archive':
+        require(c.get('regional_archive_route_sha256') is not None, 'regional archive is not Root enrolled')
+        request=parse(raw)
+        require(set(request)=={'config_path','config_sha256'} and request['config_sha256']==c['regional_archive_route_sha256'], 'regional archive request pin differs')
+        from research_tools.same_region_archive import guest_collect
+        return blob(guest_collect(request['config_path'],request['config_sha256'],context=c))
     if action=='heartbeat':
         old=stable(work/'controller-heartbeat.json');v=parse(raw);previous=parse(old)
         require(v['runtime_sha256']==c['runtime_sha256'] and v['sequence']==previous['sequence']+1,'lease exact successor')

@@ -20,7 +20,7 @@ import time
 from datetime import datetime, timezone
 from decimal import Decimal, ROUND_CEILING, localcontext
 from contextlib import contextmanager
-from urllib.parse import parse_qsl, urlencode, urlsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, quote, unquote
 
 
 class Refusal(ValueError):
@@ -28,10 +28,13 @@ class Refusal(ValueError):
 
 
 CONFIG_SCHEMA = "dams-persistent-backend-budget-meter-config-v1"
+REGIONAL_CONFIG_SCHEMA = "dams-same-region-persistent-backend-budget-meter-config-v1"
 EVENT_SCHEMA = "dams-adapter-http-attempt-v1"
 GIB = Decimal(1073741824)
 MAX_SMALL = 1024 * 1024
 MAX_FILES = 2048
+MAX_REGIONAL_REQUESTS = 40000
+MAX_REGIONAL_HEAD = 8 * 1024 * 1024
 SHA = re.compile(r"[0-9a-f]{64}\Z")
 NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
 LIMIT_NAMES = (
@@ -211,9 +214,11 @@ class Meter:
                     "cumulative_cap_usd", "baseline_held_usd", "suballocation_usd", "current_budget",
                     "original_budget", "source_manifest", "source_job", "source_files", "prices", "limits",
                     "per_request_upload_bytes", "per_request_download_bytes", "allowed_paths"}
+        regional = isinstance(c, dict) and c.get("schema") == REGIONAL_CONFIG_SCHEMA
+        extra = {"generation_media_paths", "generation_delete_paths"} | ({"generation_metadata_paths", "gcs_namespaces", "same_region_admission"} if regional else set())
         require(isinstance(c, dict) and required <= set(c)
-                and set(c) <= required | {"generation_media_paths", "generation_delete_paths"}, "exact meter config fields required")
-        require(c["schema"] == CONFIG_SCHEMA and isinstance(c["task_id"], str)
+                and set(c) <= required | extra, "exact meter config fields required")
+        require(c["schema"] in (CONFIG_SCHEMA, REGIONAL_CONFIG_SCHEMA) and isinstance(c["task_id"], str)
                 and NAME.fullmatch(c["task_id"]), "root task identity differs")
         self.task_id = c["task_id"]
         require(_money(c["cumulative_cap_usd"]) > 0, "positive original authorization cap required")
@@ -234,11 +239,16 @@ class Meter:
                 "duplicate source pin")
         require(isinstance(c["prices"], dict) and set(c["prices"]) == set(PRICE_NAMES), "exact conservative prices required")
         self.prices = {key: _money(c["prices"][key]) for key in PRICE_NAMES}
-        require(all(value > 0 for value in self.prices.values()), "positive prices/unknown-wire reserve required")
+        require(all(value > 0 for key,value in self.prices.items() if key != 'outgoing_usd_per_gib_upper')
+                and (self.prices['outgoing_usd_per_gib_upper'] > 0
+                     or regional and self.prices['outgoing_usd_per_gib_upper'] == 0
+                     and 'same_region_admission' in c),
+                "positive prices or explicit Root same-region media admission required")
         require(isinstance(c["limits"], dict) and set(c["limits"]) == set(LIMIT_NAMES), "exact allocation limits required")
         for value in c["limits"].values():
             _integer(value, "typed byte/request limit required")
-        require(0 < c["limits"]["max_archive_requests"] <= MAX_FILES
+        request_cap = MAX_REGIONAL_REQUESTS if regional else MAX_FILES
+        require(0 < c["limits"]["max_archive_requests"] <= request_cap
                 and c["limits"]["max_management_requests"] > 0
                 and c["limits"]["authentication_requests_margin"] > 0
                 and c["limits"]["max_uploaded_body_bytes"] > 0
@@ -262,7 +272,7 @@ class Meter:
                 for path in entries:
                     self._path_safety(path)
                 total += len(entries)
-        for field in ("generation_media_paths", "generation_delete_paths"):
+        for field in ("generation_media_paths", "generation_delete_paths", "generation_metadata_paths"):
             dynamic = c.get(field, {})
             require(isinstance(dynamic, dict) and set(dynamic) <= set(paths), "unknown generation-path backend")
             for entries in dynamic.values():
@@ -273,6 +283,16 @@ class Meter:
                     require(not urlsplit(path).query and re.fullmatch(r"/storage/v1/b/[^/]+/o/[^/]+", path),
                             "exact GCS object base path required")
                 total += len(entries)
+        namespaces = c.get("gcs_namespaces", {})
+        require(isinstance(namespaces,dict) and set(namespaces)<=set(paths), "unknown regional namespace backend")
+        for ns in namespaces.values():
+            require(isinstance(ns,dict) and set(ns)=={"bucket","prefix","generations"}
+                    and re.fullmatch(r"[a-z0-9][a-z0-9.-]{1,220}[a-z0-9]",ns["bucket"])
+                    and ".." not in ns["bucket"]
+                    and re.fullmatch(r"[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*",ns["prefix"]), "fixed regional bucket/prefix differs")
+            require(isinstance(ns["generations"],list) and len(ns["generations"])<=1024
+                    and len(set(ns["generations"]))==len(ns["generations"])
+                    and all(isinstance(g,str) and SHA.fullmatch(g) for g in ns["generations"]), "finite Root generation tokens required")
         require(total <= 2048, "root path roster exceeds finite bound")
 
     @staticmethod
@@ -296,6 +316,7 @@ class Meter:
         require(_sha(raw) == self.config_sha256 and identity == self.config_identity, "root config drift")
         contents = {}
         refs = {key: self.config[key] for key in ("current_budget", "original_budget", "source_manifest", "source_job")}
+        if 'same_region_admission' in self.config: refs['same_region_admission'] = self.config['same_region_admission']
         refs.update({f"source:{index}": ref for index, ref in enumerate(self.config["source_files"])})
         for key, ref in refs.items():
             data, ident = _ref(ref)
@@ -304,6 +325,8 @@ class Meter:
             else:
                 require(self.input_identities[key] == ident, "fixed input native identity drift")
             contents[key] = data
+        if self.prices['outgoing_usd_per_gib_upper'] == 0:
+            self._same_region_media_binding(contents)
         old, budget = _json(contents["original_budget"]), _json(contents["current_budget"])
         require(isinstance(old, dict) and isinstance(budget, dict) and isinstance(old.get("tasks"), dict)
                 and isinstance(budget.get("tasks"), dict), "original budget schema differs")
@@ -349,6 +372,38 @@ class Meter:
                                * self.retention_hours * self.prices["standard_storage_usd_per_gib_hour_upper"])
         require(self.fixed_hold <= _money(self.config["suballocation_usd"]), "fixed uncertainty/retention hold exceeds allocation")
 
+    def _same_region_media_binding(self, contents):
+        """Zero regional network rate never waives HTTP/store/off-GCP counters.
+
+        Only the versioned research-VM route receives this SHA-pinned Root
+        admission. The attached-SA adapter separately checks actual VM identity
+        and fresh regional bucket policy; off-GCP readers must use a positive
+        outgoing rate in their distinct original Root reservation.
+        """
+        from research_tools import same_region_archive as regional
+        require(self.config['schema'] == REGIONAL_CONFIG_SCHEMA
+                and 'same_region_admission' in contents,
+                'zero egress is restricted to explicit Root regional route')
+        raw = contents['same_region_admission']; receipt = _json(raw)
+        pinned = regional.root_admission(raw, self.config['same_region_admission']['sha256'],
+            project=receipt.get('project'), region=receipt.get('region'),
+            source_manifest_sha256=_sha(contents['source_manifest']),
+            global_deadline_utc=self.config['global_deadline_utc'])
+        namespaces = self.config.get('gcs_namespaces', {})
+        require(len(namespaces) == 1 and set(namespaces) == set(self.config['allowed_paths']),
+                'zero region media applies to one exact enrolled GCS backend')
+        for backend, ns in namespaces.items():
+            require(ns['bucket'] == pinned['bucket'] and ns['prefix'] == pinned['prefix'],
+                    'zero media bucket/prefix differs from Root regional admission')
+            bucket_get = '/storage/v1/b/' + quote(pinned['bucket'], safe='')
+            for method, paths in self.config['allowed_paths'][backend].items():
+                require(method == 'GET' and paths == [bucket_get],
+                        'zero region config cannot whitelist other HTTP destinations')
+        require(not self.config.get('generation_delete_paths')
+                and not self.config.get('generation_media_paths')
+                and not self.config.get('generation_metadata_paths'),
+                'zero region route must use only its fixed generation namespace')
+
     def _now(self, minimum=None, new_request=False):
         now = self.clock()
         require(type(now) in (int, float) and math.isfinite(now) and now >= self.created,
@@ -384,10 +439,13 @@ class Meter:
         # Tickets/results remain immutable. Only this fsynced high-water metadata
         # is atomically replaced. Any crash-left temporary file refuses reopening.
         name = ".head-" + secrets.token_hex(16) + ".tmp"
-        self._write(root, name, head)
+        self._write(root, name, head, maximum=self._head_bound())
         self._anchor(root)
         os.replace(name, "head.json", src_dir_fd=root, dst_dir_fd=root)
         os.fsync(root)
+
+    def _head_bound(self):
+        return MAX_REGIONAL_HEAD if self.config['schema']==REGIONAL_CONFIG_SCHEMA else MAX_SMALL
 
     def _observe(self, root, head, minimum, new_request=False):
         maximum = _utc(head["max_observed_utc"]).timestamp()
@@ -468,10 +526,10 @@ class Meter:
             finally:
                 os.close(fd)
 
-    def _write(self, parent, name, value):
+    def _write(self, parent, name, value, *, maximum=MAX_SMALL):
         """Partial/crash output is retained; it never grants a returned ticket."""
         raw = _encoded(value)
-        require(len(raw) <= MAX_SMALL and "/" not in name, "bounded journal basename required")
+        require(len(raw) <= maximum and "/" not in name, "bounded journal basename required")
         fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=parent)
         try:
             offset = 0
@@ -516,6 +574,18 @@ class Meter:
                                  and re.fullmatch(r"[1-9][0-9]{0,39}", generation) is not None
                                  and values.get("ifGenerationMatch") == generation
                                  and split.query == urlencode(canonical))
+        if not permitted and method=="GET":
+            split=urlsplit(path)
+            if split.path in self.config.get("generation_metadata_paths",{}).get(backend,[]):
+                values=parse_qsl(split.query,keep_blank_values=True,strict_parsing=True)
+                generation=dict(values).get("generation","")
+                permitted=(len(values)==2 and set(dict(values))=={"generation","ifGenerationMatch"}
+                    and re.fullmatch(r"[1-9][0-9]{0,39}",generation) is not None
+                    and split.query==urlencode({"generation":generation,"ifGenerationMatch":generation}))
+        if not permitted and method in ("GET","POST"):
+            ns=self.config.get("gcs_namespaces",{}).get(backend)
+            if ns is not None:
+                permitted=self._regional_path(ns,method,path,event)
         require(permitted, "HTTP path outside immutable root admission")
         uploaded = _integer(event["request_body_upper_bytes"], "typed request-body upper bound required")
         downloaded = _integer(event["response_body_limit_bytes"], "typed response-body limit required")
@@ -527,6 +597,36 @@ class Meter:
             require(value is None or isinstance(value, str) and SHA.fullmatch(value), "invalid body digest")
             require(uploaded == 0 or value is not None, "nonempty body requires supplied digest")
         return dict(event)
+
+    @staticmethod
+    def _regional_path(ns,method,path,event):
+        split=urlsplit(path);bucket=quote(ns["bucket"],safe="")
+        if method=="POST":
+            if split.path!="/upload/storage/v1/b/"+bucket+"/o":return False
+            query=parse_qsl(split.query,keep_blank_values=True,strict_parsing=True);values=dict(query)
+            if len(query)!=3 or set(values)!={"uploadType","name","ifGenerationMatch"}:return False
+            name=values["name"]
+            if split.query!=urlencode({"uploadType":"media","name":name,"ifGenerationMatch":"0"}):return False
+        else:
+            prefix="/storage/v1/b/"+bucket+"/o/"
+            if not split.path.startswith(prefix):return False
+            encoded=split.path[len(prefix):];name=unquote(encoded)
+            if quote(name,safe="")!=encoded:return False
+            if split.query:
+                query=parse_qsl(split.query,keep_blank_values=True,strict_parsing=True);values=dict(query);generation=values.get("generation","")
+                expected={"generation","ifGenerationMatch"}|({"alt"}if"alt"in values else set())
+                canonical=({"alt":"media"}if"alt"in values else {})
+                canonical.update({"generation":generation,"ifGenerationMatch":generation})
+                if (len(query)!=len(expected) or set(values)!=expected or ("alt"in values and values["alt"]!="media")
+                    or re.fullmatch(r"[1-9][0-9]{0,39}",generation) is None or split.query!=urlencode(canonical)):return False
+        prefix=ns["prefix"]+"/"
+        if not name.startswith(prefix):return False
+        key=name[len(prefix):]
+        cas=re.fullmatch(r"objects/([0-9a-f]{64})\.z",key)
+        if cas:
+            return method!="POST" or event.get("request_body_sha256")==cas[1]
+        metadata=re.fullmatch(r"([0-9a-f]{64})/(manifest|seal|scientific-gate|index)\.json",key)
+        return metadata is not None and metadata[1] in ns["generations"]
 
     def _attempt_cost(self, event):
         with localcontext() as context:
@@ -568,7 +668,7 @@ class Meter:
         raw, _ = _read_file(self.root / "binding.json", private=True)
         require(raw == _encoded(self._binding()), "immutable accounting binding differs")
         require(set(os.listdir(root)) == {"lock", "binding.json", "head.json", "tickets", "results"}, "unexpected accounting root entry")
-        head_raw, _ = _read_file(self.root / "head.json", private=True)
+        head_raw, _ = _read_file(self.root / "head.json", maximum=self._head_bound(), private=True)
         head = _json(head_raw)
         require(isinstance(head, dict) and head_raw == _encoded(head)
                 and set(head) == set(self._head()) and head["schema"] == "dams-http-meter-head-v1"
@@ -579,7 +679,8 @@ class Meter:
         events, records, previous, latest = [], [], None, self.created
         with _directory(self.root / "tickets") as directory:
             names = sorted(os.listdir(directory))
-            require(len(names) <= MAX_FILES and names == [f"{n:08d}.json" for n in range(1, len(names) + 1)],
+            request_cap = MAX_REGIONAL_REQUESTS if self.config['schema'] == REGIONAL_CONFIG_SCHEMA else MAX_FILES
+            require(len(names) <= min(request_cap, self.config['limits']['max_archive_requests']) and names == [f"{n:08d}.json" for n in range(1, len(names) + 1)],
                     "ticket sequence gap/unexpected entry")
             for sequence, name in enumerate(names, 1):
                 raw, _ = _read_file(self.root / "tickets" / name, private=True)

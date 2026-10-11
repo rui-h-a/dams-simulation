@@ -16,6 +16,7 @@ from dams_sim.storage import digest,source_hash
 from dams_sim.longitudinal_pipeline import driver_hash
 
 SCHEMA='dams-compute-only-live-lifecycle-v2'
+REGIONAL_SCHEMA='dams-same-region-research-live-lifecycle-v1'
 TERMINAL_STORAGE_VERSION='dams-terminal-accepted-raw-reuse-v2'
 FIELDS={'schema','phase','ledger_path','approval','collector_admission','assignment','minimum_head',
  'head_receipt_dir','ssh_key_file','known_hosts','network_tag','runtime','transfer','ack_generation',
@@ -30,7 +31,13 @@ class Live:
         self.entry=entry;self.c=entry.c;self.s=entry.stage;self.o=options;self.raw=blob(options);self.stack=ExitStack();self.popen=popen
         self.g=g;self.vm=None;self.disk=None;self.remote_context=None;self.runtime=None;self.closed=False;self.collector=None
         try:
-            require(isinstance(options,dict) and set(options)==FIELDS and options['schema']==SCHEMA and options['phase']in PHASES,'live lifecycle exact options')
+            self.regional = options.get('schema') == REGIONAL_SCHEMA if isinstance(options,dict) else False
+            require(isinstance(options,dict) and set(options)==(FIELDS|{'workload_admission','regional_archive','capacity_plan'} if self.regional else FIELDS) and options['schema']in (SCHEMA,REGIONAL_SCHEMA) and options['phase']in (PHASES|{'regional-archive-start','regional-archive-status','regional-layout','regional-enroll','regional-capacity'} if self.regional else PHASES),'live lifecycle exact options')
+            self.workload = None
+            if self.regional:
+                from research_tools.same_region_archive import root_admission
+                self.workload = root_admission(entry.reference(options['workload_admission']), options['workload_admission']['sha256'], project=self.c['project'], region=self.c['region'], source_manifest_sha256=entry.manifest_sha, global_deadline_utc=self.c['global_deadline_utc'])
+                require(entry.options.get('archive_backend_factory') is None, 'regional guest route cannot also authenticate local factory')
             require(self.c.get('paid_actions_authorized')is True,'root original paid authorization required')
             finite(options['max_command_seconds'],3600);finite(options['max_stdout_bytes'],MAX_IO)
             finite(options['overhead_bytes'],MAX_IO);finite(options['max_terminal_files'],8192);finite(options['max_terminal_bytes'],1024**4)
@@ -132,12 +139,20 @@ class Live:
             'remote_helper_sha256':self.entry.options['component_sha256']['research_tools/compute_only_remote.py'],
             'max_source_bytes':p['max_source_bytes'],'max_source_files':p['max_source_files'],'stage_id':self.s['id'],
             'source_sha256':source_hash(),'max_terminal_files':self.o['max_terminal_files'],'max_terminal_bytes':self.o['max_terminal_bytes']}
+        if self.regional:
+            c['regional_workload_admission_sha256']=self.o['workload_admission']['sha256']
+            c['regional_global_deadline_utc']=self.c['global_deadline_utc']
+            if self.o['capacity_plan'] is not None:c['regional_capacity_plan_sha256']=self.o['capacity_plan']['sha256']
+        if self.regional and self.o['regional_archive'] is not None:
+            c['regional_archive_bundle_sha256']=self.o['regional_archive']['sha256']
+            bundle=parse(self.entry.reference(self.o['regional_archive']))
+            c['regional_archive_route_sha256']=bundle['config_sha256']
         if self.runtime is not None:c.update(runtime_sha256=digest(blob(self.runtime)),provider_identity_sha256=digest(blob({'vm':self.vm,'disk':self.disk})))
         return c
     def _load_provider(self):
         p=parse(read(self.events,self.s['id']+'-provider.json')[0]);self.vm=p['vm'];self.disk=p['disk']
         require(p['termination_utc']==self.e['termination_utc'] and p['approval_sha256']==self.o['approval']['sha256'],'retained provider/approval changed')
-        cc.validate_compute_only_instance(self.c,self.s,self.e,self.vm)
+        self._validate_vm(self.vm)
     def load_host_enrollment(self):
         receipt=parse(read(self.events,self.s['id']+'-host-enrollment.json')[0])
         require(receipt['instance_id']==str(self.vm['id']) and receipt['project']==self.c['project']
@@ -186,7 +201,7 @@ class Live:
         self.load_host_enrollment()
     def _fresh_provider(self):
         vm=self.provider_call(['gcloud','compute','instances','describe',self.e['instance_name'],'--project='+self.c['project'],'--zone='+self.vm['zone'].rsplit('/',1)[-1],'--format=json'])
-        require(str(vm['id'])==str(self.vm['id']),'provider instance replaced');cc.validate_compute_only_instance(self.c,self.s,self.e,vm);return vm
+        require(str(vm['id'])==str(self.vm['id']),'provider instance replaced');self._validate_vm(vm);return vm
     def _retain(self,ticket,attempt):
         head=ticket['head'];raw=blob({'head':head,'attempt':attempt})
         self.retained.write_new(f'{head["sequence"]:08d}.json',raw);require(read(self.retained,f'{head["sequence"]:08d}.json')[0]==raw,'durable head retention')
@@ -256,7 +271,9 @@ class Live:
         rules=self.provider_call(['gcloud','compute','firewall-rules','list','--project='+self.c['project'],'--format=json']);seen={}
         desired={('INGRESS','allow'):(['35.235.240.0/20'],[{'IPProtocol':'tcp','ports':['22']}]),('INGRESS','deny'):(['0.0.0.0/0'],[{'IPProtocol':'all'}]),('EGRESS','allow'):(['0.0.0.0/0'],[{'IPProtocol':'tcp','ports':['443']}]),('EGRESS','deny'):(['0.0.0.0/0'],[{'IPProtocol':'all'}])}
         for r in rules:
-            if r.get('network')!=subnet['network']or r.get('disabled')or r.get('targetServiceAccounts'):continue
+            if r.get('network')!=subnet['network']or r.get('disabled'):continue
+            targets=r.get('targetServiceAccounts')
+            if targets and (not self.regional or self.workload['service_account'] not in targets):continue
             if r.get('targetTags')and self.o['network_tag']not in r['targetTags']:continue
             action='allow'if r.get('allowed')else'deny';k=(r.get('direction'),action)
             require(k in desired and k not in seen and (r.get('sourceRanges'if k[0]=='INGRESS'else'destinationRanges',[]),r.get('allowed'if action=='allow'else'denied'))==desired[k],'no-SA applicable firewall differs')
@@ -264,11 +281,16 @@ class Live:
         require(set(seen)==set(desired)and all(seen[(d,'allow')]<seen[(d,'deny')]for d in ('INGRESS','EGRESS')),'no-SA IAP/HTTPS allow+deny missing')
         if self.c['network_mode']=='internal-offline':
             r=self.c.get('image_dependency_receipt',{});require(r.get('image_id')==str(self.c['image_id'])and r.get('offline_prepare_exit')==0 and r.get('uv_lock_sha256')==digest((self.entry.root.path/'uv.lock').read_bytes()),'internal image locked dependencies unavailable')
-        self.event('environment',{'image':image,'subnet':subnet,'no_sa_firewall_verified':True,'science_complete':False})
+        if self.regional:
+            self._regional_IAM_preflight()
+        self.event('environment',{'image':image,'subnet':subnet,'no_sa_firewall_verified':not self.regional,'regional_workload_verified':self.regional,'science_complete':False})
     def launch(self):
         require(self.e['state']=='reserved'and self.e['attempts']==0,'create already attempted; root reconciliation required')
         self.preflight();self.entry.check(full=True)
         argv=cc.create_compute_only_command(self.c,self.s,self.e,self.c['zones'][0],self.entry.root.path/'cloud/compute-only-wait-source.sh',startup_sha256=self.entry.options['component_sha256']['cloud/compute-only-wait-source.sh'])
+        if self.regional:
+            from research_tools.same_region_archive import create_command
+            argv=create_command(self.c,self.s,self.e,self.c['zones'][0],self.entry.root.path/'cloud/compute-only-wait-source.sh',startup_sha256=self.entry.options['component_sha256']['cloud/compute-only-wait-source.sh'],admission=self.workload)
         argv+=['--tags='+self.o['network_tag']]
         for i,arg in enumerate(argv):
             if arg.startswith('--metadata='):argv[i]=arg+',enable-guest-attributes=TRUE'
@@ -277,7 +299,7 @@ class Live:
             self.provider_call(argv);created=True
             vm=self.provider_call(['gcloud','compute','instances','describe',self.e['instance_name'],'--project='+self.c['project'],'--zone='+self.c['zones'][0],'--format=json'])
             require(vm.get('name')==self.e['instance_name']and all(vm.get('labels',{}).get(k)==v for k,v in cc.labels(self.c,self.s).items()),'created VM ownership mismatch')
-            self.vm=vm;cc.validate_compute_only_instance(self.c,self.s,self.e,vm);cc.verify_boot_disk(self.g,self.c,self.s,vm)
+            self.vm=vm;self._validate_vm(vm);cc.verify_boot_disk(self.g,self.c,self.s,vm)
             self.disk=self.provider_call(['gcloud','compute','disks','describe',vm['disks'][0]['source'].rsplit('/',1)[-1],'--project='+self.c['project'],'--zone='+self.c['zones'][0],'--format=json'])
             self.event('provider',{'vm':vm,'disk':self.disk,'termination_utc':self.e['termination_utc'],'approval_sha256':self.o['approval']['sha256']})
             self.ledger.event(self.s['id'],state='running',instance_id=str(vm['id']),boot_disk_id=str(self.disk['id']))
@@ -315,6 +337,58 @@ class Live:
                 try:self.delete()
                 except BaseException:pass # original provider-side absolute DELETE remains, unknown is retained.
             raise
+    def _validate_vm(self,vm):
+        if self.regional:
+            from research_tools.same_region_archive import validate_instance
+            return validate_instance(self.c,self.s,self.e,vm,self.workload)
+        return cc.validate_compute_only_instance(self.c,self.s,self.e,vm)
+    def _regional_IAM_preflight(self):
+        from research_tools.same_region_archive import PERMISSIONS
+        a=self.workload
+        bucket=self.provider_call(['gcloud','storage','buckets','describe','gs://'+a['bucket'],'--format=json'])
+        iam=self.provider_call(['gcloud','storage','buckets','get-iam-policy','gs://'+a['bucket'],'--format=json'])
+        project=self.provider_call(['gcloud','projects','get-iam-policy',a['project'],'--format=json'])
+        role=self.provider_call(['gcloud','iam','roles','describe',a['bucket_role'].rsplit('/',1)[-1],'--project='+a['project'],'--format=json'])
+        require(digest(blob(bucket))==a['bucket_metadata_sha256'] and digest(blob(iam))==a['bucket_iam_sha256'] and digest(blob(project))==a['project_iam_sha256'],'fresh Root IAM/bucket custody differs')
+        require(set(role.get('includedPermissions',[]))==PERMISSIONS and len(role.get('includedPermissions',[]))==len(PERMISSIONS) and role.get('deleted',False) is False,'fresh guest custom role is broader/different')
+        member='serviceAccount:'+a['service_account']
+        grants=[r for r in iam.get('bindings',[]) if member in r.get('members',[])]
+        require(len(grants)==1 and grants[0].get('role')==a['bucket_role'] and 'condition' not in grants[0], 'actual workload bucket bindings differ')
+        require(not any(member in r.get('members',[]) for r in project.get('bindings',[])), 'guest has project roles')
+        require(not any(m in ('allUsers','allAuthenticatedUsers') for policy in (iam,project) for r in policy.get('bindings',[]) for m in r.get('members',[])), 'public archive/project IAM refused')
+        require(str(bucket.get('location',bucket.get('location_type',''))).upper()==a['region'].upper(), 'actual bucket not same region')
+    def regional_layout(self):
+        require(self.regional and self.o['regional_archive'] is None,'layout needs explicit regional mode before config')
+        self.load_runtime();return parse(self.exchange('regional-layout'))
+    def regional_capacity(self):
+        require(self.regional and self.o['capacity_plan'] is not None,'explicit Root joint capacity plan required')
+        self.load_runtime();self._fresh_provider()
+        raw=self.entry.reference(self.o['capacity_plan']);plan=parse(raw);bounds=plan['bounds']
+        require(bounds['scientific_raw_upper_bytes']>=self.runtime['runtime_limits']['batch_max_output_bytes']
+            and bounds['spool_upper_bytes']>=parse(self.entry.reference(self.o['transfer']))['max_spool_bytes']
+            and bounds['collector_cache_upper_bytes']>=parse(self.entry.reference(self.o['transfer']))['max_transfer_bytes']
+            and bounds['local_cas_upper_bytes']>=parse(self.entry.reference(self.o['transfer']))['max_transfer_bytes']
+            and bounds['raw_lease_upper_bytes']>=self.runtime['runtime_limits']['max_output_bytes']
+            and bounds['safety_floor_bytes']>=self.runtime['runtime_limits']['min_free_disk_bytes'], 'capacity plan understates original frozen workspaces')
+        result=parse(self.exchange('regional-capacity',raw))
+        require(result['plan_sha256']==digest(raw) and result['source_manifest_sha256']==self.entry.manifest_sha
+            and result['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk})), 'native capacity readback identity differs')
+        return self.event('capacity-admission',result)
+    def regional_enroll(self):
+        require(self.regional and self.o['regional_archive'] is not None,'explicit Root enrollment required')
+        self.load_runtime();raw=self.entry.reference(self.o['regional_archive'])
+        return parse(self.exchange('regional-enroll',raw))
+    def regional_archive_start(self):
+        require(self.regional and self.o['regional_archive'] is not None,'explicit guest archive required')
+        self.load_runtime(); self._fresh_provider()
+        # Root config ref is an enrollment bundle, exact route bytes are inside.
+        bundle=parse(self.entry.reference(self.o['regional_archive']))
+        request={'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']}
+        return parse(self.exchange('regional-archive-start',blob(request)))
+    def regional_archive_status(self):
+        require(self.regional and self.o['regional_archive'] is not None,'explicit guest archive required')
+        self.load_runtime();bundle=parse(self.entry.reference(self.o['regional_archive']))
+        return parse(self.exchange('regional-archive-status',blob({'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']})))
     def load_runtime(self):
         runtime_raw=self.entry.reference(self.o['runtime']);transfer_raw=self.entry.reference(self.o['transfer'])
         self.runtime=parse(runtime_raw);transfer=parse(transfer_raw)
@@ -345,6 +419,12 @@ class Live:
         verify_identity(r,doctor['measurements']);return transfer
     def activate(self):
         transfer=self.load_runtime();self._fresh_provider();self.entry.check(full=True)
+        if self.regional:
+            require(self.o['capacity_plan'] is not None,'regional activation needs prior joint native capacity admission')
+            receipt=parse(read(self.events,self.s['id']+'-capacity-admission.json')[0])
+            require(receipt['plan_sha256']==self.o['capacity_plan']['sha256']
+                and receipt['source_manifest_sha256']==self.entry.manifest_sha
+                and receipt['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk})), 'original joint capacity gate not passed')
         require(not any(n==self.s['id']+'-activation-BEGIN.json'for n in os.listdir(self.events.fd)),'activation already attempted; no automatic retry')
         heartbeat={'schema':'DAMS-compute-controller-lease-1','runtime_sha256':digest(blob(self.runtime)),'sequence':0,'observed_utc':cc.stamp()}
         self.event('activation-BEGIN',{'runtime_sha256':digest(blob(self.runtime)),'science_complete':False})
@@ -718,7 +798,7 @@ class Live:
         except BaseException:
             self.ledger.event(self.s['id'],state='uncertain',failure='normal closeout refused; preservation unverified, no active delete requested, absolute expiry unchanged',science_verified=False)
             raise
-    def run(self):return getattr(self,self.o['phase'])()
+    def run(self):return getattr(self,self.o['phase'].replace('-','_'))()
     def close(self):
         if not self.closed:self.closed=True;self.stack.close()
     def __enter__(self):return self

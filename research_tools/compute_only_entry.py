@@ -84,7 +84,8 @@ class Entry:
             require(self.prepare_deadline <= self.termination <= cloud_control.utc(c['global_deadline_utc'])
                     and (self.allow_expired or datetime.now(timezone.utc) < (self.termination if phase=='lifecycle' else self.prepare_deadline)), 'entry fixed deadline expired or extends the original deadline')
             require(self.prepare_deadline.utcoffset().total_seconds() == 0, 'entry prepare deadline must be UTC')
-            components = self.components = COMPONENTS | (ARCHIVE_COMPONENTS if factory_fields else set()) | ({'research_tools/small_enterprise.py','research_tools/small_enterprise_cloud.py'} if self.stage['spec']=='small-enterprise-5y' else set())
+            regional_components = {'research_tools/same_region_archive.py',*ARCHIVE_COMPONENTS} if phase=='lifecycle' and parse(self.reference(value['lifecycle'])).get('schema')=='dams-same-region-research-live-lifecycle-v1' else set()
+            components = self.components = regional_components | COMPONENTS | (ARCHIVE_COMPONENTS if factory_fields else set()) | ({'research_tools/small_enterprise.py','research_tools/small_enterprise_cloud.py'} if self.stage['spec']=='small-enterprise-5y' else set())
             pins = value['component_sha256']; require(isinstance(pins, dict) and set(pins) == components, 'entry component pins incomplete')
             for name, sha in pins.items():
                 require(isinstance(sha, str) and re.fullmatch('[0-9a-f]{64}', sha), 'component SHA type differs')
