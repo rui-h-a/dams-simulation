@@ -1,13 +1,16 @@
 """One source-bound operational arm of the unchanged small-enterprise study.
 
 Only the existing Scheduler executes cases. The fixed confirmation roster remains
-66 worlds; this operation declares both arms of uncompleted world 52008.
-A single invocation executes one exact arm and cannot complete a pair or study.
-This does not complete a pair, redefine the study, or authorize paid resources.
+66 worlds; a pinned status snapshot selects an unstarted frozen-roster arm.
+A versioned envelope can execute both exact arms sequentially in the same VM.
+Only two complete original raw gates certify a pair; neither mode completes a study.
+Neither mode redefines the study or authorizes paid resources.
 """
 from __future__ import annotations
 import argparse
-from contextlib import ExitStack
+from contextlib import ExitStack, contextmanager
+from datetime import datetime
+import re
 import hashlib
 import json
 import os
@@ -23,12 +26,17 @@ from dams_sim.scheduler import Scheduler
 from dams_sim._committed_pages import Directory
 from research_tools import small_enterprise as study
 
-SCHEMA = 'DAMS-small-enterprise-cloud-confirmation-arm-1'
+SCHEMA = 'DAMS-small-enterprise-cloud-confirmation-arm-2'
+PAIR_SCHEMA = 'DAMS-small-enterprise-cloud-confirmation-pair-1'
+PAIR_FIELDS = {'schema','source_sha256','pipeline_driver_sha256','study_sha256',
+               'pilot_inventory_sha256','population','days','seed','selected_world',
+               'status_snapshot_sha256','arm_profiles'}
 FIELDS = {'schema','source_sha256','pipeline_driver_sha256','study_entry_sha256',
           'study_sha256','pilot_inventory_sha256','population','days','seed',
           'selected_world','selected_arm','selected_case_id','selected_config_sha256',
           'selected_phase','confirmation_roster_sha256',
-          'confirmation_study_sha256','confirmation_world_count','confirmation_world_ids'}
+          'confirmation_study_sha256','confirmation_world_count','confirmation_world_ids',
+          'status_snapshot','status_snapshot_sha256'}
 CORE = study.CORE
 DRIVER = study.DRIVER
 STUDY_IMPORT_SHA = '2732dc6ff3d73e9848c022522e02a744ca0e77b775d472227585e8229784494a'
@@ -40,7 +48,6 @@ SHA_ENV = 'DAMS_SMALL_ENTERPRISE_CLOUD_PROFILE_SHA256'
 CONFIRMATION_ROSTER_RAW = b'{"pilot_worlds_excluded":true,"requests":[{"endpoint":"work_per_present_member_workday","requested_worlds":16},{"endpoint":"decision_regret_per_decision","requested_worlds":16},{"endpoint":"net_resource_gain_per_present_member_workday","requested_worlds":16},{"endpoint":"closed_by_common_end","requested_worlds":66}],"status":"frozen","study_sha256":"bfcb565b0fd9c21ea3aa3a8a1fe8914b11246b422c4b0bc9bbac9332a4346f9a","world_count":66,"world_ids":[52000,52001,52002,52003,52004,52005,52006,52007,52008,52009,52010,52011,52012,52013,52014,52015,52016,52017,52018,52019,52020,52021,52022,52023,52024,52025,52026,52027,52028,52029,52030,52031,52032,52033,52034,52035,52036,52037,52038,52039,52040,52041,52042,52043,52044,52045,52046,52047,52048,52049,52050,52051,52052,52053,52054,52055,52056,52057,52058,52059,52060,52061,52062,52063,52064,52065]}\n'
 CONFIRMATION_ROSTER_SHA = '4a20d2f1d9f2bea4ea1f8bed3982773252c9deae12609ac5a428901d812c79f2'
 CONFIRMATION_STUDY_SHA = 'bfcb565b0fd9c21ea3aa3a8a1fe8914b11246b422c4b0bc9bbac9332a4346f9a'
-SELECTED_CONFIRMATION_WORLD = 52008
 SELECTED_ARMS = ('startup-existing', 'startup-founding')
 # These values affect Config/case identity and remain the original N300 values.
 FROZEN_CASE_LIMITS = {'max_events': 2000000, 'world_timeout_seconds': 86400.0,
@@ -49,7 +56,9 @@ FROZEN_CASE_LIMITS = {'max_events': 2000000, 'world_timeout_seconds': 86400.0,
 def require(ok, message):
     if not ok: raise ValueError(message)
 
-def plan(limits):
+def plan(limits, *, world):
+    require(type(world) is int and world in range(52000, 52066),
+            'selected world is not in the frozen independent confirmation roster')
     limits = limits if isinstance(limits,RuntimeLimits) else RuntimeLimits.from_dict(limits)
     require(limits.journal_chunk_bytes == 1048576 and limits.per_world_rss_bytes is not None,
             'original small-study lossless journal/RSS contract missing')
@@ -70,27 +79,86 @@ def plan(limits):
             and type(roster['world_count']) is int and roster['world_count'] == 66
             and roster['world_ids'] == list(range(52000,52066))
             and roster['study_sha256'] == CONFIRMATION_STUDY_SHA
-            and SELECTED_CONFIRMATION_WORLD in roster['world_ids'],
+            and world in roster['world_ids'],
             'existing independent confirmation roster changed')
     rows = [{k:r[k] for k in ('case_id','config','tags')}
-            for r in study.rows(300,SELECTED_CONFIRMATION_WORLD,limits)]
+            for r in study.rows(300,world,limits)]
     require(len(rows)==2 and len({r['case_id'] for r in rows})==2
             and [r['tags']['arm_id'] for r in rows] == list(SELECTED_ARMS)
-            and all(r['config']['world'] == SELECTED_CONFIRMATION_WORLD
+            and all(r['config']['world'] == world
                     and r['config']['days'] == 1917 and r['config']['n'] == 300
                     and r['config']['seed'] == declaration['seed'] for r in rows),
             'exact uncompleted confirmation pair inventory differs')
     return limits, declaration, rows
 
 
-def build_profile(limits, *, world, arm):
-    require(type(world) is int and world == SELECTED_CONFIRMATION_WORLD
+SNAPSHOT_SCHEMA = 'DAMS-small-enterprise-confirmation-status-1'
+SNAPSHOT_FIELDS = {'schema', 'source_sha256', 'pipeline_driver_sha256',
+                   'study_sha256', 'confirmation_roster_sha256', 'population',
+                   'observed_utc', 'cases'}
+STATUS_FIELDS = {'case_id', 'config_sha256', 'world', 'arm', 'state'}
+STATES = {'UNSTARTED', 'COMPLETE', 'PARTIAL', 'UNKNOWN', 'RUNNING', 'FAILED'}
+
+
+def validate_status_snapshot(snapshot, expected_sha, limits):
+    """Conservative selection evidence, not a raw-result acceptance certificate.
+
+    Root seals the current census and prevents cross-host double dispatch. This
+    helper cannot turn an unknown, partial or completed case into a fresh one.
+    The digest travels with the body; a guest needs no host-private path.
+    """
+    require(isinstance(snapshot, dict) and set(snapshot) == SNAPSHOT_FIELDS
+            and snapshot['schema'] == SNAPSHOT_SCHEMA, 'unsupported status snapshot')
+    require(isinstance(expected_sha, str) and len(expected_sha) == 64
+            and all(c in '0123456789abcdef' for c in expected_sha), 'invalid status snapshot SHA')
+    raw = canonical(snapshot) + b'\n'
+    require(len(raw) <= 65536 and digest(raw) == expected_sha, 'status snapshot body pin differs')
+    require(snapshot['source_sha256'] == CORE and snapshot['pipeline_driver_sha256'] == DRIVER
+            and snapshot['study_sha256'] == CONFIRMATION_STUDY_SHA
+            and snapshot['confirmation_roster_sha256'] == CONFIRMATION_ROSTER_SHA
+            and type(snapshot['population']) is int and snapshot['population'] == 300,
+            'status snapshot is not this frozen N300 study')
+    observed = snapshot['observed_utc']
+    require(isinstance(observed, str) and re.fullmatch(
+            r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?Z', observed),
+            'snapshot UTC observation missing')
+    try:
+        instant = datetime.fromisoformat(observed[:-1] + '+00:00')
+    except (ValueError, TypeError) as error:
+        raise ValueError('invalid snapshot UTC observation') from error
+    require(instant.utcoffset().total_seconds() == 0, 'snapshot observation is not UTC')
+    require(isinstance(snapshot['cases'], list) and len(snapshot['cases']) == 132,
+            'status snapshot must name every frozen confirmation arm')
+    expected = {}
+    for world in range(52000, 52066):
+        _, _, rows = plan(limits, world=world)
+        for row in rows:
+            expected[row['case_id']] = (world, row['tags']['arm_id'], digest(canonical(row['config'])))
+    seen = {}
+    for item in snapshot['cases']:
+        require(isinstance(item, dict) and set(item) == STATUS_FIELDS, 'invalid status row shape')
+        case_id = item['case_id']
+        require(isinstance(case_id, str) and case_id in expected and case_id not in seen,
+                'missing, duplicate or foreign snapshot case')
+        require(type(item['world']) is int and (item['world'], item['arm'], item['config_sha256'])
+                == expected[case_id], 'status row changes frozen world/arm/config')
+        require(isinstance(item['state'], str) and item['state'] in STATES, 'unknown snapshot state')
+        seen[case_id] = item
+    require(set(seen) == set(expected), 'status snapshot roster coverage differs')
+    return seen
+
+
+def build_profile(limits, *, world, arm, status_snapshot, status_snapshot_sha256):
+    require(type(world) is int and world in range(52000, 52066)
             and isinstance(arm,str) and arm in SELECTED_ARMS,
-            'only uncompleted confirmation world52008 exact arms are selectable')
-    _, declaration, rows = plan(limits)
+            'only frozen confirmation worlds and exact arms are selectable')
+    _, declaration, rows = plan(limits, world=world)
+    statuses = validate_status_snapshot(status_snapshot, status_snapshot_sha256, limits)
     selected = [r for r in rows if r['tags']['world']==world and r['tags']['arm_id']==arm]
     require(len(selected)==1,'selected existing confirmation arm unavailable')
     row=selected[0]
+    require(statuses[row['case_id']]['state'] == 'UNSTARTED',
+            'selected case is not explicitly unstarted; preserve original case/resume authority')
     return {'schema':SCHEMA,'source_sha256':CORE,'pipeline_driver_sha256':DRIVER,
             'study_entry_sha256':STUDY_IMPORT_SHA,'study_sha256':digest(canonical(declaration)),
             # Retained wire field: digest of THIS exact assigned two-arm inventory.
@@ -99,23 +167,63 @@ def build_profile(limits, *, world, arm):
             'selected_case_id':row['case_id'],'selected_config_sha256':digest(canonical(row['config'])),
             'selected_phase':'confirmation','confirmation_roster_sha256':CONFIRMATION_ROSTER_SHA,
             'confirmation_study_sha256':CONFIRMATION_STUDY_SHA,
-            'confirmation_world_count':66,'confirmation_world_ids':list(range(52000,52066))}
+            'confirmation_world_count':66,'confirmation_world_ids':list(range(52000,52066)),
+            'status_snapshot':status_snapshot,'status_snapshot_sha256':status_snapshot_sha256}
+
+
+def build_pair_profile(limits, *, world, status_snapshot, status_snapshot_sha256):
+    """Two unchanged arms, not a new calendar, sample or scientific model."""
+    arms = [build_profile(limits, world=world, arm=arm, status_snapshot=status_snapshot,
+                          status_snapshot_sha256=status_snapshot_sha256) for arm in SELECTED_ARMS]
+    rt = limits if isinstance(limits, RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    require(rt.max_output_bytes == study.CAPS[300] and rt.batch_max_output_bytes >= 2*study.CAPS[300]
+            and rt.min_free_disk_bytes >= 80*1024**3,
+            'pair needs two original 16GiB cases and retained 80GiB safety floor')
+    keys = ('source_sha256','pipeline_driver_sha256','study_sha256','pilot_inventory_sha256',
+            'population','days','seed','selected_world','status_snapshot_sha256')
+    require(all(arms[0][key] == arms[1][key] for key in keys), 'pair arm common identity differs')
+    profile = {'schema':PAIR_SCHEMA, **{key:arms[0][key] for key in keys}, 'arm_profiles':arms}
+    require(len(canonical(profile)) <= 65536, 'paired profile exceeds original bounded wire allowance')
+    return profile
+
+
+def validate_pair_profile(profile, limits):
+    require(isinstance(profile,dict) and set(profile)==PAIR_FIELDS and profile['schema']==PAIR_SCHEMA,
+            'unsupported small-enterprise paired profile')
+    arms = profile['arm_profiles']
+    require(isinstance(arms,list) and len(arms)==2, 'paired profile requires two original arms')
+    for arm in arms:
+        require(isinstance(arm,dict) and arm.get('schema')==SCHEMA,
+                'pair child must be the retained single-arm schema')
+        validate_profile(arm,limits)
+    require([arm['selected_arm'] for arm in arms] == list(SELECTED_ARMS),
+            'pair arm order or literal strategies differ')
+    expected = build_pair_profile(limits,world=profile['selected_world'],
+                                  status_snapshot=arms[0]['status_snapshot'],
+                                  status_snapshot_sha256=profile['status_snapshot_sha256'])
+    require(canonical(profile)==canonical(expected),
+            'pair world/source/snapshot/calendar/config identity differs')
+    return profile
 
 
 def validate_profile(profile, limits):
+    if isinstance(profile,dict) and profile.get('schema')==PAIR_SCHEMA:
+        return validate_pair_profile(profile,limits)
     require(isinstance(profile,dict) and set(profile)==FIELDS and profile['schema']==SCHEMA,
             'unsupported small-enterprise cloud profile')
     require(source_hash()==CORE and driver_hash()==DRIVER
             and file_digest(Path(study.__file__))==STUDY_IMPORT_SHA,'executing f9 science/study entry differs')
     require(type(profile['selected_world']) is int and type(profile['population']) is int
             and type(profile['days']) is int and type(profile['seed']) is int,'profile numeric types differ')
-    expected=build_profile(limits,world=profile['selected_world'],arm=profile['selected_arm'])
+    expected=build_profile(limits,world=profile['selected_world'],arm=profile['selected_arm'],
+                           status_snapshot=profile['status_snapshot'],
+                           status_snapshot_sha256=profile['status_snapshot_sha256'])
     require(canonical(profile)==canonical(expected),'source/study/full calendar/seed/literal arm/config pin differs')
     return profile
 
 def assignment(profile, limits):
     validate_profile(profile,limits)
-    _, declaration, rows=plan(limits)
+    _, declaration, rows=plan(limits, world=profile['selected_world'])
     return {'schema':'dams-compute-only-assignment-v1','source_sha256':CORE,
             'pipeline_driver_sha256':DRIVER,'spec_sha256':profile['study_sha256'],
             'spec':declaration,'inventory_sha256':profile['pilot_inventory_sha256'],'cases':rows}
@@ -134,7 +242,8 @@ def _profile(path, expected_sha):
 
 class _OperationOutputs:
     """FD-relative operational JSON; scientific Scheduler remains unchanged."""
-    def __init__(self, output):
+    def __init__(self, output, *, pair_mode=False):
+        require(type(pair_mode) is bool, 'invalid operational output mode')
         self.stack = ExitStack(); self.observed = {}; self.directories = []
         try:
             path = Path(output).absolute()
@@ -147,7 +256,8 @@ class _OperationOutputs:
             for name in reversed(missing): root = self._child(root, name)
             self.root = root
             self.stage = self._child(root, 'confirmation-operation')
-            for directory,names in ((root,('small-operation.json','single-arm-result.json')),
+            for directory,names in ((root,('paired-operation.json','pair-result.json') if pair_mode
+                                    else ('small-operation.json','single-arm-result.json')),
                                     (self.stage,('case_inventory.json','manifest.json','case_census.json'))):
                 for name in names:
                     raw=self.read(directory,name)
@@ -247,8 +357,109 @@ class _OperationOutputs:
                                'operation JSON changed at close')
 
 
+@contextmanager
+def _case_writer(profile):
+    """Single-host/UID case lock; Root still owns cross-VM dispatch uniqueness."""
+    import fcntl
+    # Fixed POSIX namespace, independent of a worker's TMPDIR/cache routing.
+    parent = Path('/tmp').resolve()
+    path = parent / ('dams-small-enterprise-writers-' + str(os.getuid()))
+    try:
+        path.mkdir(mode=0o700)
+    except FileExistsError:
+        pass
+    info = path.lstat()
+    require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid()
+            and stat.S_IMODE(info.st_mode) == 0o700, 'unsafe case writer directory')
+    with ExitStack() as stack:
+        directory = Directory(path)
+        stack.callback(directory.close)
+        require((info.st_dev, info.st_ino) == (os.fstat(directory.fd).st_dev, os.fstat(directory.fd).st_ino),
+                'case writer directory identity changed')
+        name = CORE + '-' + profile['selected_case_id'] + '.lock'
+        fd = directory.open(name, os.O_RDWR | os.O_CREAT | os.O_NONBLOCK)
+        owner = stack.enter_context(os.fdopen(fd, 'a+b'))
+        opened = os.fstat(owner.fileno())
+        require(stat.S_ISREG(opened.st_mode) and opened.st_nlink == 1
+                and opened.st_uid == os.getuid(), 'unsafe case writer lock')
+        fcntl.flock(owner, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        directory.matches(name, owner.fileno())
+        directory.check()
+        yield
+        directory.matches(name, owner.fileno())
+        directory.check()
+
 def execute(profile, limits, output):
-    validate_profile(profile,limits);limits,declaration,rows=plan(limits)
+    validate_profile(profile, limits)
+    if profile['schema']==PAIR_SCHEMA:
+        with ExitStack() as stack:
+            for arm in profile['arm_profiles']:
+                stack.enter_context(_case_writer(arm))
+            return _execute_pair_owned(profile,limits,output)
+    with _case_writer(profile):
+        return _execute_owned(profile, limits, output)
+
+def _execute_pair_owned(profile, limits, output):
+    """Retain each child's evidence; failed second arm can never certify a pair."""
+    output = Path(output).absolute()
+    outputs = _OperationOutputs(output,pair_mode=True)
+    import fcntl
+    try:
+        fd = outputs.root.open('.small-operation.lock',os.O_RDWR|os.O_CREAT)
+        with os.fdopen(fd,'a+b') as owner:
+            require(os.fstat(owner.fileno()).st_nlink==1, 'unsafe pair operation lock')
+            fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            require(not outputs.observed, 'paired operation already has state; preserve original resume/verification path')
+            children = []
+            for arm in profile['arm_profiles']:
+                path = output/arm['selected_arm']
+                require(not os.path.lexists(path), 'paired child already has state; preserve existing arm evidence')
+                children.append(outputs._child(outputs.root,arm['selected_arm']))
+            intended = {'schema':'DAMS-small-enterprise-paired-operation-1',
+                        'profile':profile,'full_confirmation_pair_assignment':assignment(profile,limits),
+                        'child_outputs':list(SELECTED_ARMS),'paired_world_complete':False,
+                        'completed_arm_receipts':[]}
+            outputs.write(outputs.root,'paired-operation.json',intended)
+            accepted = []
+            for arm, child in zip(profile['arm_profiles'],children):
+                outputs.check()
+                # Same original Scheduler/raw gate as single-arm execution. UID
+                # locks for BOTH original cases are already held by execute().
+                _execute_owned(arm,limits,child.path)
+                outputs.check()
+                observed = _OperationOutputs(child.path)
+                try:
+                    raw = observed.read(observed.root,'single-arm-result.json')
+                    require(raw is not None, 'completed arm raw-gate receipt missing')
+                    from research_tools.compute_only_control import parse
+                    result = parse(raw)
+                    require(result.get('status')=='COMPLETE_INDIVIDUAL_FULL_RAW_VERIFIED'
+                            and result.get('case_id')==arm['selected_case_id']
+                            and canonical(result.get('profile'))==canonical(arm)
+                            and result.get('paired_world_complete') is False
+                            and result.get('full_study_complete') is False,
+                            'completed arm raw-gate receipt differs')
+                    accepted.append({'arm':arm['selected_arm'],'case_id':arm['selected_case_id'],
+                                     'relative_output':arm['selected_arm'],
+                                     'single_arm_result_sha256':digest(raw),
+                                     'manifest_sha256':result['manifest_sha256']})
+                finally:
+                    observed.close()
+                intended['completed_arm_receipts']=list(accepted)
+                outputs.write(outputs.root,'paired-operation.json',intended)
+            validate_pair_profile(profile,limits)
+            outputs.write(outputs.root,'pair-result.json',
+                          {'status':'COMPLETE_PAIRED_WORLD_FULL_RAW_VERIFIED',
+                           'profile_sha256':digest(canonical(profile)),
+                           'world':profile['selected_world'],'arms':accepted,
+                           'paired_world_complete':True,'independent_confirmation_worlds':1,
+                           'full_study_complete':False,'empirical_validation':False})
+    finally:
+        outputs.close()
+
+
+def _execute_owned(profile, limits, output):
+    validate_profile(profile,limits);limits,declaration,rows=plan(limits, world=profile['selected_world'])
     output=Path(output).absolute()
     outputs=_OperationOutputs(output)
     import fcntl
@@ -257,6 +468,11 @@ def execute(profile, limits, output):
       with os.fdopen(lock_fd,'a+b') as owner:
         require(stat.S_ISREG(os.fstat(owner.fileno()).st_mode) and os.fstat(owner.fileno()).st_nlink==1,'operation lock is not owned regular bytes')
         fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        case_path = output/'cases'/profile['selected_case_id']
+        require(not os.path.lexists(case_path),
+                'selected case already has local state; preserve original resume/verification path')
+        require(outputs.read(outputs.root,'single-arm-result.json') is None,
+                'accepted single-arm result exists; completed case cannot be regenerated')
         intended={'profile':profile,'full_confirmation_pair_assignment':assignment(profile,limits)}
         raw=outputs.read(outputs.root,'small-operation.json')
         if raw is not None:
@@ -324,19 +540,32 @@ def main(argv=None):
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--runtime-limits',type=Path,required=True)
     p.add_argument('--plan-only',action='store_true')
+    p.add_argument('--pair',action='store_true')
     p.add_argument('--world',type=int)
     p.add_argument('--arm',choices=SELECTED_ARMS)
+    p.add_argument('--status-snapshot',type=Path)
+    p.add_argument('--status-snapshot-sha256')
     a=p.parse_args(argv)
     if a.plan_only:
-        require(a.world is not None and a.arm is not None,'plan requires exact world and arm')
+        require(a.world is not None and ((a.pair and a.arm is None) or (not a.pair and a.arm is not None)),
+                'plan requires one world and either one exact arm or paired mode')
+        require(a.status_snapshot is not None and a.status_snapshot_sha256 is not None,
+                'planning requires the Root-pinned readonly status snapshot')
         limits=json.loads(a.runtime_limits.read_bytes())
-        profile=build_profile(limits,world=a.world,arm=a.arm)
+        snapshot,_=_profile(a.status_snapshot,a.status_snapshot_sha256)
+        if a.pair:
+            profile=build_pair_profile(limits,world=a.world,status_snapshot=snapshot,
+                                       status_snapshot_sha256=a.status_snapshot_sha256)
+        else:
+            profile=build_profile(limits,world=a.world,arm=a.arm,status_snapshot=snapshot,
+                                  status_snapshot_sha256=a.status_snapshot_sha256)
         validate_profile(profile,limits)
         print(json.dumps({'status':'SOURCE_ONLY_UNISSUED','profile':profile,
               'assignment':assignment(profile,limits),'paired_world_complete':False,
               'full_study_complete':False,'paid_actions_authorized':False}),flush=True)
         return 0
-    require(a.world is None and a.arm is None,'execution selection belongs to sealed runtime profile')
+    require(not a.pair and a.world is None and a.arm is None and a.status_snapshot is None
+            and a.status_snapshot_sha256 is None,'execution selection belongs to sealed runtime profile')
     path=os.environ.get(ENV);pin=os.environ.get(SHA_ENV)
     require(path and pin,'root-enrolled exact single-arm runtime profile required')
     profile,observed=_profile(path,pin)
