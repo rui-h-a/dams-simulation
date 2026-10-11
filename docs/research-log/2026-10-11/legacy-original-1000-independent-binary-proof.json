@@ -1,0 +1,157 @@
+{
+  "bounded_buffer_bytes": 65536,
+  "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+  "chunk_references": 3527,
+  "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+  "controls": [
+    {
+      "name": "valid stream spanning bounded decoded buffers",
+      "status": "PASS"
+    },
+    {
+      "name": "truncated encoded stream",
+      "status": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "name": "wrong encoded SHA",
+      "status": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "name": "wrong raw SHA",
+      "status": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "name": "appended encoded tail with updated outer hash",
+      "status": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "name": "wrong declared decoded length",
+      "status": "REJECTED_AS_REQUIRED"
+    }
+  ],
+  "decoder_function": "verify_complete_archive.decode_stream",
+  "decoder_source_sha256": "99839f8cee28dcd04c2631619e15d1bdd3dcf1aee5a5840afad5f50a32ce4efd",
+  "extracted_encoded_bytes": 0,
+  "files": [
+    {
+      "chunk_references": 878,
+      "file": ".longitudinal-working.sqlite",
+      "raw_bytes": 3681513472,
+      "raw_sha256": "1b50be2c9a59e72ad82c915278cc00f47a9fa7412a5cbccb757f9a7f455288d6",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 4,
+      "file": "checkpoint-day-003690.json",
+      "raw_bytes": 12787884,
+      "raw_sha256": "c824ffaded104786cd155c30abf976c7068a2c1db8b52790a4c6040c32c30f9f",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 875,
+      "file": "checkpoint-day-003690.sqlite",
+      "raw_bytes": 3669495808,
+      "raw_sha256": "83cfbcbe00e71fb73c3bcc684cf87997a96e0c4daa4d3259ac696d39abd6490d",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 4,
+      "file": "checkpoint-day-003743.json",
+      "raw_bytes": 12951108,
+      "raw_sha256": "601b9a4b1f5739429a5f1d21aee475369e4102a7ed71140bb92e5606fca4fdbf",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 878,
+      "file": "checkpoint-day-003743.sqlite",
+      "raw_bytes": 3681513472,
+      "raw_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 1,
+      "file": "checkpoint-index.json",
+      "raw_bytes": 1690,
+      "raw_sha256": "e0c882ae18f8a085bc02589b519fa8a7053a25b0b6a2cc9a0c042db9717a3cfc",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 4,
+      "file": "final_state.json",
+      "raw_bytes": 12951098,
+      "raw_sha256": "095d1bef8b0ba2775b74fa82fb06918bf2bc4c76c4c7b8e7d66a7cec591f65fc",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 878,
+      "file": "final_state.sqlite",
+      "raw_bytes": 3681513472,
+      "raw_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 1,
+      "file": "manifest.json",
+      "raw_bytes": 6851,
+      "raw_sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 1,
+      "file": "report.md",
+      "raw_bytes": 1555,
+      "raw_sha256": "4f4472b0e5b1afd89d7ce4b4dc48188ad4efd8557161945b7d6500a1007bba22",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 1,
+      "file": "report.svg",
+      "raw_bytes": 119869,
+      "raw_sha256": "8b81956b8396f9e27c8e334c2fa4024026ae6204132e3d08fc171e9d5014ed75",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 1,
+      "file": "summary.json",
+      "raw_bytes": 2509,
+      "raw_sha256": "e533692b5946e5622bc76f199427d0c8981c791765e26fbce014c360c4a15805",
+      "status": "PASS"
+    },
+    {
+      "chunk_references": 1,
+      "file": "timeseries.csv",
+      "raw_bytes": 2963434,
+      "raw_sha256": "689723c878cb350b86c871791162feaa3abbd5ed8a108f3c05dbdc9314df4449",
+      "status": "PASS"
+    }
+  ],
+  "formal_worlds_added": 0,
+  "independent_wrapper_source_sha256": "9daf690a2434769fb404cd5bde6f7518838e88727ba97c47df1b93cdb4132517",
+  "index_sha256": "7fc0b152ba55f3b621e6eb0d6a0e24a4b1cbd81f71e55f4af33ed5ad820fd840",
+  "lifecycle_admissions": 0,
+  "materialized_raw_bytes": 0,
+  "max_sampled_owned_process_group_rss_bytes": 22872064,
+  "model_constructions": 0,
+  "network_calls": 0,
+  "normal_tar_eof": true,
+  "original_pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+  "original_scientific_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+  "owned_process_group_absent": true,
+  "peak_rss_bytes": 28442624,
+  "raw_bytes": 14755822222,
+  "raw_files": 13,
+  "retirement_authority": false,
+  "sampled_limits_are_not_os_isolation": true,
+  "schema": "DAMS-independent-legacy-TAR-full13-binary-replay-public-1",
+  "scope": "Complete byte reconstruction and independent SHA-256 replay only. This is not Model restoration, independent scientific or economic transition validation, Lifecycle admission, raw retirement authority, or an additional independent paired world.",
+  "shared_scientific_transition_functions": false,
+  "status": "PASS",
+  "tar_bytes": 1032570880,
+  "tar_members": 1021,
+  "tar_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+  "true_wait_completed": true,
+  "unique_encoded_bytes": 1030388263,
+  "unique_encoded_chunks": 999,
+  "uses_public_cloud_archive_decode_chunk": false,
+  "wall_seconds": 44.9228957919986
+}

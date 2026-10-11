@@ -1,0 +1,361 @@
+{
+  "schema": "DAMS-incremental-research-evidence-r51-1",
+  "snapshot_UTC": "2026-10-11T01:29:06.773006+00:00",
+  "formal_science": {
+    "n30": {
+      "verified_paired_worlds": 70,
+      "pilot_worlds": 4,
+      "confirmation_worlds": 66,
+      "complete_independent_remote_full13_recovery_proofs": 140,
+      "adverse_and_null_results_retained": true,
+      "four_preregistered_precision_targets_met": true,
+      "confirmation_inference_uses_66_not_pilot_70": true
+    },
+    "n120": {
+      "verified_paired_worlds": 63,
+      "pilot_worlds": 4,
+      "confirmation_worlds": 59,
+      "planned_confirmation_worlds": 66,
+      "remaining_confirmation_worlds": 7,
+      "calendar_days_per_case": 1917,
+      "CLI_state": "RUNNING_AT_FINITE_OS_PROCESS_AND_ACCEPTED_CASE_METADATA_SNAPSHOT",
+      "new_completed_worlds_in_readonly_restore_operation": 0,
+      "final_precision_and_statistics_acceptance": "PENDING",
+      "initial_population": 120,
+      "completed_pair_final_population_range": [
+        166,
+        179
+      ],
+      "growth_mode": "Frozen exogenous workforce targets; not an endogenous or organic-growth effect.",
+      "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+      "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+      "case_metadata_and_revalidation_are_not_new_worlds": true,
+      "last_accepted_world": 51058,
+      "world51059_not_counted_without_paired_acceptance": true,
+      "new_paired_worlds_since_R50_public_cut": 2
+    },
+    "original_1000": {
+      "verified_cases": 35,
+      "planned_pilot_cases": 144,
+      "verified_complete_pilot_paired_worlds": 0,
+      "planned_pilot_paired_worlds": 4,
+      "confirmation_worlds": 0,
+      "state": "BLOCKED_CAPACITY_AND_ARCHIVE_CONSUMER_ADMISSION",
+      "concurrent_free_admission_bytes": 153378624512,
+      "prefix_cases": 28,
+      "full_strategy_cases": 7,
+      "remaining_pilot_cases": 109,
+      "counts_carried_forward_not_recomputed_by_this_operation": true
+    },
+    "n300": {
+      "complete_paired_worlds": 0,
+      "state": "PREPARED_ONLY_NOT_FORMAL_EXECUTION"
+    },
+    "larger_scales": {
+      "populations": [
+        10000,
+        100000,
+        1000000,
+        10000000
+      ],
+      "new_verified_complete_five_or_ten_year_paired_worlds": 0,
+      "state": "BLOCKED_FULL_WORKLOAD_AND_RESOURCE_ADMISSION"
+    }
+  },
+  "legacy_original_1000_full13_binary_check": {
+    "proof_file": "legacy-original-1000-full13-binary-proof.json",
+    "proof_sha256": "9155c1b7dc1cdccc5557a3df5d33a5254e2d3180d63a1c5956294e0248fd2b79",
+    "source_file": "research_tools/verify_legacy_transport_archive.py",
+    "source_sha256": "c9f6d493fdecebe3c2bd3c63f25001298980e0393d853bda8a9d7e8123c1737d",
+    "tests_file": "tests/test_verify_legacy_transport_archive.py",
+    "tests_sha256": "fc76a5cd32ffd68fef78ea2b764e13af85cf98d207135ffaadb223521cc43627",
+    "reported_actual_unit_tests_passed": 44,
+    "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+    "initial_population": 1000,
+    "calendar_days": 3743,
+    "frozen_scientific_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "case_config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+    "raw_files": 13,
+    "full_raw_bytes": 14755822222,
+    "TAR_bytes": 1032570880,
+    "TAR_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+    "unique_encoded_chunks": 999,
+    "logical_chunk_references": 3527,
+    "decoder_wall_seconds": 44.95744170798571,
+    "decoder_peak_RSS_bytes": 46301184,
+    "physical_TAR_download_wall_seconds": 232.47860191602376,
+    "actual_existing_asset_GET_attempts": 10,
+    "materialized_raw_bytes": 0,
+    "extracted_encoded_cache_bytes": 0,
+    "independent_decoder_proof_file": "legacy-original-1000-independent-binary-proof.json",
+    "independent_actual_receipt_sha256": "e489b10d49c3f40f8a664eca7ba22c4834c3fe003c97c6ba1e6294406fbec621",
+    "independent_decoder_source_and_controls": {
+      "bounded_buffer_bytes": 65536,
+      "case_id": "481aea08d05467fe9bc6bf254daada574e9b9dfb01a46aa59ac3fb9fc9f64275",
+      "chunk_references": 3527,
+      "config_sha256": "809add85fd2f80e9f9ab1f8b70e23adb18576dd69b725fb18579a4665baef484",
+      "controls": [
+        {
+          "name": "valid stream spanning bounded decoded buffers",
+          "status": "PASS"
+        },
+        {
+          "name": "truncated encoded stream",
+          "status": "REJECTED_AS_REQUIRED"
+        },
+        {
+          "name": "wrong encoded SHA",
+          "status": "REJECTED_AS_REQUIRED"
+        },
+        {
+          "name": "wrong raw SHA",
+          "status": "REJECTED_AS_REQUIRED"
+        },
+        {
+          "name": "appended encoded tail with updated outer hash",
+          "status": "REJECTED_AS_REQUIRED"
+        },
+        {
+          "name": "wrong declared decoded length",
+          "status": "REJECTED_AS_REQUIRED"
+        }
+      ],
+      "decoder_function": "verify_complete_archive.decode_stream",
+      "decoder_source_sha256": "99839f8cee28dcd04c2631619e15d1bdd3dcf1aee5a5840afad5f50a32ce4efd",
+      "extracted_encoded_bytes": 0,
+      "files": [
+        {
+          "chunk_references": 878,
+          "file": ".longitudinal-working.sqlite",
+          "raw_bytes": 3681513472,
+          "raw_sha256": "1b50be2c9a59e72ad82c915278cc00f47a9fa7412a5cbccb757f9a7f455288d6",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 4,
+          "file": "checkpoint-day-003690.json",
+          "raw_bytes": 12787884,
+          "raw_sha256": "c824ffaded104786cd155c30abf976c7068a2c1db8b52790a4c6040c32c30f9f",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 875,
+          "file": "checkpoint-day-003690.sqlite",
+          "raw_bytes": 3669495808,
+          "raw_sha256": "83cfbcbe00e71fb73c3bcc684cf87997a96e0c4daa4d3259ac696d39abd6490d",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 4,
+          "file": "checkpoint-day-003743.json",
+          "raw_bytes": 12951108,
+          "raw_sha256": "601b9a4b1f5739429a5f1d21aee475369e4102a7ed71140bb92e5606fca4fdbf",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 878,
+          "file": "checkpoint-day-003743.sqlite",
+          "raw_bytes": 3681513472,
+          "raw_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 1,
+          "file": "checkpoint-index.json",
+          "raw_bytes": 1690,
+          "raw_sha256": "e0c882ae18f8a085bc02589b519fa8a7053a25b0b6a2cc9a0c042db9717a3cfc",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 4,
+          "file": "final_state.json",
+          "raw_bytes": 12951098,
+          "raw_sha256": "095d1bef8b0ba2775b74fa82fb06918bf2bc4c76c4c7b8e7d66a7cec591f65fc",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 878,
+          "file": "final_state.sqlite",
+          "raw_bytes": 3681513472,
+          "raw_sha256": "7ddeead2926a1779e2c093f63789fd22f76c2c3a1b98e87d5111608098e92b43",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 1,
+          "file": "manifest.json",
+          "raw_bytes": 6851,
+          "raw_sha256": "ba3fd7148fe86630d4acdea1848a1557ecee4cb55c8661c114d8922a34ed92a9",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 1,
+          "file": "report.md",
+          "raw_bytes": 1555,
+          "raw_sha256": "4f4472b0e5b1afd89d7ce4b4dc48188ad4efd8557161945b7d6500a1007bba22",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 1,
+          "file": "report.svg",
+          "raw_bytes": 119869,
+          "raw_sha256": "8b81956b8396f9e27c8e334c2fa4024026ae6204132e3d08fc171e9d5014ed75",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 1,
+          "file": "summary.json",
+          "raw_bytes": 2509,
+          "raw_sha256": "e533692b5946e5622bc76f199427d0c8981c791765e26fbce014c360c4a15805",
+          "status": "PASS"
+        },
+        {
+          "chunk_references": 1,
+          "file": "timeseries.csv",
+          "raw_bytes": 2963434,
+          "raw_sha256": "689723c878cb350b86c871791162feaa3abbd5ed8a108f3c05dbdc9314df4449",
+          "status": "PASS"
+        }
+      ],
+      "formal_worlds_added": 0,
+      "independent_wrapper_source_sha256": "9daf690a2434769fb404cd5bde6f7518838e88727ba97c47df1b93cdb4132517",
+      "index_sha256": "7fc0b152ba55f3b621e6eb0d6a0e24a4b1cbd81f71e55f4af33ed5ad820fd840",
+      "lifecycle_admissions": 0,
+      "materialized_raw_bytes": 0,
+      "max_sampled_owned_process_group_rss_bytes": 22872064,
+      "model_constructions": 0,
+      "network_calls": 0,
+      "normal_tar_eof": true,
+      "original_pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+      "original_scientific_source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+      "owned_process_group_absent": true,
+      "peak_rss_bytes": 28442624,
+      "raw_bytes": 14755822222,
+      "raw_files": 13,
+      "retirement_authority": false,
+      "sampled_limits_are_not_os_isolation": true,
+      "schema": "DAMS-independent-legacy-TAR-full13-binary-replay-public-1",
+      "scope": "Complete byte reconstruction and independent SHA-256 replay only. This is not Model restoration, independent scientific or economic transition validation, Lifecycle admission, raw retirement authority, or an additional independent paired world.",
+      "shared_scientific_transition_functions": false,
+      "status": "PASS",
+      "tar_bytes": 1032570880,
+      "tar_members": 1021,
+      "tar_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+      "true_wait_completed": true,
+      "unique_encoded_bytes": 1030388263,
+      "unique_encoded_chunks": 999,
+      "uses_public_cloud_archive_decode_chunk": false,
+      "wall_seconds": 44.9228957919986
+    },
+    "scientific_restore_or_transition_replay": false,
+    "standard_Lifecycle_registration_or_retirement_admission": false,
+    "new_scientific_worlds": 0,
+    "original_batch_capacity_gate_unchanged": true,
+    "original_full_case_bytes_are_observed_not_large_scale_projection": true,
+    "two_existing_remote_archive_copies_share_provider_fault_domain": true
+  },
+  "cold_storage": {
+    "n30_complete_independent_backup_cases": 140,
+    "prior_distinct_retirement_receipts": 30,
+    "r7_success_receipts_at_snapshot": 25,
+    "total_distinct_retirement_receipts_at_snapshot": 55,
+    "r7_terminal_markers_at_snapshot": {
+      "actual-batch-child-exit.json": false,
+      "actual-batch-failure.json": false,
+      "actual-batch-result.json": false,
+      "root-actual-outer-exit.json": false
+    },
+    "observed_external_free_bytes_at_science_snapshot": 104481869824,
+    "observed_internal_free_bytes_at_science_snapshot": 18390159360,
+    "original_1000_raw_retired_by_this_operation": false,
+    "owned_transport_TAR_cleanup": {
+      "UTC": "2026-10-11T01:32:09.149656+00:00",
+      "status": "ACTUAL_OWNED_REGENERABLE_TAR_ONLY_REMOVED_AFTER_TWO_COMPLETE_BINARY_VERIFIERS_CLOSED",
+      "owned_files_deleted": 1,
+      "owned_logical_bytes_deleted": 1032570880,
+      "owned_allocated_bytes_before_unlink": 1040203776,
+      "original_files_deleted": 0,
+      "remote_objects_deleted": 0,
+      "original_inputs_native_unchanged": true,
+      "original13_raw_native_unchanged": true,
+      "free_bytes_before_unlink": 104288182272,
+      "free_bytes_after_unlink": 105328459776,
+      "free_delta_not_attributed_exclusively_to_concurrent_unlink": true,
+      "verified_TAR_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
+      "fixed_originals_and_two_existing_remote_archives_retained": true,
+      "scientific_samples_added": 0,
+      "original_raw_retirement_authority": false
+    },
+    "capacity_gate_bytes": 153378624512,
+    "no_free_space_gate_relaxed": true,
+    "heavy_internal_cache_disabled_below_24GiB": true
+  },
+  "GCS_and_budget": {
+    "cumulative_budget_USD": 100,
+    "existing_reservation_envelopes_USD": 99.55,
+    "reservations_are_not_supplier_spend": true,
+    "supplier_cost_reconciliation": "Official delayed project-filtered billing report observed; final cumulative supplier invoice reconciliation remains pending.",
+    "new_funding_suballocation_issued": true,
+    "new_compute_VM_created": false,
+    "GCS_use_within_existing_authorization_allowed": true,
+    "original_global_deadline_UTC": "2026-10-15T08:54:46.960873Z",
+    "parent_reservation_USD": "34.00",
+    "new_N120_child_USD": "8.00",
+    "existing_N30_child_USD": "5.50",
+    "children_total_within_parent_USD": "13.50",
+    "remaining_parent_purpose_USD": "20.50",
+    "new_child_does_not_increase_global_99_55_envelopes": true,
+    "supplier_spend_USD": "NOT_YET_FULLY_RECONCILED",
+    "old_unresolved_holds_released": false,
+    "official_JPY_catalog_single_case_quote_ceiling_JPY": 224,
+    "same_catalog_FX_conditional_quote_ceiling_USD": "1.43",
+    "quote_not_bank_FX_or_supplier_invoice": true,
+    "quote_requests_upper_total": 244,
+    "archive_meter_reserved_cost_upper_USD": "1.415271435594313926994800567626953125",
+    "meter_reserved_upper_is_not_supplier_spend": true,
+    "new_paid_object_storage_created": true,
+    "no_new_large_GCP_formal_compute": true,
+    "new_paid_storage_cleanup_complete": false,
+    "cleanup_requires_safe_verified_non_GCP_copy_first": true,
+    "R50_actual_single_case_GCS_proof_is_historical_separate_episode": true,
+    "new_funding_suballocation_issued_this_R51_operation": false,
+    "new_GCP_resources_created_this_R51_operation": false,
+    "current_paid_storage_registered_with_ROOT_cleanup_tracking": true,
+    "current_Master_tracking_SHA256": "a0c8762be1eadd032062cc153ade55ad1a9150e8b42aea2e4bc57ac0a819c4b6"
+  },
+  "paper": {
+    "main_PDF_pages": 83,
+    "main_PDF_bytes": 841202,
+    "main_PDF_sha256": "c99f62877dda4c2875340a43d981401c76e2f1733248aedcb9e7c9fa08b9cd54",
+    "actual_latexmk_build_exit_code": 0,
+    "undefined_or_overflow_or_missing_character_log_hits": 0,
+    "all_pages_newly_rendered": 83,
+    "pages_pixel_identical_to_prior_complete_visual_acceptance": 71,
+    "changed_pages_individually_viewed_again": [
+      4,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77
+    ],
+    "new_blocking_visual_defects": 0,
+    "new_83_pages_individually_viewed_claim": false,
+    "combined_artifact_review_sha256": "7f909ebc251e5ac55b786714a53f2bdb9c7b37110b911da4db5e67243cdcf413",
+    "storage_source_json_sha256": "6e56dd31ad9774ccdd649b51eee4131502f2fc3d006e212d10d23949689e3757",
+    "single_case_GCS_binary_custody_integrated": true,
+    "new_N120_final_statistics_in_paper": false,
+    "final_whole_paper_acceptance": false,
+    "N120_final_statistics_and_new_legacy_binary_profile_not_yet_integrated": true,
+    "existing_83_page_PDF_preserved_without_nonblocking_rebuild": true
+  },
+  "previous_public_R50_cut_preserved": true,
+  "failed_attempts_and_frozen_results_preserved": true,
+  "whole_goal_complete": false
+}

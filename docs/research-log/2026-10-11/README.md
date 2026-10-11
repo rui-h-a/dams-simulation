@@ -1,5 +1,27 @@
 # DAMS research execution evidence — 2026-10-11
 
+## Later paired acceptance — 2026-10-11T01:35:30.404609+00:00
+
+N120 has now reached **64/70** accepted paired worlds: four pilot plus **60/66 confirmation**, with six remaining. World 51059 now has a complete paired acceptance receipt, both accepted case statuses and exact manifest hashes. Both strategies cover 1,917 calendar days; initial population is 120 and final population is 175 in this world. Final precision and statistical acceptance remain pending. [Later finite observation](r51-later-formal-progress.json), [actual paired result](n120-world-51059-paired-result.json), [selected accepted case statuses](n120-world-51059-case-statuses.json). The earlier 01:29 R51 cutoff below is preserved unchanged in its own observation.
+
+## R51 — new formal pairs and a complete legacy archive verifier
+
+At 2026-10-11T01:29:06.773006+00:00, N120 has **63/70** accepted paired worlds: four pilot plus **59/66 confirmation**, with seven confirmation worlds remaining. World 51058 has a paired acceptance receipt and both accepted case statuses. World 51059's two producer manifests report completion, but no paired acceptance exists at this cutoff; it is not counted. The original formal CLI is still active. This adds two independent accepted pairs since the public R50 cutoff; rechecking old worlds and archival verification add no scientific samples. N30 remains 4 pilot plus 66 confirmation pairs, with all four precision targets, adverse/null outcomes and 140/140 full-case off-device recovery proofs retained.
+
+The new read-only [legacy transport verifier](https://github.com/rui-h-a/dams-simulation/blob/main/research_tools/verify_legacy_transport_archive.py) and its [44 passing tests](https://github.com/rui-h-a/dams-simulation/blob/main/tests/test_verify_legacy_transport_archive.py) are included in this publication increment. The actual 3,743-day thousand-person archive passed strict TAR/member EOF, encoded hashes and the full SHA-256 of **all 13 original files / 14,755,822,222 bytes**. Its **1,032,570,880-byte** transport contains 999 unique encoded chunks and 3,527 logical references. Actual decoding took **44.96 seconds**, with **44.16 MiB** peak decoder RSS. No 14.75 GB raw copy or second encoded cache was materialized. A separate stdlib-only decoder has also replayed the complete binary evidence; its exact source, controls, resource and file checks are recorded separately. Neither decoder constructs the Model or validates scientific transitions.
+
+After both verifiers closed, only this operation's owned transport temporary file was removed. Original evidence and the two existing remote archives remain. The two archives share a provider fault domain. R7 has **55** distinct prior-plus-current redundant raw-retirement receipts at the science snapshot; external free space at that earlier snapshot was **97.306 GiB**. Later free space after transport cleanup is reported as a separate volume observation, not as a sum inferred from logical deletions.
+
+The original thousand-person formal study is still **35/144 accepted cases and zero complete pilot paired worlds**. Its unchanged **153,378,624,512-byte** capacity gate and the standard archive-consumer/Lifecycle contract remain unmet. Binary compatibility is now demonstrated for one complete legacy archive; safe production import, scientific restore and raw-retirement authorization are separate pending requirements. N300 and the ten registered larger five-/ten-year batches have no completed formal paired worlds.
+
+GCS is already actually preserving one complete N120 case under the existing storage authorization. No new GCP compute or storage resource was created by this legacy check. Reservation envelopes remain US$99.55 under the cumulative US$100 cap; supplier expenditure is still being reconciled. Current paid storage is tracked for eventual cleanup after verified preservation outside GCP. The **83-page** accepted interim PDF is preserved; final N120 statistics and this new legacy profile await evidence-based integration. This record does not claim final research or paper completion.
+
+[Exact R51 observation](research-observation-r51.json), [full legacy binary proof](legacy-original-1000-full13-binary-proof.json), [independent binary proof](legacy-original-1000-independent-binary-proof.json). Earlier dated observations follow unchanged.
+
+---
+
+# DAMS research execution evidence — 2026-10-11
+
 ## R50 — actual GCS full-case preservation and paper integration
 
 At 2026-10-11T01:00:58.565558+00:00, N120 remains **61/70** complete pairs: 4 pilot plus **57/66 confirmation**, with nine confirmation pairs remaining. The original CLI is active and 60 existing pairs have been fully revalidated in this continuation; these rechecks are not additional independent worlds. N30 retains 4 pilot plus 66 confirmation pairs, all four precision targets and adverse/null results, and **140/140** full-case off-device recovery proofs.

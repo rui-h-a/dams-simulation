@@ -1,0 +1,31 @@
+{
+  "schema": "DAMS-R51-later-paired-acceptance-1",
+  "observed_UTC": "2026-10-11T01:35:30.404609+00:00",
+  "prior_01_29_cut_63_preserved": true,
+  "verified_paired_worlds": 64,
+  "pilot_worlds": 4,
+  "confirmation_worlds": 60,
+  "planned_confirmation_worlds": 66,
+  "remaining_confirmation_worlds": 6,
+  "latest_accepted_world": 51059,
+  "initial_population": 120,
+  "latest_pair_final_population": 175,
+  "observation_years": 5,
+  "calendar_days_with_settlement": 1917,
+  "identity": {
+    "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "spec_sha256": "1c907af385dffbfacc3f438a846aec0040824d09c1c14473586d1547651d351d"
+  },
+  "two_accepted_case_statuses_and_exact_manifest_hashes_checked": true,
+  "prior63_metadata_unchanged": true,
+  "new_full_raw_replay_by_this_readonly_observer": false,
+  "new_accepted_pair_proof_file": "n120-world-51059-paired-result.json",
+  "new_accepted_pair_proof_sha256": "05555b0b0744339c8657cccb37393143c4b06ea20deede526c943c38650d9934",
+  "new_accepted_case_statuses_file": "n120-world-51059-case-statuses.json",
+  "new_accepted_case_statuses_sha256": "89e0546375797f504ce35756274a128ae51b6f16d07364ff43a48075486ce044",
+  "external_free_bytes": 105167441920,
+  "internal_free_bytes": 18307543040,
+  "formal_or_cold_actors_stopped": false,
+  "final_precision_statistics_acceptance": "PENDING"
+}
