@@ -1,0 +1,65 @@
+{
+  "schema": "public-formal-progress-r53-v1",
+  "observed_utc": "2026-10-11T02:47:31.653468+00:00",
+  "N30": {
+    "paired_worlds": 70,
+    "excluded_pilots": 4,
+    "confirmation_worlds": 66,
+    "precision_met": true,
+    "off_device_complete13_recovery_proofs": 140,
+    "adverse_and_zero_results_retained": true
+  },
+  "N120": {
+    "paired_worlds": 70,
+    "excluded_pilots": 4,
+    "confirmation_worlds": 66,
+    "precision_met": true,
+    "normal_reaped_absent_terminal": true,
+    "final_confirmed_populations": [
+      166,
+      179
+    ],
+    "complete_calendar_days": 1917
+  },
+  "N300": {
+    "public_operations_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+    "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+    "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "completed_strategy_cases": 1,
+    "completed_paired_worlds": 0,
+    "first_case_id": "a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17",
+    "first_manifest_sha256": "4b19d718647d4affcedec53207dda14547318bf24861c4df4a0b8a3d9158f8ac",
+    "first_case_status": "complete; raw-validation and worker absence accepted before next wave",
+    "first_regime": "hierarchy",
+    "initial_population": 300,
+    "first_final_population": 436,
+    "complete_calendar_days": 1917,
+    "first_model_wall_seconds": 468.6587008750066,
+    "first_output_bytes": 470204293,
+    "prior_invocation_exit_code": 1,
+    "prior_stop_reason": "unchanged safety-capacity admission for the next strategy refused",
+    "original_first_case_preserved": true,
+    "current_invocation": "RUNNING at this observation; exact same versioned CLI resumed after existing cold lifecycle freed capacity; no completed case restarted",
+    "current_started_utc": "2026-10-11T02:40:33.748831+00:00",
+    "confirmation_worlds": "selected by unchanged four-pilot precision rule; no N300 confirmation roster yet"
+  },
+  "original_N1000": {
+    "validated_cases": 35,
+    "historical_prefixes": 28,
+    "complete_strategy_trajectories": 7,
+    "total_pilot_cases": 144,
+    "complete_pilot_paired_worlds": 0,
+    "confirmation_worlds": 0,
+    "remaining_pilot_cases": 109,
+    "status": "BLOCKED unchanged storage admission"
+  },
+  "N10000_and_above": {
+    "completed_full_five_or_ten_year_worlds": 0,
+    "registered_scale_period_batches": 10,
+    "status": "BLOCKED; registered designs and short engineering probes do not establish formal execution"
+  },
+  "cloud_compute": "No current dedicated research compute VM observed in the finite ROOT resource census at 2026-10-11T02:00:26Z; existing object-storage custody remains separate",
+  "candidate_endogenous_MA_model": "independent candidate; not included in frozen formal samples",
+  "whole_research_complete": false
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "public-storage-adapter-controls-v1",
+  "source_sha256": "fc346e36e48eed404466750ed0d76ccd59da5f004db616eb713d700dbf43d60e",
+  "test_sha256": "e3f4c2081485d30486af9121d006aed792415286892ae7f8f171371280125ead",
+  "actual_control_rounds": 2,
+  "tiny_controls_per_round": 14,
+  "source_stable": true,
+  "receipt_sha256": "ef7acf4affb434472c0c418384857e33028f75312e82c62a6bf3b26e28c05a4a",
+  "independent_review_sha256": "3f1939effffdc8b179e5d291fc145ee8b2488bcdd8e4a35610117781130bd79a",
+  "active_base_transport_and_Lifecycle_not_modified": true,
+  "actual_provider_or_retirement_operations": 0,
+  "status": "TESTED_INDEPENDENTLY_REVIEWED_OPERATIONAL_EXTENSION; formal promotion pending",
+  "new_scientific_worlds": 0
+}

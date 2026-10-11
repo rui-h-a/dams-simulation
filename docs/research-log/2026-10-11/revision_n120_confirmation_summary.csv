@@ -1,0 +1,5 @@
+endpoint,assigned_worlds,defined_pairs,undefined_pairs,mean_effect,sd_effect,standard_error,lower,upper,maximum_error_radius,precision_target,precision_met,family_alpha,primary_tests,unit,negative_worlds,positive_worlds,zero_worlds
+work_per_present_member_workday,66,66,0,-0.010138776694987276,0.009855744458586424,0.0012131582801186993,-0.013742060618341025,-0.006535492771633529,0.003603283923353748,0.01,True,0.05,12,synthetic work units / actual present-member workday,58,8,0
+decision_regret_per_decision,66,66,0,-0.0004339903410788011,0.00034173043401524887,4.206410863595146e-05,-0.0005589278112193828,-0.0003090528709382194,0.00012493747014058167,0.02,True,0.05,12,synthetic regret units / actual decisions,59,7,0
+net_resource_gain_per_present_member_workday,66,66,0,-0.013320358933193664,0.009853670658236823,0.0012129030129416735,-0.016922884670142378,-0.009717833196244948,0.003602525736948716,0.05,True,0.05,12,synthetic resource units / actual present-member workday,59,7,0
+closed_by_common_end,66,66,0,0.0,0.0,0.0,-0.0988147554790653,0.0988147554790653,0.0988147554790653,0.1,True,0.05,12,"probability, world-level indicator",0,0,66

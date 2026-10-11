@@ -1,3 +1,19 @@
+## R53 — N120 completed and independently accepted; N300 exact continuation
+
+Observation: 2026-10-11T02:47:31.653468+00:00. N120 completes all 4 excluded pilot and 66 confirmation pairs. All four prespecified precision targets pass. Work and net resource gain are lower under DAMS; regret is lower; closure difference is zero with a nonzero adjusted interval. These are synthetic/exogenous-model results. The 140 raw strategy cases are not 140 independent worlds.
+
+The updated English paper contains these results, all264 world effects, and clear empirical limitations. Its86pages were actually built and rendered; changed pages were visually examined, unchanged body pixels were matched to accepted editions, and all footer page numbers were checked.
+
+N300 has one fully raw-validated1917-day hierarchy strategy(initial300;final436), zero complete paired worlds. The next producer was refused by the unchanged capacity gate. The existing cold lifecycle subsequently released space, and the exact original versioned CLI was resumed without restarting the completed strategy; it is RUNNING only at this observation.
+
+Original N1000 remains35/144cases, zero complete paired pilot worlds; ten larger scale/period designs remainBLOCKED. No candidate enterprise/M&A model or short engineering test enters the frozen samples.
+
+Evidence: [accepted N120 statistics](n120-final-statistical-acceptance.json), [all264 effects](revision_n120_confirmation_effects.csv), [paper verification](n120-final-paper-verification.json), [current observation](research-observation-r53.json).
+
+The small new storage-facing subclass is offline-tested; it does not itself upload, promote or retire data. Existing source, safety floors, raw evidence, calendar, precision and samples remain fixed.
+
+---
+
 # DAMS research execution evidence — 2026-10-11
 
 ## R52 — later formal acceptance and preservation scope

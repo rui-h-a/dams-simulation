@@ -1,0 +1,265 @@
+effect,endpoint,initial_n,reference_denominator,stage,target_halfwidth,treatment_denominator,unit,world
+-0.015485813066420162,work_per_present_member_workday,120,192794.0,confirmation,0.01,192794.0,synthetic work units / actual present-member workday,51000
+-0.0005421957187225195,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51000
+-0.01866174177789237,net_resource_gain_per_present_member_workday,120,192794.0,confirmation,0.05,192794.0,synthetic resource units / actual present-member workday,51000
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51000
+-0.0230182807214534,work_per_present_member_workday,120,192651.0,confirmation,0.01,192651.0,synthetic work units / actual present-member workday,51001
+-0.001001044340427826,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51001
+-0.02618852120813764,net_resource_gain_per_present_member_workday,120,192651.0,confirmation,0.05,192651.0,synthetic resource units / actual present-member workday,51001
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51001
+-0.019013304190585778,work_per_present_member_workday,120,192828.0,confirmation,0.01,192828.0,synthetic work units / actual present-member workday,51002
+-0.0004874339379386493,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51002
+-0.022163520964084027,net_resource_gain_per_present_member_workday,120,192828.0,confirmation,0.05,192828.0,synthetic resource units / actual present-member workday,51002
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51002
+-0.008609671051906354,work_per_present_member_workday,120,189765.0,confirmation,0.01,189765.0,synthetic work units / actual present-member workday,51003
+-0.0001757789814774216,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51003
+-0.011830760293864762,net_resource_gain_per_present_member_workday,120,189765.0,confirmation,0.05,189765.0,synthetic resource units / actual present-member workday,51003
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51003
+0.009938934993462878,work_per_present_member_workday,120,190852.0,confirmation,0.01,190852.0,synthetic work units / actual present-member workday,51004
+-0.0001292695907771247,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51004
+0.006739073320544908,net_resource_gain_per_present_member_workday,120,190852.0,confirmation,0.05,190852.0,synthetic resource units / actual present-member workday,51004
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51004
+-0.014012739626902526,work_per_present_member_workday,120,192526.0,confirmation,0.01,192526.0,synthetic work units / actual present-member workday,51005
+-0.0004978549976078998,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51005
+-0.017206593963458694,net_resource_gain_per_present_member_workday,120,192526.0,confirmation,0.05,192526.0,synthetic resource units / actual present-member workday,51005
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51005
+-0.013108730599622476,work_per_present_member_workday,120,191435.0,confirmation,0.01,191435.0,synthetic work units / actual present-member workday,51006
+-0.00012484143006443946,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51006
+-0.016298586164174456,net_resource_gain_per_present_member_workday,120,191435.0,confirmation,0.05,191435.0,synthetic resource units / actual present-member workday,51006
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51006
+-0.032280240141427274,work_per_present_member_workday,120,193761.0,confirmation,0.01,193761.0,synthetic work units / actual present-member workday,51007
+-0.0005408079324845504,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51007
+-0.03542638410228527,net_resource_gain_per_present_member_workday,120,193761.0,confirmation,0.05,193761.0,synthetic resource units / actual present-member workday,51007
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51007
+-0.018935624878542834,work_per_present_member_workday,120,192818.0,confirmation,0.01,192818.0,synthetic work units / actual present-member workday,51008
+-0.0007572818619386249,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51008
+-0.02208807952489167,net_resource_gain_per_present_member_workday,120,192818.0,confirmation,0.05,192818.0,synthetic resource units / actual present-member workday,51008
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51008
+-0.009704898270047613,work_per_present_member_workday,120,192662.0,confirmation,0.01,192662.0,synthetic work units / actual present-member workday,51009
+-0.00035868300438263515,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51009
+-0.012882483886308416,net_resource_gain_per_present_member_workday,120,192662.0,confirmation,0.05,192662.0,synthetic resource units / actual present-member workday,51009
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51009
+-0.009527725508750029,work_per_present_member_workday,120,192366.0,confirmation,0.01,192366.0,synthetic work units / actual present-member workday,51010
+-0.0003429142903578052,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51010
+-0.012717478375682933,net_resource_gain_per_present_member_workday,120,192366.0,confirmation,0.05,192366.0,synthetic resource units / actual present-member workday,51010
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51010
+-0.013431953333030489,work_per_present_member_workday,120,192477.0,confirmation,0.01,192477.0,synthetic work units / actual present-member workday,51011
+-0.000593021102769065,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51011
+-0.01661597012464855,net_resource_gain_per_present_member_workday,120,192477.0,confirmation,0.05,192477.0,synthetic resource units / actual present-member workday,51011
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51011
+-0.0058404123028230615,work_per_present_member_workday,120,191754.0,confirmation,0.01,191754.0,synthetic work units / actual present-member workday,51012
+-6.145663781543902e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51012
+-0.009026786511445284,net_resource_gain_per_present_member_workday,120,191754.0,confirmation,0.05,191754.0,synthetic resource units / actual present-member workday,51012
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51012
+-0.015296634412207188,work_per_present_member_workday,120,192362.0,confirmation,0.01,192362.0,synthetic work units / actual present-member workday,51013
+-0.0006503704840328355,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51013
+-0.018467738892302465,net_resource_gain_per_present_member_workday,120,192362.0,confirmation,0.05,192362.0,synthetic resource units / actual present-member workday,51013
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51013
+-0.001004235574314949,work_per_present_member_workday,120,192561.0,confirmation,0.01,192561.0,synthetic work units / actual present-member workday,51014
+-0.0005761275088405678,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51014
+-0.004199326999891562,net_resource_gain_per_present_member_workday,120,192561.0,confirmation,0.05,192561.0,synthetic resource units / actual present-member workday,51014
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51014
+-0.005586686291173093,work_per_present_member_workday,120,192467.0,confirmation,0.01,192467.0,synthetic work units / actual present-member workday,51015
+-0.0004558253861882567,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51015
+-0.008771128299413289,net_resource_gain_per_present_member_workday,120,192467.0,confirmation,0.05,192467.0,synthetic resource units / actual present-member workday,51015
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51015
+-0.011022916638018465,work_per_present_member_workday,120,191420.0,confirmation,0.01,191420.0,synthetic work units / actual present-member workday,51016
+-0.000797576601016866,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51016
+-0.01421589542811319,net_resource_gain_per_present_member_workday,120,191420.0,confirmation,0.05,191420.0,synthetic resource units / actual present-member workday,51016
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51016
+-0.009870561037367498,work_per_present_member_workday,120,192958.0,confirmation,0.01,192958.0,synthetic work units / actual present-member workday,51017
+-0.00018413204910728773,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51017
+-0.013053896270943666,net_resource_gain_per_present_member_workday,120,192958.0,confirmation,0.05,192958.0,synthetic resource units / actual present-member workday,51017
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51017
+-0.027997611887252916,work_per_present_member_workday,120,192194.0,confirmation,0.01,192194.0,synthetic work units / actual present-member workday,51018
+-0.0005170701782496213,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51018
+-0.031206609046372624,net_resource_gain_per_present_member_workday,120,192194.0,confirmation,0.05,192194.0,synthetic resource units / actual present-member workday,51018
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51018
+-0.011377914001990064,work_per_present_member_workday,120,193231.0,confirmation,0.01,193231.0,synthetic work units / actual present-member workday,51019
+-0.0006042048124281461,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51019
+-0.014549765309491258,net_resource_gain_per_present_member_workday,120,193231.0,confirmation,0.05,193231.0,synthetic resource units / actual present-member workday,51019
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51019
+-0.021051177930279552,work_per_present_member_workday,120,190273.0,confirmation,0.01,190273.0,synthetic work units / actual present-member workday,51020
+-0.00042364998174277205,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51020
+-0.02421952025945795,net_resource_gain_per_present_member_workday,120,190273.0,confirmation,0.05,190273.0,synthetic resource units / actual present-member workday,51020
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51020
+0.009646738209900363,work_per_present_member_workday,120,191248.0,confirmation,0.01,191248.0,synthetic work units / actual present-member workday,51021
+-0.0004812453044663618,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51021
+0.006446704745496912,net_resource_gain_per_present_member_workday,120,191248.0,confirmation,0.05,191248.0,synthetic resource units / actual present-member workday,51021
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51021
+-0.015819897886683476,work_per_present_member_workday,120,191800.0,confirmation,0.01,191800.0,synthetic work units / actual present-member workday,51022
+0.00017089889151872782,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51022
+-0.019024798825164835,net_resource_gain_per_present_member_workday,120,191800.0,confirmation,0.05,191800.0,synthetic resource units / actual present-member workday,51022
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51022
+-0.01674443509465906,work_per_present_member_workday,120,193834.0,confirmation,0.01,193834.0,synthetic work units / actual present-member workday,51023
+-0.0006329357084113689,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51023
+-0.01992344393727641,net_resource_gain_per_present_member_workday,120,193834.0,confirmation,0.05,193834.0,synthetic resource units / actual present-member workday,51023
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51023
+-0.015294164208082162,work_per_present_member_workday,120,191709.0,confirmation,0.01,191709.0,synthetic work units / actual present-member workday,51024
+-0.0005298972548151582,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51024
+-0.018462507895649627,net_resource_gain_per_present_member_workday,120,191709.0,confirmation,0.05,191709.0,synthetic resource units / actual present-member workday,51024
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51024
+-0.005336648147781675,work_per_present_member_workday,120,193293.0,confirmation,0.01,193293.0,synthetic work units / actual present-member workday,51025
+-0.000993353246769406,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51025
+-0.008495583029023868,net_resource_gain_per_present_member_workday,120,193293.0,confirmation,0.05,193293.0,synthetic resource units / actual present-member workday,51025
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51025
+-0.02271136017607378,work_per_present_member_workday,120,191215.0,confirmation,0.01,191215.0,synthetic work units / actual present-member workday,51026
+2.076565564121738e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51026
+-0.025910899961133826,net_resource_gain_per_present_member_workday,120,191215.0,confirmation,0.05,191215.0,synthetic resource units / actual present-member workday,51026
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51026
+-0.016217736007828387,work_per_present_member_workday,120,192323.0,confirmation,0.01,192323.0,synthetic work units / actual present-member workday,51027
+-0.0014466904342750608,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51027
+-0.019412881674233495,net_resource_gain_per_present_member_workday,120,192323.0,confirmation,0.05,192323.0,synthetic resource units / actual present-member workday,51027
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51027
+-0.020481102457054146,work_per_present_member_workday,120,193949.0,confirmation,0.01,193949.0,synthetic work units / actual present-member workday,51028
+-0.00048400429152641207,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51028
+-0.023636055563283964,net_resource_gain_per_present_member_workday,120,193949.0,confirmation,0.05,193949.0,synthetic resource units / actual present-member workday,51028
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51028
+-0.0006171176622127295,work_per_present_member_workday,120,191974.0,confirmation,0.01,191974.0,synthetic work units / actual present-member workday,51029
+-0.00045112994476654775,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51029
+-0.003794370831913252,net_resource_gain_per_present_member_workday,120,191974.0,confirmation,0.05,191974.0,synthetic resource units / actual present-member workday,51029
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51029
+-0.02676048386405383,work_per_present_member_workday,120,191238.0,confirmation,0.01,191238.0,synthetic work units / actual present-member workday,51030
+-0.0010700127784062617,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51030
+-0.029908655252582905,net_resource_gain_per_present_member_workday,120,191238.0,confirmation,0.05,191238.0,synthetic resource units / actual present-member workday,51030
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51030
+-0.00485212281927816,work_per_present_member_workday,120,191422.0,confirmation,0.01,191422.0,synthetic work units / actual present-member workday,51031
+-0.0007323311731424892,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51031
+-0.008043762233766572,net_resource_gain_per_present_member_workday,120,191422.0,confirmation,0.05,191422.0,synthetic resource units / actual present-member workday,51031
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51031
+-1.7560016055018224e-05,work_per_present_member_workday,120,190545.0,confirmation,0.01,190545.0,synthetic work units / actual present-member workday,51032
+-0.0007784906384098577,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51032
+-0.0032152298578244087,net_resource_gain_per_present_member_workday,120,190545.0,confirmation,0.05,190545.0,synthetic resource units / actual present-member workday,51032
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51032
+-0.014853589732727768,work_per_present_member_workday,120,192709.0,confirmation,0.01,192709.0,synthetic work units / actual present-member workday,51033
+0.00023402949269773522,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51033
+-0.018044670585205758,net_resource_gain_per_present_member_workday,120,192709.0,confirmation,0.05,192709.0,synthetic resource units / actual present-member workday,51033
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51033
+-0.0030811202316327613,work_per_present_member_workday,120,192700.0,confirmation,0.01,192700.0,synthetic work units / actual present-member workday,51034
+-0.00023577142788985643,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51034
+-0.00624925723215175,net_resource_gain_per_present_member_workday,120,192700.0,confirmation,0.05,192700.0,synthetic resource units / actual present-member workday,51034
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51034
+-0.027463108621405885,work_per_present_member_workday,120,191949.0,confirmation,0.01,191949.0,synthetic work units / actual present-member workday,51035
+-0.00010391928920686078,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51035
+-0.030654841842210567,net_resource_gain_per_present_member_workday,120,191949.0,confirmation,0.05,191949.0,synthetic resource units / actual present-member workday,51035
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51035
+-0.003152635876928711,work_per_present_member_workday,120,192932.0,confirmation,0.01,192932.0,synthetic work units / actual present-member workday,51036
+-0.0009269772765499226,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51036
+-0.006344174864758134,net_resource_gain_per_present_member_workday,120,192932.0,confirmation,0.05,192932.0,synthetic resource units / actual present-member workday,51036
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51036
+0.006905565314148321,work_per_present_member_workday,120,192863.0,confirmation,0.01,192863.0,synthetic work units / actual present-member workday,51037
+0.0003296830655139509,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51037
+0.0037406243975376396,net_resource_gain_per_present_member_workday,120,192863.0,confirmation,0.05,192863.0,synthetic resource units / actual present-member workday,51037
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51037
+0.007819547180739628,work_per_present_member_workday,120,193555.0,confirmation,0.01,193555.0,synthetic work units / actual present-member workday,51038
+-0.0003825565984256745,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51038
+0.004641380768093062,net_resource_gain_per_present_member_workday,120,193555.0,confirmation,0.05,193555.0,synthetic resource units / actual present-member workday,51038
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51038
+-0.018492820864198567,work_per_present_member_workday,120,192523.0,confirmation,0.01,192523.0,synthetic work units / actual present-member workday,51039
+-0.00010095050656265016,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51039
+-0.021669843869239536,net_resource_gain_per_present_member_workday,120,192523.0,confirmation,0.05,192523.0,synthetic resource units / actual present-member workday,51039
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51039
+-0.0010172461266511057,work_per_present_member_workday,120,192278.0,confirmation,0.01,192278.0,synthetic work units / actual present-member workday,51040
+-0.0005315287779827284,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51040
+-0.00419753716358684,net_resource_gain_per_present_member_workday,120,192278.0,confirmation,0.05,192278.0,synthetic resource units / actual present-member workday,51040
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51040
+-0.011708244733176887,work_per_present_member_workday,120,191367.0,confirmation,0.01,191367.0,synthetic work units / actual present-member workday,51041
+-0.00030361057169042346,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51041
+-0.014913342790836781,net_resource_gain_per_present_member_workday,120,191367.0,confirmation,0.05,191367.0,synthetic resource units / actual present-member workday,51041
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51041
+0.009485531971305639,work_per_present_member_workday,120,192964.0,confirmation,0.01,192964.0,synthetic work units / actual present-member workday,51042
+-0.0006201894207166145,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51042
+0.006343235998999774,net_resource_gain_per_present_member_workday,120,192964.0,confirmation,0.05,192964.0,synthetic resource units / actual present-member workday,51042
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51042
+-0.0031278406710670836,work_per_present_member_workday,120,193281.0,confirmation,0.01,193281.0,synthetic work units / actual present-member workday,51043
+-3.2259658537318187e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51043
+-0.0063071495529547494,net_resource_gain_per_present_member_workday,120,193281.0,confirmation,0.05,193281.0,synthetic resource units / actual present-member workday,51043
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51043
+-0.010349474226023503,work_per_present_member_workday,120,191329.0,confirmation,0.01,191329.0,synthetic work units / actual present-member workday,51044
+-0.00025856832534190514,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51044
+-0.013568275348697756,net_resource_gain_per_present_member_workday,120,191329.0,confirmation,0.05,191329.0,synthetic resource units / actual present-member workday,51044
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51044
+-0.007078557397633967,work_per_present_member_workday,120,193304.0,confirmation,0.01,193304.0,synthetic work units / actual present-member workday,51045
+-0.00013289995360521618,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51045
+-0.010248176236354545,net_resource_gain_per_present_member_workday,120,193304.0,confirmation,0.05,193304.0,synthetic resource units / actual present-member workday,51045
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51045
+0.007824559321158553,work_per_present_member_workday,120,193830.0,confirmation,0.01,193830.0,synthetic work units / actual present-member workday,51046
+-0.0007929248819349161,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51046
+0.004684952449158009,net_resource_gain_per_present_member_workday,120,193830.0,confirmation,0.05,193830.0,synthetic resource units / actual present-member workday,51046
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51046
+-0.015508826175815171,work_per_present_member_workday,120,192741.0,confirmation,0.01,192741.0,synthetic work units / actual present-member workday,51047
+-9.844904977755926e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51047
+-0.0186890006067858,net_resource_gain_per_present_member_workday,120,192741.0,confirmation,0.05,192741.0,synthetic resource units / actual present-member workday,51047
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51047
+0.006121485839140739,work_per_present_member_workday,120,192191.0,confirmation,0.01,192191.0,synthetic work units / actual present-member workday,51048
+1.060059695644211e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51048
+0.002927527745368641,net_resource_gain_per_present_member_workday,120,192191.0,confirmation,0.05,192191.0,synthetic resource units / actual present-member workday,51048
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51048
+-0.01211403856473292,work_per_present_member_workday,120,193308.0,confirmation,0.01,193308.0,synthetic work units / actual present-member workday,51049
+-0.0004430422823792756,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51049
+-0.015284367780283636,net_resource_gain_per_present_member_workday,120,193308.0,confirmation,0.05,193308.0,synthetic resource units / actual present-member workday,51049
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51049
+-0.008493831943328312,work_per_present_member_workday,120,191762.0,confirmation,0.01,191762.0,synthetic work units / actual present-member workday,51050
+0.00016641139646858538,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51050
+-0.011668339927185523,net_resource_gain_per_present_member_workday,120,191762.0,confirmation,0.05,191762.0,synthetic resource units / actual present-member workday,51050
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51050
+-0.017533388530570182,work_per_present_member_workday,120,191684.0,confirmation,0.01,191684.0,synthetic work units / actual present-member workday,51051
+-0.00043936107259849935,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51051
+-0.020696928523474933,net_resource_gain_per_present_member_workday,120,191684.0,confirmation,0.05,191684.0,synthetic resource units / actual present-member workday,51051
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51051
+-0.005443555881496032,work_per_present_member_workday,120,193438.0,confirmation,0.01,193438.0,synthetic work units / actual present-member workday,51052
+-0.0004337504547137737,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51052
+-0.008635793187505958,net_resource_gain_per_present_member_workday,120,193438.0,confirmation,0.05,193438.0,synthetic resource units / actual present-member workday,51052
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51052
+-0.006766774330068559,work_per_present_member_workday,120,192675.0,confirmation,0.01,192675.0,synthetic work units / actual present-member workday,51053
+-7.43687911583038e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51053
+-0.009961013333573354,net_resource_gain_per_present_member_workday,120,192675.0,confirmation,0.05,192675.0,synthetic resource units / actual present-member workday,51053
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51053
+-0.003301802338396387,work_per_present_member_workday,120,193294.0,confirmation,0.01,193294.0,synthetic work units / actual present-member workday,51054
+1.2855156467123097e-05,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51054
+-0.006488140248524066,net_resource_gain_per_present_member_workday,120,193294.0,confirmation,0.05,193294.0,synthetic resource units / actual present-member workday,51054
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51054
+-0.009530458151347565,work_per_present_member_workday,120,193332.0,confirmation,0.01,193332.0,synthetic work units / actual present-member workday,51055
+-0.0005428282194303562,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51055
+-0.012709704215115525,net_resource_gain_per_present_member_workday,120,193332.0,confirmation,0.05,193332.0,synthetic resource units / actual present-member workday,51055
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51055
+0.0006713818881887157,work_per_present_member_workday,120,192331.0,confirmation,0.01,192331.0,synthetic work units / actual present-member workday,51056
+-0.0010981303763313577,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51056
+-0.00251973134888428,net_resource_gain_per_present_member_workday,120,192331.0,confirmation,0.05,192331.0,synthetic resource units / actual present-member workday,51056
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51056
+-0.012112210620796038,work_per_present_member_workday,120,190790.0,confirmation,0.01,190790.0,synthetic work units / actual present-member workday,51057
+-0.0002459807809794424,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51057
+-0.01529581563154081,net_resource_gain_per_present_member_workday,120,190790.0,confirmation,0.05,190790.0,synthetic resource units / actual present-member workday,51057
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51057
+-0.02326094765719211,work_per_present_member_workday,120,191379.0,confirmation,0.01,191379.0,synthetic work units / actual present-member workday,51058
+-0.00037622398366553116,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51058
+-0.026443376241312877,net_resource_gain_per_present_member_workday,120,191379.0,confirmation,0.05,191379.0,synthetic resource units / actual present-member workday,51058
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51058
+-0.002692309116868241,work_per_present_member_workday,120,192627.0,confirmation,0.01,192627.0,synthetic work units / actual present-member workday,51059
+-0.00030937179590810257,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51059
+-0.005890718477966406,net_resource_gain_per_present_member_workday,120,192627.0,confirmation,0.05,192627.0,synthetic resource units / actual present-member workday,51059
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51059
+-0.014874221803389931,work_per_present_member_workday,120,193483.0,confirmation,0.01,193483.0,synthetic work units / actual present-member workday,51060
+-0.0003713153549244931,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51060
+-0.018058997726855153,net_resource_gain_per_present_member_workday,120,193483.0,confirmation,0.05,193483.0,synthetic resource units / actual present-member workday,51060
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51060
+-0.0213038148114435,work_per_present_member_workday,120,192874.0,confirmation,0.01,192874.0,synthetic work units / actual present-member workday,51061
+-0.0007078571796457472,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51061
+-0.024464168202776526,net_resource_gain_per_present_member_workday,120,192874.0,confirmation,0.05,192874.0,synthetic resource units / actual present-member workday,51061
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51061
+-0.0001767763506552722,work_per_present_member_workday,120,192359.0,confirmation,0.01,192359.0,synthetic work units / actual present-member workday,51062
+-0.0007015543442061203,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51062
+-0.003379381895495137,net_resource_gain_per_present_member_workday,120,192359.0,confirmation,0.05,192359.0,synthetic resource units / actual present-member workday,51062
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51062
+-0.017783718311833674,work_per_present_member_workday,120,191682.0,confirmation,0.01,191682.0,synthetic work units / actual present-member workday,51063
+-0.0006895270155521313,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51063
+-0.02097963655141699,net_resource_gain_per_present_member_workday,120,191682.0,confirmation,0.05,191682.0,synthetic resource units / actual present-member workday,51063
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51063
+-0.006763859247868931,work_per_present_member_workday,120,192624.0,confirmation,0.01,192624.0,synthetic work units / actual present-member workday,51064
+-0.0007419834174862902,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51064
+-0.009936880262902181,net_resource_gain_per_present_member_workday,120,192624.0,confirmation,0.05,192624.0,synthetic resource units / actual present-member workday,51064
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51064
+-0.018558074466077823,work_per_present_member_workday,120,192032.0,confirmation,0.01,192032.0,synthetic work units / actual present-member workday,51065
+-0.00047107435590430444,decision_regret_per_decision,120,5196.0,confirmation,0.02,5196.0,synthetic regret units / actual decisions,51065
+-0.02174894890367196,net_resource_gain_per_present_member_workday,120,192032.0,confirmation,0.05,192032.0,synthetic resource units / actual present-member workday,51065
+0,closed_by_common_end,120,1,confirmation,0.1,1,"probability, world-level indicator",51065
