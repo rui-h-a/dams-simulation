@@ -1,0 +1,227 @@
+{
+  "backup_correction_retained": {
+    "N120_all_140_current_full13_off_device_proof": false,
+    "N120_closed_cases": 140,
+    "N120_cold_cases": 3,
+    "N120_selected52_local_676_SHA_files_not_whole140_off_device": true,
+    "N30_cases": 140,
+    "N30_cold_cases": 113,
+    "N30_full_case_off_device_restores": 140,
+    "earlier_R75_false_total_retained_as_history_and_explicitly_corrected_in_R76": true
+  },
+  "cloud": {
+    "GCS_actually_in_use": true,
+    "IAM_permissions": [
+      "storage.buckets.get",
+      "storage.objects.create",
+      "storage.objects.get"
+    ],
+    "active_checkpoint_streaming_not_implemented_or_claimed": true,
+    "alternative_N2_catalog": {
+      "architecture_not_returned_by_machine_API": true,
+      "memory_gib": 32,
+      "usable_guest_hardware_must_be_measured": true,
+      "vcpus": 4
+    },
+    "alternative_N2_operational_adapter": "INDEPENDENT_IMPLEMENTATION_IN_PROGRESS_NOT_LAUNCHED",
+    "alternative_N2_quota": {
+      "limit": 200,
+      "metric": "N2_CPUS",
+      "usage": 0
+    },
+    "bounded_original_entry_create_trials": [
+      {
+        "activation_present": false,
+        "actual_command_record_sha256": "34f3a87b0972a20679ef5d63efae6781ae323afaff02a780e0c2d632f9543288",
+        "attempt": 1,
+        "failure": "ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS",
+        "finished_utc": "2026-10-11T19:39:56.991165+00:00",
+        "formal_worlds_added": 0,
+        "machine": "c4d-highmem-4",
+        "original_entry_exit": 2,
+        "provider_reason": "stockout",
+        "purchase": "STANDARD",
+        "wall_seconds": 49.86456370801898,
+        "zone": "us-central1-a"
+      },
+      {
+        "activation_present": false,
+        "actual_command_record_sha256": "2bed62f189f99a4d1cf9a29d3a0333dc0df1248f35342b1dcfc553517d450ae1",
+        "attempt": 2,
+        "failure": "ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS",
+        "finished_utc": "2026-10-11T19:50:45.126491+00:00",
+        "formal_worlds_added": 0,
+        "machine": "c4d-highmem-4",
+        "original_entry_exit": 2,
+        "provider_reason": "stockout",
+        "purchase": "STANDARD",
+        "wall_seconds": 29.92685566598084,
+        "zone": "us-central1-b"
+      },
+      {
+        "activation_present": false,
+        "actual_command_record_sha256": "f77ac752c5fc00cfba0e942255ce4a3b906523ab5b4cb66a468f48ad7248d740",
+        "attempt": 3,
+        "failure": "ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS",
+        "finished_utc": "2026-10-11T19:52:31.810289+00:00",
+        "formal_worlds_added": 0,
+        "machine": "c4d-highmem-4",
+        "original_entry_exit": 2,
+        "provider_reason": "stockout",
+        "purchase": "STANDARD",
+        "wall_seconds": 27.56382725003641,
+        "zone": "us-central1-c"
+      }
+    ],
+    "catalog_and_quota_not_capacity_proof": true,
+    "closed_producer_same_VM_archive_route_code_exists": true,
+    "formal_cloud_pair_complete": false,
+    "fresh_reconciled_VM_count": 0,
+    "fresh_reconciled_disk_count": 0,
+    "new_regional_admission_sha256": "d4bdec6a8b573077c5a78cfdc4ef50950bd4f8b27bb4c7f42863bd64d9ce7a01",
+    "new_same_region_bucket_and_minimal_workload_service_account_actually_created": true,
+    "no_data_only_VM_created": true,
+    "original_120_second_lease_and_global_cutoff_retained": true,
+    "pending_compute_operations": 0,
+    "stockout_not_quota_denial": true,
+    "three_attempt_scope_finished_not_running": true,
+    "workload_project_roles": []
+  },
+  "current_paper_scope": {
+    "conditional_predeclared_resources_and_method_population": 100000,
+    "five_years_are_post_adoption_observation_not_all_cases_1917_days": true,
+    "formal_precision_design_per_new_scale_not_blindly_66": true,
+    "frozen_accepted_prior_science_not_removed": true,
+    "full_model_scale_comparison": 50000,
+    "larger_populations_future_work_not_current_completion_gate": true,
+    "main_population": 10000
+  },
+  "fee_status": {
+    "cleanup_margin_preserved": true,
+    "paid_resource_final_cleanup_not_completed": true,
+    "reservations_are_not_supplier_spend": true,
+    "same_cumulative_US100_authorization": true,
+    "supplier_invoice_not_fully_reconciled": true
+  },
+  "independent_candidate": {
+    "correlated_skill_appointment_tenure_care_time_causal_opt_in": true,
+    "empirically_calibrated": false,
+    "formal_worlds": 0,
+    "full_two_organization_historical_MA_not_completed": true,
+    "r6_30day_eight_person_one_hire_four_acquired_person_case": "ENGINEERING_ONLY",
+    "r6_branch": "research/enterprise-integrated-r6-20261012",
+    "r6_commit": "e46c405f32998659779554d99b220de4e70d17c6",
+    "r6_controls_per_stable_round": 105,
+    "r7_network_task_dependency_and_department_objective_work": "ISOLATED_CANDIDATE_IN_PROGRESS_NOT_SCIENTIFICALLY_FROZEN",
+    "unseen_firm_validated": false
+  },
+  "next_executable_action": "Qualify the predefined Standard N2 operational adapter against actual quota/catalog, fixed scientific profiles, original same-region identity and shared fee parent before one original-entry paid create; no scientific downscaling.",
+  "observed_utc": "2026-10-11T19:59:12.011720+00:00",
+  "operational_public_source": {
+    "branch": "research/small-enterprise-cloud-confirmation-n300-20261012-r1",
+    "commit": "04a33cb521551bb2a5a46a7f56e9e52b4dd4be4e",
+    "current_runtime_manifest_sha256": "92d5c91f91552eef6652f9a0b0cbe595eee7df976f0e21152f53f8879c53b284",
+    "formal_pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "formal_science_core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "historical_source_not_hotpatched": true,
+    "later_Standard_doctor_whitelist_and_N2_disk_interface_defects_being_corrected_in_new_package": true,
+    "source_only_and_offline_controls_not_full_Linux_guest_acceptance": true
+  },
+  "paper": {
+    "PDF_sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "all_86_pages_rendered": true,
+    "build_exit": 0,
+    "negative_and_null_results_retained": true,
+    "new_scope_and_gaps_in_methods_limitations_conclusion": true,
+    "pages": 86,
+    "status": "INTERIM_NOT_FINAL_RESEARCH_DELIVERY",
+    "undefined_overfull_missing_character_health_matches": 0,
+    "visual_acceptance": "85 prior-accepted body pages pixel-identical, changed conclusion page checked at reading size; prior complete edition all pages reviewed"
+  },
+  "revision": "r77",
+  "schema": "DAMS-public-research-observation-1",
+  "scientific_progress": {
+    "N10000": {
+      "complete_long_term_paired_worlds": 0
+    },
+    "N100000": {
+      "complete_long_term_paired_worlds": 0
+    },
+    "N120": {
+      "confirmation_accepted": 66,
+      "final_population_range": [
+        166,
+        179
+      ],
+      "pairs_completed": 70,
+      "pilot_excluded": 4,
+      "planned_confirmation": 66,
+      "precision_checks_passed": 4
+    },
+    "N30": {
+      "confirmation_accepted": 66,
+      "final_population_range": [
+        41,
+        45
+      ],
+      "pairs_completed": 70,
+      "pilot_excluded": 4,
+      "planned_confirmation": 66,
+      "precision_checks_passed": 4
+    },
+    "N300": {
+      "accepted_final_population_range": [
+        430,
+        438
+      ],
+      "confirmation_accepted": 7,
+      "confirmation_remaining": 59,
+      "current_original_producer_running": false,
+      "extra_unpaired_arm_excluded": true,
+      "initial_population": 300,
+      "pairs_completed": 11,
+      "pilot_excluded": 4,
+      "planned_confirmation": 66
+    },
+    "N50000": {
+      "complete_long_term_paired_worlds": 0
+    },
+    "original_N1000": {
+      "accepted_cases": 35,
+      "complete_single_strategy_trajectories": 7,
+      "confirmation_worlds": 0,
+      "historical_or_intermediate_cases": 28,
+      "paired_pilot_worlds": 0,
+      "planned_paired_pilot_worlds": 4,
+      "planned_pilot_cases": 144,
+      "remaining_cases": 109
+    }
+  },
+  "seven_status_boundaries": [
+    "SPECIFIED",
+    "IMPLEMENTED",
+    "ENGINEERING_TESTED",
+    "FORMAL_EXECUTED",
+    "STATISTICALLY_ACCEPTED",
+    "EXTERNALLY_VALIDATED",
+    "PAPER_INTEGRATED"
+  ],
+  "storage_snapshot": {
+    "external": {
+      "available_bytes": 106026762240,
+      "logical_deleted_bytes_are_not_this_measurement": true,
+      "measured_utc": "2026-10-11T19:59:12.011720+00:00"
+    },
+    "internal-cache": {
+      "available_bytes": 19704176640,
+      "logical_deleted_bytes_are_not_this_measurement": true,
+      "measured_utc": "2026-10-11T19:59:12.011720+00:00"
+    },
+    "working": {
+      "available_bytes": 102318260224,
+      "logical_deleted_bytes_are_not_this_measurement": true,
+      "measured_utc": "2026-10-11T19:59:12.011720+00:00"
+    }
+  },
+  "whole_goal_complete": false
+}

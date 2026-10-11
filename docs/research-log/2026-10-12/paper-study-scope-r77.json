@@ -1,0 +1,122 @@
+{
+  "schema": "DAMS-paper-scope-overlay-r77-1",
+  "effective_UTC": "2026-10-11T18:30:53.859036+00:00",
+  "user_revision_sha256": "04e4a0fe1cd17ce2238025fd3bf3976245588328ab937af6c2122f02aad99995",
+  "historical_registry_reference": "docs/research-log/2026-10-10/formal-scale-batches-r38/registry.json",
+  "historical_registry_sha256": "90db78723eb2b3f396c2be487fc3d7863a6681191aa32d150a24ca85768974e1",
+  "historical_registry_unchanged": true,
+  "overlay_is_not_new_scheduler_or_scientific_result": true,
+  "historical_registrations": [
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-5y-n1000-20261010-r1",
+      "initial_population": 1000,
+      "post_adoption_years": 5,
+      "current_paper_role": "CONTINUATION_BASELINE",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-10y-n1000-20261010-r1",
+      "initial_population": 1000,
+      "post_adoption_years": 10,
+      "current_paper_role": "CONTINUATION_BASELINE",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-5y-n10000-20261010-r1",
+      "initial_population": 10000,
+      "post_adoption_years": 5,
+      "current_paper_role": "PRIMARY_MAIN_PAPER",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-10y-n10000-20261010-r1",
+      "initial_population": 10000,
+      "post_adoption_years": 10,
+      "current_paper_role": "PRIMARY_MAIN_PAPER",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-5y-n100000-20261010-r1",
+      "initial_population": 100000,
+      "post_adoption_years": 5,
+      "current_paper_role": "CONDITIONAL_EXTENSION",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-10y-n100000-20261010-r1",
+      "initial_population": 100000,
+      "post_adoption_years": 10,
+      "current_paper_role": "CONDITIONAL_EXTENSION",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-5y-n1000000-20261010-r1",
+      "initial_population": 1000000,
+      "post_adoption_years": 5,
+      "current_paper_role": "FUTURE_STUDY_NOT_MAIN_PAPER_GATE",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-10y-n1000000-20261010-r1",
+      "initial_population": 1000000,
+      "post_adoption_years": 10,
+      "current_paper_role": "FUTURE_STUDY_NOT_MAIN_PAPER_GATE",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-5y-n10000000-20261010-r1",
+      "initial_population": 10000000,
+      "post_adoption_years": 5,
+      "current_paper_role": "FUTURE_STUDY_NOT_MAIN_PAPER_GATE",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    },
+    {
+      "registration_id": "frozen-schema3-longitudinal-adoption-10y-n10000000-20261010-r1",
+      "initial_population": 10000000,
+      "post_adoption_years": 10,
+      "current_paper_role": "FUTURE_STUDY_NOT_MAIN_PAPER_GATE",
+      "historical_frozen_status": "BLOCKED",
+      "accepted_new_complete_worlds": 0,
+      "old_frozen_model_not_automatically_qualified_as_new_complete_enterprise_model": true
+    }
+  ],
+  "new_population_scope": [
+    {
+      "initial_population": 10000,
+      "role": "REQUIRED_PRIMARY",
+      "state": "PLANNED_NOT_FROZEN_NEW_MODEL_INTEGRATION_PENDING"
+    },
+    {
+      "initial_population": 50000,
+      "role": "REQUIRED_FULL_RESOLUTION_COMPARISON",
+      "state": "PLANNED_NOT_FROZEN_NEW_MODEL_INTEGRATION_PENDING"
+    },
+    {
+      "initial_population": 100000,
+      "role": "CONDITIONAL_PRESPECIFIED_ADMISSION",
+      "state": "NOT_ADMITTED"
+    }
+  ],
+  "new_world_ids_or_confirmation_counts_selected": false,
+  "samples_determined_by_new_preregistered_precision_design": true,
+  "higher_populations_retained_as_future_designs": true,
+  "whole_goal_complete": false
+}

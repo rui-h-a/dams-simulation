@@ -1,3 +1,9 @@
+# Latest verified observation: R77 — 2026-10-11T19:59:12.011720+00:00
+
+[Current scientific, storage, cloud, model and paper evidence](../2026-10-12/research-observation-r77.json). N30 and N120 are each 4 excluded pilot + 66 accepted confirmation pairs; N300 remains 11/70 and the original thousand-person study has zero complete pilot pairs. GCS is used. Three actual C4D create attempts failed on capacity, with no retained VM or disk; an independently revised N2 operational profile is not yet launched. Current paper scope is N10,000 main / N50,000 full-model comparison / conditional N100,000; the 86-page PDF remains interim. Earlier dated observations below are historical, not proof of a current process.
+
+--- retained prior dated index ---
+
 ## R76 latest actual observation — 2026-10-11T17:56:36.626470+00:00
 
 N30/N120 retain 4 excluded pilots + 66 confirmation pairs each. N300 remains 11/70 (4 + 7), stopped; original N1000 remains 35/144 cases and zero complete paired pilot worlds. R12 storage exited 1 and was reaped at 2026-10-11T17:38:04.978585Z; no new science or raw retirement. Current actual GCP inventory returns zero VMs and disks; GCS storage remains in use. C4D Standard family grant is 50 vCPU, not a VM capacity guarantee. The first-arm cloud route has source-only independent review, with actual Root issue and activation still pending.
