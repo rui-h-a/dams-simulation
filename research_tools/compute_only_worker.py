@@ -48,6 +48,57 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def paired_nonphase_capacity(output, work, runtime):
+    """Observe the whole pair on its true backing device; never truncate data.
+
+    The existing Scheduler still reserves each complete case and controls its
+    original writes/checkpoints. This additional supervisor observes BOTH arm
+    children, failed attempts and metadata at each original control tick. A
+    failure enters the existing cooperative-stop/reap path. This is a sampled
+    software guard, not an atomic filesystem quota or a scientific raw gate.
+    Legacy/single-arm/opt-in loop execution retains its previous behavior.
+    """
+    profile=runtime.get('small_enterprise_profile',{})
+    if profile.get('schema')!='DAMS-small-enterprise-cloud-confirmation-pair-1':return None
+    limits=runtime['runtime_limits']
+    if any(limits.get(k,0) for k in ('phase_max_output_bytes','phase_spool_bytes',
+            'phase_checkpoint_headroom_bytes','phase_metadata_reserve_bytes')):return None
+    require(limits['min_free_disk_bytes']>=80*2**30, 'paired physical safety floor below original80GiB')
+    output=lexical(output);work=lexical(work)
+    root_info=output.stat();underlay=work.stat()
+    require(stat.S_ISDIR(root_info.st_mode) and stat.S_ISDIR(underlay.st_mode)
+            and root_info.st_dev==underlay.st_dev, 'nonphase pair must use actual backing device')
+    fs=os.statvfs(work);free=fs.f_bavail*fs.f_frsize
+    require(free>=limits['min_free_disk_bytes'], 'paired actual backing device free floor exhausted')
+    total=0;files=0
+    for parent,dirs,names in os.walk(output,followlinks=False):
+        for name in dirs:
+            p=Path(parent)/name
+            try:s=p.lstat()
+            except FileNotFoundError:continue
+            require(stat.S_ISDIR(s.st_mode) and s.st_dev==root_info.st_dev,
+                    'paired output foreign or symlink directory')
+        for name in names:
+            p=Path(parent)/name
+            try:s=p.lstat()
+            except FileNotFoundError:continue  # owned atomic publication; no deletion here
+            require(stat.S_ISREG(s.st_mode) and s.st_nlink==1 and s.st_dev==root_info.st_dev,
+                    'paired output foreign or nonregular leaf')
+            total+=s.st_size;files+=1
+            require(total<=limits['batch_max_output_bytes'], 'whole paired cumulative output byte cap reached')
+            require(not limits['batch_max_output_files'] or files<=limits['batch_max_output_files'],
+                    'whole paired cumulative output file cap reached')
+    require(anchor(output.stat())[:2]==anchor(root_info)[:2]
+            and anchor(work.stat())[:2]==anchor(underlay)[:2], 'paired output/backing namespace replaced')
+    fs=os.statvfs(work);free=fs.f_bavail*fs.f_frsize
+    require(free>=limits['min_free_disk_bytes'], 'paired actual backing device free floor exhausted')
+    return {'schema':'DAMS-paired-nonphase-capacity-observation-1','logical_bytes':total,
+            'files':files,'physical_available_bytes':free,
+            'minimum_physical_free_bytes':limits['min_free_disk_bytes'],
+            'whole_pair_including_failed_attempts':True,'sampled_supervisor_guard':True,
+            'atomic_filesystem_quota':False,'science_complete':False}
+
+
 def pairs(items):
     result = {}
     for key, value in items:
@@ -496,6 +547,7 @@ def run_compute(runtime_path, root_path, work_path):
                     env.update({ENV:str(work.path/'small-enterprise-profile.json'),SHA_ENV:sha(profile_raw)})
                 command = [str(root.path / 'run.sh'), '--spec', runtime['spec'], '--scale', str(runtime['scale']),
                            '--output', str(output), '--runtime-limits', str(work.path / 'runtime-limits.json')]
+                paired_capacity=paired_nonphase_capacity(output,work.path,runtime)
                 logfd = os.open('pipeline.log', os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
                                 0o600, dir_fd=out.fd)
                 previous_handlers = {}
@@ -521,6 +573,7 @@ def run_compute(runtime_path, root_path, work_path):
                                 try:
                                     check_files(root, package)
                                     work.check(); out.check()
+                                    paired_capacity=paired_nonphase_capacity(output,work.path,runtime)
                                     if preservation is not None:
                                         check_output_capacity(output, preservation)
                                         guard_original_limits(work, original_limits)
@@ -590,6 +643,7 @@ def run_compute(runtime_path, root_path, work_path):
                 work.check(); out.check()
                 try:
                     check_files(root, package)
+                    paired_capacity=paired_nonphase_capacity(output,work.path,runtime)
                     if preservation is not None:
                         guard_original_limits(work, original_limits)
                     require(work.read(runtime_path.name) == (data, initial)
@@ -612,6 +666,8 @@ def run_compute(runtime_path, root_path, work_path):
                         'logical_bytes':phase_totals,'raw_limit':phase.value['raw_bytes'],
                         'encoded_limit':phase.value['spool_bytes'],'fully_allocated_quiescent_files':phase_totals is not None,
                         'original_scientific_horizon_unchanged':True}
+                if paired_capacity is not None:
+                    terminal['paired_nonphase_capacity']=paired_capacity
                 out.write('cloud-terminal.json', terminal, exclusive=True)
                 work.write('compute-terminal.json', terminal, exclusive=True)
                 return code if not error else 2
