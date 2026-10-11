@@ -265,8 +265,6 @@
       "actual-batch-result.json": false,
       "root-actual-outer-exit.json": false
     },
-    "observed_external_free_bytes_at_science_snapshot": 104481869824,
-    "observed_internal_free_bytes_at_science_snapshot": 18390159360,
     "original_1000_raw_retired_by_this_operation": false,
     "owned_transport_TAR_cleanup": {
       "UTC": "2026-10-11T01:32:09.149656+00:00",
@@ -278,50 +276,14 @@
       "remote_objects_deleted": 0,
       "original_inputs_native_unchanged": true,
       "original13_raw_native_unchanged": true,
-      "free_bytes_before_unlink": 104288182272,
-      "free_bytes_after_unlink": 105328459776,
-      "free_delta_not_attributed_exclusively_to_concurrent_unlink": true,
       "verified_TAR_sha256": "e5b1dcdaf09d609f986518a38db3ed204c744a24ad2cea0a54cf1f3198212ed2",
       "fixed_originals_and_two_existing_remote_archives_retained": true,
       "scientific_samples_added": 0,
-      "original_raw_retirement_authority": false
+      "original_raw_retirement_authority": false,
+      "logical_deletion_not_equated_to_physical_reclamation": true
     },
     "capacity_gate_bytes": 153378624512,
-    "no_free_space_gate_relaxed": true,
-    "heavy_internal_cache_disabled_below_24GiB": true
-  },
-  "GCS_and_budget": {
-    "cumulative_budget_USD": 100,
-    "existing_reservation_envelopes_USD": 99.55,
-    "reservations_are_not_supplier_spend": true,
-    "supplier_cost_reconciliation": "Official delayed project-filtered billing report observed; final cumulative supplier invoice reconciliation remains pending.",
-    "new_funding_suballocation_issued": true,
-    "new_compute_VM_created": false,
-    "GCS_use_within_existing_authorization_allowed": true,
-    "original_global_deadline_UTC": "2026-10-15T08:54:46.960873Z",
-    "parent_reservation_USD": "34.00",
-    "new_N120_child_USD": "8.00",
-    "existing_N30_child_USD": "5.50",
-    "children_total_within_parent_USD": "13.50",
-    "remaining_parent_purpose_USD": "20.50",
-    "new_child_does_not_increase_global_99_55_envelopes": true,
-    "supplier_spend_USD": "NOT_YET_FULLY_RECONCILED",
-    "old_unresolved_holds_released": false,
-    "official_JPY_catalog_single_case_quote_ceiling_JPY": 224,
-    "same_catalog_FX_conditional_quote_ceiling_USD": "1.43",
-    "quote_not_bank_FX_or_supplier_invoice": true,
-    "quote_requests_upper_total": 244,
-    "archive_meter_reserved_cost_upper_USD": "1.415271435594313926994800567626953125",
-    "meter_reserved_upper_is_not_supplier_spend": true,
-    "new_paid_object_storage_created": true,
-    "no_new_large_GCP_formal_compute": true,
-    "new_paid_storage_cleanup_complete": false,
-    "cleanup_requires_safe_verified_non_GCP_copy_first": true,
-    "R50_actual_single_case_GCS_proof_is_historical_separate_episode": true,
-    "new_funding_suballocation_issued_this_R51_operation": false,
-    "new_GCP_resources_created_this_R51_operation": false,
-    "current_paid_storage_registered_with_ROOT_cleanup_tracking": true,
-    "current_Master_tracking_SHA256": "a0c8762be1eadd032062cc153ade55ad1a9150e8b42aea2e4bc57ac0a819c4b6"
+    "no_free_space_gate_relaxed": true
   },
   "paper": {
     "main_PDF_pages": 83,
@@ -357,5 +319,16 @@
   },
   "previous_public_R50_cut_preserved": true,
   "failed_attempts_and_frozen_results_preserved": true,
-  "whole_goal_complete": false
+  "whole_goal_complete": false,
+  "cloud_storage": {
+    "new_compute_VM_created": false,
+    "new_paid_object_storage_created": true,
+    "no_new_large_GCP_formal_compute": true,
+    "new_paid_storage_cleanup_complete": false,
+    "cleanup_requires_safe_verified_non_GCP_copy_first": true,
+    "R50_actual_single_case_GCS_proof_is_historical_separate_episode": true,
+    "new_GCP_resources_created_this_R51_operation": false,
+    "retained_resources_listed_for_cleanup": true
+  },
+  "public_scope": "Scientific provenance, complete binary checks and preservation methods; private device and operating-ledger details remain in retained operation evidence."
 }

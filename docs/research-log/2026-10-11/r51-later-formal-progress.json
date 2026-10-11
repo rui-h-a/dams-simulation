@@ -24,8 +24,6 @@
   "new_accepted_pair_proof_sha256": "05555b0b0744339c8657cccb37393143c4b06ea20deede526c943c38650d9934",
   "new_accepted_case_statuses_file": "n120-world-51059-case-statuses.json",
   "new_accepted_case_statuses_sha256": "89e0546375797f504ce35756274a128ae51b6f16d07364ff43a48075486ce044",
-  "external_free_bytes": 105167441920,
-  "internal_free_bytes": 18307543040,
   "formal_or_cold_actors_stopped": false,
   "final_precision_statistics_acceptance": "PENDING"
 }

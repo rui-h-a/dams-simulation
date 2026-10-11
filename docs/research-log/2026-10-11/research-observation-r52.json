@@ -1,0 +1,59 @@
+{
+  "schema": "DAMS-incremental-scientific-progress-r52-1",
+  "snapshot_UTC": "2026-10-11T01:51:19.552816+00:00",
+  "n120": {
+    "accepted_pairs": 66,
+    "pilot_accepted": 4,
+    "confirmation_accepted": 62,
+    "confirmation_target": 66,
+    "confirmation_remaining": 4,
+    "accepted_case_units": 132,
+    "latest_accepted_world": 51061,
+    "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "spec_sha256": "1c907af385dffbfacc3f438a846aec0040824d09c1c14473586d1547651d351d",
+    "entry_sha256": "2732dc6ff3d73e9848c022522e02a744ca0e77b775d472227585e8229784494a",
+    "days_with_settlement": 1917,
+    "primary_years": 5,
+    "initial_population": 120,
+    "final_population_range": [
+      166,
+      179
+    ],
+    "all_selected_manifest_SHA_and_case_status_bindings_checked": true
+  },
+  "count_scope": "Existing formal acceptance receipts, selected complete statuses and exact manifest hashes; this observation does not replay model transitions or add independent worlds.",
+  "final_precision_and_statistics_acceptance": "PENDING_ALL_CONFIRMATION_WORLD_ACCEPTANCE",
+  "n30": {
+    "pilot_worlds": 4,
+    "confirmation_worlds": 66,
+    "complete_independent_off_device_case_recovery_proofs": 140,
+    "four_precision_targets_met": true,
+    "adverse_and_null_results_retained": true
+  },
+  "original_1000": {
+    "accepted_cases": 35,
+    "complete_pilot_paired_worlds": 0,
+    "planned_pilot_cases": 144,
+    "capacity_and_archive_consumer_admission": "PENDING"
+  },
+  "n300_and_larger_complete_five_or_ten_year_worlds": 0,
+  "isolated_clone_engine_check": {
+    "first_actual_attempt": "Stopped before cloning or SQL/model execution because the operating filesystem probe was passed a subdirectory rather than a mount point. Failed evidence retained; correction is separate.",
+    "Engine_restore_actually_returned": false,
+    "formal_writer_resume_validated": false,
+    "new_scientific_worlds": 0,
+    "raw_retirement_authority": false
+  },
+  "public_scope_correction": {
+    "scientific_counts_dates_sources_and_binary_proofs_preserved": true,
+    "private_original_records_preserved": true,
+    "files": [
+      "README.md",
+      "research-observation-r51.json",
+      "r51-later-formal-progress.json"
+    ],
+    "earlier_linked_JSON_records_not_fully_audited_in_this_correction": true
+  },
+  "final_paper_or_whole_research_complete": false
+}
