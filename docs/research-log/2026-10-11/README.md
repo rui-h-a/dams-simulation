@@ -1,3 +1,13 @@
+# DAMS research execution evidence — 2026-10-11
+
+## R49 — existing remote archive custody readback
+
+At 2026-10-11T00:19:26.538434+00:00, the original 1,000-person case completed the real bounded readback of six existing GitHub assets (two correlated repository/provider copies). All 18 GET attempts exited successfully; 2,065,146,004 bytes were streamed and both 1,032,570,880-byte concatenated TAR hashes matched. The child was reaped and its process group was absent. This verifies binary custody, not a new scientific world, full13 model restoration, Lifecycle promotion or permission to retire the original raw case.
+
+N120 remains **61/70** paired worlds (4 pilot + 57/66 confirmation), with **50** existing pairs revalidated in the current continuation. N30 remains **70/70** paired worlds and **140/140** complete remote recovery proofs; **46** distinct closed-case raw retirements have succeeded. Actual external free space at this snapshot was **98.849 GiB**; unlink totals do not establish physical free space. Original N1000 remains **35/144 cases, 0/4 complete pilot paired worlds**; larger five-/ten-year formal worlds remain zero.
+
+See [the exact R49 record](research-observation-r49.json). The 83-page PDF is unchanged; there is no new N120 final statistics or PDF acceptance claim. Existing reservation envelopes are not supplier expenditure; final billing reconciliation is pending. No new compute VM or funding allocation was issued by this operation.
+
 # Current evidence — 2026-10-11
 
 Snapshot: 2026-10-10T23:42:58.355842+00:00. N30 retains 66 confirmation pairs and 140 independent full-case recovery proofs. N120 retains 61/70 verified pairs (4 pilot + 57/66 confirmation); its original CLI is still revalidating existing raw data before the nine remaining confirmation worlds. At this snapshot, 41 existing pairs have been revalidated; these are not new worlds.
