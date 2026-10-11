@@ -1,0 +1,54 @@
+{
+  "additional_targeted_audit": {
+    "audit_receipt_sha256": "66f978d1508e858a043e4e3f783f0a56584336ac9e6d61403d95f86ef4f3a2a4",
+    "composition": {
+      "exact_existing_scalar_controls": 24,
+      "historical_r3_counterexample_controls": 9,
+      "independent_Decimal_and_direct_checks": 3
+    },
+    "controls_receipt_sha256": "ae65e35c235b651bf76160fbc6417bbc4740fb90ac6524e743400a86ebf4b3b7",
+    "formal_worlds": 0,
+    "limit": "This targeted audit is not a rerun of the complete 59-test suite or independent whole-model validation. Fixed scalar iterations are not independent research worlds.",
+    "model_executions": 0,
+    "passed": true,
+    "provider_calls": 0,
+    "rounds": 2,
+    "sql": 0,
+    "tests_per_round": 36
+  },
+  "empirical_calibration_completed": false,
+  "formal_study_adopted": false,
+  "formal_worlds_added": 0,
+  "held_out_validation_completed": false,
+  "journal_boundary": {
+    "inherited_cli_profile_storage": "Default journal format; the historical r3 recorded profile used schema2 with 1 MiB chunks. No current r4 full profile is completed.",
+    "journal_chunks_identical_to_published_r3": true,
+    "journal_chunks_sha256": "50a38b20a49c4c0231256df11199da3375242b82cf7471b3860780e4baf6618f",
+    "operating_config_schema": 2,
+    "operating_config_schema_is_not_journal_storage_schema": true
+  },
+  "ma_integrated": false,
+  "model_candidate": "longitudinal-enterprise-operations-4",
+  "model_source_sha256": "9ebaeb9cd061d42a9ec127c93a47ca116a2c61d423de4c0c416e74c86019df1c",
+  "operations_file_sha256": "e1ffafb39c64cfb573279ce44bbb3cf3fc7049605869d9af6a3da4cdb7140eba",
+  "preserved_multisite_numeric_difference": 3.552713678800501e-15,
+  "public_ancestor": {
+    "commit": "71b6a8b385730d8fa2a0f46b0f26e73067d046af",
+    "url": "https://github.com/rui-h-a/dams-simulation/commit/71b6a8b385730d8fa2a0f46b0f26e73067d046af"
+  },
+  "publication_only_changes": "A notice precedes the unchanged historical profile text; this scope and the portable manifest are publication metadata. Runtime code, parameters, fixtures and their model source identity remain unchanged.",
+  "reproducing_engineering_controls": {
+    "command": "PYTHONPATH=.:tests python3 -B -m unittest -v test_enterprise_growth test_enterprise_operations test_enterprise_operations_r4",
+    "cwd": "repository root",
+    "declared_python": ">=3.11",
+    "platform_boundary": "No all-platform, clean public-clone, wheel or production-cloud acceptance is claimed.",
+    "recorded_final_suite_tests": 59,
+    "scope": "Bounded local engineering tests, including tiny model/recovery fixtures and independent scalar budget checks. No completed formal world or empirical evidence is added."
+  },
+  "runtime_files": 69,
+  "runtime_manifest": "source-manifest.operations-r4.json",
+  "schema": "dams-operations-r4-publication-scope-v1",
+  "source_changes": "Destination-aware domestic/cross-context order fulfillment; bounded served coordination with persistent unmet queue and productive-readiness effect; cash/material allocation from actual site potentials and unit costs with conservation and checkpoint predicates. Synthetic mechanism hypotheses remain uncalibrated.",
+  "status": "ENGINEERING_ONLY_NOT_ADOPTED",
+  "strict_general_cross_version_equivalence": false
+}

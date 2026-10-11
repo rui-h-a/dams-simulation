@@ -116,7 +116,7 @@ class _RawDailyAccounting:
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
         self.operations=EnterpriseOperatingState(config) if config.enterprise_operations is not None else None
         self.market_rng=WorldRandom(config.seed,config.world,world_context=config.longitudinal.world_context)
-        if self.operations is not None:self.supported=self.supported | {"financing_inflow_resource_units","enterprise_legal_and_interest_resource_units","enterprise_material_and_logistics_resource_units","enterprise_coordination_hours","orders_arrived_units","orders_expired_units","delivered_product_units"}
+        if self.operations is not None:self.supported=self.supported | {"financing_inflow_resource_units","enterprise_legal_and_interest_resource_units","enterprise_material_and_logistics_resource_units","enterprise_coordination_hours","orders_arrived_units","orders_expired_units","delivered_product_units","enterprise_coordination_requested_workdays","enterprise_coordination_served_workdays"}
         self.supported = self.supported | ({'infrastructure_setup_resource_units',
             'infrastructure_maintenance_resource_units'} if self.enterprise is not None else set())
         self.people={p['id']:p for p in state['people']}
@@ -331,6 +331,31 @@ class _RawDailyAccounting:
         expected_guilds={g for g in self.alias if self.alias[g]==g} if decision_day else set()
         if set(decisions)!=expected_guilds or set(votes)!=(set(active) if decision_day else set()):
             raise ValueError('raw vote/decision daily roster differs')
+        coordination_service={};coordination_readiness={};coordination_inputs={}
+        if self.operations is not None:
+            phases=[v for k,e,v in events if k=='enterprise_coordination_begin']
+            if len(phases)!=1 or funding is None:raise ValueError('raw coordination phase missing or unbounded')
+            phase=phases[0]
+            if set(phase)!={'inputs','plan'} or not isinstance(phase['inputs'],list):raise ValueError('raw coordination phase shape differs')
+            post=[] if auto_closure else present or []
+            if [v.get('person') for v in phase['inputs']]!=sorted(post):raise ValueError('raw coordination present roster differs')
+            people=[]
+            for value in phase['inputs']:
+                if set(value)!={'person','site','morning_trust','morning_fatigue','service_capacity'}:raise ValueError('raw coordination inputs differ')
+                i=value['person'];agent=self.agents[i]
+                trust=self.number(value['morning_trust'],'coordination morning trust',high=1.)
+                fatigue=self.number(value['morning_fatigue'],'coordination morning fatigue',high=1.)
+                cooperation=max(0.,min(1.,agent['reciprocity']*trust*(1-fatigue)))
+                other=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation+training[i]
+                capacity=self.operations.coordination_capacity(agent['care_hours'],other)
+                if value['site']!=agent['site'] or value['service_capacity']!=capacity:raise ValueError('raw coordination actual available time differs')
+                coordination_inputs[i]=value;people.append((i,agent['site'],capacity))
+            coordination_service,coordination_readiness,coordination_plan=self.operations.prepare_coordination(day,
+                active=len(active),guilds=self.enterprise.guilds,departments=self.enterprise.departments,sites=self.enterprise.sites,
+                people=people,funding=funding)
+            if phase['plan']!=coordination_plan:raise ValueError('raw requested/served/unmet coordination differs')
+            self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
+            self.metrics['enterprise_coordination_served_workdays']+=math.fsum(v['served'] for v in coordination_plan['sites'])
         losses=[]
         for g,decision in sorted(decisions.items()):
             domain=[votes[i] for i in active if self.members[i]==g];effective=[];ballots=[];flags=[]
@@ -379,9 +404,14 @@ class _RawDailyAccounting:
                 original_cooperation=max(0.,min(1.,agent['reciprocity']*morning['trust']*(1-morning['fatigue'])))
                 expected_cooperation=0. if attack_active and p.attack=='freeride' and i in attackers else original_cooperation
                 if value['cooperation']!=expected_cooperation:raise ValueError('raw cooperation differs from morning evidence')
-                coordination=self.operations.coordination(len(active),self.enterprise.guilds,self.enterprise.departments,self.enterprise.sites,agent['site']) if self.operations is not None else 0.
+                coordination=coordination_service.get(i,0.) if self.operations is not None else 0.
                 if self.operations is not None:
-                    if value['enterprise_coordination']!=coordination*funding or value['enterprise_calendar_fraction']!=self.operations.calendar_fraction(clock,agent['site'],day):raise ValueError('raw context/coordination reservation differs')
+                    ci=coordination_inputs[i]
+                    if morning['trust']!=ci['morning_trust'] or morning['fatigue']!=ci['morning_fatigue']:raise ValueError('raw coordination/work morning state differs')
+                    if (value['enterprise_coordination']!=coordination*funding
+                            or value['enterprise_calendar_fraction']!=self.operations.calendar_fraction(clock,agent['site'],day)
+                            or value['enterprise_coordination_readiness_fraction']!=coordination_readiness.get(agent['site'],1.)):
+                        raise ValueError('raw context/coordination reservation differs')
                     if not 0<=value['enterprise_production_fraction']<=1:raise ValueError('raw production constraint fraction invalid')
                 reservations=coordination+.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*original_cooperation+training[i]
                 governance[i]=.05 if (1-agent['care_hours']-reservations)*funding>=.05 else 0.
@@ -391,7 +421,7 @@ class _RawDailyAccounting:
                 if attack!=(attack_time if i in attackers else 0.):raise ValueError('raw work attack reservation differs from cohort/window')
                 reserved=reservations*funding+governance[i]
                 limit=max(0.,(1-agent['care_hours'])*funding-reserved)
-                if attack>limit+1e-12 or value['effort']>limit-attack+1e-12 or agent['care_hours']+reserved+value['effort']+attack>1+1e-12:
+                if attack>limit+1e-12 or value['effort']>max(0.,limit-attack)+1e-12 or agent['care_hours']+reserved+value['effort']+attack>1+1e-12:
                     raise ValueError('raw work exceeds funded individual time capacity')
                 if value['effort']==0 and value['produced_research_only']!=0:raise ValueError('raw zero-effort work produces output')
             self.metrics['work_events']+=1
@@ -409,16 +439,38 @@ class _RawDailyAccounting:
         revenue=output*l.revenue_resource_units_per_work_unit
         material_cost=0.
         if self.operations is not None:
-            by_site=defaultdict(float)
-            for v in work:by_site[self.agents[v['person']]['site']]+=v['produced_research_only']
-            if output>self.operations.productive_limit(self.enterprise.capacity,self.cash,self.enterprise.sites)+1e-8:raise ValueError('raw production exceeds contract/capital/installed plant')
+            by_site=defaultdict(list)
+            for v in work:by_site[self.agents[v['person']]['site']].append(v['produced_research_only'])
+            by_site={site:math.fsum(values) for site,values in by_site.items()}
+            phases=[v for k,e,v in events if k=='enterprise_production_plan']
+            if len(phases)!=1:raise ValueError('raw production allocation phase missing')
+            plan=phases[0]
+            if set(plan)!={'capacity','cash_available','potentials_by_site','allocated_by_site'} or plan['capacity']!=self.enterprise.capacity or plan['cash_available']!=self.cash:
+                raise ValueError('raw production available capacity/cash differs')
+            potentials=dict(plan['potentials_by_site'])
+            if plan['potentials_by_site']!=[[s,v] for s,v in sorted(potentials.items())]:raise ValueError('raw production potential roster differs')
+            allocated=self.operations.allocate_production(potentials,self.enterprise.capacity,self.cash,self.enterprise.sites)
+            if plan['allocated_by_site']!=[[s,v] for s,v in sorted(allocated.items())]:raise ValueError('raw site cost/capital allocation differs')
+            observed_potentials=defaultdict(float);person_potentials={};person_sites={}
+            for value in work:
+                person=value['person'];site=self.agents[person]['site']
+                potential=self.number(value['enterprise_unconstrained_potential'],'unconstrained production potential')
+                observed_potentials[site]+=potential;person_potentials[person]=potential;person_sites[person]=site
+            if dict(observed_potentials)!=potentials:raise ValueError('raw individual/site potential sums differ')
+            allocated_people=self.operations.allocate_people(person_potentials,person_sites,allocated)
+            for value in work:
+                person=value['person'];potential=person_potentials[person]
+                fraction=allocated_people[person]/potential if potential else 1.
+                if value['enterprise_production_fraction']!=fraction or value['produced_research_only']!=allocated_people[person]:
+                    raise ValueError('raw person/site production allocation differs')
+            if output>self.enterprise.capacity*self.operations.c.productive_units_per_installed_seat_workday+1e-8:raise ValueError('raw production exceeds installed plant')
             interest_paid=operation_begin['interest_due']*(funding if funding is not None else 0.)
             material_cost,operation_end=self.operations.finish_day(day,by_site,self.cash,interest_paid=interest_paid)
             if [(k,e,v) for k,e,v in events if k=='enterprise_market_end']!=[('enterprise_market_end',f'market:end:{day}',operation_end)]:raise ValueError('raw production/delivery/settlement phase differs')
             self.cash-=material_cost;self.metrics['operating_resource_units']+=material_cost
             self.metrics['enterprise_material_and_logistics_resource_units']+=material_cost
             self.metrics['orders_arrived_units']+=operation_begin['arrivals'];self.metrics['orders_expired_units']+=operation_begin['expired'];self.metrics['delivered_product_units']+=operation_begin['delivered']
-            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(self.operations.coordination(len(active),self.enterprise.guilds,self.enterprise.departments,self.enterprise.sites,self.agents[i]['site']) for i in ([] if auto_closure else present))*funding
+            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(coordination_service.values())*funding
             if record.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw operating stock differs from actual complete history')
             revenue=operation_received
         else:
@@ -544,7 +596,7 @@ def verify_daily_evidence(path,config,state,database,*,config_history=()):
                     'department_count':accounting.enterprise.departments,'site_count':accounting.enterprise.sites}
                 if any(row.get(k)!=v for k,v in direct_growth.items()):raise ValueError('daily enterprise stock differs from journal')
             if accounting.operations is not None:
-                expected={'market_price_resource_units':accounting.operations.price,'order_backlog_units':accounting.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in accounting.operations.shipments),'credit_debt_resource_units':accounting.operations.debt}
+                expected={'market_price_resource_units':accounting.operations.price,'order_backlog_units':accounting.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in accounting.operations.shipments),'credit_debt_resource_units':accounting.operations.debt,'coordination_pending_workdays':math.fsum(accounting.operations.coordination_pending.values())}
                 if any(row.get(k)!=v for k,v in expected.items()):raise ValueError('daily market stock differs from complete event history')
             last=row
         if count!=config.days or state['day']!=config.days:raise ValueError('daily evidence incomplete/oversized horizon')

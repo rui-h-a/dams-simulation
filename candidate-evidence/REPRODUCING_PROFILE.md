@@ -1,3 +1,16 @@
+# Current operations r4 publication boundary
+
+> The text below is preserved verbatim as the historical causal-r3 profile
+> description. The current operations-r4 calendar configurations have changed
+> to operating schema 2 and are not the exact inputs executed for that r3
+> profile. No complete 1,917-day operations-r4 profile, scientific admission,
+> empirical calibration or M&A integration is claimed. The existing commands
+> below are inherited entry points; executing them creates a new versioned
+> run and does not reproduce a completed r4 study. See
+> `OPERATIONS_R4_PUBLICATION_SCOPE.json` and the root `README.md`.
+
+---
+
 # Reproducing the causal candidate
 
 This isolated candidate is a synthetic research version, not the frozen formal

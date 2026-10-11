@@ -429,7 +429,22 @@ class LongitudinalEngine:
         # scales available capacity and divisible reservations, not the cost of
         # an indivisible governance operation into a free vote.
         cooperation={i:clip(self.agents[i].reciprocity*snapshot[i][1]*(1-snapshot[i][2])) for i in present}
-        coordination={i:self.operations.coordination(len(active),self.guild_count,self.enterprise.departments,self.site_count,self.agents[i].site) if self.operations is not None else 0. for i in present}
+        coordination={i:0. for i in present};coordination_readiness={}
+        coordination_plan=None
+        if self.operations is not None:
+            coordination_inputs=[]
+            for i in sorted(present):
+                other=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation[i]+training[i]
+                capacity=self.operations.coordination_capacity(self.agents[i].care_hours,other)
+                coordination_inputs.append({'person':i,'site':self.agents[i].site,'morning_trust':snapshot[i][1],
+                                            'morning_fatigue':snapshot[i][2],'service_capacity':capacity})
+            coordination,coordination_readiness,coordination_plan=self.operations.prepare_coordination(day,
+                active=len(active),guilds=self.guild_count,departments=self.enterprise.departments,sites=self.site_count,
+                people=[(v['person'],v['site'],v['service_capacity']) for v in coordination_inputs],funding=funding)
+            self.ledger.add_journal(day,'enterprise_coordination_begin',f'coordination:begin:{day}',
+                                    {'inputs':coordination_inputs,'plan':coordination_plan})
+            self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
+            self.metrics['enterprise_coordination_served_workdays']+=math.fsum(v['served'] for v in coordination_plan['sites'])
         variable_reservations={i:coordination[i]+.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation[i]+training[i] for i in present}
         governance_time={i:.05 if (1-self.agents[i].care_hours-variable_reservations[i])*funding>=.05 else 0. for i in present}
         losses=[];participation=[];influence=[]
@@ -464,13 +479,13 @@ class LongitudinalEngine:
             limit=max(0.,(1-a.care_hours)*funding-reserved)
             attack=attack_time if i in attackers else 0.
             if attack>limit+1e-12:raise ValueError('longitudinal attack budget infeasible for present actor capacity')
-            limit-=attack;time_limits[i]=limit
+            limit=max(0.,limit-attack);time_limits[i]=limit
             autonomy=a.autonomy*p.autonomy_response*(len(self.members[a.guild])*share-1)
             if p.behavior_rule=='linear_response':effort=.5+.35*trust+autonomy-.4*fatigue-a.care_hours
             elif p.behavior_rule=='satisficing':effort=(.45 if a.confirmed/max(1,self.people[i]['active_workdays'])>=.5 else .8)+autonomy-.3*fatigue
             else:effort=a.effort_memory+.1*(trust-.5)+autonomy-.2*fatigue
             efforts[i]=clip(effort,0,limit)
-            if self.operations is not None:efforts[i]*=self.operations.calendar_fraction(self.clock,a.site,day)
+            if self.operations is not None:efforts[i]*=self.operations.calendar_fraction(self.clock,a.site,day)*coordination_readiness.get(a.site,1.)
             if not creating:efforts[i]=0.
             if attack_active and p.attack=='freeride' and i in attackers:efforts[i]=max(0.,efforts[i]-attack);cooperation[i]=0.
             booked=a.care_hours+reserved+efforts[i]+attack
@@ -481,20 +496,25 @@ class LongitudinalEngine:
         team_help={team:statistics.fmean(cooperation.get(i,0.) for i in ids) for team,ids in self.teams.items()}
         production_fraction=1.
         if self.operations is not None:
-            potentials=[]
+            potential_by_site=defaultdict(float);potential_by_person={}
             for index,i in enumerate(self.active):
                 if i not in present or not creating or funding==0:continue
                 a=self.agents[i];token=self.people[i]['token'];cross=self.active[(index+1)%len(self.active)]
                 help_input=(team_help[a.team]+cooperation.get(cross,0.))/2
                 shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
                 adopt=self.adoption[a.guild];transition=1. if adopt is None else 1-.2*self.routine[a.guild]*(1-clip((day-adopt)/l.transition_days))
-                potentials.append(a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input))
-            potential=math.fsum(potentials)
-            productive_limit=self.operations.productive_limit(self.enterprise.capacity,self.cash,self.site_count)
-            production_fraction=min(1.,productive_limit/potential) if potential else 1.
-            efforts={i:effort*production_fraction for i,effort in efforts.items()}
+                potential=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input)
+                potential_by_person[i]=potential;potential_by_site[a.site]+=potential
+            allocated=self.operations.allocate_production(dict(potential_by_site),self.enterprise.capacity,self.cash,self.site_count)
+            allocated_people=self.operations.allocate_people(potential_by_person,{i:self.agents[i].site for i in potential_by_person},allocated)
+            production_fractions={i:allocated_people[i]/potential if potential else 1. for i,potential in potential_by_person.items()}
+            self.ledger.add_journal(day,'enterprise_production_plan',f'production:plan:{day}',
+                {'capacity':self.enterprise.capacity,'cash_available':self.cash,
+                 'potentials_by_site':[[s,v] for s,v in sorted(potential_by_site.items())],
+                 'allocated_by_site':[[s,v] for s,v in sorted(allocated.items())]})
+            efforts={i:effort*production_fractions.get(i,1.) for i,effort in efforts.items()}
             self.metrics['enterprise_coordination_hours']+=math.fsum(coordination.values())*funding
-        produced_by_site=defaultdict(float)
+        produced_by_site=defaultdict(list)
         daily_output=0.;yearwork=max(1,self.clock.workdays_in_year(day))
         for index,i in enumerate(self.active):
             a=self.agents[i];token=self.people[i]['token']
@@ -512,7 +532,8 @@ class LongitudinalEngine:
             difficulty=.5+self.rng.uniform('task_difficulty',day,token)
             quality=math.exp(.1*self.rng.normal('task_output',day,token))
             produced=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*quality*shock*(self.demand if self.operations is None else 1.)*transition/difficulty*(1+p.cooperation_strength*help_input)
-            daily_output+=produced;produced_by_site[a.site]+=produced;observed=max(0.,produced+p.review_error_sd*self.rng.normal('observed_work',day,token))
+            if self.operations is not None:produced=allocated_people[i]
+            daily_output+=produced;produced_by_site[a.site].append(produced);observed=max(0.,produced+p.review_error_sd*self.rng.normal('observed_work',day,token))
             fraud=attack_active and p.attack=='forge' and i in attackers
             if fraud:observed+=attack_time;self.metrics['fraudulent_records_submitted']+=1
             audit=self.rng.uniform('review_audit',day,token)<(.6 if fraud else .02)
@@ -524,7 +545,7 @@ class LongitudinalEngine:
             else:self.ledger.push('review',a.guild,claim)
             if attack_active and p.attack=='duplicate' and i in attackers:self.ledger.push('review',a.guild,dataclasses.replace(claim))
             self.metrics['work_events']+=1
-            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attackers else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fraction} if self.operations is not None else {})})
+            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attackers else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
             workload=efforts[i]+coordination[i]*funding+(attack_time if i in attackers else 0.)+training[i]*funding
             a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03)
             a.learning=clip(a.learning+l.skill_learning_per_work_year*efforts[i]/yearwork,0,2)
@@ -537,7 +558,7 @@ class LongitudinalEngine:
         for i in self.active:self.agents[i].tenure+=1/self.clock.days_in_year(day)
         revenue=daily_output*l.revenue_resource_units_per_work_unit
         if self.operations is not None:
-            material_cost,operation_end=self.operations.finish_day(day,produced_by_site,self.cash,interest_paid=operation_begin['interest_due']*funding)
+            material_cost,operation_end=self.operations.finish_day(day,{site:math.fsum(values) for site,values in produced_by_site.items()},self.cash,interest_paid=operation_begin['interest_due']*funding)
             self.cash-=material_cost;self.metrics['operating_resource_units']+=material_cost
             self.metrics['enterprise_material_and_logistics_resource_units']+=material_cost
             self.metrics['orders_arrived_units']+=operation_begin['arrivals'];self.metrics['orders_expired_units']+=operation_begin['expired']
@@ -575,7 +596,7 @@ class LongitudinalEngine:
                     'infrastructure_setup_resource_units_cumulative':self.metrics.get('infrastructure_setup_resource_units',0.),
                     'infrastructure_maintenance_resource_units_cumulative':self.metrics.get('infrastructure_maintenance_resource_units',0.)})
             if self.operations is not None:
-                row.update({'market_price_resource_units':self.operations.price,'order_backlog_units':self.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in self.operations.shipments),'credit_debt_resource_units':self.operations.debt})
+                row.update({'market_price_resource_units':self.operations.price,'order_backlog_units':self.operations.backlog(),'receivable_resource_units':math.fsum(v['revenue'] for v in self.operations.shipments),'credit_debt_resource_units':self.operations.debt,'coordination_pending_workdays':math.fsum(self.operations.coordination_pending.values())})
             row['work_creation_enabled']=creating
             row['adoption_days']=canonical(self.adoption).decode()
             for key in ('active_member_calendar_days','active_member_workdays','present_member_workdays','present_member_work_hours','available_member_work_hours','post_adoption_available_member_work_hours','produced_work_units','decision_regret_units','decisions_completed','decisions_unresolved','review_hours','appeal_hours','governance_hours','training_hours','migration_resource_units','dual_run_resource_units','maintenance_resource_units','payroll_resource_units','recruitment_resource_units','operating_resource_units','operating_unfunded_resource_units','revenue_resource_units'):
@@ -711,10 +732,10 @@ class LongitudinalEngine:
             raise ValueError('longitudinal restored execution source differs; resume with the original frozen source')
         obj=cls.__new__(cls);obj.config=Config.from_dict(value['config']);obj.l=obj.config.longitudinal
         obj.version = CAUSAL_MODEL_VERSION if obj.config.enterprise_operations is not None else GROWTH_MODEL_VERSION if obj.config.enterprise_growth is not None else cls.version
-        obj.operations = EnterpriseOperatingState.restore(obj.config,value.get('enterprise_operating_state'),value['day']) if obj.config.enterprise_operations is not None else None
-        if obj.operations is None and 'enterprise_operating_state' in value:raise ValueError('unexpected operating state')
         obj.enterprise = (EnterpriseGrowthState.restore(obj.config,value.get('enterprise_growth_state'),value['day'])
             if obj.config.enterprise_growth is not None else None)
+        obj.operations = EnterpriseOperatingState.restore(obj.config,value.get('enterprise_operating_state'),value['day'],sites=obj.enterprise.sites) if obj.config.enterprise_operations is not None else None
+        if obj.operations is None and 'enterprise_operating_state' in value:raise ValueError('unexpected operating state')
         if obj.enterprise is None and 'enterprise_growth_state' in value:raise ValueError('unexpected enterprise growth state')
         if obj.l is None or value.get('model_version')!=obj.version or value.get('state_schema_version')!=1:raise ValueError('longitudinal state schema differs')
         obj._state_hash_codec=value.get('state_hash_codec',LEGACY_STATE_HASH_CODEC)
@@ -750,7 +771,7 @@ class LongitudinalEngine:
         expected=self.config.n*self.l.initial_cash_per_member-self.metrics.get('recruitment_resource_units',0)-self.metrics.get('migration_resource_units',0)-self.metrics.get('operating_resource_units',0)-self.metrics.get('infrastructure_setup_resource_units',0)+self.metrics.get('revenue_resource_units',0)+self.metrics.get('financing_inflow_resource_units',0)
         if not math.isclose(self.cash,expected,rel_tol=1e-12,abs_tol=1e-8):raise ValueError('resource balance does not conserve funds')
         if self.operations is not None:
-            self.operations.validate(self.day)
+            self.operations.validate(self.day,sites=self.site_count)
             stock_metrics={'delivered_revenue':'revenue_resource_units',
                 'delivered_units':'delivered_product_units','product_units':'produced_work_units',
                 'orders_arrived':'orders_arrived_units','orders_expired':'orders_expired_units',
@@ -997,7 +1018,7 @@ def validate_persisted_state(state,database,*,expected_source_sha256=None):
         if config.enterprise_growth is not None else None)
     if enterprise is None and 'enterprise_growth_state' in state:raise ValueError('unexpected persisted enterprise state')
     guild_count = enterprise.guilds if enterprise is not None else config.guilds
-    operations=EnterpriseOperatingState.restore(config,state.get('enterprise_operating_state'),state['day']) if config.enterprise_operations is not None else None
+    operations=EnterpriseOperatingState.restore(config,state.get('enterprise_operating_state'),state['day'],sites=enterprise.sites) if config.enterprise_operations is not None else None
     if operations is None and 'enterprise_operating_state' in state:raise ValueError('unexpected operating persisted state')
     expected_model = CAUSAL_MODEL_VERSION if operations is not None else GROWTH_MODEL_VERSION if enterprise is not None else 'longitudinal-1'
     if l is None or state.get('model_version')!=expected_model or state.get('state_schema_version')!=1:raise ValueError('persisted longitudinal schema differs')
