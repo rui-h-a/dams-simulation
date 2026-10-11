@@ -1,0 +1,466 @@
+{
+  "schema": "dams-actual-storage-custody-controls-r69",
+  "observed_utc": "2026-10-11T11:25:30.766266+00:00",
+  "antecedent_r66_sha256": "c1ee377f1ad8de08e99e07a0d5ed422f0d1bbab92b152d3c9a7ac50f361cc097",
+  "original_N1000_restore_engineering": {
+    "result_sha256": "5a44bd3aa64560b9c6f25f877872579056a805e6643b503a920ae8fec762b171",
+    "terminal_sha256": "a361f4421f5fa2f33a760464af5669900f48d41e37a2181d16229ad6d0bcf572",
+    "status": "ACTUAL_CLONE_ENGINE_RESTORE_RETURNED_NORMAL_EXIT0_REAPED",
+    "restored_day": 3743,
+    "restored_journal_rows": 13228569,
+    "source_core_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "pipeline_driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "ledger_semantic_sha256": "5aeb47187a87251dfb99d7b1b55d46349e8ec8576d37eec2046d7ba164b60fe0",
+    "new_formal_worlds": 0,
+    "new_scientific_days": 0,
+    "formal_writer_resume_validated": false,
+    "original_raw_retirement_authorized": false,
+    "independent_backup": false,
+    "independent_formal_offdevice_backup_claimed": false,
+    "shared_case_ID_alone_is_not_formal_source_config_attempt_or_byte_identity": true
+  },
+  "original_N1000_formal_flat_retirement_blocked_by_engineering_attempt_config_and_byte_drift": true,
+  "verified_checkpoint_engineering_copy_retirements": [
+    {
+      "receipt_sha256": "464ec070e0801aa79bbbbde9311c1ef4ce47275bdb029d05f3c8c53d18abf539",
+      "observed_utc": "2026-10-11T08:35:11.968250+00:00",
+      "derived_copy": "copy2",
+      "logical_retired_bytes": 2206269440,
+      "observed_work_volume_available_change_bytes": 2218758144,
+      "observed_backing_available_change_bytes": 0,
+      "concurrent_activity_prevents_exact_physical_attribution": true,
+      "all_historical_ACK_receipts_preserved": true,
+      "original_checkpoint_and_530_encoded_chunks_preserved": true,
+      "old_collector_blind_restart_authorized": false
+    },
+    {
+      "receipt_sha256": "57be31627e4786a7be7fe759476445e270168e3f213487e09a1a1e7e960dcb1b",
+      "observed_utc": "2026-10-11T09:05:58.894241+00:00",
+      "derived_copy": "copy1",
+      "logical_retired_bytes": 2206269440,
+      "observed_work_volume_available_change_bytes": 2222968832,
+      "observed_backing_available_change_bytes": 0,
+      "concurrent_activity_prevents_exact_physical_attribution": true,
+      "all_historical_ACK_receipts_preserved": true,
+      "original_checkpoint_and_530_encoded_chunks_preserved": true,
+      "old_collector_blind_restart_authorized": false
+    }
+  ],
+  "N120_selected52_archive_operation": {
+    "status": "ACTUAL_R2_EXIT1_REAPED_AFTER_TWO_NEW_COLD_CASES_THIRD_UPLOAD_RESPONSE_READ_FAILURE",
+    "science_and_runtime_cutoff_utc": "2026-10-11T11:25:30.766266+00:00",
+    "runtime_source_count": 17,
+    "unchanged_original_runtime_source_count": 16,
+    "additional_Root_source_sha256": "cbfbf4b2517cf60399e2e5298ac9c8bfaa3e46e42f28191a522742897bb41cda",
+    "operation_issued_receipt_sha256": "a9cc9d9957c55dff7630d802e71434401b370403fc097e52a1d5723a729560ae",
+    "actual_started_receipt_sha256": "eabb2d84ee25ecf5a363028c1cf744ea9e6b1b68315eec69e7033d3b82981527",
+    "actual_launch_evidence_sha256": "b8d6e2de6ee68d00e4947544ffd419ae4851608854c081aea758cd4fbf2994e3",
+    "actual_exit_code": 1,
+    "reaped": true,
+    "actual_producer_absent_at_cut": true,
+    "running_at_cut": false,
+    "terminal_receipt_sha256": "af9a801cb074050c4eeb68379b7c50403d76314cd065fd0a24ec47268fef5b55",
+    "terminal_initial_case_inference_is_current": false,
+    "terminal_correction": "The retained terminal initially inferred failure in the second case. Durable receipts establish two successful cases, followed by a third-case upload response read failure.",
+    "failed_upload_ticket": 688,
+    "HTTP200_alone_establishes_upload_EOF_or_verified_generation": false,
+    "failed_upload_result_record_sha256": "f0597c13e46cf8607e677c299b37ba4ebbfdf71711da41caf736584ec85e9a5d",
+    "unknown_POST_generation_requires_actual_verification": false,
+    "archive_requests_attempted": 692,
+    "archive_results_persisted": 692,
+    "archive_pending_results": 0,
+    "closed_head_sha256": "811014895d07c857a400c633a848c19111a54bb9b24f127ceada7f664c8f6dc1",
+    "inherited_requests_before_R2": 80,
+    "inherited_auth_attempts_before_R2": 2,
+    "existing_meter_epoch_config_job_and_prefix_reset": false,
+    "selected52_new_complete_cold_cases": 2,
+    "selected52_remaining_cases": 50,
+    "all_N120_cold_cases": 3,
+    "all_N120_cases": 140,
+    "future87_deferred_not_admitted": true,
+    "completed_cases": [
+      {
+        "case_id": "1b040b9744a72b7b6bff0ab425a48fe1fe645553574de4f1fd4bf9a4ca3c5e0a",
+        "receipt_sha256": "d5c168ee309d4f746239c6791591cbeb3551daeacde9c83310e28dc77d725487",
+        "receipt_bytes": 19462,
+        "admission_status": "ALL_ADMITTED_BACKENDS_ACTUALLY_RESTORED",
+        "admission_full_readbacks": [
+          {
+            "chunks_read": 64,
+            "encoded_bytes_read": 171488736,
+            "files": 13,
+            "manifest_sha256": "a501bc0ad577993ec11708c41bec12029ceb4004d875d17bae7b8f8c03b0ffb9",
+            "observed_utc": "2026-10-11T09:47:11.063152+00:00",
+            "raw_bytes": 226211979,
+            "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+            "strict_eof": true
+          }
+        ],
+        "promotion_status": "AUTHORITATIVE_ARCHIVE_PROMOTION_PASS",
+        "promotion_full_readbacks": [
+          {
+            "chunks_read": 64,
+            "encoded_bytes_read": 171488736,
+            "files": 13,
+            "manifest_sha256": "a501bc0ad577993ec11708c41bec12029ceb4004d875d17bae7b8f8c03b0ffb9",
+            "observed_utc": "2026-10-11T09:49:12.963380+00:00",
+            "raw_bytes": 226211979,
+            "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+            "strict_eof": true
+          }
+        ],
+        "promotion_alone_physically_evicts_raw": false,
+        "eviction_status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "eviction_observed_utc": "2026-10-11T09:51:07.272621+00:00",
+        "raw_paths_evicted": 12,
+        "logical_unlinked_bytes": 226205473,
+        "scientific_content_deleted": false,
+        "new_scientific_samples": 0,
+        "initial_backup_status": "ACTUAL_REMOTE_FULL13_GENERATION_BINARY_EOF_SHA_AND_PHYSICAL_RESTORE_PASS",
+        "initial_backup_raw13": [
+          {
+            "bytes": 52088832,
+            "relative": ".longitudinal-working.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "d1a0545a18ad2b3068e1c2e45d9206eea9ed1beeba08b58c06b2cf467cce60ea",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 5391834,
+            "relative": "checkpoint-day-001890.json",
+            "restored_binary_EOF": true,
+            "sha256": "9616e0b64cf102ee8998e55c332dc41af46d8fa1aa6d401fbd54c0c1c8c7e943",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 52051968,
+            "relative": "checkpoint-day-001890.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "8dab3cacc0c0be92e7430ccb593f8318bf2f2dcbc6355ef1bafd8bc23b6f483e",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 5470535,
+            "relative": "checkpoint-day-001917.json",
+            "restored_binary_EOF": true,
+            "sha256": "4df0385efa1e1558301b94b88af900f16a39f8d48ab41a692377e38c38cb8627",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 52088832,
+            "relative": "checkpoint-day-001917.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "666c408b0ea0f890d697cb8becf68834cb4145a753835dc46a37906406ee22c0",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 1684,
+            "relative": "checkpoint-index.json",
+            "restored_binary_EOF": true,
+            "sha256": "1105ac491753a24f495d701e75631258559d28f1b2f335e0627eec1fb99cc4c9",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 5470525,
+            "relative": "final_state.json",
+            "restored_binary_EOF": true,
+            "sha256": "8ac1bc065b54f351e36944dac3624897fa2c1eb062bae16f6bdd9377d9eee04d",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 52088832,
+            "relative": "final_state.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "666c408b0ea0f890d697cb8becf68834cb4145a753835dc46a37906406ee22c0",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 6506,
+            "relative": "manifest.json",
+            "restored_binary_EOF": true,
+            "sha256": "f4875927fbacfc48b13bf328fbf83b7356f8a9b122e19c909d0d6fd7800ef4b7",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 1550,
+            "relative": "report.md",
+            "restored_binary_EOF": true,
+            "sha256": "ebcc6e79e9abfea4ab1fec7ce773ae286b576c86dbce9e58f703fc63c7906b3f",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 62074,
+            "relative": "report.svg",
+            "restored_binary_EOF": true,
+            "sha256": "9b734ee41dad43167e475d7628a28e20845382ced645227409edd673cbf933ed",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 2485,
+            "relative": "summary.json",
+            "restored_binary_EOF": true,
+            "sha256": "6216de3b33aa4a3c0d2ab3b0ee8de25e6c98a03b07729905fa8e630592ce331b",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 1486322,
+            "relative": "timeseries.csv",
+            "restored_binary_EOF": true,
+            "sha256": "002ffbb615d2d4c8c4291898eb07aa521ded802a2289a6bdd115dd178ffa3946",
+            "strict_codec_EOF": true
+          }
+        ],
+        "initial_backup_metadata_sha256": "9646d523a1a8990049ba7e188d54182afc2ca1f51be16c3ec442e3bb3e88ef71",
+        "initial_backup_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "full_three_Lifecycle_readbacks_complete": true
+      },
+      {
+        "case_id": "11368fb688151956e6995b963907c103591cfeacd06071bd9b5d23720a7cc5a4",
+        "receipt_sha256": "185b3ac8c292694304e382d8f03005f16013ccf86ca9affbffcf44b9a6d05d00",
+        "receipt_bytes": 19138,
+        "admission_status": "ALL_ADMITTED_BACKENDS_ACTUALLY_RESTORED",
+        "admission_full_readbacks": [
+          {
+            "chunks_read": 60,
+            "encoded_bytes_read": 155783622,
+            "files": 13,
+            "manifest_sha256": "c132ed48954b07dc1e6123779a883c32e9da1daf39b16984c1e14bf472926af3",
+            "observed_utc": "2026-10-11T09:55:10.987002+00:00",
+            "raw_bytes": 208722905,
+            "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+            "strict_eof": true
+          }
+        ],
+        "promotion_status": "AUTHORITATIVE_ARCHIVE_PROMOTION_PASS",
+        "promotion_full_readbacks": [
+          {
+            "chunks_read": 60,
+            "encoded_bytes_read": 155783622,
+            "files": 13,
+            "manifest_sha256": "c132ed48954b07dc1e6123779a883c32e9da1daf39b16984c1e14bf472926af3",
+            "observed_utc": "2026-10-11T09:57:07.472353+00:00",
+            "raw_bytes": 208722905,
+            "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+            "strict_eof": true
+          }
+        ],
+        "promotion_alone_physically_evicts_raw": false,
+        "eviction_status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "eviction_observed_utc": "2026-10-11T10:01:33.714671+00:00",
+        "raw_paths_evicted": 12,
+        "logical_unlinked_bytes": 208716411,
+        "scientific_content_deleted": false,
+        "new_scientific_samples": 0,
+        "initial_backup_status": "ACTUAL_REMOTE_FULL13_GENERATION_BINARY_EOF_SHA_AND_PHYSICAL_RESTORE_PASS",
+        "initial_backup_raw13": [
+          {
+            "bytes": 47788032,
+            "relative": ".longitudinal-working.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "7a09438cebad7ec24e8bf2cbfdcce71ffda128d5335127942a764e5d09527ba9",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 5322669,
+            "relative": "checkpoint-day-001890.json",
+            "restored_binary_EOF": true,
+            "sha256": "6bd7899de08a136d784e18ad3b77303d28dcfddb7332b195b72fea344e5dec72",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 47767552,
+            "relative": "checkpoint-day-001890.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "ed291a1d9cd1a2f66aff4bfd258a1ba4163f8115c4718bd2d23712d1b226beb5",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 5395823,
+            "relative": "checkpoint-day-001917.json",
+            "restored_binary_EOF": true,
+            "sha256": "7fc8ee76c034b5d12358cad4311ba982e164d95f713baea1fbbc3d70d29b2e83",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 47788032,
+            "relative": "checkpoint-day-001917.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "76e5f14d216ea48a314ebbe2b466bd81d471312d7dcbd079016f26086e8a3aca",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 1683,
+            "relative": "checkpoint-index.json",
+            "restored_binary_EOF": true,
+            "sha256": "237ed4dfb26cae25d1d4098696c7c409026b082867435ee5dc1540ceca379d82",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 5395813,
+            "relative": "final_state.json",
+            "restored_binary_EOF": true,
+            "sha256": "28af89ffe7bcafcd1845bb744c3f1ec15734fc0f46448bda3564d4e80540788c",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 47788032,
+            "relative": "final_state.sqlite",
+            "restored_binary_EOF": true,
+            "sha256": "76e5f14d216ea48a314ebbe2b466bd81d471312d7dcbd079016f26086e8a3aca",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 6494,
+            "relative": "manifest.json",
+            "restored_binary_EOF": true,
+            "sha256": "c99365b731c6747d724a58fcbb76e86171a2426a63b363c64b6c6cbfecd796e9",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 1562,
+            "relative": "report.md",
+            "restored_binary_EOF": true,
+            "sha256": "df4e2ab5d6531b84593337dc28387aaf8997c2ec023f1b70965e334103add464",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 62081,
+            "relative": "report.svg",
+            "restored_binary_EOF": true,
+            "sha256": "52b07bdd3970bc4d2e16bcaa5acae6804d416855cd8639ba0c676bfed6442ffd",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 2359,
+            "relative": "summary.json",
+            "restored_binary_EOF": true,
+            "sha256": "9776ace7112b73ba1653f731c6f34bada9cf6a7290847ccf3ec126159c726e7a",
+            "strict_codec_EOF": true
+          },
+          {
+            "bytes": 1402773,
+            "relative": "timeseries.csv",
+            "restored_binary_EOF": true,
+            "sha256": "fbfa5cc10b8fe71edecadc032e3dfb7406998edce4df719ae61b48aebd3f9138",
+            "strict_codec_EOF": true
+          }
+        ],
+        "initial_backup_metadata_sha256": "3a3da2522e86a18600071752a96cb4b433c1ca5d8c27ad5337d20b262539e5fc",
+        "initial_backup_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "full_three_Lifecycle_readbacks_complete": true
+      }
+    ],
+    "failed_or_unverified_workspace_and_historical_proofs_retained": true,
+    "first_case_independent_saved_metadata_review_sha256": "d90420e2edd82d520a8314953725fa94cc0f4416378ef6cc389be32185d07149",
+    "cold_cases_independently_checked_in_that_metadata_review": 1,
+    "independent_cold_review_repeated_raw_or_provider_reads": false,
+    "source_scientific_cases_or_samples_added": 0,
+    "automatic_retry_authorized": false,
+    "whole52_or140_cold_complete": false,
+    "request_counter_is_supplier_invoice": false,
+    "new_compute_VM_created": false,
+    "failed_upload_object_later_reconciled_with_four_GETs": true,
+    "current_persisted_auth_attempts": 4,
+    "remaining50_archive_continuation_running": false,
+    "meter_head_is_dated_cut_proof_not_publication_live_guard": true
+  },
+  "N30_full_independent_backup_cases": 140,
+  "N30_cold_cases": 113,
+  "N30_cold_total": 140,
+  "prior_verified_workspace_cache_retirement": {
+    "terminal_sha256": "e20dbdb4aa21c24cecdc712443bf0dd881a8a8e2d1950f626f68e207c42dfec3",
+    "actual_receipt_sha256": "77901d5e64898be2cb2e5b058f3964dd001779a3ace75d0922d3ef89dee7d924",
+    "actual_exit_code": 0,
+    "reaped": true,
+    "regenerable_owned_files_retired": 50,
+    "logical_retired_bytes": 309735581,
+    "observed_work_volume_available_change_bytes": 309690368,
+    "backing_volume_release_proven": false,
+    "original13_and_prior_full13_proof_and_failed_evidence_preserved": true,
+    "new_scientific_samples": 0
+  },
+  "verified_unused_Git_duplicate_retirement": {
+    "terminal_sha256": "aa956ca30651a8a80a686f1c7f34f99cb74de24b39396b541a04e2bfcf090c6f",
+    "actual_result_sha256": "5b65001fbed84fff3c728e1a981cbf413f04421fa4f59591e45d77c8532a5941",
+    "independent_metadata_postcheck_sha256": "6b418c5f686266b2285714736d6ed293de62a7aadbaf041b1b151a00dde695f8",
+    "exact_duplicate_files_retired": 4,
+    "actual_exit_code": 0,
+    "reaped": true,
+    "logical_retired_bytes": 840915582,
+    "observed_internal_volume_available_change_bytes": 840622080,
+    "four_byte_identical_external_copies_retained": true,
+    "valid_Git_history_repository_roots_and_HEAD_index_config_preserved": true,
+    "scientific_source_and_raw_or_provider_actions": 0
+  },
+  "supplier_invoice_reconciliation_complete": false,
+  "new_compute_VM_created": false,
+  "whole_goal_complete": false,
+  "antecedent_r67_sha256": "f3df2ad621f9af2a29d04068f917ad9461d83d8733248c9085a090b92d28d415",
+  "unknown_upload_object_reconciliation": {
+    "status": "FIXED_GENERATION_COMPLETE_BINARY_EOF_SHA_PASS",
+    "result_sha256": "9f47200140bc1a691e85beee195028edec4b3d84c6e1d2ef9afc31c42088b3fa",
+    "terminal_sha256": "a5cf18fda5dfd2585decfbf6103e964956bad1a070132509f983dc4a5cad0d01",
+    "independent_saved_metadata_review_sha256": "f4aec4aa87a47b5994e0318b654b604ef9904cc2ad033f7bafcf23d94d2a8297",
+    "actual_GET_requests": 4,
+    "POST_requests": 0,
+    "raw_retirements": 0,
+    "new_scientific_samples": 0,
+    "cold_cases_reexecuted": 0,
+    "normal_exit_code": 0,
+    "reaped": true,
+    "generation": "1791713117228046",
+    "encoded_bytes_full_EOF_SHA_verified": 3361693,
+    "encoded_object_sha256": "0234362cb61f5d4a914aa5453be0fbc625cfd6e17e325d411504025eacc75622",
+    "initial_requests": 688,
+    "final_requests": 692,
+    "final_results": 692,
+    "final_pending": 0,
+    "prior_auth_attempts": 3,
+    "final_auth_attempts": 4,
+    "original_meter_epoch_job_config_counters_and_holds_reset": false,
+    "separate_reconciliation_caller_source_sha256": "4383a785f82f9b06e8fa82b35250ae090dea37b8be0caf05a2e806d604c4d111",
+    "separate_caller_independent_offline_controls": 38,
+    "separate_caller_independent_offline_control_receipt_sha256": "6f756f6098f79d399457e986c19e8cce49a9b61b22696ef8b753b332fba53442",
+    "original_archive_runtime_sources_replaced": false,
+    "original16_plus_source17_retained": true,
+    "independent_review_repeated_binary_or_provider_reads": false,
+    "completed_third_case_or_remaining50_continuation_claimed": false,
+    "whole52_cold_complete": false,
+    "supplier_invoice_reconciled": false
+  },
+  "antecedent_r68_sha256": "c6520458faea1866a2552ebca39bae947d8f07b5a9ee3e2dffd267c61cf0fd35",
+  "internal_continuation_preauth_refusal": {
+    "status": "ROOT_ACTUAL_SOURCE50FC_PREAUTH_PIN_SCHEMA_REFUSAL",
+    "receipt_sha256": "f84e7a5120be9ad3e5fb87ff4fe78363b817bde6d664c8e6f6f7e28891e01dd3",
+    "source_sha256": "50fc9a127e70c5daa635b6c004562a1139f9d409eb537c12b768cbec7ec24c23",
+    "actual_exit_code": 1,
+    "reaped": true,
+    "registered_Lifecycle_three_key_pin_rejected_by_owner_metadata_schema": true,
+    "token_holder_constructor_reached": false,
+    "persistent_Backend_Meter_constructor_reached": false,
+    "actual_provider_or_auth_calls": 0,
+    "raw_retirements": 0,
+    "scientific_source_or_Master_changed": false,
+    "minimal_successor_executed_at_cut": false,
+    "continued_remaining50_or_new_cold_cases_claimed": false,
+    "old_failure_source_and_grant_preserved": true
+  },
+  "N300_original_pipeline_capacity_stop": {
+    "status": "CAPACITY_STOP_EXIT1_REAPED",
+    "stopped_utc": "2026-10-11T10:59:30.912344+00:00",
+    "producer_exit_code": 1,
+    "reaped": true,
+    "owned_process_group_absent_at_terminal": true,
+    "terminal_sha256": "18a54de30011279926f0dd7fcbfffbfe4a0409d555b944d8972fde31b19ca390",
+    "stderr_sha256": "fbfd3934ae164e6f7faf1bf81f7fa5cd11a6ed24166328b4a8dfc8c98e9a7865",
+    "scheduler_guard_line": 361,
+    "scheduler_source_sha256": "114cddf6beda055868f0f24d93bfc5c4e2965ff3ecd4a4c1faccb9d6ee163ed2",
+    "scientific_startup_required_GiB_unchanged": 96,
+    "scientific_safe_floor_GiB_unchanged": 80,
+    "per_new_producer_reservation_GiB_unchanged": 16,
+    "RUNNING_at_cut": false,
+    "resumption_completed_or_authorized_by_publication": false
+  }
+}
