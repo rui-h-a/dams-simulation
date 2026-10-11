@@ -1,3 +1,11 @@
+# Latest verified observation: R60
+
+Dated 2026-10-11T05:19:16.945639+00:00. N30 and N120 retain four pilot and 66 accepted confirmation paired worlds each. N300 retains one complete five-year pilot pair; its next case is paused at day 1,205 of 1,917 under the unchanged capacity guard. Original1000 remains 35/144 accepted cases and zero complete paired worlds.
+
+An actually invoked custody continuation was reaped with a strict file-pin ABI error before raw cleanup. All 13 original files of the affected case remain unchanged. Standard backup and promotion evidence persists. The cumulative request count is 6,426 with zero pending attempts. The original 6,337 immutable request/result prefix was reconciled; no completed custody case or scientific world is added. A separate unissued repair retains the 10,000-request cap and explicitly defers one of the 42 remaining units.
+
+[Actual failure and preserved evidence](cold-api-abi-failure-r60.json) · [Current scientific observation](research-observation-r60.json). The prior R59 failure record was published in the historical 10 October directory; it is retained. This update places the evidence in the current 11 October index. The 86-page interim PDF is unchanged and the overall research remains unfinished.
+
 ## R58 — reaped preservation prefix and remaining original evidence
 
 Observation: 2026-10-11T04:31:42.782397+00:00. The cold consumer stopped on its bounded guard at2026-10-11T04:22:19.876153+00:00 and was actually reaped with exit1. It completed **4/46 selected cases**, bringing individually deduplicated cold lifecycles to **72/140**. Its unfinished fifth case adds no completion; all13 original file identities remain intact for each of the42 selected remaining cases. Other unretired cases outside this selected scope are not silently treated as complete. The earlier R57 RUNNING observation retains its original cutoff.

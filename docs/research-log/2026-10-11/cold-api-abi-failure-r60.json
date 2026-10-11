@@ -1,0 +1,58 @@
+{
+  "schema": "dams-actual-cold-api-abi-failure-r60-v1",
+  "observation_utc": "2026-10-11T05:19:16.945639+00:00",
+  "operation": "actually invoked custody continuation, reaped exit1",
+  "failure_utc": "2026-10-11T05:04:19.729921+00:00",
+  "failure_type": "strict explicitly admitted file-pin ABI mismatch",
+  "cause": "Root supplied path,bytes,sha256,native; unchanged Lifecycle._pin requires exactly path,bytes,sha256.",
+  "source_sha256": {
+    "root_wrapper": "0f253f22bffbe9b560eb3eed5e9195355f75bf13088af899c7310c6507947a85",
+    "consumer": "e216f3bd10fa18e4896e1cbbc4b14ad274488dd45d07137bba1ac6eb5b0e93ae",
+    "meter_implementation": "6b29a6ab542f5c5c9e793a4ae873ce63c34971eb8e848ee8b3b387470e9562d3"
+  },
+  "actually_completed_cold_cases_added": 0,
+  "new_scientific_worlds": 0,
+  "case_id": "291bf5b92606b9a79ba9ad704f3b070a619a8f4b83115ea0e91b627554a5e3c3",
+  "all13_raw_native_unchanged_in_actual_closed_inventory": true,
+  "original_raw_cleanup_transactions": 0,
+  "current_standard_custody_evidence": {
+    "existing_backups": {
+      "bytes": 464,
+      "sha256": "2b682696652b5b98531f32d187f89eadf918a712f519da83ffa90acf4d609e3f"
+    },
+    "existing_backup_readback": {
+      "bytes": 899,
+      "sha256": "b449a0a247caa5874c79ce6532a8f9bc200ecfd79ad04218999a7333ff6b1992"
+    },
+    "existing_promotion": {
+      "bytes": 561,
+      "sha256": "d96aeeda9515bba8197b88f159a3f452e0548f92cf8e56741f31f00ed40427fd"
+    }
+  },
+  "readback_scope": {
+    "admission_saved_full13_strict_eof_receipt": true,
+    "promotion_and_pre_eviction_full_readbacks": "Existing API execution order and actual charged prefix support both passes; no separate third-pass metrics receipt is asserted."
+  },
+  "cumulative_accounting": {
+    "before": 6337,
+    "after": 6426,
+    "completed": 6426,
+    "pending": 0,
+    "charged_prefix_reset": false,
+    "original_request_cap": 10000,
+    "all_original6337_immutable_ticket_and_result_files_verified": true
+  },
+  "exact_remaining_case_units": 42,
+  "next_bounded_scope": {
+    "status": "UNISSUED_SOURCE_REPAIR",
+    "already_promoted_first_case": "evict only, retaining mandatory fresh full readback",
+    "fresh_case_units": 40,
+    "explicit_deferred_case_units": 1,
+    "planned_request_upper": 9939,
+    "original_request_cap_changed": false
+  },
+  "scientific_sources_samples_populations_calendars_and_precision_changed": false,
+  "new_VM_created_by_operation": false,
+  "raw_deleted_by_publication": false,
+  "whole_research_complete": false
+}
