@@ -1,0 +1,436 @@
+{
+  "schema": "DAMS-R78-r7-five-year-engineering-public-evidence-1",
+  "evidence_completed_utc": "2026-10-11T20:33:31.791175+00:00",
+  "scope": {
+    "model_version": "longitudinal-enterprise-integrated-7-networks-tasks-1",
+    "engineering_complete_pairs": 1,
+    "completed_arm_executions": 2,
+    "formal_worlds_added": 0,
+    "scientific_paired_worlds_added": 0,
+    "original_N30_formal_sample_modified": false,
+    "empirical_calibration_completed": false,
+    "out_of_sample_validation_completed": false,
+    "statistical_precision_evaluated": false,
+    "confidence_intervals_or_p_values_reported": false,
+    "platform_actually_executed": "macOS",
+    "Linux_candidate_validated": false,
+    "local_engineering_profile_provider_calls": 0,
+    "local_profile_paid_provider_cost_usd": 0
+  },
+  "source": {
+    "repository": "rui-h-a/dams-simulation",
+    "branch": "research/enterprise-integrated-r7-20261012",
+    "commit": "4f7b9989867b63509da3383aee9cf816b2c98efc",
+    "core_sha256": "f2ce5ba098f199dd71cac4cb9ffb34e85a76d0a8e4c4396d33a31072586bc108",
+    "manifest_sha256": "b009417cba9ede52edd8184f557baafdab284fe7be3a5de7e4b2091defa2a7db",
+    "frozen_source_file_count": 291,
+    "publication_readback": {
+      "Git_blob_and_mode_entries": 292,
+      "changed_files_full_byte_readbacks": 15,
+      "all_entries_were_individual_full_byte_downloads": false
+    }
+  },
+  "design": {
+    "calendar_start_inclusive": "2020-01-01",
+    "calendar_end_exclusive": "2025-01-01",
+    "Gregorian_calendar_days": 1827,
+    "workdays": 1305,
+    "work_weekdays": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "holidays": [],
+    "initial_population": 30,
+    "seed": 42,
+    "world_index": 0,
+    "initial_agents_and_complete_logical_ledger_equal": true,
+    "initial_complete_header_equal_except_predeclared_treatment": true,
+    "adoption_observation_window": "day-zero adoption in the DAMS parent guilds; full five-year window",
+    "settlement": {
+      "backend": "central",
+      "settlement_days": 1,
+      "appeal_delay_days": 3,
+      "work_creation_stop_day": null,
+      "separate_settlement_tail_declared": false,
+      "all_claims_settled_at_window_end": false,
+      "complete_pending_evidence_retained": true
+    },
+    "synthetic_fixture_assumptions": {
+      "annual_exit_probability": 0.0,
+      "annual_vacancy_fill_probability": 0.0,
+      "annual_leave_workdays": 0.0,
+      "demographic_or_cultural_calibration": false
+    }
+  },
+  "reproduction": {
+    "published_base_configuration": "candidate-evidence/calendar-networks-r7.json",
+    "base_configuration_sha256": "6dbf244bcf7babf4d857564f93e09547afcb437cfc32fbc721c6519565ab6e40",
+    "common_overrides_fixed_before_execution": {
+      "days": 1827,
+      "max_events": 2000000,
+      "max_output_mb": 2147.483648,
+      "max_wall_seconds": 1800.0,
+      "max_rss_mb": 1024.0
+    },
+    "arm_overrides": {
+      "hierarchy-never": {
+        "regime": "hierarchy",
+        "longitudinal.adoption_mode": "never",
+        "longitudinal.adoption_day": 0
+      },
+      "dams-fixed0": {
+        "regime": "sublinear",
+        "longitudinal.adoption_mode": "fixed",
+        "longitudinal.adoption_day": 0
+      }
+    },
+    "profile_file_serialization": "UTF-8 json.dumps(config.to_dict(), indent=2) followed by one newline",
+    "entry": "dams_sim.cli.run_world",
+    "entry_options": {
+      "checkpoint_interval_days": 30,
+      "checkpoint_interval_seconds": 60,
+      "journal_chunk_bytes": 1048576
+    },
+    "checkpoint_retention": "latest two complete checkpoints, including days 1800 and 1827",
+    "resource_guard": {
+      "per_arm_events": 2000000,
+      "per_arm_raw_cap_bytes": 2147483648,
+      "per_arm_wall_seconds": 1800,
+      "per_arm_rss_mib": 1024,
+      "observed_storage_floor_bytes": 85899345920,
+      "preflight_required_common_peak_bound_bytes": 15166603264,
+      "actual_preflight_available_bytes": 102288904192,
+      "capacity_pass": true
+    },
+    "resource_guards_do_not_change_scientific_parameters": true
+  },
+  "arms": {
+    "hierarchy-never": {
+      "regime": "hierarchy",
+      "adoption_mode": "never",
+      "config_sha256": "44d1072679391883d908b606eba0ac7ce64d24a40ba90aecccd3fa87512d8ac4",
+      "final_manifest_sha256": "cad535ff277fd965ad664b03ea15e01b0b76ebb77dfa8b636d66178d192c1918",
+      "final_state_semantic_sha256": "b03b273b12831ba2856af397841cf80867a7bf5ac4fe7d6f67386261637b4ad1",
+      "completed_calendar_days": 1827,
+      "outcomes": {
+        "active_members_final": 34,
+        "ever_people": 34,
+        "organization_capacity_final": 39,
+        "guild_count_final": 5,
+        "department_count_final": 3,
+        "site_count_final": 3,
+        "migration_resource_units": null,
+        "training_hours": 8.40000000000001,
+        "dual_run_resource_units": 2.8000000000000003,
+        "maintenance_resource_units": 0.0,
+        "produced_work_units": 21543.62791470756,
+        "decision_regret_units": 318.48675384362616,
+        "cash_resource_units": 215975.31557287907,
+        "unfinished_records": 10440,
+        "unfinished_appeals": 364,
+        "adoption_days": {
+          "0": null,
+          "1": null,
+          "2": null,
+          "3": null,
+          "4": null
+        }
+      },
+      "execution": {
+        "wall_seconds": 315.2503222079831,
+        "cpu_seconds": 301.968659,
+        "process_lifetime_peak_rss_mib": 71.015625,
+        "complete_output_logical_bytes": 135889970,
+        "initialization_wall_seconds": 0.028745791991241276,
+        "simulation_and_periodic_checkpoint_wall_seconds": 306.11442387499847,
+        "final_serialization_wall_seconds": 9.019585417001508,
+        "final_hashing_wall_seconds": 0.05999733303906396,
+        "minimum_observed_free_bytes": 102108667904
+      },
+      "account_checks": {
+        "complete_raw_accounts_valid": true,
+        "organization_task_accounts_valid": true,
+        "organization_days_verified": 1827,
+        "acquisition_cash_conserved": true,
+        "acquisitions_closed": 1,
+        "acquisitions_integrated": 1,
+        "acquisitions_failed": 0,
+        "transferred_people": 4,
+        "parent_transaction_cash_delta_resource_units": -11.699999999999998,
+        "seller_consideration_resource_units": 10.0,
+        "external_service_provider_receipts_resource_units": 4.7
+      },
+      "journal": {
+        "schema_version": 2,
+        "lossless_chunks": 1828,
+        "chunk_target_bytes": 1048576
+      },
+      "recovery": {
+        "checkpoint_day": 1800,
+        "replayed_tail_days": 27,
+        "complete_encoded_state_and_semantic_digest_equal": true,
+        "state_encoding": "json-string-keys-v2; complete values compared, no research field omitted",
+        "checkpoint_receipt_sha256": "6178eae2605f4addba942eee783595517006d8cf81673dca6a623110bccd5907",
+        "checkpoint_load": {
+          "cpu_seconds": 24.634213000000003,
+          "wall_seconds": 24.774229208007455,
+          "kernel_disk_read_bytes": 34787328,
+          "kernel_disk_written_bytes": 28426240,
+          "end_resident_bytes": 98156544,
+          "end_physical_footprint_bytes": 87867848,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        },
+        "tail_execution": {
+          "cpu_seconds": 0.2508619999999979,
+          "wall_seconds": 0.3626712500117719,
+          "kernel_disk_read_bytes": 180224,
+          "kernel_disk_written_bytes": 18173952,
+          "end_resident_bytes": 98222080,
+          "end_physical_footprint_bytes": 87884232,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        },
+        "complete_raw_account_verification": {
+          "cpu_seconds": 33.257614000000004,
+          "wall_seconds": 33.305048542039,
+          "kernel_disk_read_bytes": 3186688,
+          "kernel_disk_written_bytes": 0,
+          "end_resident_bytes": 73170944,
+          "end_physical_footprint_bytes": 59998664,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        },
+        "checkpoint_recovery_receipt_verification": {
+          "cpu_seconds": 16.450327999999992,
+          "wall_seconds": 16.464291582989972,
+          "kernel_disk_read_bytes": 143360,
+          "kernel_disk_written_bytes": 4096,
+          "end_resident_bytes": 102350848,
+          "end_physical_footprint_bytes": 83165640,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        }
+      },
+      "raw_file_sha256": {
+        ".longitudinal-working.sqlite": "6feecf61b684ae7dc79135ae9071b0fa07b0b8eb3ff9e71be974a06762f3f5ab",
+        "checkpoint-day-001800.json": "085059d0a48408a8d8521a9a436e5b71e083e6070e21bf30c6f5ae875950acfa",
+        "checkpoint-day-001800.sqlite": "32494384a4266ef099ccd75f4475eab7e495a4114d4313585a2d8598f6de2a2d",
+        "checkpoint-day-001827.json": "50c3e326a4b7d46bcc3a8ba9d2e51640d2f8fed1db90f35f3ff15616b570b12f",
+        "checkpoint-day-001827.sqlite": "a6d6b52b740cbb9d9fc096739bfd64f59210b95f1a0674b5dcb2f28c33352cc7",
+        "checkpoint-index.json": "a018d4e9d2a65d414ea4a231c41026bd9a956341f2d37347fd296ba518991986",
+        "final_state.json": "18f882ad446a46d8adf4601328dd9e47368aa0085ad0e00d4d42f33c0d4baf56",
+        "final_state.sqlite": "a6d6b52b740cbb9d9fc096739bfd64f59210b95f1a0674b5dcb2f28c33352cc7",
+        "report.md": "ee52dce61c66e4022704964e4e459da78528f9bd614153c1f2956567cc2a25bf",
+        "report.svg": "a159ae17508f62855fa6543b4b0b012fc7bc02f4ed6c6660232c878511e73ca5",
+        "summary.json": "091bbd4eb7ccc2fee504951dc9f34acfd1a7a239222d5545737e5a3f80e2b564",
+        "timeseries.csv": "cf888883411d718f20cf4f5715aad56ab116faf4284a7c63094933a6e4ac290b"
+      }
+    },
+    "dams-fixed0": {
+      "regime": "sublinear",
+      "adoption_mode": "fixed",
+      "config_sha256": "cceb3483f5d83da62cbdfc7f9c47ef1ec9385ca811598547565c2892c7ef8748",
+      "final_manifest_sha256": "cfa36ed9a37c532f308a3ff868ad6505cb2aec95e382ae0553011ef8cd669bb3",
+      "final_state_semantic_sha256": "3ae06b06c3d095310bb3843638cfa4e5ebc1b808073d9ccb2e61dad669b26416",
+      "completed_calendar_days": 1827,
+      "outcomes": {
+        "active_members_final": 34,
+        "ever_people": 34,
+        "organization_capacity_final": 39,
+        "guild_count_final": 5,
+        "department_count_final": 3,
+        "site_count_final": 3,
+        "migration_resource_units": 60.0,
+        "training_hours": 200.39999999999276,
+        "dual_run_resource_units": 98.79999999999998,
+        "maintenance_resource_units": 0.0,
+        "produced_work_units": 20618.545777161755,
+        "decision_regret_units": 316.7753439276533,
+        "cash_resource_units": 206619.1782442633,
+        "unfinished_records": 10439,
+        "unfinished_appeals": 347,
+        "adoption_days": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": null
+        }
+      },
+      "execution": {
+        "wall_seconds": 326.9518136669649,
+        "cpu_seconds": 303.41,
+        "process_lifetime_peak_rss_mib": 73.671875,
+        "complete_output_logical_bytes": 136768851,
+        "initialization_wall_seconds": 0.04038895800476894,
+        "simulation_and_periodic_checkpoint_wall_seconds": 317.73219412501203,
+        "final_serialization_wall_seconds": 9.096642791992053,
+        "final_hashing_wall_seconds": 0.0605983329587616,
+        "minimum_observed_free_bytes": 101970763776
+      },
+      "account_checks": {
+        "complete_raw_accounts_valid": true,
+        "organization_task_accounts_valid": true,
+        "organization_days_verified": 1827,
+        "acquisition_cash_conserved": true,
+        "acquisitions_closed": 1,
+        "acquisitions_integrated": 1,
+        "acquisitions_failed": 0,
+        "transferred_people": 4,
+        "parent_transaction_cash_delta_resource_units": -11.699999999999998,
+        "seller_consideration_resource_units": 10.0,
+        "external_service_provider_receipts_resource_units": 4.7
+      },
+      "journal": {
+        "schema_version": 2,
+        "lossless_chunks": 1828,
+        "chunk_target_bytes": 1048576
+      },
+      "recovery": {
+        "checkpoint_day": 1800,
+        "replayed_tail_days": 27,
+        "complete_encoded_state_and_semantic_digest_equal": true,
+        "state_encoding": "json-string-keys-v2; complete values compared, no research field omitted",
+        "checkpoint_receipt_sha256": "75390cd9bd69b6588d088568c4d30005856725dd572558f26016ecd5093fb3b7",
+        "checkpoint_load": {
+          "cpu_seconds": 24.682981000000012,
+          "wall_seconds": 24.751651917002164,
+          "kernel_disk_read_bytes": 2207744,
+          "kernel_disk_written_bytes": 28606464,
+          "end_resident_bytes": 104660992,
+          "end_physical_footprint_bytes": 79528416,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        },
+        "tail_execution": {
+          "cpu_seconds": 0.26391799999998966,
+          "wall_seconds": 0.3986815409734845,
+          "kernel_disk_read_bytes": 106496,
+          "kernel_disk_written_bytes": 17686528,
+          "end_resident_bytes": 104677376,
+          "end_physical_footprint_bytes": 79544800,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        },
+        "complete_raw_account_verification": {
+          "cpu_seconds": 34.01446600000001,
+          "wall_seconds": 34.06349875003798,
+          "kernel_disk_read_bytes": 487424,
+          "kernel_disk_written_bytes": 0,
+          "end_resident_bytes": 108118016,
+          "end_physical_footprint_bytes": 88900040,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        },
+        "checkpoint_recovery_receipt_verification": {
+          "cpu_seconds": 16.521851999999996,
+          "wall_seconds": 16.53318774997024,
+          "kernel_disk_read_bytes": 131072,
+          "kernel_disk_written_bytes": 4096,
+          "end_resident_bytes": 123994112,
+          "end_physical_footprint_bytes": 92094968,
+          "kernel_disk_bytes_exclude_cache_hits": true
+        }
+      },
+      "raw_file_sha256": {
+        ".longitudinal-working.sqlite": "46a641b94571067b5e4153f5f8a75dab9efd0aa915da922a7bde1bbb00ac6635",
+        "checkpoint-day-001800.json": "ec0a6b84ec7fa9fd2991188e31eba41927338a46c5253a8832654c2923aa895e",
+        "checkpoint-day-001800.sqlite": "97953b755ec00ddd7b91dd1ff0602ec4905d758824fe46b6a931ebcc1ead0fb1",
+        "checkpoint-day-001827.json": "c088959ac888104541af5b3ce31db2b4c60b0a9929f959b10c4c771aa4d61ebd",
+        "checkpoint-day-001827.sqlite": "bee3e6ccd10755a6fc180f36bf5e7cbabeea5e5078c9a82754c6f956843a8271",
+        "checkpoint-index.json": "ed5d3ce0b5acc884b3070a60cbdc3da0778ced9d6fb274bcec6847c169806a1e",
+        "final_state.json": "5bbafb5777a74cbeebb1f6bf6de4ab872007ff4a2a02d5bb83346dd410991f3a",
+        "final_state.sqlite": "bee3e6ccd10755a6fc180f36bf5e7cbabeea5e5078c9a82754c6f956843a8271",
+        "report.md": "d01a55452fe4c8f0a34979cfd3d7e70c6d5ad43b1974bb7d386ab483426587f6",
+        "report.svg": "6450c203661df5e9ef16fcc299520ed4a489d5ac5bc9c7cb54ebc324d6b0ff7f",
+        "summary.json": "d3a6b568ad41438a62b226d842296c8766dd7dcaf901fa616f4e1cd751f976c3",
+        "timeseries.csv": "be08cff1e6781278726e2cc1f6624c8a755defe895087094066f037467354853"
+      }
+    }
+  },
+  "single_engineering_pair_difference_DAMS_minus_hierarchy": {
+    "produced_work_units": {
+      "value": -925.0821375458036,
+      "unit": "synthetic work units"
+    },
+    "decision_regret_units": {
+      "value": -1.7114099159728653,
+      "unit": "synthetic decision-regret units"
+    },
+    "cash_resource_units": {
+      "value": -9356.137328615761,
+      "unit": "synthetic resource units"
+    },
+    "training_hours": {
+      "value": 191.99999999999275,
+      "unit": "modeled training hours"
+    },
+    "dual_run_resource_units": {
+      "value": 95.99999999999999,
+      "unit": "synthetic resource units"
+    },
+    "unfinished_records": {
+      "value": -1,
+      "unit": "records"
+    },
+    "unfinished_appeals": {
+      "value": -17,
+      "unit": "appeals"
+    }
+  },
+  "difference_interpretation": "Lower produced work and final cash, with slightly lower decision regret in this one synthetic engineering pair. No population-level efficacy inference.",
+  "missing_metric_handling": "Hierarchy migration_resource_units remains null as in the original summary; it is not silently imputed to zero.",
+  "I_O_measurement": {
+    "main_execution_samples": 943,
+    "main_process_last_observed_kernel_read_bytes_lower_bound": 10063872,
+    "main_process_last_observed_kernel_written_bytes_lower_bound": 4401074176,
+    "exact_per_arm_main_I_O_endpoints": false,
+    "main_disk_counters_cover_all_profile_process_file_I_O": true,
+    "restoration_phase_kernel_counters_have_exact_phase_endpoints": true,
+    "kernel_counters_are_physical_SSD_or_NAND_bytes": false,
+    "warm_cache_and_process_accounting_limit_device_throughput_inference": true,
+    "hardware_saturation_or_physical_peak_capacity_certified": false,
+    "RSS_note": "process-lifetime cumulative high-water mark across sequential arm executions, not isolated fresh-process arm maxima",
+    "free_space_note": "native callback observations; neither exact transient peak nor physical NAND measurement"
+  },
+  "validation_boundaries": {
+    "program_correctness": "Raw SHA-256, SQLite integrity, lossless journal, daily/final accounting, and exact checkpoint continuation were checked.",
+    "organization_accounting": "Role, time, task, potential, learning and fatigue accountant does not call producer topology, prepare, allocation, finish or reviewer transition functions. It shares journal parsing, calendar and keyed RNG.",
+    "inherited_validation": "Some inherited enterprise validators share producer transition functions. Neither they nor checkpoint replay are complete independent whole-model, economic or external validation.",
+    "parameter_and_model_recovery_to_empirical_ground_truth_completed": false,
+    "cross_enterprise_or_cross_industry_validation_completed": false,
+    "large_population_full_horizon_admission_demonstrated": false
+  },
+  "growth_and_acquisition_limits": {
+    "population_change": "30 to 34 comes from transfer of four target employees, not evidence that DAMS causes organic hiring.",
+    "capacity_change": "30 to 39 includes inherited paid organic capacity expansion and acquisition; vacancy-fill probability remains zero.",
+    "task_departments": 2,
+    "installed_departments_not_task_departments": true,
+    "integration_mode": "preserve-autonomy",
+    "acquired_guild_retains_prior_policy_in_both_arms": "hierarchy with central backend",
+    "company_wide_forced_DAMS_conversion": false,
+    "implemented_scope": "Finite target-history capsule transfers personnel, assets, debt, knowledge and unresolved evidence, with transaction/integration costs and prior-policy autonomy.",
+    "two_independently_evolving_complete_enterprises": false,
+    "fully_calibrated_M_and_A_or_cultural_integration": false,
+    "full_M_and_A_scientific_study_completed": false,
+    "remaining_mechanism_limits": "Synthetic neutral ID department assignment, bounded role-specific networks and prior-day acyclic task chain; no calibrated political capture, motives, collusion or general project DAG."
+  },
+  "horizon_correction": {
+    "superseded_statement": "The earlier post-freeze supplement incorrectly stated that the longitudinal model has a 3650-day cap and cannot express a 3653-day ten-year calendar.",
+    "original_erroneous_supplement_sha256": "d5351c15fee567c22c9151f33a15daf9da3e468775b7045b6cf6ace78554d12c",
+    "original_record_preserved_unmodified": true,
+    "cause": "Reading error: the longitudinal override after the base integer limits was missed; source bytes did not change.",
+    "frozen_config_sha256": "2f26885074a08c78b56d9bc28eb0b38825ef9ad001c2eae878bf98793fa06174",
+    "short_horizon_config_day_cap": 3650,
+    "longitudinal_config_day_cap": 50000,
+    "Gregorian_2020_to_2030_days": 3653,
+    "3653_day_configuration_validation_passed_without_execution": true,
+    "50001_day_configuration_rejected": true,
+    "complete_ten_year_execution_storage_recovery_resource_or_statistical_admission_completed": false,
+    "calendar_capacity_is_not_compute_or_storage_admission": true
+  },
+  "original_evidence_sha256": {
+    "five-year-engineering-completion.json": "506f370217dcd61fe07590523ab205b1e5eae16f8acece89f2efac33289a456c",
+    "five-year-engineering-admission.json": "a0eba4e41c4119181876cfadf02231a2ff1f999203c337befde9b82cd055978c",
+    "five-year-initial-pair-equivalence.json": "e1dfd82670171aac0f44361302bf923cc8655f78bb02a075615fd0741d6c64d9",
+    "five-year-native-io-unit-corrected.json": "c49feefbc36798cad06c177586ff66ded64aa04723f0e00df7fc5168d8f9abaf",
+    "r7-post-freeze-engineering-supplement.json": "d5351c15fee567c22c9151f33a15daf9da3e468775b7045b6cf6ace78554d12c"
+  }
+}

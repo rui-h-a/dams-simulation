@@ -1,0 +1,184 @@
+{
+  "schema": "DAMS-dated-research-observation-r78",
+  "observed_utc": "2026-10-11T20:52:10.913148+00:00",
+  "dated_snapshot_not_live_process_claim": true,
+  "accepted_formal_science": {
+    "N30": {
+      "excluded_pilot": 4,
+      "confirmation": 66,
+      "planned_confirmation": 66,
+      "paired_total": 70,
+      "predeclared_precision_gates_passed": 4,
+      "final_population_range": [
+        41,
+        45
+      ]
+    },
+    "N120": {
+      "excluded_pilot": 4,
+      "confirmation": 66,
+      "planned_confirmation": 66,
+      "paired_total": 70,
+      "predeclared_precision_gates_passed": 4,
+      "final_population_range": [
+        166,
+        179
+      ]
+    },
+    "N300": {
+      "excluded_pilot": 4,
+      "confirmation": 7,
+      "planned_confirmation": 66,
+      "paired_total": 11,
+      "remaining_confirmation": 59,
+      "unpaired_52007_hierarchy_excluded": true,
+      "final_completed_population_range": [
+        430,
+        438
+      ]
+    },
+    "original_N1000": {
+      "complete_valid_cases": 35,
+      "planned_pilot_cases": 144,
+      "prefix_or_intermediate_cases": 28,
+      "complete_single_strategy_cases": 7,
+      "complete_paired_pilot_worlds": 0,
+      "planned_pilot_worlds": 4,
+      "confirmation_worlds": 0,
+      "remaining_cases": 109
+    },
+    "new_N10000_N50000_N100000_complete_formal_worlds": 0,
+    "frozen_source_models_seeds_rosters_and_adverse_results_unchanged": true
+  },
+  "cloud": {
+    "GCS_actually_used": true,
+    "same_region_Standard_bucket_and_minimal_guest_service_account_actually_provisioned": true,
+    "guest_storage_permissions": [
+      "storage.buckets.get",
+      "storage.objects.create",
+      "storage.objects.get"
+    ],
+    "guest_project_roles": [],
+    "three_C4D4_actual_creates_refused_for_zonal_stockout": true,
+    "actual_N2_creates": [
+      {
+        "aggregate_create_ordinal": 4,
+        "machine_type": "n2-highmem-4",
+        "purchase_mode": "STANDARD",
+        "planned_vcpus": 4,
+        "catalog_memory_GiB": 32,
+        "actual_guest_hardware_doctor_passed": false,
+        "actual_VM_and_boot_disk_created": true,
+        "actual_closed_VM_and_disk_absence_verified": true,
+        "exit_code": 2,
+        "elapsed_wall_seconds": 79.38612799998373,
+        "failure": "EXACT_PROVIDER_DEADLINE_PRECISION_REJECTED",
+        "raw_launch_result_sha256": "2fab1fdb4164cc89faaa06ba7cf5164043c1f2f8877175d36d20ec7dccd4e7d4",
+        "host_enrollment_receipt_exists": false,
+        "formal_cases_started": 0,
+        "complete_cloud_paired_worlds": 0
+      },
+      {
+        "aggregate_create_ordinal": 5,
+        "machine_type": "n2-highmem-4",
+        "purchase_mode": "STANDARD",
+        "planned_vcpus": 4,
+        "catalog_memory_GiB": 32,
+        "actual_guest_hardware_doctor_passed": false,
+        "actual_VM_and_boot_disk_created": true,
+        "actual_closed_VM_and_disk_absence_verified": true,
+        "exit_code": 2,
+        "elapsed_wall_seconds": 103.72476441698382,
+        "failure": "HOSTKEY_READINESS_BOUND_REFUSED",
+        "raw_launch_result_sha256": "b14dbbdf59bd9523d3e1f47049d6639845cf585d817cfcfa12c4bc147b7fd8f9",
+        "host_enrollment_receipt_exists": false,
+        "formal_cases_started": 0,
+        "complete_cloud_paired_worlds": 0
+      },
+      {
+        "aggregate_create_ordinal": 6,
+        "machine_type": "n2-highmem-4",
+        "purchase_mode": "STANDARD",
+        "planned_vcpus": 4,
+        "catalog_memory_GiB": 32,
+        "actual_guest_hardware_doctor_passed": false,
+        "actual_VM_and_boot_disk_created": true,
+        "actual_closed_VM_and_disk_absence_verified": true,
+        "exit_code": 2,
+        "elapsed_wall_seconds": 115.83749816700583,
+        "failure": "ACTUAL_HOST_ENROLLMENT_PASSED_FIRST_UPLOAD_COLLECTOR_PREFIX_REFUSED",
+        "raw_launch_result_sha256": "b36181904299b89c4c1f2b7aa86b0f166ae8b17e4e5064f50b62ca11533fc3e6",
+        "host_enrollment_receipt_exists": true,
+        "formal_cases_started": 0,
+        "complete_cloud_paired_worlds": 0
+      }
+    ],
+    "actual_compute_resources_at_last_root_absence_readback": {
+      "VMs": 0,
+      "disks": 0,
+      "pending_operations": 0,
+      "readback_utc": "2026-10-11T20:47:50.625297+00:00"
+    },
+    "formal_cloud_simulation_started": false,
+    "formal_cloud_worlds_added": 0,
+    "original_OS_Login_and_strict_host_enrollment_retained": true,
+    "current_operational_source": {
+      "branch": "research/small-enterprise-cloud-confirmation-n300-20261012-r1",
+      "commit": "82b4573ea56cfea1cf1d6fd1aee2ee6ebc515ed3",
+      "runtime_manifest_sha256": "e4840e504e3e1eb3052b44532c1f942dd7f8ca0f43b5de86dea95a4e8939e5d3"
+    },
+    "actual_blocker": "First upload concurrency in durable Collector head verification; macOS shared directory FD listing was reproduced independently of provider. Candidate serialization remains subject to review and actual execution. No pending-ticket allowance or prefix waiver authorized.",
+    "retained_failed_reservation_count": 1,
+    "retained_failed_metadata_bytes_upper": 2102957,
+    "retained_failed_head_sequence": 1,
+    "root_is_not_claiming_successful_SSH_upload_or_startup_three_key_publication": true,
+    "N2_node_deadline_not_extended": "2026-10-11T22:15:21Z",
+    "new_retry_admitted_at_this_snapshot": false
+  },
+  "storage": {
+    "observed_workspace_free_bytes": 101738139648,
+    "observation_is_statvfs_not_logical_or_COW_release": true,
+    "N30_independent_full_case_restores": 140,
+    "N30_total_cases": 140,
+    "N120_all140_current_full13_offdevice_custody_established": false,
+    "N120_local_selected52_SHA_checks_do_not_establish_all140_backups": true,
+    "raw_retired_in_this_work": 0
+  },
+  "budget": {
+    "cap_USD": "100",
+    "cleanup_reserve_USD": "20",
+    "parent_pair_envelope_upper_USD": "15.40",
+    "total_envelopes_and_holds_upper_USD": "99.95",
+    "unallocated_upper_USD": "0.05",
+    "three_actual_N2_pre_science_failure_uncertain_fee_upper_USD": "0.08",
+    "provider_invoice_reconciled": false,
+    "holds_are_not_actual_spend_or_refunds": true,
+    "old_attempts_request_prefixes_holds_and_global_deadline_preserved": true
+  },
+  "candidate_engineering": {
+    "branch": "research/enterprise-integrated-r7-20261012",
+    "commit": "4f7b9989867b63509da3383aee9cf816b2c98efc",
+    "core_sha256": "f2ce5ba098f199dd71cac4cb9ffb34e85a76d0a8e4c4396d33a31072586bc108",
+    "source_manifest_sha256": "b009417cba9ede52edd8184f557baafdab284fe7be3a5de7e4b2091defa2a7db",
+    "complete_days_per_arm": 1827,
+    "one_engineering_pair_formal_worlds_added": 0,
+    "raw_and_day1800_full_state_continuation_checks_passed": true,
+    "empirical_calibration_passed": false,
+    "unseen_enterprise_validation_passed": false,
+    "evidence_file": "r7-five-year-engineering-evidence.json",
+    "evidence_sha256": "e3a8a67f91d5635a5f9f7d4b2db5f4b7131e53e4eefb9a02f0152ee3a2d87389"
+  },
+  "paper": {
+    "pages": 86,
+    "main_pdf_sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "status": "INTERIM_ACCEPTED_RESULTS_ONLY_NOT_FINAL_GOAL",
+    "unchanged_by_this_observation": true
+  },
+  "effective_paper_scope": {
+    "primary_population": 10000,
+    "full_model_scale_comparison_population": 50000,
+    "conditional_predeclared_population": 100000,
+    "larger_population_studies": "future research, not current final-paper gate"
+  },
+  "whole_goal_complete": false
+}
