@@ -1,0 +1,66 @@
+{
+  "schema": "dams-public-closed-case-lifecycle-actual-v1",
+  "observed_utc": "2026-10-11T03:21:00.635428+00:00",
+  "status": "ACTUAL_N120_ONE_CLOSED_FULL13_PROMOTED_AND_12_RAW_REPRESENTATIONS_RETIRED",
+  "case_id": "627c56435de957b99c4d5b89fad5d8bb5c6c2098e4a3386b07b6b3bd04301f48",
+  "raw_paths_retired": 12,
+  "original_file_contents": 13,
+  "all_contents_preserved": true,
+  "preservation_layers": [
+    "local lossless content-addressed archive",
+    "remote generation-fixed object storage, independent device failure domain"
+  ],
+  "shared_provider_risk": "Remote objects share one cloud provider; this does not establish provider-independent custody.",
+  "complete_original_file_eof_and_sha256_verified_per_pass": true,
+  "actual_full_readback_passes": 3,
+  "prior_same_case_semantic_restore": "320831bc7df18ffede5dc5549f4b3a1fd9a7f40497f6bbc214be1df15f5b5dce",
+  "archive_sha256": "3a99bb4539039af708d2d9b2d768b48fadc554d8f28f56378c0adf3b215084f3",
+  "actual_operation_receipt": {
+    "artifact": "root-actual-operation-result.json",
+    "bytes": 3525,
+    "sha256": "266b072faeb8ff64f12b433bef5a6cf02496b7ab7651f06595f4f9867fc232ae"
+  },
+  "actual_phase_receipts": {
+    "actual-backup.json": {
+      "artifact": "actual-backup.json",
+      "bytes": 867,
+      "sha256": "825946d1cde97476e4183c949260597633d67e8b63230a8ed8ae6b901c8cb540"
+    },
+    "actual-promotion.json": {
+      "artifact": "actual-promotion.json",
+      "bytes": 984,
+      "sha256": "5aa4b5708063a83b28c38d63b57559f350bd30162a7554e359d52e3bf6e88777"
+    },
+    "actual-eviction.json": {
+      "artifact": "actual-eviction.json",
+      "bytes": 992,
+      "sha256": "ecde024859914e04fdac6b1a675daa320e03484dcd5d8e017687fda23a4d1ebb"
+    }
+  },
+  "scientific_content_deleted": false,
+  "logical_unlinked_bytes": 209046746,
+  "working_volume_observed_free_before_bytes": 102884851712,
+  "working_volume_observed_free_after_bytes": 103092543488,
+  "physical_backing_volume_observed_free_delta_bytes": 0,
+  "logical_bytes_equal_physical_backing_release_claimed": false,
+  "actual_scope_HTTP_attempts": 189,
+  "actual_scope_HTTP_attempts_closed": 189,
+  "pending_HTTP_attempts": 0,
+  "actual_cached_credential_reads_this_continuation": 1,
+  "actual_authentication_HTTP_attempts_this_continuation": 0,
+  "credential_cache_SQL_not_research_SQL": true,
+  "new_metadata_POSTs_this_continuation": 0,
+  "prior_published_index_and_4_tickets_preserved": true,
+  "scope_downloaded_body_bytes_upper": 471134334,
+  "scope_uploaded_body_bytes_upper": 33139,
+  "new_research_Model_calls": 0,
+  "new_research_SQL_calls": 0,
+  "new_compute_VM": false,
+  "new_scientific_samples": 0,
+  "authorized_budget_unchanged": true,
+  "supplier_invoice_reconciled": false,
+  "earlier_local_import_failure_and_lock_refusal_retained": true,
+  "operation_retry_automatically_performed": false,
+  "future_wait_helper_edge_defects_not_claimed_fixed_by_actual_path": true,
+  "whole_study_custody_or_whole_goal_complete": false
+}

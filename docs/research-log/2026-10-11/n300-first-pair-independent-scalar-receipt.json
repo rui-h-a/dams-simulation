@@ -1,0 +1,249 @@
+{
+  "calendar": {
+    "common_end_exclusive": "2025-01-01",
+    "common_observation_years": 5,
+    "common_window_calendar_days": 1827,
+    "effect_window": "common-end; the 90-day settlement tail is excluded from these four effect ratios",
+    "execution_days_per_strategy": 1917,
+    "execution_end_exclusive": "2025-04-01",
+    "settlement_tail_calendar_days": 90,
+    "start": "2020-01-01"
+  },
+  "completed_cli": {
+    "exit_code": 1,
+    "owned_process_group_absent": true,
+    "pair_completion_preserved_on_next_world_refusal": true,
+    "producer_reaped": true,
+    "source_and_frozen_study_post_guard": true,
+    "stderr": {
+      "artifact": "n300-sequential-resume-stderr.log",
+      "bytes": 1456,
+      "sha256": "105f714ed36c849497d78dbe14718d2271914afad438185c55a53ecf71030887"
+    },
+    "stdout": {
+      "artifact": "n300-sequential-resume-stdout.log",
+      "bytes": 106,
+      "sha256": "88007606c48d0c46870cf8dd642bcb4c6cc9966a5446c6db01e69374f0f3f696"
+    },
+    "terminal": {
+      "artifact": "n300-sequential-resume-terminal.json",
+      "bytes": 481,
+      "sha256": "22d8ba0c10df82bb37f5d661f004c6fb7601270a410fc6841194de2cab08919d"
+    },
+    "terminal_utc": "2026-10-11T02:58:28.390731+00:00"
+  },
+  "effects": [
+    {
+      "effect": -0.008420647077440169,
+      "endpoint": "work_per_present_member_workday",
+      "reference_denominator": 480074.0,
+      "reference_value": 1.1901615462658495,
+      "treatment_denominator": 480074.0,
+      "treatment_value": 1.1817408991884093
+    },
+    {
+      "effect": -0.0004348481921853647,
+      "endpoint": "decision_regret_per_decision",
+      "reference_denominator": 5196.0,
+      "reference_value": 0.008386211427665,
+      "treatment_denominator": 5196.0,
+      "treatment_value": 0.007951363235479635
+    },
+    {
+      "effect": -0.01160765574693634,
+      "endpoint": "net_resource_gain_per_present_member_workday",
+      "reference_denominator": 480074.0,
+      "reference_value": 0.6792262737870234,
+      "treatment_denominator": 480074.0,
+      "treatment_value": 0.667618618040087
+    },
+    {
+      "effect": 0,
+      "endpoint": "closed_by_common_end",
+      "reference_denominator": 1,
+      "reference_value": 0,
+      "treatment_denominator": 1,
+      "treatment_value": 0
+    }
+  ],
+  "initial_population": 300,
+  "interpretation": {
+    "contrast": "founding DAMS minus existing hierarchy; both central",
+    "effect_scope": "Descriptive results from one pilot paired world only; no confirmatory inference or precision acceptance.",
+    "empirical_validation": false,
+    "final_independent_statistical_acceptance": false,
+    "whole_research_complete": false
+  },
+  "next_world_capacity_refusal": {
+    "actual_free_below_requirement": true,
+    "completed_cases_not_regenerated": true,
+    "error": "insufficient disk for the declared complete world outputs",
+    "floor_or_cap_lowered": false,
+    "free_measurement_scope": "ROOT-reported post-terminal actual-free snapshot; scalar reviewer did not independently measure free space.",
+    "next_assigned_pilot_world": 42001,
+    "required_real_free_gib": 96,
+    "root_reported_post_terminal_actual_free_gib": 95.668,
+    "unchanged_per_case_cap_gib": 16,
+    "unchanged_safe_floor_gib": 80
+  },
+  "paired_result": {
+    "artifact": "pilot/world-42000/paired-result.json",
+    "bytes": 7336,
+    "sha256": "eeb9a8d573dfdbf8dbe52ab9c89a304f990d19a59da7d41496a84b881edce461"
+  },
+  "paired_result_status": "full-paired-raw-validated",
+  "progress": {
+    "assigned_pilot_paired_worlds": 4,
+    "assigned_pilot_world_ids": [
+      42000,
+      42001,
+      42002,
+      42003
+    ],
+    "completed_pilot_paired_worlds": 1,
+    "completed_pilot_strategy_cases": 2,
+    "count_scope": "Snapshot of the four assigned pilot completion artifacts; one pair is one world, not two independent worlds.",
+    "independent_confirmation_paired_worlds": 0
+  },
+  "revision": "R54",
+  "scalar_verification": {
+    "earlier_failure_preserved": {
+      "pin": {
+        "artifact": "initial-extra-exact-cash-sum-reviewer-failure.json",
+        "bytes": 391,
+        "sha256": "1da749c4c4ec442dc9cdec1be5d2cabfee2d2b3272a395ea08fa1e5e2807e068"
+      },
+      "scope": "Extra reviewer assertion required exact equality between cumulative cash gain and separately accumulated cost columns; the assertion failed at floating-point roundoff. It was removed from this scalar-ratio scope without changing scientific data or source. This was not a Model/raw/economic validation failure."
+    },
+    "final_receipt": {
+      "artifact": "final-scalar-review-receipt.json",
+      "bytes": 1502,
+      "sha256": "eb51bb8f15a2cf06c01a008616bfbf9d752bf497f6ee1c0d2ebeb0b9a0123494"
+    },
+    "four_effects_and_denominators_match_effects_csv_and_pair_exact_float": true,
+    "independent_arithmetic": "Explicit scalar ratios from observations.csv; no scientific module imports.",
+    "independent_review": {
+      "artifact": "independent-scalar-review.json",
+      "bytes": 734,
+      "sha256": "a12166f07551ede9a873e415afca3367afeb9a334fb1e0b9d546ba9a573f656f"
+    },
+    "independent_review_found_scalar_or_count_blocker": false,
+    "metadata_and_scalar_input_pins": [
+      {
+        "artifact": "pilot/world-42000/paired-result.json",
+        "bytes": 7336,
+        "sha256": "eeb9a8d573dfdbf8dbe52ab9c89a304f990d19a59da7d41496a84b881edce461"
+      },
+      {
+        "artifact": "study.json",
+        "bytes": 32235,
+        "sha256": "2daa18fc2d76a7b5f25317bde1b0cb632c1f57bddbb540f75d5ec2ed7687d9a1"
+      },
+      {
+        "artifact": "pilot/world-42000/observations.csv",
+        "bytes": 1703,
+        "sha256": "46bb5cdc2094aee911aedff8e1d74e9c258d47bc442a939730653398342a2998"
+      },
+      {
+        "artifact": "pilot/world-42000/effects.csv",
+        "bytes": 630,
+        "sha256": "f9a80a85029ea65e2a120528c8160a59bee9a3745381515fc6819ea513568f00"
+      },
+      {
+        "artifact": "pilot/world-42000/case_statuses.json",
+        "bytes": 328,
+        "sha256": "6a30f1c9fd857f3d331f652c988f04b8fdca38eb284c06c942ffc025bb65c882"
+      },
+      {
+        "artifact": "pilot/world-42000/cases/a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17/attempt-000/manifest.json",
+        "bytes": 6498,
+        "sha256": "4b19d718647d4affcedec53207dda14547318bf24861c4df4a0b8a3d9158f8ac"
+      },
+      {
+        "artifact": "pilot/world-42000/cases/a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17/attempt-000/summary.json",
+        "bytes": 2369,
+        "sha256": "9f768cbba35418899d21b95a542230fbbd8010004c6f22565158dacf0be3a878"
+      },
+      {
+        "artifact": "pilot/world-42000/cases/0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82/attempt-000/manifest.json",
+        "bytes": 6502,
+        "sha256": "24c7903fbf27b1ba627e6efe61ad05ae40198bb5e513bfd3838727e5a5ef434c"
+      },
+      {
+        "artifact": "pilot/world-42000/cases/0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82/attempt-000/summary.json",
+        "bytes": 2480,
+        "sha256": "5cb7cb63bd70bbb546cbf5a55066442ce76125715f55da9ebfe71910aa8d7d7d"
+      }
+    ],
+    "reviewer_script": {
+      "artifact": "review_scalars.py",
+      "bytes": 10485,
+      "sha256": "5bb63e9357fa940083503651607733de3377f66dd1cf957175d9f0fa921423ae"
+    },
+    "scope": "Scalar arithmetic and metadata consistency only; not independent Model, raw-data, economic, or empirical validation.",
+    "status": "PASS_BOUNDED_SCALAR_ARITHMETIC",
+    "two_final_rounds_equal_except_timestamp": true
+  },
+  "schema": "dams-r54-n300-first-pair-scalar-receipt-v1",
+  "source": {
+    "operational_entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+    "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "producer_public_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+    "scientific_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "study_spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+  },
+  "status": "ONE_ACTUAL_N300_PILOT_PAIR_COMPLETED_NEXT_WORLD_CAPACITY_REFUSED",
+  "strategies": [
+    {
+      "arm_id": "startup-existing",
+      "case_id": "a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17",
+      "completion_status": "complete",
+      "config_sha256": "cf1f9ad6c32c3ac3fb9458f5dcf57b99d15ced6bdf48f9462eb652d79cecf8f1",
+      "days_completed": 1917,
+      "final_active_population": 436,
+      "initial_population": 300,
+      "manifest": {
+        "artifact": "pilot/world-42000/cases/a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17/attempt-000/manifest.json",
+        "bytes": 6498,
+        "sha256": "4b19d718647d4affcedec53207dda14547318bf24861c4df4a0b8a3d9158f8ac"
+      },
+      "population_check": {
+        "entrants": 472.0,
+        "exits": 335.0,
+        "final": 436,
+        "initial": 300,
+        "retirements": 1.0
+      },
+      "regime": "hierarchy",
+      "state_semantic_sha256": "471480ab0afa5b5e2d69d29a00e4f297f3b2d74ea7dafcb155e19f7d66e90531",
+      "summary_sha256": "9f768cbba35418899d21b95a542230fbbd8010004c6f22565158dacf0be3a878",
+      "worker_exit_code": 0
+    },
+    {
+      "arm_id": "startup-founding",
+      "case_id": "0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82",
+      "completion_status": "complete",
+      "config_sha256": "7fd9d66351e9963e09c00174b585034f6189448371e4e7cb59bbafdb45556076",
+      "days_completed": 1917,
+      "final_active_population": 436,
+      "initial_population": 300,
+      "manifest": {
+        "artifact": "pilot/world-42000/cases/0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82/attempt-000/manifest.json",
+        "bytes": 6502,
+        "sha256": "24c7903fbf27b1ba627e6efe61ad05ae40198bb5e513bfd3838727e5a5ef434c"
+      },
+      "population_check": {
+        "entrants": 472.0,
+        "exits": 335.0,
+        "final": 436,
+        "initial": 300,
+        "retirements": 1.0
+      },
+      "regime": "sublinear",
+      "state_semantic_sha256": "9858cc2d62e5cdb07db26d5a58a18249df108776b2b610c76cde429164550c96",
+      "summary_sha256": "5cb7cb63bd70bbb546cbf5a55066442ce76125715f55da9ebfe71910aa8d7d7d",
+      "worker_exit_code": 0
+    }
+  ],
+  "world": 42000
+}

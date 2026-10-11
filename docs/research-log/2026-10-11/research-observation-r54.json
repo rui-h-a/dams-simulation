@@ -1,0 +1,131 @@
+{
+  "schema": "dams-public-research-observation-r54-v1",
+  "observed_utc": "2026-10-11T03:24:28.845090+00:00",
+  "N30": {
+    "complete_pilot_worlds": 4,
+    "independent_confirmation_worlds": 66,
+    "accepted_pairs": 70,
+    "prespecified_precision_pass": true,
+    "adverse_and_null_results_preserved": true,
+    "full13_independent_device_restored_cases": 140,
+    "raw_strategy_cases": 140,
+    "cold_retirement_complete_receipts": 68,
+    "latest_cold_segment_new_closed_case_successes": 38,
+    "latest_cold_segment_actual_exit_code": 1,
+    "latest_cold_failure": "shared store lease wait expired before promotion; completed cases and charged request history preserved",
+    "failing_cold_case_is_not_new_scientific_sample": true
+  },
+  "N120": {
+    "complete_pilot_worlds": 4,
+    "independent_confirmation_worlds": 66,
+    "accepted_pairs": 70,
+    "raw_strategy_cases": 140,
+    "prespecified_precision_checks_pass": 4,
+    "checks": 4,
+    "initial_population": 120,
+    "confirmation_final_population_range": [
+      166,
+      179
+    ],
+    "scientific_calendar_days": 1917,
+    "five_year_work_creation_days": 1827,
+    "settlement_tail_days": 90,
+    "actual_producer_reaped_exit_code": 0,
+    "final_statistics_in_current_paper": true,
+    "actual_one_closed_full13_case_cold_promoted": 1,
+    "full140_remote_custody_complete": false
+  },
+  "N300": {
+    "complete_pilot_worlds": 1,
+    "assigned_pilot_worlds": 4,
+    "independent_confirmation_worlds": 0,
+    "completed_strategy_cases": 2,
+    "first_world": 42000,
+    "initial_population": 300,
+    "first_pair_final_population": [
+      436,
+      436
+    ],
+    "scientific_calendar_days": 1917,
+    "full_work_creation_days": 1827,
+    "settlement_tail_days": 90,
+    "effect_inference_from_one_pilot": false,
+    "actual_status_at_observation": "RUNNING_EXISTING_VERSIONED_CLI_RESUME_REVALIDATES_CLOSED_PAIR_BEFORE_NEXT_PRODUCER",
+    "source_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+    "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+    "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+    "runtime_sha256": "314279d30914fdc58fd7ed4f7d3823d0978ee550aab81aa1062a6bc09530bde2",
+    "study_declaration_sha256": "2daa18fc2d76a7b5f25317bde1b0cb632c1f57bddbb540f75d5ec2ed7687d9a1",
+    "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272",
+    "actual_resumed_utc": "2026-10-11T03:21:16.276334+00:00",
+    "unchanged_next_producer_requirement_bytes": 103079215104,
+    "admission_working_free_bytes": 103092637696,
+    "already_completed_strategy_cases_restarted": 0,
+    "confirmation_worlds": "16 to128 determined by the unchanged four-pilot precision rule; not yet fixed",
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "research_tools.small_enterprise",
+      "--population",
+      "300",
+      "--output",
+      "RESEARCH_OUTPUT/n300-producer-wave-v1",
+      "--runtime-limits",
+      "docs/frozen-studies/small-enterprise-five-year/n300-wave-runtime.json",
+      "--producer-wave-width",
+      "1"
+    ],
+    "source_working_directory": "clean public e49e2d6 branch study/small-enterprise-producer-wave-v1",
+    "next_case_guaranteed_completed_by_capacity_admission": false
+  },
+  "original_N1000": {
+    "validated_cases": 35,
+    "assigned_precision_pilot_cases": 144,
+    "complete_pilot_worlds": 0,
+    "assigned_pilot_worlds": 4,
+    "independent_confirmation_worlds": 0,
+    "actual_status": "CAPACITY_BLOCKED",
+    "unchanged_safety_requirement_bytes": 153378624512,
+    "remaining_cases": 109
+  },
+  "larger_scale_designs": {
+    "registered_scale_period_designs": 10,
+    "populations": [
+      1000,
+      10000,
+      100000,
+      1000000,
+      10000000
+    ],
+    "periods_years": [
+      5,
+      10
+    ],
+    "ten_designs_admitted_as_READY": 0,
+    "complete_10000plus_five_year_worlds": 0,
+    "short_initialization_not_formal_completion": true
+  },
+  "storage_observed_free_bytes": {
+    "working_research_volume": 103092547584,
+    "physical_backing_volume": 111066218496
+  },
+  "GCP": {
+    "new_compute_started": false,
+    "storage_actual_used": true,
+    "budget_authorization_unchanged": true,
+    "actual_supplier_cost_reconciled": false,
+    "maximum_machine_capacity_claimed": false
+  },
+  "current_paper": {
+    "pages": 86,
+    "sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81",
+    "source_commit_before_this_log_publication": "498f812a130f3be2235b70b475ffef6708a54639",
+    "actually_built_and_all_pages_rendered_and_accepted": true,
+    "final_all_research_completed": false
+  },
+  "unvalidated_enterprise_endogenous_growth_MA_candidate_mixed_into_frozen_samples": false,
+  "empirical_external_validation_completed": false,
+  "whole_goal_complete": false
+}

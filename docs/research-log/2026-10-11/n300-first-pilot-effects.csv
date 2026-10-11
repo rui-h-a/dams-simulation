@@ -1,0 +1,5 @@
+initial_n,stage,world,endpoint,effect,unit,target_halfwidth,treatment_denominator,reference_denominator
+300,pilot,42000,work_per_present_member_workday,-0.008420647077440169,synthetic work units / actual present-member workday,0.01,480074.0,480074.0
+300,pilot,42000,decision_regret_per_decision,-0.0004348481921853647,synthetic regret units / actual decisions,0.02,5196.0,5196.0
+300,pilot,42000,net_resource_gain_per_present_member_workday,-0.01160765574693634,synthetic resource units / actual present-member workday,0.05,480074.0,480074.0
+300,pilot,42000,closed_by_common_end,0,"probability, world-level indicator",0.1,1,1

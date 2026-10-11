@@ -1,3 +1,19 @@
+## R54 — first complete N300 pilot pair and actual cold-data retirement
+
+Observation: 2026-10-11T03:24:28.845090+00:00. N30 and N120 each retain all four excluded pilot and66 independent confirmation pairs. N120 passes all four fixed precision checks; its adverse and null findings are integrated into the accepted86-page interim paper.
+
+N300 now has **1/4 complete pilot paired worlds**, **2 complete strategy cases**, and **0 confirmation worlds**. Both first-world strategies cover1,917 days(initial300;final436), comprising1,827 work-creation days plus90 settlement days. One pilot describes this synthetic/exogenous scenario; it supports no confirmatory or real-enterprise inference. The independently checked effects use the common creation window, rather than mixing it with tail-inclusive summary denominators.
+
+The next producer was capacity-refused. A complete N120 cold case subsequently passed three generation-fixed full13-file readbacks, retained its existing semantic recovery evidence, and safely retired12 redundant raw representations. All13 original file contents remain in local lossless custody and remote fixed generations. Actual working-volume free space rose; physical backing-volume free space did not rise during this operation. The unchanged96GiB gate admitted one exact N300 CLI continuation at2026-10-11T03:21:16.276334+00:00; it was RUNNING at this observation, revalidating its completed pair before the next producer. Completed strategy trajectories were not restarted.
+
+N30 full remote recovery proof remains140/140. Its latest cold segment finished38 additional cases(total68 retirement receipts), then exited on an actual shared-store lease timeout before promotion. The failing case, completed cases and all charged requests remain preserved; the segment is not described as RUNNING. Preservation work creates no new scientific worlds.
+
+Original N1000 remains35/144 cases and0/4 complete pilot worlds, blocked by the unchanged142.8GiB capacity requirement. No ten registered scale/period design is READY; no10,000-plus complete five-year world has finished. GCS storage is actually being used. No new cloud compute started, budget authority is unchanged, and supplier invoices are not yet reconciled. Enterprise/M&A candidates are not mixed into frozen samples.
+
+Evidence: [first N300 paired result](n300-first-pilot-pair.json), [pilot effects](n300-first-pilot-effects.csv), [independent scalar scope](n300-first-pair-independent-scalar-receipt.json), [actual full13 cold lifecycle](n120-actual-full13-cold-lifecycle.json), [timestamped observation](research-observation-r54.json).
+
+---
+
 ## R53 — N120 completed and independently accepted; N300 exact continuation
 
 Observation: 2026-10-11T02:47:31.653468+00:00. N120 completes all 4 excluded pilot and 66 confirmation pairs. All four prespecified precision targets pass. Work and net resource gain are lower under DAMS; regret is lower; closure difference is zero with a nonzero adjusted interval. These are synthetic/exogenous-model results. The 140 raw strategy cases are not 140 independent worlds.
