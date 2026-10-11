@@ -1,3 +1,17 @@
+## R57 — actual cold continuation and frozen single-case capacity check
+
+Observation: 2026-10-11T04:15:05.905574+00:00. The generation-fixed GCS cold consumer is **RUNNING at this cutoff**, with **three new completed cases** in its 46-case scope. Each completed promotion records a full13-file, strict-EOF backend readback; the frozen eviction API verifies retained original content before removing12 redundant raw representations. Independent review checked these three small saved receipts and their distinct case IDs; it did not repeat payload or model replay. **68 prior +3 new =71/140 distinct cold lifecycles**, while N30's separate full remote restoration proof remains140/140. The original operational expiry, cumulative request/authentication history, funding hold and global deadline were retained. This is not completion of the whole running segment, nor a new scientific sample.
+
+Actual working-volume free space is **96.022 GiB**; physical backing-volume free space is **103.439 GiB**. Working free-space gains are not described as equal backing-volume release. N300 remains **1/4 complete pilot pairs,2 complete strategies,0 confirmation worlds**, with the second pilot stopped and its day1,205/1,917 checkpoint preserved. It has not been resumed under insufficient headroom.
+
+A read of the original N1000 frozen scheduler confirms that its unchanged two-worker runtime admits each next case separately and can naturally serialize. The bare requirement is80GiB floor +46.845GiB full-case reservation =**126.845GiB**. The previously reported **142.845GiB** shared threshold additionally includes16GiB of historical other-study reservation; it is not a four-worker requirement or a claim that N120 remains active. Current free space is below even the bare threshold. No reserve was silently removed, capacity limit lowered, runtime changed or source rewritten. N1000 remains **35/144 validated cases,0/4 complete pilot paired worlds**.
+
+N30 and N120 retain **4 excluded pilot +66 confirmation pairs each**; N120's four fixed precision checks pass and adverse/null results remain integrated. The **86-page interim PDF is unchanged**. No10,000-plus complete five-year world has finished, no registered large-scale design is READY, and enterprise/M&A candidates remain separate. GCS is in actual use; no new compute VM was created, invoices remain unreconciled, and final research/paid-resource closeout is unfinished.
+
+[Exact observation](research-observation-r57.json) · [Three saved cold-success receipts and scope](cold-continuation-prefix-r57.json) · [Frozen single-case admission arithmetic](original1000-capacity-formula-r57.json). Historical observations, including the R55 correction, remain below with their original cutoffs.
+
+---
+
 ## R56 — exact N300 checkpoint closure and completed cold-receipt reconciliation
 
 Observation: 2026-10-11T03:45:24.599050+00:00. N30 and N120 each retain **4 excluded pilot +66 confirmation pairs**; N120's four fixed precision targets pass and its adverse/null results remain in the accepted **86-page** interim paper. N30 retains **140/140 full13 off-device restoration proofs**.

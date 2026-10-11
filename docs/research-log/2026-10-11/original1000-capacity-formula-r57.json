@@ -1,0 +1,23 @@
+{
+  "UTC": "2026-10-11T04:15:05.905574+00:00",
+  "actual_current_working_free_bytes": 103103168512,
+  "bare_single_case_entry_bytes": 136198755328,
+  "case_required_bytes": 50299409408,
+  "floor_bytes": 85899345920,
+  "four_checkpoint_generations_already_in_case_estimate": true,
+  "historical_additional_study_hold_bytes": 17179869184,
+  "historical_other_study_hold_is_not_claim_of_a_current_live_N120_process": true,
+  "new_actual_capacity_admission": false,
+  "original_runtime_cpu_budget": 2,
+  "original_runtime_max_workers": 2,
+  "reducing_workers_does_not_solve_single_case_capacity": true,
+  "scheduler_may_naturally_launch_one_case_under_unchanged_two_worker_runtime": true,
+  "schema": "dams-original1000-frozen-launch-capacity-scope-v1",
+  "scientific_cases_restarted": false,
+  "scope": "Read of the frozen per-next-case scheduler formula, not empirical fullcase storage measurement or permission to bypass source/runtime/data/RAM/deadline/collector prerequisites. Changing the same-output locked runtime to one worker is refused; unchanged runtime can already serialize by actual admission.",
+  "shared_entry_bytes": 153378624512,
+  "source_or_runtime_or_gate_modified": false,
+  "source_read_receipt_bytes": 13847,
+  "source_read_receipt_sha256": "f509e78330f1245368a8141505cbd60e3675a30f1ec65fea08756c154a923b51",
+  "still_below_even_bare_single_case": true
+}

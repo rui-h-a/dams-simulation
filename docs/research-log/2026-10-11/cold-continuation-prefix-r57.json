@@ -1,0 +1,96 @@
+{
+  "UTC": "2026-10-11T04:15:05.905574+00:00",
+  "caller_sha256": "f3b7e5a161fd65c26d4b874b2ecabc8895fe4e1e59e5c22827e7f141896a9e92",
+  "current_segment_completed_cases": 3,
+  "new_scientific_worlds": 0,
+  "no_unique_original_evidence_deleted": true,
+  "original_expiry_not_extended": true,
+  "peer_small_receipt_bytes": 4874,
+  "peer_small_receipt_sha256": "f6add0980b9599e1c91188b67e773c2f78cad44281530ad306d686f066779430",
+  "prior_closed_distinct_cases": 68,
+  "root_saved_successes": [
+    {
+      "archive_sha256": "4e75ee3fbecfd0f84860e9214b0fc046491cac14b5d2d48e3920647e7dea9757",
+      "case_id": "d97f522aaa972d847a8aaf9aabaf8e8ee2d8631caa521f3e30598f3b926a0deb",
+      "eviction": {
+        "free_after": 102941413376,
+        "free_before": 102859382784,
+        "logical_unlinked_bytes": 81200054,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T03:53:35.025979+00:00"
+      },
+      "original_scope_index": 38,
+      "promotion_full13_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 52816025,
+        "files": 13,
+        "observed_utc": "2026-10-11T03:51:08.892376+00:00",
+        "raw_bytes": 81206538,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3017,
+      "success_receipt_sha256": "b1dbf9653d2aaa7a82996de84d31367cfc20dc1febf25f38cf38f24951f0b85a"
+    },
+    {
+      "archive_sha256": "367dbf18621505a71ab3e9c34df98f40a048baaec62ae7c93e2959614aed52f3",
+      "case_id": "4e79874386f77edb08dc85ec01ac1896aef78c18fcfd402544ed13e3098fa262",
+      "eviction": {
+        "free_after": 103022010368,
+        "free_before": 102940372992,
+        "logical_unlinked_bytes": 80718651,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T04:01:08.092335+00:00"
+      },
+      "original_scope_index": 39,
+      "promotion_full13_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 52431147,
+        "files": 13,
+        "observed_utc": "2026-10-11T03:58:40.609332+00:00",
+        "raw_bytes": 80725134,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3545,
+      "success_receipt_sha256": "b5b098e087f8fb7f3cb7c94afee4dabb21ee9d04da04ccddedb68b89527f6a66"
+    },
+    {
+      "archive_sha256": "fde903184e9b12b8197fca4880949e06fb238c4c9d42d8a29020c28ee3ff7352",
+      "case_id": "35c45ff68e899fa38ee173da4bc1fc039ccba9f4c2dfe383410f4962c120ca94",
+      "eviction": {
+        "free_after": 103102849024,
+        "free_before": 103021363200,
+        "logical_unlinked_bytes": 80504606,
+        "new_scientific_samples": 0,
+        "raw_paths_evicted": 12,
+        "scientific_content_deleted": false,
+        "status": "PROMOTED_ORIGINAL_CONTENT_PRESERVED_RAW_EVICTION_PASS",
+        "utc": "2026-10-11T04:09:49.197793+00:00"
+      },
+      "original_scope_index": 40,
+      "promotion_full13_readback": {
+        "chunks_read": 28,
+        "encoded_bytes_read": 52618372,
+        "files": 13,
+        "observed_utc": "2026-10-11T04:06:24.816835+00:00",
+        "raw_bytes": 80511091,
+        "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS",
+        "strict_eof": true
+      },
+      "success_receipt_bytes": 3545,
+      "success_receipt_sha256": "cbe1184474196dd9679bca42fa26c9144039873a9f04f2fa9058f6f8039f53b3"
+    }
+  ],
+  "schema": "dams-actual-cold-continuation-saved-prefix-v1",
+  "scope_limit": "Saved API receipts were independently read; actual promotion explicitly records full13 strict-EOF readback. Eviction fresh full13 is supported by the frozen API PASS gate, not a new independent payload or semantic replay. Only the three completed cases are counted. No claim of full46/full140 lifecycle completion.",
+  "source_sha256": "36d227767487b09a316282f020614313aad6410fb3ea198c9d928996e69efe80",
+  "target_cases": 140,
+  "total_distinct_cold_cases": 71
+}
