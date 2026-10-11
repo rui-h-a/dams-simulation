@@ -17,6 +17,7 @@ import re
 import shutil
 import sqlite3
 import stat
+import threading
 import time
 
 from dams_sim._committed_pages import Directory, identity
@@ -145,6 +146,7 @@ class Collector:
     """
     def __init__(self, admission_file, *, admission_sha256, assignment_raw, minimum_head=None, archive_backends=None, proof_reuse=None, lifetime_check=None):
         self.closed = False; self.opened = []; self.archive = None
+        self._history_lock = threading.RLock()
         self.archive_backends = archive_backends
         self.proof_reuse = proof_reuse
         require(lifetime_check is None or callable(lifetime_check), 'collector lifetime check differs')
@@ -291,6 +293,12 @@ class Collector:
             os.close(fd)
 
     def _history(self, minimum=None):
+        # listdir(fd) uses a shared native directory cursor. Serialize concurrent
+        # lifecycle read gates as well as cursor validation/publication.
+        with self._history_lock:
+            return self._history_locked(minimum)
+
+    def _history_locked(self, minimum=None):
         require(parse(read(self.state, 'initial.json')[0]) == {'sequence': 0, 'sha256': None, 'requests': 0, 'bytes': 0},
                 'collector initial head changed')
         previous = None; total = 0; heads = [{'sequence': 0, 'sha256': None, 'requests': 0, 'bytes': 0}]
