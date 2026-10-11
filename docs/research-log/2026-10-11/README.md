@@ -1,3 +1,17 @@
+# R63 — Two complete N300 pilot pairs and a published isolated candidate (2026-10-11T06:52:54.947985+00:00)
+
+N300 now has **2/4 complete pilot paired worlds**, with **zero confirmation worlds**. All four accepted strategy trajectories cover 1,917 calendar days: five years of observation and a 90-day settlement tail. Initial population is 300; the two pairs finish at 436 and 433 respectively. The interrupted hierarchy trajectory resumes as attempt001 and is counted once. At this capture, the unchanged frozen CLI and the next world's worker are alive; this is not another completed pair. Pilot effects remain conditional synthetic findings and do not establish a final study effect or endogenous real-enterprise growth.
+
+N30 and N120 each retain 4 pilot plus 66 accepted confirmation pairs, including adverse and null results. N30 has 140/140 complete offdevice recovery proofs and **98/140 cold-lifecycle cases**; its custody continuation is alive at this capture. N120 has one cold-lifecycle case. Original N1000 remains 35/144 accepted cases and zero complete pilot pairs; N10000 and above have no complete formal five-/ten-year world.
+
+The enterprise-operations r4 candidate is now published on [its isolated research branch](https://github.com/rui-h-a/dams-simulation/commit/72cf8d3105bc87153f692772a2d2971d916bc829): 149 source files were fully read back. A real clean checkout passed the published 59-test engineering suite twice in clean virtual environments on macOS/Python3.14. Earlier temporary-directory security refusals and an interrupted owned supervisor attempt are retained. This is not Linux validation, a calibrated or held-out validated model, M&A integration, or adoption into frozen studies.
+
+N120 archival admission has two reproduced operational blockers: the old meter's request validation ceiling and omitted conservative wire-response allowances. Finite versioned corrections are being tested; the new storage batch is not issued or running. Active custody, source, budget and current PDF remain unchanged. Logical raw retirement is not evidence of physical backing-volume reclamation. The 86-page PDF remains interim; larger studies, model integration, external validity, supplier reconciliation and final cleanup remain incomplete.
+
+[Exact progress](research-observation-r63.json) · [Accepted N300 pairs](n300-accepted-pilot-pairs-r63.json) · [Published candidate and clean-checkout evidence](enterprise-operations-public-clean-clone-r63.json). Earlier observations retain their historical cutoffs and claims.
+
+---
+
 # R62 — Actual N300 checkpoint resumption (2026-10-11T06:08:00.030334+00:00)
 
 The unchanged N300 formal study CLI has actually resumed after both-volume capacity and exact source/checkpoint admission. It retains the completed first pilot pair and resumes the interrupted trajectory from day 1,205 of 1,917. The running CLI does not itself add a completed pair or confirmation sample.

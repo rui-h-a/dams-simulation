@@ -1,0 +1,45 @@
+{
+  "schema": "dams-published-candidate-clean-checkout-r63",
+  "observed_utc": "2026-10-11T06:52:54.947985+00:00",
+  "candidate_commit": "72cf8d3105bc87153f692772a2d2971d916bc829",
+  "candidate_tree": "56ad71de36dc8971d2f171c9bf1188f587979fc6",
+  "candidate_url": "https://github.com/rui-h-a/dams-simulation/commit/72cf8d3105bc87153f692772a2d2971d916bc829",
+  "candidate_model_source_sha256": "9ebaeb9cd061d42a9ec127c93a47ca116a2c61d423de4c0c416e74c86019df1c",
+  "source_files_published_and_fully_read_back": 149,
+  "publication_receipt_sha256": "e3770e9111f1e175141a3a19920762096fab5aef9a64302b5742a0ddc8231c6f",
+  "clean_clone_test_receipt_sha256": "c414c5ae7101d7aac1dcf8d3a9b5d4a5cebdaa2d62dd19389fc16bd57aa34247",
+  "actual_platform": "macOS arm64 Python3.14 standard-library engineering suite only",
+  "successful_engineering_rounds": [
+    {
+      "round": 1,
+      "tests": 59,
+      "exit_code": 0,
+      "elapsed_seconds": 8.906149874994298,
+      "peak_RSS_bytes": 55689216,
+      "stderr_sha256": "c2ce0c5c0dee9f89aab4625763e37d1ef5395abde2ad6d71511fa1cba045c4de",
+      "producer_reaped": true
+    },
+    {
+      "round": 2,
+      "tests": 59,
+      "exit_code": 0,
+      "elapsed_seconds": 10.96781704199384,
+      "peak_RSS_bytes": 54378496,
+      "stderr_sha256": "368205e21b87400d8ffffc584bdafe6a44e72a03ad1d4edda51f7510b0e73f04",
+      "producer_reaped": true
+    }
+  ],
+  "prior_refusals_and_interrupted_owned_supervisor_attempt_preserved": true,
+  "two_consecutive_fault_free_supervisor_attempts_claimed": false,
+  "published_sources_and_git_controls_unchanged": true,
+  "clean_worktree": true,
+  "successful_reproducible_test_scratch_removed": true,
+  "failed_tiny_fixtures_retained": true,
+  "formal_worlds_added": 0,
+  "formal_study_adopted": false,
+  "empirical_calibration_completed": false,
+  "held_out_validation_completed": false,
+  "M_and_A_integrated": false,
+  "Linux_or_wheel_clean_install_validated": false,
+  "scope": "Isolated candidate engineering source; not a new version of frozen science. Scalar repairs do not establish full longitudinal or external model validity."
+}

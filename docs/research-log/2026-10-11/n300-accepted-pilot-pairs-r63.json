@@ -1,0 +1,179 @@
+{
+  "schema": "dams-accepted-n300-pilot-pairs-r63",
+  "observed_utc": "2026-10-11T06:52:54.947985+00:00",
+  "complete_pilot_pairs": 2,
+  "planned_pilot_pairs": 4,
+  "confirmation_pairs": 0,
+  "independent_worlds_are_pairs_not_strategies_or_resume_attempts": true,
+  "resumed_failed_attempt_not_counted_again": true,
+  "accepted_pairs": [
+    {
+      "world": 42000,
+      "paired_result_sha256": "eeb9a8d573dfdbf8dbe52ab9c89a304f990d19a59da7d41496a84b881edce461",
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 436,
+        "startup-founding": 436
+      },
+      "accepted_cases": [
+        {
+          "case_id": "a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17",
+          "attempt": "attempt-000",
+          "manifest_sha256": "4b19d718647d4affcedec53207dda14547318bf24861c4df4a0b8a3d9158f8ac",
+          "state_semantic_sha256": "471480ab0afa5b5e2d69d29a00e4f297f3b2d74ea7dafcb155e19f7d66e90531"
+        },
+        {
+          "case_id": "0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82",
+          "attempt": "attempt-000",
+          "manifest_sha256": "24c7903fbf27b1ba627e6efe61ad05ae40198bb5e513bfd3838727e5a5ef434c",
+          "state_semantic_sha256": "9858cc2d62e5cdb07db26d5a58a18249df108776b2b610c76cde429164550c96"
+        }
+      ],
+      "calendar_days": 1917,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.008420647077440169,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 480074.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 480074.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 42000
+        },
+        {
+          "effect": -0.0004348481921853647,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 42000
+        },
+        {
+          "effect": -0.01160765574693634,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 480074.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 480074.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 42000
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "pilot",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 42000
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 42001,
+      "paired_result_sha256": "07b407a6274ea12a3920fbf5d37946b0fc32fceba1bf160ce32c5cd1bfd9b905",
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 433,
+        "startup-founding": 433
+      },
+      "accepted_cases": [
+        {
+          "case_id": "fc80f4a7435199ad0e90e9e6c33c4ec4456f0951ee6340da6332fb20b77e6b2e",
+          "attempt": "attempt-001",
+          "manifest_sha256": "90dc629f63cd316d6d6a4d2068a1ac9a1e4e675544f6988963498c76fb4d4eed",
+          "state_semantic_sha256": "a849a7e2ab25ec1ba593bdb8ff82b0c37763943d08d7be6be28fae5e8666a5d6"
+        },
+        {
+          "case_id": "44dc5ad9d0f3cfc8b281fabb01cf4e6970606fe14c7a2b7bbb77068392a64f70",
+          "attempt": "attempt-000",
+          "manifest_sha256": "833e4f45f5c87f6b90fe784b502b361df736d29cc1eba05a3b8c9deb72764188",
+          "state_semantic_sha256": "bd7e4af1ca210255ff018a9a09710c30ef28bb6d9b67fb53a682229ef7bbb84f"
+        }
+      ],
+      "calendar_days": 1917,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.0011342047012430356,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481354.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 481354.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 42001
+        },
+        {
+          "effect": -3.710864273395384e-05,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 42001
+        },
+        {
+          "effect": -0.004326449909554331,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481354.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 481354.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 42001
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "pilot",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 42001
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    }
+  ],
+  "existing_frozen_CLI_alive_at_capture": true,
+  "next_world_42002_worker_alive_at_capture": false,
+  "ongoing_execution_is_not_completion": true,
+  "scope": "Four accepted complete strategy trajectories form two pilot pairs. Formal raw validation is separate from independent scalar checks and real-enterprise external validity. Fixed precision rules determine confirmation sample size after all four pilot worlds."
+}

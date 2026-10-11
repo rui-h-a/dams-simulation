@@ -1,0 +1,63 @@
+{
+  "schema": "dams-actual-research-observation-r63",
+  "observed_utc": "2026-10-11T06:52:54.947985+00:00",
+  "N30": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "full13_offdevice_restore_cases": 140,
+    "cold_lifecycle_complete_cases": 98,
+    "custody_process_alive_at_capture": true
+  },
+  "N120": {
+    "complete_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 66,
+    "fixed_precision_endpoints_pass": 4,
+    "complete_cold_cases": 1
+  },
+  "N300": {
+    "complete_pilot_pairs": 2,
+    "planned_pilot_pairs": 4,
+    "accepted_confirmation_pairs": 0,
+    "calendar_days": 1917,
+    "initial_population": 300,
+    "accepted_pair_final_populations": [
+      436,
+      433
+    ],
+    "frozen_formal_CLI_alive_at_capture": true
+  },
+  "original_N1000": {
+    "accepted_cases": 35,
+    "planned_pilot_cases": 144,
+    "complete_pilot_worlds": 0,
+    "confirmation_worlds": 0
+  },
+  "N10000_and_larger": {
+    "complete_formal_five_or_ten_year_worlds": 0
+  },
+  "candidate": {
+    "published_source_commit": "72cf8d3105bc87153f692772a2d2971d916bc829",
+    "engineering_tests_per_successful_round": 59,
+    "successful_rounds": 2,
+    "formal_adoption": false
+  },
+  "storage_engineering": {
+    "operational_admission_not_complete": true,
+    "independent_counterexamples": [
+      "Old persistent meter rejects the required existing-archive request bound above its10000 validation ceiling.",
+      "Conservative wire accounting must include upload response bodies, worst-case existing-object metadata probes and both policy scopes."
+    ],
+    "versioned_finite_cap_and_wire_bound_correction_in_progress": true,
+    "active_N30_meter_and_scientific_sources_unchanged": true,
+    "new_batch_authorized_or_launched": false,
+    "physical_backing_free_space_not_inferred_from_logical_retirement": true
+  },
+  "paper": {
+    "pages": 86,
+    "status": "INTERIM_NOT_FINAL",
+    "pdf_sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81"
+  },
+  "new_compute_VM_created": false,
+  "provider_invoice_fully_reconciled": false,
+  "whole_goal_complete": false
+}
