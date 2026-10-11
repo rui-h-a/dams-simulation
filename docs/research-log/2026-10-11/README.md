@@ -1,3 +1,19 @@
+# R65 — Four N300 pilot pairs, frozen confirmation roster and actual safe cleanup (2026-10-11T08:02:31.598480+00:00)
+
+N300 has **4/4 complete pilot paired worlds**. Each pair has two complete 1,917-day trajectories: five years of observation plus the fixed 90-day settlement tail. Final populations are 436, 433, 433 and 433 in the frozen synthetic scenario. The fourth pair independently passed full EOF, size, SHA-256 and native-file checks for all 26 originals, plus calendar, population and four observation-endpoint calculations. These checks do not independently replicate the full model or establish real-company validity.
+
+The prespecified precision rules selected **66 confirmation worlds**, distinct from the four pilots. The frozen roster is 52000–52065. At capture, **0/66 confirmation pairs** are complete; the unchanged formal CLI is alive. Assignment does not count as completed computation.
+
+N30 and N120 preserve all 4 pilot plus 66 confirmation pairs, including adverse and null results. N30 retains 140/140 full offdevice recovery proofs. Its separate cold lifecycle is now **113/140**: the latest 41-case scope exited normally with no pending Meter attempts and without resetting its epoch. Another 27 cases remain unfinished. N120 still has one completed cold case. Closed-owner evidence covers all 140 N120 identities; current full-byte custody covers the selected 52 cases and 676 originals. Owner closure does not mean all 140 current originals were reread or archived. New live grants, source-bound ownership, financial and both-volume capacity admission remain required.
+
+Two exactly reconstructable engineering transport copies were retired after verified reconstruction and source custody. Their logical size was 2,005,749,760 bytes. Work-volume available space increased by 2,005,667,840 bytes; the physical backing volume showed zero immediate increase. Concurrent research activity prevents exact physical attribution. Original scientific files, checkpoints, chunks, recipes, failed-case evidence and other retained cache were preserved.
+
+A bounded clone-backed restore test of the original N1000 case has started. It authorizes no scientific advance or writer resume and counts as no new world. Original N1000 remains **35/144 cases and 0/4 complete pilot worlds**. N10000 and larger have no accepted complete five-/ten-year world. The 86-page PDF remains interim. External calibration, larger studies, full archival preservation, supplier reconciliation and final resource cleanup remain unfinished.
+
+[Exact progress](research-observation-r65.json) · [Pilot pairs and confirmation assignment](n300-accepted-pilot-pairs-r65.json) · [Custody and cleanup evidence](storage-custody-and-source-controls-r65.json). Prior cutoffs, failures and findings remain below.
+
+---
+
 # R64 — Three complete N300 pilot pairs and verified archival source repairs (2026-10-11T07:22:27.697114+00:00)
 
 N300 now has **3/4 complete pilot paired worlds**, with **zero confirmation worlds**. The third pair covers 1,917 calendar days (five-year observation plus 90-day settlement tail); both arms grow from 300 to 433 members in the frozen synthetic scenario. All 26 original files were streamed through EOF and matched their recorded SHA-256, size and native-file fences. Independent calendar, population and four observation-endpoint calculations agree with the accepted pair. These checks do not establish an independently replicated full model or real-enterprise external validity. The unchanged frozen CLI is alive at this capture; an active pipeline is not a fourth completed world.
