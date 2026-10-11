@@ -1,0 +1,2581 @@
+{
+  "schema": "dams-accepted-n300-pilot-and-confirmation-pairs-r73",
+  "observed_utc": "2026-10-11T15:55:22.619947+00:00",
+  "complete_pilot_pairs": 4,
+  "planned_pilot_pairs": 4,
+  "confirmation_pairs": 7,
+  "independent_worlds_are_pairs_not_strategies_or_resume_attempts": true,
+  "resumed_failed_attempt_not_counted_again": true,
+  "accepted_pairs": [
+    {
+      "world": 42000,
+      "paired_result_sha256": "eeb9a8d573dfdbf8dbe52ab9c89a304f990d19a59da7d41496a84b881edce461",
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 436,
+        "startup-founding": 436
+      },
+      "accepted_cases": [
+        {
+          "case_id": "a2337bf52703db80fc35773c04924beb0117ceb0fd3d032a35124cffb2c4fb17",
+          "attempt": "attempt-000",
+          "manifest_sha256": "4b19d718647d4affcedec53207dda14547318bf24861c4df4a0b8a3d9158f8ac",
+          "state_semantic_sha256": "471480ab0afa5b5e2d69d29a00e4f297f3b2d74ea7dafcb155e19f7d66e90531"
+        },
+        {
+          "case_id": "0b6a400fbf0cac591f8c8b2595b42bd1f4dad35c6c1f4872dede91e5c653ab82",
+          "attempt": "attempt-000",
+          "manifest_sha256": "24c7903fbf27b1ba627e6efe61ad05ae40198bb5e513bfd3838727e5a5ef434c",
+          "state_semantic_sha256": "9858cc2d62e5cdb07db26d5a58a18249df108776b2b610c76cde429164550c96"
+        }
+      ],
+      "calendar_days": 1917,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.008420647077440169,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 480074.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 480074.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 42000
+        },
+        {
+          "effect": -0.0004348481921853647,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 42000
+        },
+        {
+          "effect": -0.01160765574693634,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 480074.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 480074.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 42000
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "pilot",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 42000
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 42001,
+      "paired_result_sha256": "07b407a6274ea12a3920fbf5d37946b0fc32fceba1bf160ce32c5cd1bfd9b905",
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 433,
+        "startup-founding": 433
+      },
+      "accepted_cases": [
+        {
+          "case_id": "fc80f4a7435199ad0e90e9e6c33c4ec4456f0951ee6340da6332fb20b77e6b2e",
+          "attempt": "attempt-001",
+          "manifest_sha256": "90dc629f63cd316d6d6a4d2068a1ac9a1e4e675544f6988963498c76fb4d4eed",
+          "state_semantic_sha256": "a849a7e2ab25ec1ba593bdb8ff82b0c37763943d08d7be6be28fae5e8666a5d6"
+        },
+        {
+          "case_id": "44dc5ad9d0f3cfc8b281fabb01cf4e6970606fe14c7a2b7bbb77068392a64f70",
+          "attempt": "attempt-000",
+          "manifest_sha256": "833e4f45f5c87f6b90fe784b502b361df736d29cc1eba05a3b8c9deb72764188",
+          "state_semantic_sha256": "bd7e4af1ca210255ff018a9a09710c30ef28bb6d9b67fb53a682229ef7bbb84f"
+        }
+      ],
+      "calendar_days": 1917,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.0011342047012430356,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481354.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 481354.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 42001
+        },
+        {
+          "effect": -3.710864273395384e-05,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 42001
+        },
+        {
+          "effect": -0.004326449909554331,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481354.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 481354.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 42001
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "pilot",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 42001
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 42002,
+      "paired_result_sha256": "84f695f668b05811bacdfecb94431c9d57959530c6681f4e33d5b3b2c5dc6841",
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 433,
+        "startup-founding": 433
+      },
+      "accepted_cases": [
+        {
+          "case_id": "cfc525c9a9baaee38d77fe47b355d3c5740ac66d20f2929023e769e535fa846e",
+          "attempt": "attempt-000",
+          "manifest_sha256": "f4e85caf3be106c98a7afff44d22b184d597df6bec9a67a41581c30765f02b1d",
+          "state_semantic_sha256": "1be732207caeebc34d1f74ed9c37657553e1b3469dee25c3cdc880309a755119"
+        },
+        {
+          "case_id": "1349b3ad6fe3b8bf8b64eca44b0c9449de50d0e43360de486be7f68f1bad249e",
+          "attempt": "attempt-000",
+          "manifest_sha256": "cee19a9fdcc762d1ce2dfd705ad860ebaf54a671e42113ebfab7ba6c6b8d0fb2",
+          "state_semantic_sha256": "f93da27ea8b0a9974dd8ad16f51fb54b4ac3f29181889d2fc94b8063045a5bac"
+        }
+      ],
+      "calendar_days": 1917,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.006025198588241354,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481011.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 481011.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 42002
+        },
+        {
+          "effect": -3.36073712311636e-05,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 42002
+        },
+        {
+          "effect": -0.00919809900008084,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481011.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 481011.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 42002
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "pilot",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 42002
+        }
+      ],
+      "independent_full13_and_scalar_receipt_sha256": "79340e0c52e6430fc4e4450818ee2ea29eb4132aa89e7734b5a5f9a7609ac28f",
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 42003,
+      "paired_result_sha256": "3f0b958cb132a2f66341b04ddbd41db566d2dd2e107e5982da98b9704a5d22c4",
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 433,
+        "startup-founding": 433
+      },
+      "accepted_cases": [
+        {
+          "case_id": "91832b8824880bac51da97f013e580e4b687e9cde7896221b1f0e576528f0062",
+          "attempt": "attempt-000",
+          "manifest_sha256": "817bdf453f065c4bba0e346c76eb86fa6c0ed490fe9b110bd25a87b146314e12",
+          "state_semantic_sha256": "69b278d4a23458cff61292446c8917bd93cc0c0aec3abe6b2a73e949aab4ad23"
+        },
+        {
+          "case_id": "075e6f26a0ccb1a9ff27f1229de6110db18bd8fb904543c085825a6b80902702",
+          "attempt": "attempt-000",
+          "manifest_sha256": "4cf5b87e18f092a8cf99be05df3d2c6eb9c3a2f54b446c5e611280470a299c4d",
+          "state_semantic_sha256": "c253845735565dc248def1482dd9bbdd9118d6abc264b589397a8edf18c7c78f"
+        }
+      ],
+      "calendar_days": 1917,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.0030167198872672607,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479488.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 479488.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 42003
+        },
+        {
+          "effect": -0.00022426249323156087,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 42003
+        },
+        {
+          "effect": -0.0062136716357977795,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479488.0,
+          "stage": "pilot",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 479488.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 42003
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "pilot",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 42003
+        }
+      ],
+      "independent_full13_and_scalar_receipt_sha256": "73d0eb4394c78ae15b975ce15ddc9a57543bb104bc87de6192f44b6ce571569c",
+      "empirical_validation": false,
+      "complete_study": false
+    }
+  ],
+  "existing_frozen_CLI_alive_at_capture": false,
+  "ongoing_execution_is_not_completion": true,
+  "scope": "Four pilot pairs and the six earlier confirmation rows remain unchanged. Seven assigned confirmation worlds52000–52006, fourteen distinct accepted cases, passed saved producer and independent full13 EOF/SHA/calendar/population/four observation-endpoint checks. The seventh world has higher DAMS decision regret. The original CLI stopped at its unchanged capacity guard; no interim inference, 66-world completion, full model replication, empirical calibration or external validity is claimed.",
+  "confirmation_worlds_complete": 7,
+  "confirmation_worlds_requested": 66,
+  "confirmation_roster_sha256": "4a20d2f1d9f2bea4ea1f8bed3982773252c9deae12609ac5a428901d812c79f2",
+  "confirmation_roster": {
+    "pilot_worlds_excluded": true,
+    "requests": [
+      {
+        "endpoint": "work_per_present_member_workday",
+        "requested_worlds": 16
+      },
+      {
+        "endpoint": "decision_regret_per_decision",
+        "requested_worlds": 16
+      },
+      {
+        "endpoint": "net_resource_gain_per_present_member_workday",
+        "requested_worlds": 16
+      },
+      {
+        "endpoint": "closed_by_common_end",
+        "requested_worlds": 66
+      }
+    ],
+    "status": "frozen",
+    "study_sha256": "bfcb565b0fd9c21ea3aa3a8a1fe8914b11246b422c4b0bc9bbac9332a4346f9a",
+    "world_count": 66,
+    "world_ids": [
+      52000,
+      52001,
+      52002,
+      52003,
+      52004,
+      52005,
+      52006,
+      52007,
+      52008,
+      52009,
+      52010,
+      52011,
+      52012,
+      52013,
+      52014,
+      52015,
+      52016,
+      52017,
+      52018,
+      52019,
+      52020,
+      52021,
+      52022,
+      52023,
+      52024,
+      52025,
+      52026,
+      52027,
+      52028,
+      52029,
+      52030,
+      52031,
+      52032,
+      52033,
+      52034,
+      52035,
+      52036,
+      52037,
+      52038,
+      52039,
+      52040,
+      52041,
+      52042,
+      52043,
+      52044,
+      52045,
+      52046,
+      52047,
+      52048,
+      52049,
+      52050,
+      52051,
+      52052,
+      52053,
+      52054,
+      52055,
+      52056,
+      52057,
+      52058,
+      52059,
+      52060,
+      52061,
+      52062,
+      52063,
+      52064,
+      52065
+    ]
+  },
+  "confirmation_accepted": [
+    {
+      "world": 52000,
+      "paired_result_sha256": "04598f8a1f3ac49c92c8b22dd4dcd4def44319c48decd22f30411119722929c5",
+      "paired_result_bytes": 7386,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 434,
+        "startup-founding": 434
+      },
+      "accepted_cases": [
+        {
+          "case_id": "8aa5de6b0dcb71fd12aee34cdd8724703f3b7d9654b687c9a1bac1b8a0fdf44e",
+          "attempt": "attempt-000",
+          "manifest_sha256": "e93b217f60e3b93887c1a0104b90903f7c4174ce738bb9a4c8b3a5457ec454f7",
+          "state_semantic_sha256": "292784f36b4a3d1301553a9378812c767103e30a6a04b10cfdec135fffa22767"
+        },
+        {
+          "case_id": "fc6f00430f0b6535992c424d807cdf50bacce0b73ff6f977cff1f4958864de72",
+          "attempt": "attempt-000",
+          "manifest_sha256": "8ef2deae718aa02a3f3988de58c9f69c9fc9b3c8977954bb8e7856a5dfcfc8ea",
+          "state_semantic_sha256": "0500edf1875ad31ecea084b3df1dfc99ff68aa4397589ffb1830c5cbcf60ae44"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.017362959531984856,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479116.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 479116.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52000
+        },
+        {
+          "effect": -0.00034220547057573283,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52000
+        },
+        {
+          "effect": -0.020551748885710874,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479116.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 479116.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52000
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52000
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "independent_full13_and_scalar_receipt_sha256": "e1ade127681b3de1f947b83f578f8424086492b02167b39e7056d77380104dd2",
+      "independent_terminal_sha256": "c8c1f8090133806c6dc88acfa97d221142bb47c9697993dc60cadacc04b799f1",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.017362959531984856,
+          "recorded_effect": -0.017362959531984856,
+          "difference": 0.0,
+          "reference_value": 1.1745220415812254,
+          "treatment_value": 1.1571590820492406,
+          "reference_denominator": 479116.0,
+          "treatment_denominator": 479116.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": -0.00034220547057573283,
+          "recorded_effect": -0.00034220547057573283,
+          "difference": 0.0,
+          "reference_value": 0.010033673694389546,
+          "treatment_value": 0.009691468223813813,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.020551748885710874,
+          "recorded_effect": -0.020551748885710874,
+          "difference": 0.0,
+          "reference_value": 0.66355359135205,
+          "treatment_value": 0.6430018424663392,
+          "reference_denominator": 479116.0,
+          "treatment_denominator": 479116.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "8aa5de6b0dcb71fd12aee34cdd8724703f3b7d9654b687c9a1bac1b8a0fdf44e",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6501,
+              "sha256": "e93b217f60e3b93887c1a0104b90903f7c4174ce738bb9a4c8b3a5457ec454f7"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 112775168,
+              "sha256": "ec91bf22cc29bb787dc8ff6cfc6c6c03520bf5b7f27f1346aa643dd749e4840f"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5631130,
+              "sha256": "fd2811cefdb9bcc97820ed2fb3dcaac2dd5ea4b6c5b3841f1727be834c9f0069"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 112775168,
+              "sha256": "dbd01c8862a135edfabf1f1fa07076726123165b7c548eb303f00f079bb1f6f5"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5706691,
+              "sha256": "a731e311de47d96976815f02adc5d615dbfbd8c0f2dc356adac48ba6f1b75739"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 112775168,
+              "sha256": "c3437a02c44feee5006e9993cec02ec42e00832c1742e7a55838b53aa40a3d7a"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1685,
+              "sha256": "b0ecf45bc555736f914f3d690c3ae60fcc81e425678ee79870a8decb52a1ef78"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5706681,
+              "sha256": "9ed8e438033fc78c9350ecc96fe789fbe8cbd960f798a7aa2688519cc9be9eca"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 112775168,
+              "sha256": "c3437a02c44feee5006e9993cec02ec42e00832c1742e7a55838b53aa40a3d7a"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1562,
+              "sha256": "4373bbb515e9673523f6d2459f2ccd81189b300dc8393b2403a9cbcef2f60310"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62065,
+              "sha256": "280cf4c8b4285aea08fde36f1ebd4ed8320b288cf8afaa32f796c850f45efb12"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2368,
+              "sha256": "c9d30b3376e03884865a9529df35eee3d155ef6de1cf06adbd3a9b888aefb966"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1409616,
+              "sha256": "9654c7450b55352dbf6657089f6d0af06401b37e19795f5ea61decb169805b6e"
+            }
+          ]
+        },
+        {
+          "case_id": "fc6f00430f0b6535992c424d807cdf50bacce0b73ff6f977cff1f4958864de72",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6499,
+              "sha256": "8ef2deae718aa02a3f3988de58c9f69c9fc9b3c8977954bb8e7856a5dfcfc8ea"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 121765888,
+              "sha256": "10b5072db58cb253449cceaab91423499ed92f2c5150894fd8d6ede725037c01"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5725623,
+              "sha256": "dd2164c2d4bcac22930ea2e14d9be6a1776f3a25b06c8ce16dceafd9ded9448a"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 121765888,
+              "sha256": "ecfbca68cbdee98c413b720a5ac8c7d1f5cbe4a7f34ae8e305926721e68faa02"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5802411,
+              "sha256": "95e919dbadcd9e16cf6f3f202d334b976e877f30f6f1442e9d4bbd98bac14216"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 121765888,
+              "sha256": "a94cc3ef5b9cf2842518a3bff691fae2c5450a817ff4a40e24de4ab305d8c4fd"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1684,
+              "sha256": "cbb6f7de9bb7474d66743b1c1105c7caa5891b0089c644bb2a126807a7cec336"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5802401,
+              "sha256": "f0a8b18c0b6bbd89cb8e0b84c4f4f939da4afb00396a7790506acc212a37290e"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 121765888,
+              "sha256": "a94cc3ef5b9cf2842518a3bff691fae2c5450a817ff4a40e24de4ab305d8c4fd"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1550,
+              "sha256": "e82289c33902d741ff3abe20abddf08c583b64e247fcb5452b47c90b0e6eae93"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62066,
+              "sha256": "c868dafb5111ef715b71cb135ad61a8886fb79a171782c02b55d46f7d4bd88a6"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2480,
+              "sha256": "5e76309be39c97870d29ed9a6f1818e399af4d55646cd78bf43c9f6a2b389ede"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1494566,
+              "sha256": "e2759f9cebfdcde00922a7d98d027d70671cab1a82188d32ff32590ba962a1f3"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "8aa5de6b0dcb71fd12aee34cdd8724703f3b7d9654b687c9a1bac1b8a0fdf44e",
+          "initial_people": 300,
+          "entrants": 483,
+          "departures_including_retirements": 349,
+          "final_active": 434,
+          "final_ever": 783
+        },
+        {
+          "case_id": "fc6f00430f0b6535992c424d807cdf50bacce0b73ff6f977cff1f4958864de72",
+          "initial_people": 300,
+          "entrants": 483,
+          "departures_including_retirements": 349,
+          "final_active": 434,
+          "final_ever": 783
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 52001,
+      "paired_result_sha256": "12382124b653dd3a87a7a9e085fb730cb1faa385d6af637302756dd197cf4614",
+      "paired_result_bytes": 7351,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 430,
+        "startup-founding": 430
+      },
+      "accepted_cases": [
+        {
+          "case_id": "6488c75c8b327e9e0c052ba2f1cbc53e4739eac5081db8d4c8863868ac5fddc7",
+          "attempt": "attempt-000",
+          "manifest_sha256": "1cca41103b5b91dba886f49c60979e89a19bdb2eb67ed265a1c98107064cbdcf",
+          "state_semantic_sha256": "83a235168596eb52fb93210b9d57f9b03943d9e1a8cbc98e148d0171513eea74"
+        },
+        {
+          "case_id": "47a19f76526839b8bb6afdc26e089be99cde8d78ec7363e9ee78c99c1c641898",
+          "attempt": "attempt-000",
+          "manifest_sha256": "da06c19f052b8e854d7b7ba446ac4a3b9b52c02ba97a97d7ca93c0de3db3e170",
+          "state_semantic_sha256": "decb38b035296be3774103dafb211c7bb009995809ecc0aadb9ffc984944db4c"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.007376574122512025,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481601.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 481601.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52001
+        },
+        {
+          "effect": -0.0001047693700628391,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52001
+        },
+        {
+          "effect": -0.01056552098931507,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481601.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 481601.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52001
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52001
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "independent_full13_and_scalar_receipt_sha256": "6b107def17e06e461087b1e06d1a7abd8638e46ec1f1b6cd45f075f00ee1b913",
+      "independent_terminal_sha256": "54c40463e76be910140ac1b0e516e69d9e82b157ab7d94b3947caf8f2f2d0321",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.007376574122512025,
+          "recorded_effect": -0.007376574122512025,
+          "difference": 0.0,
+          "reference_value": 1.2087364132929295,
+          "treatment_value": 1.2013598391704174,
+          "reference_denominator": 481601.0,
+          "treatment_denominator": 481601.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": -0.0001047693700628391,
+          "recorded_effect": -0.0001047693700628391,
+          "difference": 0.0,
+          "reference_value": 0.00841120126670574,
+          "treatment_value": 0.0083064318966429,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.01056552098931507,
+          "recorded_effect": -0.01056552098931507,
+          "difference": 0.0,
+          "reference_value": 0.6977418140292223,
+          "treatment_value": 0.6871762930399072,
+          "reference_denominator": 481601.0,
+          "treatment_denominator": 481601.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "6488c75c8b327e9e0c052ba2f1cbc53e4739eac5081db8d4c8863868ac5fddc7",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6509,
+              "sha256": "1cca41103b5b91dba886f49c60979e89a19bdb2eb67ed265a1c98107064cbdcf"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 112979968,
+              "sha256": "81a1490ceccd89830cf9756977c74e49c3cf2a3263bd89c7119483eaf394e5c4"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5640928,
+              "sha256": "33296ae05258f40cd22a308d879e2d24fc059a787653e97d47e15dbb5faea5ed"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 112979968,
+              "sha256": "7ad36b5825470f24663cb12d5507542930f4dfa7fe6f9a05780bf77e27a56633"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5714585,
+              "sha256": "687127ba94fe97596656796a0947b7d2eb3771b3bc4fa7a60e88c410c2236f98"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 112979968,
+              "sha256": "cc27900a4f19ae1310020af1ce2925224cfaa1467fa40f2d6023660527e68bf0"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "b6157ecd154dd0be9dd293454cbec26a9387b61f99979299a7d0f5718278707c"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5714575,
+              "sha256": "13166273675a9e2940e80ff05e74985847c2b0b4b64aca8c5fa5a7a856949bf1"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 112979968,
+              "sha256": "cc27900a4f19ae1310020af1ce2925224cfaa1467fa40f2d6023660527e68bf0"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1563,
+              "sha256": "b051c74d364eedbf9ab673eb34458d3c4cefd54cf1c42a63ca2b9ca5989e74a9"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62063,
+              "sha256": "40d65882368fdb9c3c9645f5425f6754b2cc92d6d8d97ead3979a2780ae3d927"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2351,
+              "sha256": "a4273e298fc9e4fcdaa4b9cbc1d7792703fcea91db002ac9cce3798fd8655827"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1408541,
+              "sha256": "bc276d70dda18954c52a3053accf3f01ca9c4e9aa3a3b1abbae4ddc7996240b9"
+            }
+          ]
+        },
+        {
+          "case_id": "47a19f76526839b8bb6afdc26e089be99cde8d78ec7363e9ee78c99c1c641898",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6511,
+              "sha256": "da06c19f052b8e854d7b7ba446ac4a3b9b52c02ba97a97d7ca93c0de3db3e170"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 122486784,
+              "sha256": "1852610f100d2e46c56fb16e98682ba573d6b5e03988d2a794587467e8c5c92b"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5737420,
+              "sha256": "ed35f4bfff6ff1666097a3e120c04b9dcc49ce93d9dbf88e65ac0cf5de654564"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 122486784,
+              "sha256": "0563252025efaaf7c225a3608f9f3e7671ccf3b074979765da0e38c0f5bf21e4"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5812337,
+              "sha256": "bcc77c788c8f4478a4d6bde48cc08b5092763511ae8b1abeb1229cae62cdf5b9"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 122486784,
+              "sha256": "443b3cd9fd5f5f0019864ed23202f913fb7891592d2f02924cdb110f40bc06fe"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "fc6c4ec19ef878b4097a1d55481cd2e2a3601fa208e589228454c861297962bd"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5812327,
+              "sha256": "6d1c459aa7a6aae464d59cf342a0771ae6e57a4ceb756a78c0d95b16ff301c78"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 122486784,
+              "sha256": "443b3cd9fd5f5f0019864ed23202f913fb7891592d2f02924cdb110f40bc06fe"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1551,
+              "sha256": "d70cb544f3a2c2fd93ae69f892f1fcef9d8d9ed3a0afa9e527e67cccaa5ca461"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62064,
+              "sha256": "ce684ad9473579b32f9507bcdaaf6fc767c5bb5d49426f07df5df6b0c632309c"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2464,
+              "sha256": "7db4cf4ad3f3e9a03985f36ebc9ee61aead575ad30894ce1b11cef4e27516b57"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1495350,
+              "sha256": "5f9be94797eee1ee89276e4e3348ddece1b2bb54a028b80e1a8e529dafaa6931"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "6488c75c8b327e9e0c052ba2f1cbc53e4739eac5081db8d4c8863868ac5fddc7",
+          "initial_people": 300,
+          "entrants": 497,
+          "departures_including_retirements": 367,
+          "final_active": 430,
+          "final_ever": 797
+        },
+        {
+          "case_id": "47a19f76526839b8bb6afdc26e089be99cde8d78ec7363e9ee78c99c1c641898",
+          "initial_people": 300,
+          "entrants": 497,
+          "departures_including_retirements": 367,
+          "final_active": 430,
+          "final_ever": 797
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 52002,
+      "paired_result_sha256": "a8c6ff611213dc6e5efdeaf534ce495d54a44cb9ed1c75203876ec26e473f426",
+      "paired_result_bytes": 7387,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 437,
+        "startup-founding": 437
+      },
+      "accepted_cases": [
+        {
+          "case_id": "fd011f0bae4dc46c6d342e972ed07ac24fe88d341373e32c12367b2e8b08252f",
+          "attempt": "attempt-000",
+          "manifest_sha256": "4e4295290380972d80e0e536e7e2cd1a7f18d2318d3792117f59a6ce899fc02d",
+          "state_semantic_sha256": "ca95307840b10a34a7cc876c87dafeaebe1b1929562523857cee1967a8867441"
+        },
+        {
+          "case_id": "d54edef02d5934bb76efda42780eaccd2e0f64e6310b72c414b47f2648c35b38",
+          "attempt": "attempt-000",
+          "manifest_sha256": "0a8f210320a8eaae7fe781aca15974b52682b541171e4939fb09f5728f704bde",
+          "state_semantic_sha256": "e149e7a3a3140b79c9d59673ba90c77af7f9d016d3861fdb52a4da00a5326061"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.012002862008886783,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 480813.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 480813.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52002
+        },
+        {
+          "effect": -0.00018144906778423502,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52002
+        },
+        {
+          "effect": -0.015194435448039778,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 480813.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 480813.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52002
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52002
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "independent_full13_and_scalar_receipt_sha256": "a6b1a02c2b67b73cec7b26b628b85597bc234c9034d219c3180e6df9089feca8",
+      "independent_terminal_sha256": "6290c3b7261c3c2349d7b6b61452c2d15113362eec1512e858902863942f3c05",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.012002862008886783,
+          "recorded_effect": -0.012002862008886783,
+          "difference": 0.0,
+          "reference_value": 1.152661166059684,
+          "treatment_value": 1.1406583040507972,
+          "reference_denominator": 480813.0,
+          "treatment_denominator": 480813.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": -0.00018144906778423502,
+          "recorded_effect": -0.00018144906778423502,
+          "difference": 0.0,
+          "reference_value": 0.009293322999400427,
+          "treatment_value": 0.009111873931616192,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.015194435448039778,
+          "recorded_effect": -0.015194435448039778,
+          "difference": 0.0,
+          "reference_value": 0.6416337395965898,
+          "treatment_value": 0.62643930414855,
+          "reference_denominator": 480813.0,
+          "treatment_denominator": 480813.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "fd011f0bae4dc46c6d342e972ed07ac24fe88d341373e32c12367b2e8b08252f",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6500,
+              "sha256": "4e4295290380972d80e0e536e7e2cd1a7f18d2318d3792117f59a6ce899fc02d"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 112422912,
+              "sha256": "9ca0d9c1c194987d0dfcb93d73309ac275c7b5feb08f54eeddb76221f5cb12f0"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5650865,
+              "sha256": "4932d00a0452e395840df088ff874ed3e469778d711f4e851994cf4aeb68f98c"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 112422912,
+              "sha256": "76d1cbcf3738250c9c4099cca7be3051a333e9c1cc67bbbe75daa0181d2d3f0d"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5727030,
+              "sha256": "067b61458e3e2ec71a5d0dde9e0c31764ea8a3f7debf49cf61a7a584b85bca48"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 112422912,
+              "sha256": "ae41e81c85d70e285415b549e60d8643b20dea523af2dedc739b0a5a6f4ab911"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1685,
+              "sha256": "8898aca5092a120656da89db2bd6b9e1cd86c12a022ac4b6633171f86d3c9a48"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5727020,
+              "sha256": "b7ffd5fb5262685f47ccabd5e8204563d4ff6223ccf97012605826fb81fbac89"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 112422912,
+              "sha256": "ae41e81c85d70e285415b549e60d8643b20dea523af2dedc739b0a5a6f4ab911"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1562,
+              "sha256": "6fdef5f6cee4c92b58c7463506adf475a8f78d5c71a08d091a48a7e216c97d91"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62063,
+              "sha256": "799978577d71b0fe0fa74fca3f29d6031e5922a92c9c7614c773d3e51c98ca9a"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2372,
+              "sha256": "a2915a6209257a973bf0ef2e6dfe1fdbea3e98d699282488f2aa241777fac8dc"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1408972,
+              "sha256": "0c756649c8bab43416cec50ad774a3805aa538f52f28a242b8e01f37d5eade0b"
+            }
+          ]
+        },
+        {
+          "case_id": "d54edef02d5934bb76efda42780eaccd2e0f64e6310b72c414b47f2648c35b38",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6500,
+              "sha256": "0a8f210320a8eaae7fe781aca15974b52682b541171e4939fb09f5728f704bde"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 122056704,
+              "sha256": "965d520ac4d65f2226a9783cbee70f97764344a3a1a4acabb6e8a32158ba2226"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5728084,
+              "sha256": "f6d13a1f3bc959ab6f60d30d8793f035dc62e0bf455f0d61d10fbacbdf7effcb"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 122056704,
+              "sha256": "fe3f5de77aafa84745e78ccd4c1e5820dc300874bbfe9e0c267b6120a1802bb6"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5805320,
+              "sha256": "7b354febcb5627c169782917a6c53d03bed1a410ea899cff1a8495d93e7ef221"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 122056704,
+              "sha256": "a26d3b190d95709bf3944090e58cd4f188e18f58733c4f4107bfdc4b703496f8"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1685,
+              "sha256": "7093e7f96594eba376030198a4a07d3438e07d68a591b3499ae8023cc542a997"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5805310,
+              "sha256": "ac70b4b6a44555b5844d11ab0080a0eeb50aafb0c15b9ec20a253f2d5792b5d5"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 122056704,
+              "sha256": "a26d3b190d95709bf3944090e58cd4f188e18f58733c4f4107bfdc4b703496f8"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1551,
+              "sha256": "18b90c456f8595203c230012ad0ddddcfec37cadb8dc3447d19b3e2c4a2e84f7"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62064,
+              "sha256": "3c2726d660ede8bab22fa75acc9508b1f6e7cee91b83f5a5144d9943c1da063a"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2477,
+              "sha256": "d35278bc38fe206d780f8ae33b3c53afbb2216ed0761af8409e88b4caa0c4698"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1476008,
+              "sha256": "477508cae0da7df2087193abd8fece5bb901edda54ff0ac3f9f975da45c1eed0"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "fd011f0bae4dc46c6d342e972ed07ac24fe88d341373e32c12367b2e8b08252f",
+          "initial_people": 300,
+          "entrants": 515,
+          "departures_including_retirements": 378,
+          "final_active": 437,
+          "final_ever": 815
+        },
+        {
+          "case_id": "d54edef02d5934bb76efda42780eaccd2e0f64e6310b72c414b47f2648c35b38",
+          "initial_people": 300,
+          "entrants": 515,
+          "departures_including_retirements": 378,
+          "final_active": 437,
+          "final_ever": 815
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 52003,
+      "paired_result_sha256": "22309eb7f378df44309941a017b798342c7490a1f9a1868994dadf6ef4ddfcc8",
+      "paired_result_bytes": 7393,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 438,
+        "startup-founding": 438
+      },
+      "accepted_cases": [
+        {
+          "case_id": "d90828ae4626b7a9c33b59c127071e6bbf1a680b124843d0a39c8ea07c5b0dcb",
+          "attempt": "attempt-000",
+          "manifest_sha256": "f429165dad03fd2b9aec5c2836397442d3a850918008a28d61391cff9d15fee0",
+          "state_semantic_sha256": "1f73cdf4ec2a9e61a5cc9c9a20915f50a264fb9bd003e939012abba29de0d65a"
+        },
+        {
+          "case_id": "8c662416f943a4c0324d21c24f1bbaa4c559936a714e496324d60cc15c2ebfbb",
+          "attempt": "attempt-000",
+          "manifest_sha256": "80cf7e5ea66226ddf920fa88d879f65efc11fd1e8e20f2a8e1614534a557ae5d",
+          "state_semantic_sha256": "daf4bd46753600df77cd96178b2e20c282edeb5931b18f4af1b035fc620140ef"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.011399893851586906,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481343.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 481343.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52003
+        },
+        {
+          "effect": -0.0005875073671788959,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52003
+        },
+        {
+          "effect": -0.014561360830436132,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 481343.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 481343.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52003
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52003
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "independent_full13_and_scalar_receipt_sha256": "89901eb1aed1634241420b94ff34e78f89b9dc3e2645697a5747ce3c281fc56f",
+      "independent_terminal_sha256": "954d8f7325e323246e9e9734e5e34fcfe6167f4e784db5fb14d2c0027f660811",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.011399893851586906,
+          "recorded_effect": -0.011399893851586906,
+          "difference": 0.0,
+          "reference_value": 1.2015480493615502,
+          "treatment_value": 1.1901481555099633,
+          "reference_denominator": 481343.0,
+          "treatment_denominator": 481343.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": -0.0005875073671788959,
+          "recorded_effect": -0.0005875073671788959,
+          "difference": 0.0,
+          "reference_value": 0.00931220621071315,
+          "treatment_value": 0.008724698843534254,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.014561360830436132,
+          "recorded_effect": -0.014561360830436132,
+          "difference": 0.0,
+          "reference_value": 0.6905757697189698,
+          "treatment_value": 0.6760144088885337,
+          "reference_denominator": 481343.0,
+          "treatment_denominator": 481343.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "d90828ae4626b7a9c33b59c127071e6bbf1a680b124843d0a39c8ea07c5b0dcb",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6505,
+              "sha256": "f429165dad03fd2b9aec5c2836397442d3a850918008a28d61391cff9d15fee0"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 113217536,
+              "sha256": "4e58ff45bc36330693317017d0eaa2a748f31d46bca62d7af213a1f8a7082b0f"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5632845,
+              "sha256": "5c7d04f6b449ed93046f7750adc51d30bb464180e79cd7b7533bd212291a8ea5"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 113217536,
+              "sha256": "4fa0ff3a86613213f7b138299d948a2aa1fa81c50ebc273727b75082eb1e2eee"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5706765,
+              "sha256": "23fbf29c7cd669623907a3c707bacf78a487015920c84da32b8fcd11b9301bdf"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 113217536,
+              "sha256": "9f56200ced982327bdda1248629cfff42d1687964bbfff29160a59cd683042c5"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "0c7380b67b2165a30efd5ca56861c9f0a400eb64c7b6664d01dfc453251f34f6"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5706755,
+              "sha256": "d9eee1cdcc63a59767b098ed28cb1e046a309fd3c40feb3bdca2869680990bbd"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 113217536,
+              "sha256": "9f56200ced982327bdda1248629cfff42d1687964bbfff29160a59cd683042c5"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1563,
+              "sha256": "b271f51d2be7005b14cd46a8eadee730bac3104b1d2728775fd096075dc4d7ff"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62066,
+              "sha256": "7014eafb727da623dc559d42ead468729a2575cb76f2098e4ebccc08959da334"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2373,
+              "sha256": "1be68cdcbdb4b301ae06926009367b6834ffd7fe7e3ffc7b159e2c38aed8d985"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1409424,
+              "sha256": "2b22dcbdc834da1f570632d9c7e8895a2243e5227ffdbaeff5b20dd6080061aa"
+            }
+          ]
+        },
+        {
+          "case_id": "8c662416f943a4c0324d21c24f1bbaa4c559936a714e496324d60cc15c2ebfbb",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6500,
+              "sha256": "80cf7e5ea66226ddf920fa88d879f65efc11fd1e8e20f2a8e1614534a557ae5d"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 122822656,
+              "sha256": "bc81a2caa13a6c13144c63c96c6d620f2a79039fffa466def9d337ab90b76f5c"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5728079,
+              "sha256": "b8a8d472d59ac473d9d66dacf6cf673943b39d3790153d3daac329f9fa292455"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 122822656,
+              "sha256": "344333fc4e9237e9523f7c9abeafa7255d16ff27d070548ccbdd38ad8f6d1a80"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5803183,
+              "sha256": "3b0eebb42ccaa5af7d19afb200d6080a98cb2087c376605f4695585030e0268e"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 122822656,
+              "sha256": "c3fca09c8dc46169f5d5343d58ef177218d02d9c5085ea721663496c3f40e92b"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "eab55691afd424fc2ef8af2de955bc66eb86ad544fef26b1011106d0e7d88a9c"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5803173,
+              "sha256": "68242c2a3a3dad3832c65bb445ad863d9d2fc007e65288d5e6cb1253bea3c488"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 122822656,
+              "sha256": "c3fca09c8dc46169f5d5343d58ef177218d02d9c5085ea721663496c3f40e92b"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1551,
+              "sha256": "03912d670abfddcd41871500333284d1849de0fcd5171d58dad5310116be4536"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62068,
+              "sha256": "97e341fb8a7c48736ccde2fd25cf7473a32669d57603c14e239ec759e88b2858"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2483,
+              "sha256": "49d9603e763b389cb82b18022f51d29ddadf615fc27af3b6e273012f313689e1"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1495001,
+              "sha256": "247e0f10fcfc71a91c84927909404368224ffa3cc35001482aa5dd88306986c3"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "d90828ae4626b7a9c33b59c127071e6bbf1a680b124843d0a39c8ea07c5b0dcb",
+          "initial_people": 300,
+          "entrants": 483,
+          "departures_including_retirements": 345,
+          "final_active": 438,
+          "final_ever": 783
+        },
+        {
+          "case_id": "8c662416f943a4c0324d21c24f1bbaa4c559936a714e496324d60cc15c2ebfbb",
+          "initial_people": 300,
+          "entrants": 483,
+          "departures_including_retirements": 345,
+          "final_active": 438,
+          "final_ever": 783
+        }
+      ],
+      "empirical_validation": false,
+      "complete_study": false
+    },
+    {
+      "world": 52004,
+      "paired_result_sha256": "de462dac1ec88f614bf8efd40564c2b6c512527a513148409820d1aa7999d8df",
+      "paired_result_bytes": 7352,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 430,
+        "startup-founding": 430
+      },
+      "accepted_cases": [
+        {
+          "case_id": "e9b8779a4f0c047a702261b21478cea6d4e0b7b5fe4945aa17e2a1b75cde7772",
+          "attempt": "attempt-000",
+          "manifest_sha256": "05abe40603bdfc8f25ec776c0644a1c2a623d3f88fcb2634afd663657fc670f2",
+          "state_semantic_sha256": "cacc3835a0616cd62277f6260941ddbaa96b647a1bf464396c11adbedaff06b9"
+        },
+        {
+          "case_id": "ac1395e78b95fbdf9a69d2332d795cdd0037c4ead6c257b35ff77d9aa696bc00",
+          "attempt": "attempt-000",
+          "manifest_sha256": "deebcd43d2657333b4b62d288ed39b5344a3c7a49623d2f1e492da8d32f6182d",
+          "state_semantic_sha256": "3a828cfdb0ce8e993f29127a894ef264e2860ef6570a7b40214784f927a9b3cb"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.012954815143757292,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479351.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 479351.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52004
+        },
+        {
+          "effect": -0.00016776073765486198,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52004
+        },
+        {
+          "effect": -0.016139016282381125,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479351.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 479351.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52004
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52004
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "empirical_validation": false,
+      "complete_study": false,
+      "independent_full13_and_scalar_receipt_sha256": "aab86c2723e30b2aecc179280ec5b598a0a9a47c1b6215817fe937695338331d",
+      "independent_terminal_sha256": "7624b2d2daa16ba4214cf804e0c5f1692309d95e22c983e02e93ad6e54a3b4cf",
+      "independent_closure_sha256": "61648ecb6d5264ed3217b0009978b874dc7639bce9bd0ce2607cb1f16d6ca970",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.012954815143757292,
+          "recorded_effect": -0.012954815143757292,
+          "difference": 0.0,
+          "reference_value": 1.2336479640086941,
+          "treatment_value": 1.2206931488649369,
+          "reference_denominator": 479351.0,
+          "treatment_denominator": 479351.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": -0.00016776073765486198,
+          "recorded_effect": -0.00016776073765486198,
+          "difference": 0.0,
+          "reference_value": 0.009380174203366409,
+          "treatment_value": 0.009212413465711547,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.016139016282381125,
+          "recorded_effect": -0.016139016282381125,
+          "difference": 0.0,
+          "reference_value": 0.7226466100947548,
+          "treatment_value": 0.7065075938123737,
+          "reference_denominator": 479351.0,
+          "treatment_denominator": 479351.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "e9b8779a4f0c047a702261b21478cea6d4e0b7b5fe4945aa17e2a1b75cde7772",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6502,
+              "sha256": "05abe40603bdfc8f25ec776c0644a1c2a623d3f88fcb2634afd663657fc670f2"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 113004544,
+              "sha256": "2734a2c6b3e40f43583d525c8bbabccd9ef5314d4ae8b00686be30afcdef3eff"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5640734,
+              "sha256": "81a62acb7f34035005fa681cc490f71b2bc8d672967358d236aca60f24db5e7d"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 113004544,
+              "sha256": "3a565dd15de05f2b886fd0cf2975ad9f8eb8eab8c362b425eba98d2987e2ac49"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5716432,
+              "sha256": "6dad6ce32648622b11b35afc601af1144775a273a40ace04b695620659ba751f"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 113004544,
+              "sha256": "996c85821ba4b8b176a66e1af57dc912cd962e0afc82f1b7b9d704dee30413dc"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "a0adaf5b361f71b8997142f9ff38596573cc6667515e4ccc490a6619e4e59523"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5716422,
+              "sha256": "2677c9e371375a18971232ea3ece88a03e08c34ac6b9c9cadfa5ae6c3a512b36"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 113004544,
+              "sha256": "996c85821ba4b8b176a66e1af57dc912cd962e0afc82f1b7b9d704dee30413dc"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1562,
+              "sha256": "d626d31620e7ab26d5876f42c4ac59e2612f5f8ff9c8a4656cc87052c08b43e4"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62066,
+              "sha256": "b59ac1d9805f8880702d8bda18dd1e6f65f2b5161065aceaa3684f03581417db"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2350,
+              "sha256": "b8996dafb482d9e4a264393050ca119f8ee3086b4c1cd38ffdbfad77af8e743d"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1408143,
+              "sha256": "a392aa4d5a427591b7ba6493b0d0fbbf59aad10dba711fae8a09c3ab95a500fa"
+            }
+          ]
+        },
+        {
+          "case_id": "ac1395e78b95fbdf9a69d2332d795cdd0037c4ead6c257b35ff77d9aa696bc00",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6500,
+              "sha256": "deebcd43d2657333b4b62d288ed39b5344a3c7a49623d2f1e492da8d32f6182d"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 122441728,
+              "sha256": "6034ae7e576a7d6a92319376176fcc5ab0b7f3b75fc47e53d733006703841701"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5737154,
+              "sha256": "e80af879fc8ff7c3b42e3ba73e3225bd790b5969c2566620e0095e9eb9f704bd"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 122441728,
+              "sha256": "a247a60ebcd378f8e3f09d2c9b77e4f83ddff82fea2d29865058cff5d198550e"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5814126,
+              "sha256": "66b2b52ef9069707767b7792bc5337d9ebb635405db7d0789b38dd5831979a90"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 122441728,
+              "sha256": "73206cee9971c54f695364debf5c36cbc75aa594930cb3e34720056ed6145622"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1685,
+              "sha256": "3e397553d0dd5f93647f4e3f5cc9b403ca49e496364e437a51d0dcee3ea401f9"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5814116,
+              "sha256": "85f38b5d03a6c3e5281af9aebcdaf8754c9001b34c01d40a5950d55d557bfbdf"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 122441728,
+              "sha256": "73206cee9971c54f695364debf5c36cbc75aa594930cb3e34720056ed6145622"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1550,
+              "sha256": "686d3a68933cb0f0ddca0dc2ce4ff3c01c0fce184e66d355092b9932265ab58f"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62067,
+              "sha256": "99ca3c28a773cd6ee8b58bb3dfe0f85707268dd8e6b0307b4f48c06e2c52a208"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2464,
+              "sha256": "a373b66ab622d1cf41b4001ec81d2c71a6aa3fa5f243172dc25e7b3b0b0cfef9"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1495061,
+              "sha256": "a36b6905c1a3b542f7b376831e0e8022f25056db77cac34079d9be615c730784"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "e9b8779a4f0c047a702261b21478cea6d4e0b7b5fe4945aa17e2a1b75cde7772",
+          "initial_people": 300,
+          "entrants": 500,
+          "departures_including_retirements": 370,
+          "final_active": 430,
+          "final_ever": 800
+        },
+        {
+          "case_id": "ac1395e78b95fbdf9a69d2332d795cdd0037c4ead6c257b35ff77d9aa696bc00",
+          "initial_people": 300,
+          "entrants": 500,
+          "departures_including_retirements": 370,
+          "final_active": 430,
+          "final_ever": 800
+        }
+      ]
+    },
+    {
+      "world": 52005,
+      "paired_result_sha256": "c84cd0dd663e5aff7b60c9e65d82464d18f1bdc61a486aabe244317a383ee587",
+      "paired_result_bytes": 7389,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 433,
+        "startup-founding": 433
+      },
+      "accepted_cases": [
+        {
+          "case_id": "4c5410a1cc6347590843efb0c6b7901f0abae593b2515f12b845b7725cac4acc",
+          "attempt": "attempt-000",
+          "manifest_sha256": "b92c498b2867a1db6326ac91f08c2e3fab75e95c75ffce0f1b5f508e2e67dfc3",
+          "state_semantic_sha256": "23c743d3a791afe4b38fb354eb8729a22bfa8d92fa85da2dd91854058c007a41"
+        },
+        {
+          "case_id": "50f90821b16b500cc72cd2bf7bc2da4dc9a7851fb4245191895ff8e11463a1da",
+          "attempt": "attempt-000",
+          "manifest_sha256": "4d8159c786e3c63a6c878addc7a54ff00038f49b28a86e7b2d5266924f0d50dc",
+          "state_semantic_sha256": "ee4b4a23d3bce5d905b85f7eb43f42777ebc0308c9822c4c1b2a1d11e4da1457"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.011065100505980086,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479229.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 479229.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52005
+        },
+        {
+          "effect": -0.00019522767728931238,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52005
+        },
+        {
+          "effect": -0.014266075405246714,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479229.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 479229.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52005
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52005
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "empirical_validation": false,
+      "complete_study": false,
+      "independent_full13_and_scalar_receipt_sha256": "f4afbfb5592793256ea3be745543281c8efc7d82b2013ed628d348542e9573d4",
+      "independent_terminal_sha256": "64f4fb7d10081a5e7fe07fdcee9ef0c1114438235afc5d851d7d502a3cb85063",
+      "independent_closure_sha256": "0de3dc21834f7536cbdd6f56ab295808db9d26ca7cc62f8bf349035af3a6ff87",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.011065100505980086,
+          "recorded_effect": -0.011065100505980086,
+          "difference": 0.0,
+          "reference_value": 1.207028971156958,
+          "treatment_value": 1.1959638706509779,
+          "reference_denominator": 479229.0,
+          "treatment_denominator": 479229.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": -0.00019522767728931238,
+          "recorded_effect": -0.00019522767728931238,
+          "difference": 0.0,
+          "reference_value": 0.010353106367738065,
+          "treatment_value": 0.010157878690448752,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.014266075405246714,
+          "recorded_effect": -0.014266075405246714,
+          "difference": 0.0,
+          "reference_value": 0.6960920495599757,
+          "treatment_value": 0.681825974154729,
+          "reference_denominator": 479229.0,
+          "treatment_denominator": 479229.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "4c5410a1cc6347590843efb0c6b7901f0abae593b2515f12b845b7725cac4acc",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6508,
+              "sha256": "b92c498b2867a1db6326ac91f08c2e3fab75e95c75ffce0f1b5f508e2e67dfc3"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 112340992,
+              "sha256": "169a4f8b3570a552ba3f92e9b55a21de2c3ba8b65db10ce40465f34dabd851a1"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5625844,
+              "sha256": "588b571d099f7788b78ab2f0f7048c8b517404c6c9c74e849b759a94ce0039ab"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 112340992,
+              "sha256": "6633c31fa2db9773699726d51fbeb20d915db5fd988ea9c59b9325938cc5bda4"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5698378,
+              "sha256": "706f57b8ee63c406830bf2eba3935d5226892474f98996094a8e2a47aec851f0"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 112340992,
+              "sha256": "1e2bf1dc0b014fa7e966be9e4826586ce4ccb5e7c8017b6b0b713c08b57e783a"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "59ce4b7ac7fe0f4ccebadfd9092be428dc697291111b851a33fe2926e63c1e07"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5698368,
+              "sha256": "b921eebf92fe78caecc8a833eecc2f9e3354ae299a2a6fcdca798b76e49e1a3e"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 112340992,
+              "sha256": "1e2bf1dc0b014fa7e966be9e4826586ce4ccb5e7c8017b6b0b713c08b57e783a"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1563,
+              "sha256": "4fb89e6621f5f8e7fc00e4ad41f500e6ffe12862bb695975f918957c8cf45259"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62060,
+              "sha256": "d664ea623e29b3f3cd66085e35fc08471176d217ff4a8bfe4db1a6a7ae4c73cf"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2374,
+              "sha256": "1219b035bae1ba76dabbc9ec33e6a833ab49b7852914fa10945b77c40e8203de"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1409843,
+              "sha256": "9927f43ed3b329fc2a1a3fce83ce2fedc4daa0a7ead615a3114c6c698d07e34b"
+            }
+          ]
+        },
+        {
+          "case_id": "50f90821b16b500cc72cd2bf7bc2da4dc9a7851fb4245191895ff8e11463a1da",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6502,
+              "sha256": "4d8159c786e3c63a6c878addc7a54ff00038f49b28a86e7b2d5266924f0d50dc"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 121733120,
+              "sha256": "6663b2d46ab27213e40358f9551bcdf0428fb96349fc4954e877302dfb45588f"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5700209,
+              "sha256": "5ecaeffc4a7a5c0f82de4726090ac3e322cbdf1c5964ebc0a5daab7f10c3947e"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 121733120,
+              "sha256": "d9748d7bb2ea8890c8d6ff976ac05c212832217691e56ec848803ad9dcadac5f"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5773723,
+              "sha256": "4bd5c7f609c9e76a0043ffb95aeb05536412f8a0751a5ef01561c72f7465b146"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 121733120,
+              "sha256": "7b98a250e3e6ca2c0ecdc8e37bd12e747bb44be4daeee83a8821e720347642b3"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1685,
+              "sha256": "4c7d68c513645c0a82190e46c2bcba160de33541a8a988989e9d53fdeb80c660"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5773713,
+              "sha256": "0bfdde76385edde63e7cb9bcaa849f072ac5087d1bdd5d913045cd46768f5b84"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 121733120,
+              "sha256": "7b98a250e3e6ca2c0ecdc8e37bd12e747bb44be4daeee83a8821e720347642b3"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1551,
+              "sha256": "b7719afd317ba0e90d70a82e7793264eb24eb3d093900fca2f30d16e6e12d264"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62061,
+              "sha256": "cd0a986d21e7b3917cd9ae73f41cad0de8ae52f9dd8edda86b9fa5b95978fdca"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2477,
+              "sha256": "3ecf9503ed7e986123991c21db10e83a6bb2d54e2925a485db7c3304c52163c2"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1474372,
+              "sha256": "77a3930a7bcd47ba6b2a074a7914fd7c293c3b5e980e7204a127f14247da2342"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "4c5410a1cc6347590843efb0c6b7901f0abae593b2515f12b845b7725cac4acc",
+          "initial_people": 300,
+          "entrants": 470,
+          "departures_including_retirements": 337,
+          "final_active": 433,
+          "final_ever": 770
+        },
+        {
+          "case_id": "50f90821b16b500cc72cd2bf7bc2da4dc9a7851fb4245191895ff8e11463a1da",
+          "initial_people": 300,
+          "entrants": 470,
+          "departures_including_retirements": 337,
+          "final_active": 433,
+          "final_ever": 770
+        }
+      ]
+    },
+    {
+      "world": 52006,
+      "paired_result_sha256": "c108aea046a90acdd872f79cf7050dc95a8cfdeb90924961b5db4c9b7f1bd662",
+      "paired_result_bytes": 7393,
+      "status": "full-paired-raw-validated",
+      "identity": {
+        "pipeline_driver_sha256": "81edc3f731f39157ae562c0ec920416c8c1fe3b642d8938bdd3d99a48d37ecd3",
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "spec_sha256": "dcc4adb96371e718ea62f83fecaf0708a982474343968a220bde04c8f2b34272"
+      },
+      "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+      "initial_population": 300,
+      "final_population_by_arm": {
+        "startup-existing": 430,
+        "startup-founding": 430
+      },
+      "accepted_cases": [
+        {
+          "case_id": "03983db83ca2f5deb9ee6efaa7fd3477ad6a0c88cd949b8af52b335ec3133ab8",
+          "attempt": "attempt-000",
+          "manifest_sha256": "d85496ff03a3e2efaf65046151ae220e8a7f34101a5f4cfd27e1f604295f6506",
+          "state_semantic_sha256": "b6fa0f767a06678b8a277567a3174e8dd1aa1e1493a40fe061b863fe8aa85ebe"
+        },
+        {
+          "case_id": "3faa930ca9ff7b1ba04f21a92e4319bceba9dad6286dbb00d2cfede1477f1356",
+          "attempt": "attempt-000",
+          "manifest_sha256": "a86bb0e4ffad34dd68a8bef78203cf1173f6a426f13cff246872c0f53b40060f",
+          "state_semantic_sha256": "668a788a38b0537a89f1e540e442c0cd98399eb5228b9e7e741ad1e5a5ab040f"
+        }
+      ],
+      "calendar_days": 1917,
+      "creating_days": 1827,
+      "settlement_tail_days": 90,
+      "observation_years": 5,
+      "calendar_start": "2020-01-01",
+      "calendar_end_exclusive": "2025-04-01",
+      "effects": [
+        {
+          "effect": -0.0033544692126412645,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 483417.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 483417.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52006
+        },
+        {
+          "effect": 0.00017938859674795568,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52006
+        },
+        {
+          "effect": -0.006505992638587532,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 483417.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 483417.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52006
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52006
+        }
+      ],
+      "producer_full_raw_validation": true,
+      "independent_full13_and_scalar_validation": true,
+      "empirical_validation": false,
+      "complete_study": false,
+      "independent_full13_and_scalar_receipt_sha256": "ec88371b4ceda8f4a2ddea3ed16b5a22ed04f4c48ec4551b1b56c3e53e40e9fd",
+      "independent_terminal_sha256": "8794c0463433e8ac0d9da79154c383d848f2bdb33c273edb3ef8725e06045c5a",
+      "independent_closure_sha256": "39b40e4bdd314cba85c08f466e7fc6ad8cf89c58f4d34a4ed02af95abbf6c0d4",
+      "independent_endpoint_checks": [
+        {
+          "endpoint": "work_per_present_member_workday",
+          "independent_effect": -0.0033544692126412645,
+          "recorded_effect": -0.0033544692126412645,
+          "difference": 0.0,
+          "reference_value": 1.1777867416800356,
+          "treatment_value": 1.1744322724673943,
+          "reference_denominator": 483417.0,
+          "treatment_denominator": 483417.0,
+          "pass": true
+        },
+        {
+          "endpoint": "decision_regret_per_decision",
+          "independent_effect": 0.00017938859674795568,
+          "recorded_effect": 0.00017938859674795568,
+          "difference": 0.0,
+          "reference_value": 0.009215432012643935,
+          "treatment_value": 0.009394820609391891,
+          "reference_denominator": 5196.0,
+          "treatment_denominator": 5196.0,
+          "pass": true
+        },
+        {
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "independent_effect": -0.006505992638587532,
+          "recorded_effect": -0.006505992638587532,
+          "difference": 0.0,
+          "reference_value": 0.6668662113718329,
+          "treatment_value": 0.6603602187332454,
+          "reference_denominator": 483417.0,
+          "treatment_denominator": 483417.0,
+          "pass": true
+        },
+        {
+          "endpoint": "closed_by_common_end",
+          "independent_effect": 0,
+          "recorded_effect": 0,
+          "difference": 0,
+          "reference_value": 0,
+          "treatment_value": 0,
+          "reference_denominator": 1,
+          "treatment_denominator": 1,
+          "pass": true
+        }
+      ],
+      "independent_observation_days": [
+        0,
+        1826
+      ],
+      "independent_raw_file_rosters": [
+        {
+          "case_id": "03983db83ca2f5deb9ee6efaa7fd3477ad6a0c88cd949b8af52b335ec3133ab8",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6499,
+              "sha256": "d85496ff03a3e2efaf65046151ae220e8a7f34101a5f4cfd27e1f604295f6506"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 113082368,
+              "sha256": "01e7ea84bb7d98c1f368648b43a4e9579586b42d453597d62c77583b5f8c5f78"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5618247,
+              "sha256": "885591a450f046b39108b15c3444371905d721190d9d3f6b1243e6d246750dd1"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 113082368,
+              "sha256": "74012fd522e3ca1124c7883a1509e8777bf90608105a1454bab0b173879d934c"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5692262,
+              "sha256": "08d94173fe8e9104251f24833ffeb9bafcef5d5e3ac6027f76b7c1e736a6b7ab"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 113082368,
+              "sha256": "3fd60e3d5ea68560b15dbbc3f51e44146d13a3a3844afe7302531524cb8b9b09"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1685,
+              "sha256": "e8af4a2c81bd66f1a603f643b4275b949b539c7f7c92afdff4610a805739239a"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5692252,
+              "sha256": "2bb0e2b9d5cd27712203c7bcf7305bdf52ae3a8df9a9db9a4b1246370b276404"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 113082368,
+              "sha256": "3fd60e3d5ea68560b15dbbc3f51e44146d13a3a3844afe7302531524cb8b9b09"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1563,
+              "sha256": "de0a318759412af6c5f1a39e15436c5368619527888a30e77c6a2c882c95c102"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62059,
+              "sha256": "08e7410e99d617c0cba41d2f2c3e725009c923f987b85418fc32d4f99daf12e6"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2371,
+              "sha256": "f7b230138afa4e050a1537a200358c117d8c34017a7533d4b07393bd3b48b93d"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1407650,
+              "sha256": "c7f5b4e359868cf802772812aed7e6541f700d8865765a1c38cbe1a2404cbec5"
+            }
+          ]
+        },
+        {
+          "case_id": "3faa930ca9ff7b1ba04f21a92e4319bceba9dad6286dbb00d2cfede1477f1356",
+          "files": [
+            {
+              "file": "manifest.json",
+              "bytes": 6501,
+              "sha256": "a86bb0e4ffad34dd68a8bef78203cf1173f6a426f13cff246872c0f53b40060f"
+            },
+            {
+              "file": ".longitudinal-working.sqlite",
+              "bytes": 122818560,
+              "sha256": "765dfcc0669a1693658e99977d3e78e61308a9c24197c239d4233b2d6b172aca"
+            },
+            {
+              "file": "checkpoint-day-001890.json",
+              "bytes": 5715270,
+              "sha256": "356e1ee5827caf7335c2744e78cc2630a7fe3220d5b3f29491920fca560fbec6"
+            },
+            {
+              "file": "checkpoint-day-001890.sqlite",
+              "bytes": 122818560,
+              "sha256": "f6b453e9fefd9d22d87631b2c33a9380bd8b808b7fb70195f25f2481bd3cc967"
+            },
+            {
+              "file": "checkpoint-day-001917.json",
+              "bytes": 5790640,
+              "sha256": "2a5f403875190bdafe3ae85836529b7df2eeebf9f33b73148e37023c42d5d52f"
+            },
+            {
+              "file": "checkpoint-day-001917.sqlite",
+              "bytes": 122818560,
+              "sha256": "a1e3d1667686af01db673c4e59d6c13bcfc27e7f16704a06c62c69dc71f2d298"
+            },
+            {
+              "file": "checkpoint-index.json",
+              "bytes": 1686,
+              "sha256": "97bb472068a2decce1f4b87ece73905fa8c03aa748928a426fa224aa17e75c60"
+            },
+            {
+              "file": "final_state.json",
+              "bytes": 5790630,
+              "sha256": "dd58c9bc3d98909cdbab76da82a45f2486ed846dca25893acad9d5c7fe254e34"
+            },
+            {
+              "file": "final_state.sqlite",
+              "bytes": 122818560,
+              "sha256": "a1e3d1667686af01db673c4e59d6c13bcfc27e7f16704a06c62c69dc71f2d298"
+            },
+            {
+              "file": "report.md",
+              "bytes": 1550,
+              "sha256": "d76b17c24486b911f5a52da9a8787a2a9cb35c667664af7b81a57f4be75c7dbd"
+            },
+            {
+              "file": "report.svg",
+              "bytes": 62060,
+              "sha256": "54d4817dcf0bdbbe438db6ddd87c64d40c4aee71ecdafd67a6530d80fe0647fc"
+            },
+            {
+              "file": "summary.json",
+              "bytes": 2484,
+              "sha256": "fdcc4c2d7337be013234d076c658abc894c66ad0fd0b4d118ee9231cbeff6c83"
+            },
+            {
+              "file": "timeseries.csv",
+              "bytes": 1495372,
+              "sha256": "38218b2706fa44db840cd7e6326bd9ba1645b63f9ada9cc47828dba8f9078dd4"
+            }
+          ]
+        }
+      ],
+      "independent_population_accounting": [
+        {
+          "case_id": "03983db83ca2f5deb9ee6efaa7fd3477ad6a0c88cd949b8af52b335ec3133ab8",
+          "initial_people": 300,
+          "entrants": 464,
+          "departures_including_retirements": 334,
+          "final_active": 430,
+          "final_ever": 764
+        },
+        {
+          "case_id": "3faa930ca9ff7b1ba04f21a92e4319bceba9dad6286dbb00d2cfede1477f1356",
+          "initial_people": 300,
+          "entrants": 464,
+          "departures_including_retirements": 334,
+          "final_active": 430,
+          "final_ever": 764
+        }
+      ],
+      "raw_reader_exit_code": 0,
+      "raw_reader_reaped": true,
+      "metadata_supervisor_initial_exit_code": 1,
+      "metadata_quota_refusal_preserved": true,
+      "metadata_only_reconciliation_receipt_sha256": "d10ffed271543c4b7c1e163b14b6a3c6522cc4cd8628e1f85ffbece086d85f2d",
+      "metadata_finalizer_tool_terminal_sha256": "6de8c027ec567314ea4cb898c1b1711f6ae65e387e7fd5734269ea3eed07e379",
+      "regret_direction": "DAMS higher in this world; adverse counterexample retained"
+    }
+  ],
+  "antecedent_r65_sha256": "ebd85757d3b8aac8e8026454cf3de4c1638f2ae5c1b36aa97267b678a94ad549",
+  "independent_confirmation_pairs": 7,
+  "confirmation_assignment_frozen": true,
+  "confirmation_stage_complete": false,
+  "precision_met_claimed": false,
+  "science_count_cutoff_utc": "2026-10-11T11:25:30.766266+00:00",
+  "CLI_alive_observation_utc": "2026-10-11T11:25:30.766266+00:00",
+  "antecedent_r66_sha256": "2f98a0875ed82b5f160d80c285886ae4c752dfa1cf82f0054b54620d29cec673",
+  "independent_confirmation_unique_cases": 14,
+  "producer_confirmation_unique_cases": 14,
+  "antecedent_r67_sha256": "635a97876bfc31e418e6423de6a7fc564f7dd0b21acc09ae6d6d2a1c24c445eb",
+  "antecedent_r68_sha256": "078f3a091410a0b53e5657e5776e4af175886a9d17c5bce09da138fdf568dde3",
+  "original_pipeline_capacity_stop": {
+    "status": "CAPACITY_STOP_EXIT1_REAPED",
+    "stopped_utc": "2026-10-11T10:59:30.912344+00:00",
+    "producer_exit_code": 1,
+    "reaped": true,
+    "owned_process_group_absent_at_terminal": true,
+    "terminal_sha256": "18a54de30011279926f0dd7fcbfffbfe4a0409d555b944d8972fde31b19ca390",
+    "stderr_sha256": "fbfd3934ae164e6f7faf1bf81f7fa5cd11a6ed24166328b4a8dfc8c98e9a7865",
+    "scheduler_guard_line": 361,
+    "scheduler_source_sha256": "114cddf6beda055868f0f24d93bfc5c4e2965ff3ecd4a4c1faccb9d6ee163ed2",
+    "scientific_startup_required_GiB_unchanged": 96,
+    "scientific_safe_floor_GiB_unchanged": 80,
+    "per_new_producer_reservation_GiB_unchanged": 16,
+    "RUNNING_at_cut": false,
+    "resumption_completed_or_authorized_by_publication": false
+  },
+  "antecedent_r69_sha256": "52af2f16d673126cc33ee7d9f262783c517ff0229b310d425fab3abede0fb35c",
+  "accepted_complete_arms": 23,
+  "unpaired_complete_arms_excluded_from_pairs": 1,
+  "unpaired_world": 52007,
+  "unpaired_arm": "hierarchy",
+  "scientific_process_running_at_r70_cut": false,
+  "antecedent_r70_sha256": "e50ae8cda5eb7f75ce000566a6bbc2a3353bb5eefdc9a2090d5a4842eab477eb",
+  "antecedent_r71_sha256": "cde40f9248e2b5d65a4051973c6d44a6b186c63cb185d41668571316e78af6c4",
+  "antecedent_r72_sha256": "c290b3818f0e675d03f69224cf083f8dd04929b6276b98dd659e7227d7d69ea1"
+}
