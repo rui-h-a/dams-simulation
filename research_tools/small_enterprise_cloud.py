@@ -1,6 +1,8 @@
 """One source-bound operational arm of the unchanged small-enterprise study.
 
-Only the existing Scheduler executes cases. All eight pilot rows remain declared.
+Only the existing Scheduler executes cases. The fixed confirmation roster remains
+66 worlds; this operation declares both arms of uncompleted world 52008.
+A single invocation executes one exact arm and cannot complete a pair or study.
 This does not complete a pair, redefine the study, or authorize paid resources.
 """
 from __future__ import annotations
@@ -21,15 +23,28 @@ from dams_sim.scheduler import Scheduler
 from dams_sim._committed_pages import Directory
 from research_tools import small_enterprise as study
 
-SCHEMA = 'DAMS-small-enterprise-cloud-arm-1'
+SCHEMA = 'DAMS-small-enterprise-cloud-confirmation-arm-1'
 FIELDS = {'schema','source_sha256','pipeline_driver_sha256','study_entry_sha256',
           'study_sha256','pilot_inventory_sha256','population','days','seed',
-          'selected_world','selected_arm','selected_case_id','selected_config_sha256'}
+          'selected_world','selected_arm','selected_case_id','selected_config_sha256',
+          'selected_phase','confirmation_roster_sha256',
+          'confirmation_study_sha256','confirmation_world_count','confirmation_world_ids'}
 CORE = study.CORE
 DRIVER = study.DRIVER
 STUDY_IMPORT_SHA = '2732dc6ff3d73e9848c022522e02a744ca0e77b775d472227585e8229784494a'
 ENV = 'DAMS_SMALL_ENTERPRISE_CLOUD_PROFILE'
 SHA_ENV = 'DAMS_SMALL_ENTERPRISE_CLOUD_PROFILE_SHA256'
+
+# Public scientific roster, copied from the existing frozen study. This is a
+# source-only selector, never a new sample-size choice or paid-action grant.
+CONFIRMATION_ROSTER_RAW = b'{"pilot_worlds_excluded":true,"requests":[{"endpoint":"work_per_present_member_workday","requested_worlds":16},{"endpoint":"decision_regret_per_decision","requested_worlds":16},{"endpoint":"net_resource_gain_per_present_member_workday","requested_worlds":16},{"endpoint":"closed_by_common_end","requested_worlds":66}],"status":"frozen","study_sha256":"bfcb565b0fd9c21ea3aa3a8a1fe8914b11246b422c4b0bc9bbac9332a4346f9a","world_count":66,"world_ids":[52000,52001,52002,52003,52004,52005,52006,52007,52008,52009,52010,52011,52012,52013,52014,52015,52016,52017,52018,52019,52020,52021,52022,52023,52024,52025,52026,52027,52028,52029,52030,52031,52032,52033,52034,52035,52036,52037,52038,52039,52040,52041,52042,52043,52044,52045,52046,52047,52048,52049,52050,52051,52052,52053,52054,52055,52056,52057,52058,52059,52060,52061,52062,52063,52064,52065]}\n'
+CONFIRMATION_ROSTER_SHA = '4a20d2f1d9f2bea4ea1f8bed3982773252c9deae12609ac5a428901d812c79f2'
+CONFIRMATION_STUDY_SHA = 'bfcb565b0fd9c21ea3aa3a8a1fe8914b11246b422c4b0bc9bbac9332a4346f9a'
+SELECTED_CONFIRMATION_WORLD = 52008
+SELECTED_ARMS = ('startup-existing', 'startup-founding')
+# These values affect Config/case identity and remain the original N300 values.
+FROZEN_CASE_LIMITS = {'max_events': 2000000, 'world_timeout_seconds': 86400.0,
+                      'per_world_rss_bytes': 536870912}
 
 def require(ok, message):
     if not ok: raise ValueError(message)
@@ -38,28 +53,54 @@ def plan(limits):
     limits = limits if isinstance(limits,RuntimeLimits) else RuntimeLimits.from_dict(limits)
     require(limits.journal_chunk_bytes == 1048576 and limits.per_world_rss_bytes is not None,
             'original small-study lossless journal/RSS contract missing')
+    require(all(getattr(limits,k) == value for k,value in FROZEN_CASE_LIMITS.items()),
+            'existing N300 scientific case limits differ')
     require(limits.max_output_bytes>=study.CAPS[300] and limits.batch_max_output_bytes>=study.CAPS[300],
             'single complete-case resource allowance below original16GiB envelope')
     template, declaration = study.spec(300)
     require(template.days == 1917 and declaration['full_observation_years'] == 5
             and declaration['pilot_world_ids'] == [42000,42001,42002,42003]
-            and declaration['arms'] == ['startup-existing','startup-founding'],
+            and declaration['arms'] == list(SELECTED_ARMS)
+            and declaration['confirmation_world_start'] == 52000,
             'literal small-enterprise study changed')
+    require(digest(CONFIRMATION_ROSTER_RAW) == CONFIRMATION_ROSTER_SHA,
+            'existing confirmation roster bytes changed')
+    roster = json.loads(CONFIRMATION_ROSTER_RAW)
+    require(roster['status'] == 'frozen' and roster['pilot_worlds_excluded'] is True
+            and type(roster['world_count']) is int and roster['world_count'] == 66
+            and roster['world_ids'] == list(range(52000,52066))
+            and roster['study_sha256'] == CONFIRMATION_STUDY_SHA
+            and SELECTED_CONFIRMATION_WORLD in roster['world_ids'],
+            'existing independent confirmation roster changed')
     rows = [{k:r[k] for k in ('case_id','config','tags')}
-            for w in declaration['pilot_world_ids'] for r in study.rows(300,w,limits)]
-    require(len(rows)==8 and len({r['case_id'] for r in rows})==8,'pilot inventory differs')
+            for r in study.rows(300,SELECTED_CONFIRMATION_WORLD,limits)]
+    require(len(rows)==2 and len({r['case_id'] for r in rows})==2
+            and [r['tags']['arm_id'] for r in rows] == list(SELECTED_ARMS)
+            and all(r['config']['world'] == SELECTED_CONFIRMATION_WORLD
+                    and r['config']['days'] == 1917 and r['config']['n'] == 300
+                    and r['config']['seed'] == declaration['seed'] for r in rows),
+            'exact uncompleted confirmation pair inventory differs')
     return limits, declaration, rows
 
+
 def build_profile(limits, *, world, arm):
+    require(type(world) is int and world == SELECTED_CONFIRMATION_WORLD
+            and isinstance(arm,str) and arm in SELECTED_ARMS,
+            'only uncompleted confirmation world52008 exact arms are selectable')
     _, declaration, rows = plan(limits)
     selected = [r for r in rows if r['tags']['world']==world and r['tags']['arm_id']==arm]
-    require(type(world) is int and len(selected)==1,'selected literal pilot arm unavailable')
+    require(len(selected)==1,'selected existing confirmation arm unavailable')
     row=selected[0]
     return {'schema':SCHEMA,'source_sha256':CORE,'pipeline_driver_sha256':DRIVER,
             'study_entry_sha256':STUDY_IMPORT_SHA,'study_sha256':digest(canonical(declaration)),
+            # Retained wire field: digest of THIS exact assigned two-arm inventory.
             'pilot_inventory_sha256':digest(canonical(rows)),'population':300,'days':1917,
             'seed':declaration['seed'],'selected_world':world,'selected_arm':arm,
-            'selected_case_id':row['case_id'],'selected_config_sha256':digest(canonical(row['config']))}
+            'selected_case_id':row['case_id'],'selected_config_sha256':digest(canonical(row['config'])),
+            'selected_phase':'confirmation','confirmation_roster_sha256':CONFIRMATION_ROSTER_SHA,
+            'confirmation_study_sha256':CONFIRMATION_STUDY_SHA,
+            'confirmation_world_count':66,'confirmation_world_ids':list(range(52000,52066))}
+
 
 def validate_profile(profile, limits):
     require(isinstance(profile,dict) and set(profile)==FIELDS and profile['schema']==SCHEMA,
@@ -69,7 +110,7 @@ def validate_profile(profile, limits):
     require(type(profile['selected_world']) is int and type(profile['population']) is int
             and type(profile['days']) is int and type(profile['seed']) is int,'profile numeric types differ')
     expected=build_profile(limits,world=profile['selected_world'],arm=profile['selected_arm'])
-    require(profile==expected,'source/study/full calendar/seed/literal arm/config pin differs')
+    require(canonical(profile)==canonical(expected),'source/study/full calendar/seed/literal arm/config pin differs')
     return profile
 
 def assignment(profile, limits):
@@ -105,7 +146,7 @@ class _OperationOutputs:
             root = self._open(ancestor)
             for name in reversed(missing): root = self._child(root, name)
             self.root = root
-            self.stage = self._child(root, 'pilot-operation')
+            self.stage = self._child(root, 'confirmation-operation')
             for directory,names in ((root,('small-operation.json','single-arm-result.json')),
                                     (self.stage,('case_inventory.json','manifest.json','case_census.json'))):
                 for name in names:
@@ -216,7 +257,7 @@ def execute(profile, limits, output):
       with os.fdopen(lock_fd,'a+b') as owner:
         require(stat.S_ISREG(os.fstat(owner.fileno()).st_mode) and os.fstat(owner.fileno()).st_nlink==1,'operation lock is not owned regular bytes')
         fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        intended={'profile':profile,'full_pilot_assignment':assignment(profile,limits)}
+        intended={'profile':profile,'full_confirmation_pair_assignment':assignment(profile,limits)}
         raw=outputs.read(outputs.root,'small-operation.json')
         if raw is not None:
             from research_tools.compute_only_control import parse
@@ -267,7 +308,7 @@ def execute(profile, limits, output):
                 'summary':value['summary'],'paired_world_complete':False,'full_study_complete':False,
                 'empirical_validation':False})
         finally:
-            # Original census retains valid CPs, failed and all seven unstarted rows.
+            # Original census retains valid CPs, failed and the unstarted paired arm.
             if scheduler is None or scheduler.owned_workers_absent:
                 outputs.check()
                 census=stopped_case_census(output,rows,identity,expected_provenance=limits.provenance)
@@ -282,7 +323,20 @@ def main(argv=None):
     p.add_argument('--population',type=int,choices=(300,),required=True)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--runtime-limits',type=Path,required=True)
+    p.add_argument('--plan-only',action='store_true')
+    p.add_argument('--world',type=int)
+    p.add_argument('--arm',choices=SELECTED_ARMS)
     a=p.parse_args(argv)
+    if a.plan_only:
+        require(a.world is not None and a.arm is not None,'plan requires exact world and arm')
+        limits=json.loads(a.runtime_limits.read_bytes())
+        profile=build_profile(limits,world=a.world,arm=a.arm)
+        validate_profile(profile,limits)
+        print(json.dumps({'status':'SOURCE_ONLY_UNISSUED','profile':profile,
+              'assignment':assignment(profile,limits),'paired_world_complete':False,
+              'full_study_complete':False,'paid_actions_authorized':False}),flush=True)
+        return 0
+    require(a.world is None and a.arm is None,'execution selection belongs to sealed runtime profile')
     path=os.environ.get(ENV);pin=os.environ.get(SHA_ENV)
     require(path and pin,'root-enrolled exact single-arm runtime profile required')
     profile,observed=_profile(path,pin)
