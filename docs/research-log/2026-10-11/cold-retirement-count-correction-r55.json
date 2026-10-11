@@ -1,0 +1,15 @@
+{
+  "schema": "dams-public-evidence-count-correction-r55-v1",
+  "correction_utc": "2026-10-11T03:31:25.904903+00:00",
+  "superseded_thesis_commit": "bb3a8d99e7f1798bd97b540a3846753f13d2b5bb",
+  "superseded_simulation_commit": "b00da4f9f9cd803221892c58028ba995a7d8540d",
+  "previous_observation_sha256": "18f1e90ed2f71b70207f2439c7c0b8d2badca6deace144bb281a653a2509f92d",
+  "unsupported_cumulative_retirement_count": 68,
+  "current_cumulative_retirement_count": null,
+  "verified_latest_cold_segment_successes": 38,
+  "formal_scientific_counts_unchanged": true,
+  "full140_remote_full13_eof_sha_proofs_unchanged": true,
+  "all_previous_Git_history_preserved": true,
+  "new_scientific_samples": 0,
+  "whole_goal_complete": false
+}

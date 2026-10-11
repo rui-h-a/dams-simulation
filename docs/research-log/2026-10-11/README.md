@@ -1,3 +1,11 @@
+## R55 — cumulative cold-retirement count correction
+
+Correction at2026-10-11T03:31:25.904903+00:00: R54 stated68 cumulative cold retirements without a complete unique-receipt reconciliation. That total is withdrawn. The latest R7 segment has38 verified successful cases; this is the supported count for that segment. The aggregate total is not asserted pending completion of the separate earlier-receipt audit. N30's140/140 full13 remote restoration proofs, N30/N120 formal pair counts, N300's first complete pilot pair, and all scientific results are unchanged. The previous Git commit and source observation hash remain in history.
+
+The current timestamped R54 artifact contains this correction explicitly; the correction does not claim a new simulation, preservation operation, statistical result or paper build.
+
+---
+
 ## R54 — first complete N300 pilot pair and actual cold-data retirement
 
 Observation: 2026-10-11T03:24:28.845090+00:00. N30 and N120 each retain all four excluded pilot and66 independent confirmation pairs. N120 passes all four fixed precision checks; its adverse and null findings are integrated into the accepted86-page interim paper.
@@ -6,7 +14,7 @@ N300 now has **1/4 complete pilot paired worlds**, **2 complete strategy cases**
 
 The next producer was capacity-refused. A complete N120 cold case subsequently passed three generation-fixed full13-file readbacks, retained its existing semantic recovery evidence, and safely retired12 redundant raw representations. All13 original file contents remain in local lossless custody and remote fixed generations. Actual working-volume free space rose; physical backing-volume free space did not rise during this operation. The unchanged96GiB gate admitted one exact N300 CLI continuation at2026-10-11T03:21:16.276334+00:00; it was RUNNING at this observation, revalidating its completed pair before the next producer. Completed strategy trajectories were not restarted.
 
-N30 full remote recovery proof remains140/140. Its latest cold segment finished38 additional cases(total68 retirement receipts), then exited on an actual shared-store lease timeout before promotion. The failing case, completed cases and all charged requests remain preserved; the segment is not described as RUNNING. Preservation work creates no new scientific worlds.
+N30 full remote recovery proof remains140/140. Its latest cold segment finished38 additional cases(aggregate cold-retirement total not asserted;38 latest-segment receipts independently verified), then exited on an actual shared-store lease timeout before promotion. The failing case, completed cases and all charged requests remain preserved; the segment is not described as RUNNING. Preservation work creates no new scientific worlds.
 
 Original N1000 remains35/144 cases and0/4 complete pilot worlds, blocked by the unchanged142.8GiB capacity requirement. No ten registered scale/period design is READY; no10,000-plus complete five-year world has finished. GCS storage is actually being used. No new cloud compute started, budget authority is unchanged, and supplier invoices are not yet reconciled. Enterprise/M&A candidates are not mixed into frozen samples.
 

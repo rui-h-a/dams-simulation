@@ -9,11 +9,20 @@
     "adverse_and_null_results_preserved": true,
     "full13_independent_device_restored_cases": 140,
     "raw_strategy_cases": 140,
-    "cold_retirement_complete_receipts": 68,
+    "cold_retirement_complete_receipts": null,
     "latest_cold_segment_new_closed_case_successes": 38,
     "latest_cold_segment_actual_exit_code": 1,
     "latest_cold_failure": "shared store lease wait expired before promotion; completed cases and charged request history preserved",
-    "failing_cold_case_is_not_new_scientific_sample": true
+    "failing_cold_case_is_not_new_scientific_sample": true,
+    "cumulative_cold_retirement_total_not_yet_fully_reconciled": true,
+    "cold_retirement_count_correction": {
+      "previous_reported_total": 68,
+      "previous_total_not_supported_by_all_unique_receipts": true,
+      "latest_segment_38_receipts_verified": true,
+      "formal_pair_or_full140_restoration_proofs_affected": false,
+      "current_correct_count_scope": "38 additional actual successful retirements in segment R7; aggregate cold retirements not asserted",
+      "original_observation_sha256": "18f1e90ed2f71b70207f2439c7c0b8d2badca6deace144bb281a653a2509f92d"
+    }
   },
   "N120": {
     "complete_pilot_worlds": 4,
