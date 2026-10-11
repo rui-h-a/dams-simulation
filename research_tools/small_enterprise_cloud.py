@@ -171,11 +171,73 @@ def build_profile(limits, *, world, arm, status_snapshot, status_snapshot_sha256
             'status_snapshot':status_snapshot,'status_snapshot_sha256':status_snapshot_sha256}
 
 
+
+# Names are operational evidence outside all owned attempt directories. Attempts
+# already include their scientific data, CPs, event chunks and raw temporaries.
+PAIR_FILE_METADATA = (
+    'cloud-execution.json', 'pipeline.log', 'cloud-terminal.json',
+    '.small-operation.lock', 'paired-operation.json', 'pair-result.json')
+ARM_FILE_METADATA = (
+    '.small-operation.lock', 'small-operation.json', 'single-arm-result.json',
+    'confirmation-operation/case_inventory.json',
+    'confirmation-operation/manifest.json',
+    'confirmation-operation/case_census.json', 'case_statuses.json')
+# One original guest receipt/operation temporary at pair root, and one original
+# operation/status temporary per arm: preserve failed publications, never delete
+# them to manufacture room. Two slots in each namespace cover both publishers.
+PAIR_FILE_TEMPORARIES = 2
+ARM_FILE_TEMPORARIES = 2
+
+def paired_file_slot_requirements(limits):
+    """Administrative reservation, not measured scientific file production.
+
+    Scheduler per_world_output_files is per *attempt*. Its original finite retry
+    preserves the earlier attempt; reserve all allowed attempts of both arms.
+    This gate never changes any supplied limit, checkpoint, event or raw output.
+    Root must separately bind terminal transport to the returned whole-tree cap.
+    """
+    rt = limits if isinstance(limits, RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    require(rt.per_world_output_files == 8192,
+            'paired N300 needs the unchanged 8192-file owned attempt reservation')
+    arms = len(SELECTED_ARMS)
+    attempts = rt.max_retries + 1
+    raw = arms * attempts * rt.per_world_output_files
+    # Scheduler._record_exit publishes outside each attempt directory.
+    exit_receipts = arms * attempts
+    metadata = len(PAIR_FILE_METADATA) + arms * len(ARM_FILE_METADATA)
+    temporary = PAIR_FILE_TEMPORARIES + arms * ARM_FILE_TEMPORARIES
+    return {'schema':'DAMS-small-enterprise-paired-file-admission-1',
+            'arms':arms, 'attempts_per_arm':attempts,
+            'files_per_owned_attempt':rt.per_world_output_files,
+            'attempt_file_slots':raw, 'attempt_exit_receipt_slots':exit_receipts,
+            'named_metadata_slots':metadata,
+            'temporary_publication_slots':temporary,
+            'minimum_whole_pair_files':raw+exit_receipts+metadata+temporary,
+            'minimum_terminal_files':raw+exit_receipts+metadata+temporary,
+            'declared_whole_pair_files':rt.batch_max_output_files,
+            'batch_max_output_bytes':rt.batch_max_output_bytes,
+            'per_case_max_output_bytes':rt.max_output_bytes,
+            'min_free_disk_bytes':rt.min_free_disk_bytes,
+            'scientific_file_production_measured':False,
+            'automatic_limit_change':False}
+
+def _admit_paired_file_slots(limits):
+    value = paired_file_slot_requirements(limits)
+    require(value['declared_whole_pair_files'] >= value['minimum_whole_pair_files'],
+            'paired whole-tree file cap is insufficient: declared '
+            + str(value['declared_whole_pair_files']) + ', required '
+            + str(value['minimum_whole_pair_files'])
+            + ' (two arms, retained finite retries, exit receipts, metadata and publication temporaries);'
+            + ' no attempt reservation or evidence may be dropped')
+    return value
+
+
 def build_pair_profile(limits, *, world, status_snapshot, status_snapshot_sha256):
     """Two unchanged arms, not a new calendar, sample or scientific model."""
     arms = [build_profile(limits, world=world, arm=arm, status_snapshot=status_snapshot,
                           status_snapshot_sha256=status_snapshot_sha256) for arm in SELECTED_ARMS]
     rt = limits if isinstance(limits, RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    _admit_paired_file_slots(rt)
     require(rt.max_output_bytes == study.CAPS[300] and rt.batch_max_output_bytes >= 2*study.CAPS[300]
             and rt.min_free_disk_bytes >= 80*1024**3,
             'pair needs two original 16GiB cases and retained 80GiB safety floor')
@@ -514,8 +576,9 @@ def _execute_owned(profile, limits, output):
             outputs.check()
             require(scheduler.owned_workers_absent,'selected worker ownership not closed')
             validate_profile(profile,limits)
-            reader=study.CheckedLongitudinalCases(output,identity)
-            attempts=sorted((output/'cases'/selected['case_id']).glob('attempt-*'))
+            reader=study.CheckedLongitudinalCases(output,{k:identity[k] for k in
+                ('source_sha256','pipeline_driver_sha256','spec_sha256')})
+            attempts=sorted(p for p in (output/'cases'/selected['case_id']).glob('attempt-*') if p.is_dir())
             require(attempts,'selected attempt missing')
             value=reader.validate_case(selected,attempts[-1],expected_provenance=limits.provenance)
             require(reader.result()['unique_complete_cases']==1,'individual full raw gate missing')
