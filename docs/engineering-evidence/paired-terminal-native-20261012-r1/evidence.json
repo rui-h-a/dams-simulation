@@ -1,0 +1,114 @@
+{
+  "OOS_validated": false,
+  "actual_author_controls": {
+    "controls": 10,
+    "errors": 0,
+    "failures": 0,
+    "stable_rounds": 2
+  },
+  "actual_independent_controls": {
+    "errors": 0,
+    "extra_native_closeout_controls": 2,
+    "extra_stable_rounds": 2,
+    "failures": 0,
+    "primary_controls": 10,
+    "primary_stable_rounds": 2,
+    "timings_seconds": [
+      38.95,
+      39.077,
+      75.594,
+      74.54
+    ]
+  },
+  "auth_calls": 0,
+  "calibrated": false,
+  "candidate_source_scope": {
+    "runtime_files_changed": [
+      "research_tools/compute_only_archive.py",
+      "research_tools/compute_only_lifecycle.py"
+    ],
+    "science27_unchanged": true,
+    "source_files": 73
+  },
+  "declared_doubles": [
+    "tiny n4/day5 policy selector, never formalN300 profile acceptance",
+    "Root Entry/financial interfaces and lifetime/provider namespace",
+    "SSH action callback against complete local files",
+    "final provider delete boundary only; actual provider absence never asserted"
+  ],
+  "external_persistence_verified": false,
+  "forensic_large_file": {
+    "bytes": 34603008,
+    "committed": false,
+    "generated_only_at_test_runtime": true,
+    "scientific_acceptance": false
+  },
+  "limitations": [
+    "Two local DirectoryBackends share one physical SSD; no independent off-device backup is asserted.",
+    "Final provider deletion is a mock boundary; cloud/provider/IAM/absence/fee authority is not verified.",
+    "Tiny selection and Root financial/lifetime/SSH interfaces are declared fixtures; this is no fullN300 profile or formal-world acceptance.",
+    "32798 is a prospective whole-tree reservation, not generic terminal metadata capacity or production readiness.",
+    "Source correctness and original raw validation do not establish calibration or unseen-data external validity."
+  ],
+  "new_paid_or_deadline_authority": false,
+  "paid_actions": 0,
+  "parent_execution_commit": "2539e7431bd0a3171abb003fb8f754272f8d364f",
+  "private_source_receipt_hash_references": [
+    {
+      "label": "author_final_freeze",
+      "sha256": "124beae1554093b29eb54140da758b14450b40b4bf8aa466511289b4665620c0"
+    },
+    {
+      "label": "independent_final_handoff",
+      "sha256": "d3a8a61d1aedd0debb39654db05197a20517d2922dfd4f1c00b13175cf87b3ab"
+    },
+    {
+      "label": "independent_final_freeze",
+      "sha256": "838c6b74dbeb16fdfdfc07461aa22f8378e957f9825cda075d3e1f8d547592b3"
+    },
+    {
+      "label": "retained_author_portable_layout_fixture_refusal",
+      "sha256": "585644a1d14123fbd2a14bbc0534dc7de4b448fddc0c4f27e7cce3ca4e5ec62a"
+    },
+    {
+      "label": "earlier_readonly_bounds_review_with_exact_codec_correction",
+      "sha256": "0dc215a1006f3ea2cdd70dfb294c6be7a948946e51350674f3641ffa41493833"
+    }
+  ],
+  "provider_calls": 0,
+  "retained_limits": {
+    "command_seconds": 300,
+    "group_files": 8192,
+    "metadata_bytes": 8388608,
+    "pair_raw_bytes": 34359738368,
+    "per_attempt_reserved_files": 8192,
+    "prospective_pair_file_reservation": 32798,
+    "stdout_default_bytes": 65536,
+    "terminal_files": 8192
+  },
+  "schema": "DAMS-public-paired-terminal-native-engineering-evidence-1",
+  "source_only": true,
+  "synthetic_fixture": {
+    "arms": [
+      "startup-existing",
+      "startup-founding"
+    ],
+    "calendar_days": 5,
+    "created_by_original_frozen_model_before_this_review": true,
+    "input_files": 40,
+    "new_Model_simulations_in_review": 0,
+    "new_formal_worlds": 0,
+    "people": 4,
+    "raw_files_per_arm": 13
+  },
+  "unchanged_actual_clocks_and_resources": true,
+  "verified_paths": [
+    "true Live constructor whole-pair bytes",
+    "original full13 raw/checkpoint reader and restored scientific gate",
+    "paired whole terminal two-local-backend full decode",
+    "33MiB extra forensic preservation with no scientific promotion",
+    "exact input/stdout/stderr/helper/overhead8MiB refusal before reservation and dispatch",
+    "native ACK/Spool snapshot/Live.closeout/selected census/preservation callback",
+    "wrongarm/unknown evidence refuses cleanup boundary"
+  ]
+}

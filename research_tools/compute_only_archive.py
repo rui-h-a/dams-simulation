@@ -38,6 +38,36 @@ BACKUP_FIELDS = {'backup_id', 'domain', 'locator', 'enrollment_sha256'}
 IMPORT_SHA = digest(Path(__file__).read_bytes())
 
 
+
+def terminal_case_prefixes(collector, runtime=None):
+    """Native layout is an operation envelope; scientific case identity is unchanged."""
+    result={cid:'cases/'+cid+'/' for cid in collector.rows}
+    profile=None if runtime is None else runtime.get('small_enterprise_profile')
+    if not isinstance(profile,dict) or profile.get('schema')!='DAMS-small-enterprise-cloud-confirmation-pair-1':
+        return result
+    from research_tools.small_enterprise_cloud import validate_pair_profile, assignment
+    validate_pair_profile(profile,runtime['runtime_limits'])
+    rows=assignment(profile,runtime['runtime_limits'])['cases']
+    require({r['case_id'] for r in rows}==set(collector.rows)
+        and all(canonical(r)==canonical(collector.rows[r['case_id']]) for r in rows),
+        'paired terminal exact scientific assignment differs')
+    result={}
+    for arm in profile['arm_profiles']:
+        cid=arm['selected_case_id'];name=arm['selected_arm']
+        require(name in ('startup-existing','startup-founding')
+            and collector.rows[cid]['tags'].get('arm_id')==name and cid not in result,
+            'paired terminal arm/case identity differs')
+        result[cid]=name+'/cases/'+cid+'/'
+    require(set(result)==set(collector.rows),'paired terminal selected case coverage differs')
+    return result
+
+
+def terminal_case_tree(name):
+    """Unknown case evidence is archived too; a later census refuses its admission."""
+    parts=_name(name).split('/')
+    return bool(parts[0]=='cases' or (len(parts)>1 and parts[1]=='cases'))
+
+
 class DirectoryBackend:
     """Actual private on-disk fixture backend; never attests off-device storage.
 
@@ -198,11 +228,11 @@ class ArchiveClosure:
         return total, previous, len(os.listdir(self.holds.fd))
 
     @staticmethod
-    def native_roster_matches(manifest, files):
+    def native_roster_matches(manifest, files, *, case_prefix=None):
         # An older accepted generation is not proof that the guest's CURRENT
         # case bytes still match it. Final closure requires the same whole
         # roster; a latest checkpoint requires its complete group as a subset.
-        prefix='cases/'+manifest['case_id']+'/'+manifest['attempt']+'/'
+        prefix=(case_prefix or 'cases/'+manifest['case_id']+'/')+manifest['attempt']+'/'
         expected={prefix+p['name']:(p['codec']['raw_bytes'],p['codec']['raw_sha256'])for p in manifest['files']}
         actual={n:(f['bytes'],f['sha256'])for n,f in files.items()if n.startswith(prefix)}
         return (set(actual)==set(expected) if manifest['kind']=='final' else set(expected)<=set(actual)) and all(actual.get(n)==v for n,v in expected.items())
@@ -569,7 +599,35 @@ class ArchiveClosure:
             manifests[g]=m
         return manifests
 
-    def terminal_archive(self, roster_raw, read_range):
+    def _terminal_index_budget(self, roster_raw, files, runtime):
+        """Exact format with maximal encoded-byte digits, before any backend I/O."""
+        minimum_chunk=len(canonical({'offset':0,'raw_bytes':1,'raw_sha256':'0'*64,
+            'encoded_bytes':1,'encoded_sha256':'0'*64}))
+        count=sum((_natural(f['bytes'])+self.c.codec.CHUNK_BYTES-1)//self.c.codec.CHUNK_BYTES for f in files)
+        require(count*minimum_chunk<=MAX_METADATA_BYTES,
+                'archive terminal chunk metadata cannot fit original index ABI')
+        projected=[]
+        for f in files:
+            name=_name(f['path']);size=_natural(f['bytes']);sha=_sha(f['sha256'])
+            chunks=[]
+            for offset in range(0,size,self.c.codec.CHUNK_BYTES):
+                length=min(self.c.codec.CHUNK_BYTES,size-offset)
+                chunks.append({'offset':offset,'raw_bytes':length,'raw_sha256':'0'*64,
+                    'encoded_bytes':self.c.codec.MAX_ENCODED_CHUNK,'encoded_sha256':'0'*64})
+            descriptor={'schema':self.c.codec.SCHEMA,'codec':self.c.codec.CODEC,
+                'chunk_bytes':self.c.codec.CHUNK_BYTES,'raw_bytes':size,'raw_sha256':sha,
+                'encoded_bytes':len(chunks)*self.c.codec.MAX_ENCODED_CHUNK,'chunks':chunks}
+            projected.append({'path':name,'bytes':size,'sha256':sha,'descriptor':descriptor,
+                'scientific_status':'separately-accepted-generation'})
+        value={'schema':'dams-compute-terminal-archive-index-v1','profile_sha256':self.profile_sha,
+            'job_sha256':self.job_sha,'roster_sha256':digest(roster_raw),'files':projected,
+            'science_complete':False,'full_study_gate':False,
+            **({'terminal_runtime':runtime} if runtime is not None else {})}
+        require(len(blob(value))<=MAX_METADATA_BYTES,
+                'archive whole terminal index metadata cannot fit before any range/publish')
+        return len(blob(value))
+
+    def terminal_archive(self, roster_raw, read_range, *, runtime=None):
         """Preserve every terminal byte, including failed/unvalidated evidence.
 
         Already accepted files reuse exact descriptors; others are streamed in
@@ -581,13 +639,25 @@ class ArchiveClosure:
             and roster.get('runtime_sha256')==self.p['job']['runtime_sha256'] and roster.get('science_complete') is False
             and roster.get('terminal',{}).get('owned_pipeline_group_verification',{}).get('owned_pipeline_group_absent') is True,
             'archive terminal closed-owner/job proof differs')
+        # 8192 is the terminal enumeration quota, not Scheduler's prospective
+        # two-arm/retry reservation. Keep the native quota and 8MiB metadata ABI.
+        require(isinstance(roster_raw,bytes) and len(roster_raw)<=MAX_METADATA_BYTES,
+                'archive complete terminal roster metadata bound exceeded')
+        prefixes=terminal_case_prefixes(self.c,runtime)
+        if runtime is not None:
+            require(digest(blob(runtime))==self.p['job']['runtime_sha256'],
+                    'archive paired terminal runtime pin differs')
         files=roster.get('files');require(isinstance(files,list) and len(files)<=8192,'archive terminal file cap differs')
+        if runtime is not None:
+            require(sum(_natural(f['bytes']) for f in files)<=runtime['runtime_limits']['batch_max_output_bytes'],
+                    'archive terminal full bytes exceed original whole runtime')
         require(len({f['path'] for f in files})==len(files),'archive terminal duplicate file paths')
+        self._terminal_index_budget(roster_raw,files,runtime)
         reusable={}
         for generation in sorted(os.listdir(self.groups.fd)):
             m,_=self.ack_guard(generation)
             for part in m['files']:
-                n='cases/'+m['case_id']+'/'+m['attempt']+'/'+part['name']
+                n=prefixes[m['case_id']]+m['attempt']+'/'+part['name']
                 reusable[(n,part['codec']['raw_bytes'],part['codec']['raw_sha256'])]=part['codec']
         archive_files=[]
         for f in files:
@@ -610,7 +680,8 @@ class ArchiveClosure:
             archive_files.append({'path':n,'bytes':size,'sha256':sha,'descriptor':descriptor,
                 'scientific_status':'separately-accepted-generation' if (n,size,sha) in reusable else 'unvalidated-terminal-evidence'})
         index={'schema':'dams-compute-terminal-archive-index-v1','profile_sha256':self.profile_sha,'job_sha256':self.job_sha,
-            'roster_sha256':digest(roster_raw),'files':archive_files,'science_complete':False,'full_study_gate':False}
+            'roster_sha256':digest(roster_raw),'files':archive_files,'science_complete':False,'full_study_gate':False,
+            **({'terminal_runtime':runtime} if runtime is not None else {})}
         ir=blob(index);require(len(ir)<=MAX_METADATA_BYTES,'archive terminal index bound exceeded')
         number,_=self.c._reserve('metadata',len(ir)+1,digest(ir))
         self.c.state.write_new('terminal-archive-binding.json',blob({'reservation':number,'index_sha256':digest(ir)}))
@@ -631,6 +702,13 @@ class ArchiveClosure:
             and index['job_sha256']==self.job_sha and index['roster_sha256']==digest(rr)
             and index['science_complete'] is False and index['full_study_gate'] is False,
             'archive terminal exact job/index differs')
+        if 'terminal_runtime' in index:
+            runtime=index['terminal_runtime']
+            require(digest(blob(runtime))==self.p['job']['runtime_sha256'],
+                    'archive retained paired terminal runtime changed')
+            terminal_case_prefixes(self.c,runtime)
+            require(sum(f['bytes'] for f in index['files'])<=runtime['runtime_limits']['batch_max_output_bytes'],
+                    'archive retained terminal exceeds original whole bytes')
         require([(f['path'],f['bytes'],f['sha256']) for f in index['files']]
             ==[(f['path'],f['bytes'],f['sha256']) for f in roster['files']],'archive terminal whole inventory differs')
         requests=[]

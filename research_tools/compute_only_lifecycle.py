@@ -41,6 +41,13 @@ class Live:
             require(self.c.get('paid_actions_authorized')is True,'root original paid authorization required')
             finite(options['max_command_seconds'],3600);finite(options['max_stdout_bytes'],MAX_IO)
             finite(options['overhead_bytes'],MAX_IO);finite(options['max_terminal_files'],8192);finite(options['max_terminal_bytes'],1024**4)
+            if self.s.get('small_enterprise_profile',{}).get('schema')=='DAMS-small-enterprise-cloud-confirmation-pair-1':
+                from research_tools.small_enterprise_cloud import validate_pair_profile
+                validate_pair_profile(self.s['small_enterprise_profile'],self.s['runtime_limits'])
+                limits=self.s['runtime_limits']
+                require(options['max_terminal_files']<=limits['batch_max_output_files']
+                    and options['max_terminal_bytes']==limits['batch_max_output_bytes'],
+                    'paired terminal must cover exact whole bytes within its separate native file quota')
             require(re.fullmatch('[a-z][a-z0-9-]{0,62}',options['network_tag'] or '') is not None,'explicit no-SA network tag')
             require(len(options['terminal_copy_dirs'])==2 and len(set(options['terminal_copy_dirs']))==2,'two terminal destinations')
             self.terminal_copies=[self.stack.enter_context(_directory(p)) for p in options['terminal_copy_dirs']]
@@ -221,7 +228,9 @@ class Live:
             '--ssh-flag=-T','--ssh-flag=-oBatchMode=yes','--ssh-flag=-oConnectTimeout=15',
             '--ssh-flag=-oUserKnownHostsFile='+self.host_path,'--command='+command]
         maximum=len(input_raw)+bound+65536+len(command.encode())+self.o['overhead_bytes']
-        require(maximum<MAX_IO,'one SSH operation exceeds original metadata reservation format; split before dispatch')
+        from dams_sim.transfer_spool import MAX_METADATA_BYTES
+        require(maximum<=MAX_METADATA_BYTES and maximum<MAX_IO,
+                'one SSH operation exceeds original complete metadata reservation; split before dispatch')
         ticket=self.collector.reserve_metadata_attempt(maximum)
         attempt={'action':action,'argv_sha256':digest(blob(argv)),'input_sha256':digest(input_raw),'input_bytes':len(input_raw),'deadline_utc':c['deadline_utc']}
         head,record=self._retain(ticket,attempt);remaining=self.check();require(remaining>3,'SSH cutoff lacks owned reap')
@@ -567,12 +576,13 @@ class Live:
             and roster['case_payloads_require_original_collector'] is True,'archive terminal original job inventory')
         require(len(roster['files'])<=self.o['max_terminal_files'] and sum(f['bytes']for f in roster['files'])<=self.o['max_terminal_bytes'],'archive terminal admitted full roster bound')
         def ranges(file,offset,length):return self.exchange('terminal-read',blob({'file':file,'offset':offset,'length':length}),bound=length)
-        a=self.collector.archive;a.terminal_archive(roster_raw,ranges)
+        a=self.collector.archive;a.terminal_archive(roster_raw,ranges,runtime=self.runtime)
         require(self.exchange('terminal-roster')==roster_raw,'archive closed guest inventory changed')
         written={};locations={};parents={}
         from dams_sim._committed_pages import Directory,identity
         from research_tools.compute_only_control import leaf,file_hash
-        noncase=[f for f in roster['files'] if not f['path'].startswith('cases/')]
+        from research_tools.compute_only_archive import terminal_case_tree
+        noncase=[f for f in roster['files'] if not terminal_case_tree(f['path'])]
         require(all(f['bytes']<=MAX_IO for f in noncase),'archive terminal non-case metadata bound')
         required=sum(f['bytes']for f in noncase)+len(noncase)*8192+len(roster_raw)+MAX_IO
         for root in self.terminal_copies:
@@ -717,6 +727,11 @@ class Live:
         """Literal declared stage partitions and latest raw/CP pointers, not full study."""
         from dams_sim.storage import canonical
         allids=set(self.collector.rows);observations=[];covered=set();classifications={}
+        from research_tools.compute_only_archive import terminal_case_prefixes, terminal_case_tree
+        prefixes=terminal_case_prefixes(self.collector,self.runtime)
+        paired=any(not p.startswith('cases/') for p in prefixes.values())
+        selected_stages={str(Path(prefix).parents[1])+'/confirmation-operation':cid
+            for cid,prefix in prefixes.items()} if paired else {}
         roster_raw=read(self.terminal_copies[0],'terminal-roster.json')[0];roster=parse(roster_raw)
         require(read(self.terminal_copies[1],'terminal-roster.json')[0]==roster_raw,'closeout terminal copy inventories differ')
         files={f['path']:f for f in roster['files']};require(len(files)==len(roster['files']),'closeout duplicate terminal path')
@@ -757,12 +772,20 @@ class Live:
                 records={r['case_id']:r for r in census['records']}
                 require(len(records)==len(census['records']) and set(records)==ids
                     and all(records[k].get('classification')==group[k]for k in ids),'closeout census records differ')
+            authoritative=ids
+            if paired:
+                require(stage in selected_stages and meta.get('operational_selected_case_id')==selected_stages[stage],
+                        'paired census selected arm/source directory differs')
+                # Both children retain the full original inventory. Only the
+                # child's actual selected case is authoritative for its state.
+                authoritative={selected_stages[stage]}
             for key,kind in group.items():
+                if key not in authoritative:continue
                 require(key not in classifications or classifications[key]==kind,'closeout overlapping stage classification differs')
                 classifications[key]=kind
                 matches=[m for m in manifests.values()if m['case_id']==key]
                 if self.collector.archive is not None:
-                    matches=[m for m in matches if self.collector.archive.native_roster_matches(m,files)]
+                    matches=[m for m in matches if self.collector.archive.native_roster_matches(m,files,case_prefix=prefixes[key])]
                 record=records[key]
                 if kind=='complete':
                     require(any(m['kind']=='final' and ('attempt'not in record or record['attempt']=='cases/'+key+'/'+m['attempt'])for m in matches),'closeout complete case lacks accepted final raw')
@@ -773,10 +796,15 @@ class Live:
                         and m['sealed']['item']['sha256']==record.get('checkpoint_sha256')
                         and any(p['name']=='checkpoint-index.json' and p['codec']['raw_sha256']==record.get('checkpoint_index_sha256')for p in m['files'])for m in matches),
                         'closeout latest checkpoint lacks exact accepted generation')
-                elif kind=='unstarted':require(not matches and not any(x.startswith('cases/'+key+'/')for x in files),'closeout unstarted case has native outputs')
-            covered|=ids
+                elif kind=='unstarted':require(not matches and not any(x.startswith(prefixes[key])for x in files),'closeout unstarted case has native outputs')
+            covered|=authoritative
         require(covered==allids,'closeout declared census does not cover exact original assignment')
-        actual={n.split('/')[1]for n in files if n.startswith('cases/') and len(n.split('/'))>=3}
+        actual=set()
+        for name in files:
+            if not terminal_case_tree(name):continue
+            matched=[cid for cid,prefix in prefixes.items() if name.startswith(prefix)]
+            require(len(matched)==1,'closeout undeclared or cross-arm native case bytes')
+            actual.add(matched[0])
         require(actual<=allids,'closeout undeclared native case bytes')
         def guard():
             self.check()
