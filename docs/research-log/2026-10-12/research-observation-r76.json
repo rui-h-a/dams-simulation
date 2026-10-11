@@ -1,0 +1,174 @@
+{
+  "schema": "DAMS-research-observation-r76-1",
+  "observed_UTC": "2026-10-11T17:56:36.626470+00:00",
+  "evidence_scope": "Actual current inventory, reaped storage failure and unchanged validated scientific counts; no new world, VM, paid grant or retirement.",
+  "formal_research": {
+    "N30": {
+      "pilot_pairs": 4,
+      "confirmation_pairs": 66,
+      "validated_pairs": 70,
+      "planned_pairs": 70,
+      "precision_acceptance": true,
+      "independent_full_case_restores": 140,
+      "raw_retirements_last_verified": 113
+    },
+    "N120": {
+      "pilot_pairs": 4,
+      "confirmation_pairs": 66,
+      "validated_pairs": 70,
+      "planned_pairs": 70,
+      "precision_acceptance": true,
+      "raw_retirements_last_verified": 3,
+      "independent_full_case_restores_total_verified": "NOT_ESTABLISHED",
+      "all140_independent_restores_complete": false
+    },
+    "N300": {
+      "pilot_pairs": 4,
+      "confirmation_pairs": 7,
+      "validated_pairs": 11,
+      "planned_pairs": 70,
+      "remaining_confirmation_pairs": 59,
+      "state": "STOPPED_CAPACITY_ADMISSION",
+      "complete_strategy_arms": 23,
+      "unpaired_arm_excluded": true
+    },
+    "original_N1000": {
+      "validated_cases": 35,
+      "planned_pilot_cases": 144,
+      "prehistory_or_intermediate_cases": 28,
+      "complete_single_strategy_cases": 7,
+      "complete_paired_pilot_worlds": 0,
+      "planned_pilot_worlds": 4,
+      "confirmation_worlds": 0
+    },
+    "large_scale_registry": {
+      "registered_five_or_ten_year_designs": 10,
+      "accepted_new_complete_worlds": 0,
+      "state": "BLOCKED_RESOURCE_AND_FULL_WORKLOAD_ADMISSION"
+    }
+  },
+  "active_execution": {
+    "kind": "ALREADY_COMPLETED_N120_CASE_STORAGE_LIFECYCLE",
+    "state_at_snapshot": "STOPPED_NONZERO_REAPED",
+    "terminal_UTC": "2026-10-11T17:38:04.978585+00:00",
+    "exit_code": 1,
+    "producer_reaped": true,
+    "wall_seconds": 1104.3678950830363,
+    "terminal_sha256": "478a1b87ff7990ed5af0b85c81a84e92d9f0094c1e55620c9681a18245f68f78",
+    "source_sha256": "a291cb6e2143e7c0c0859e60a2c5e3ce5f646a6a40a6b7255a798855ec46027f",
+    "scientific_Model_started": false,
+    "new_completed_worlds": 0,
+    "new_completed_cold_cases": 0,
+    "raw_retired_by_R12": false,
+    "cumulative_same_case_meter_tickets": 1143,
+    "cumulative_same_case_meter_results": 1143,
+    "pending_requests": 0,
+    "auth_records": 10,
+    "all_historical_prefix_and_cost_records_preserved": true,
+    "failure": "Native process interpreter argv0/executable basename equality guard refused; original offender PID/argv was not captured, so no specific process, token expiry or network cause is inferred."
+  },
+  "cloud": {
+    "latest_actual_inventory_UTC": "CURRENT_REPORT_TURN_READBACK",
+    "VMs": 0,
+    "disks": 0,
+    "inventory_is_historical_snapshot_not_forever_claim": true,
+    "historical_GCP_compute_used": true,
+    "historical_partial_N1000_five_year_execution": true,
+    "accepted_complete_cloud_paired_worlds": 0,
+    "new_N300_confirmation_source_commit": "8a6c84be2a45e8809a4e5b4900bf027cf1247e57",
+    "source_branch": "research/small-enterprise-cloud-confirmation-n300-20261012-r1",
+    "selected_uncompleted_world": 52008,
+    "one_arm_per_existing_entry_invocation": true,
+    "complete_calendar_days_per_arm": 1917,
+    "full_original_confirmation_roster": 66,
+    "source_controls_passed": 10,
+    "source_files_full_pin_checked": 72,
+    "new_VM_created_by_this_phase": false,
+    "cost_IAM_capacity_collector_and_runtime_admission": "Actual quota/IAM/network/image readbacks verified; Root budget issue, local atomic space reservation, real VM capacity, guest doctor, runtime transfer and activation still pending.",
+    "source_package_is_not_formal_completion": true,
+    "latest_actual_inventory_collected_UTC": "2026-10-11T17:56:36.626470+00:00",
+    "latest_actual_inventory_tool_chunks": [
+      "d9b778",
+      "e60a1b"
+    ],
+    "cloud_storage_still_in_use": true,
+    "actual_C4D_Standard_family_grant_vCPU": 50,
+    "global_CPU_quota_headroom": 384,
+    "actual_policy_replay_UTC": "2026-10-11T17:44:39.164715+00:00",
+    "actual_policy_replay_sha256": "7dc84e7d490e9b3eec7088d7c4131d37482ea2ce4ff34a7ebe70298a5ab6f073",
+    "policy_replay_is_not_VM_capacity": true,
+    "new_paid_grant_issued": false,
+    "single_full_strategy_route_source_review": "PASSED_SOURCE_ONLY_UNISSUED",
+    "source_stage_scope": "One uncompleted 52008 arm, 1917 full calendar days; paired world remains incomplete until both arms independently validate.",
+    "conservative_single_stage_cost_upper_USD": "14.5698031458264",
+    "cost_upper_is_not_spend_or_funded_full_pair": true
+  },
+  "budget": {
+    "cumulative_cap_USD": 100,
+    "retained_cleanup_safety_USD": 20,
+    "current_total_holds_USD": 84.55,
+    "current_unallocated_USD": 15.45,
+    "original39_future_scope_closed_remaining_conservative_hold_USD": 24,
+    "original39_historical_reservation_preserved": true,
+    "unallocated_is_not_refund_or_supplier_invoice": true,
+    "supplier_full_account_invoice_reconciliation": "INCOMPLETE",
+    "Master_sha256": "6efa84f1ac8ffc40a8b4950adb71c21e5f4b74ee57dcb515eae792bb1d706056"
+  },
+  "paper": {
+    "pages": 86,
+    "state": "INTERIM",
+    "PDF_sha256": "bab5bfe16ad83cf5aee8383734d083bdd66d42218a5f94847b7d201995974990",
+    "PR1_merged_commit": "91e868da7c3d06ce9d7c538deaa520ff2cc95e22",
+    "published_PDF_commit": "e821bf7035eb66950e8d9baaa9c8bf887988be6a",
+    "actual_latex_build_passed": true,
+    "all_86_pages_visually_inspected": true,
+    "formal_completion_claim": false
+  },
+  "timing": {
+    "N300_remaining_59_pairs_conditional_minutes": 1793.6,
+    "assumption": "59 times measured approximately 30.4 minutes per complete pair, only if continuous operation resumes without admission, transfer or validation interruption",
+    "whole_goal_ETA": "NOT_ESTABLISHED"
+  },
+  "scientific_model_or_frozen_sample_changed": false,
+  "negative_null_failed_and_incomplete_evidence_preserved": true,
+  "whole_goal_complete": false,
+  "corrections": [
+    {
+      "prior_record": "research-observation-r75.json",
+      "json_pointer": "/formal_research/N120/independent_full_case_restores",
+      "prior_incorrect_value": 140,
+      "corrected_state": "INCOMPLETE_TOTAL_NOT_VERIFIED",
+      "reason": "140 closed scientific cases and metadata owner custody do not prove 140 independent full13 off-device restorations. The closed140 owner explicitly records all140_current_full13_byte_custody=false; selected52 prior EOF/SHA custody is 676 files. N30 has independently verified 140 off-device full13 restores.",
+      "prior_history_preserved": true
+    }
+  ],
+  "storage": {
+    "measured_UTC": "2026-10-11T17:56:36.626470+00:00",
+    "space_is_actual_statvfs_not_logical_cleanup": true,
+    "volumes_same_physical_SSD_are_not_independent_backup": true,
+    "current_local_formal_root_gate_GiB": 97,
+    "N120_cold_cases": 3,
+    "N120_closed_cases": 140,
+    "N30_cold_cases": 113,
+    "N30_cases": 140,
+    "unique_raw_or_running_case_deleted": false,
+    "work_volume": {
+      "available_bytes": 102560096256,
+      "available_GiB": 95.51653289794922
+    },
+    "Extreme_volume": {
+      "available_bytes": 106306732032,
+      "available_GiB": 99.005859375
+    },
+    "internal": {
+      "available_bytes": 16362287104,
+      "available_GiB": 15.238567352294922
+    }
+  },
+  "engineering_candidate_scope": {
+    "endogenous_growth_and_MA": "Independent candidate versions; engineering controls do not establish formal science, calibration or out-of-sample validity.",
+    "higher_scale_formal_worlds_added": 0,
+    "source_only_metadata_route_independent_review_sha256": "4e3f60a3f7d7907f737ea99c65777ba55f90c95e1a6c8ccb9c261e2465fb48a6",
+    "native_argv0_counterexample_diagnostic": "IN_PROGRESS_LOCAL_ONLY_NO_PROVIDER"
+  }
+}

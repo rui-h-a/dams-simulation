@@ -1,3 +1,11 @@
+## R76 latest actual observation — 2026-10-11T17:56:36.626470+00:00
+
+N30/N120 retain 4 excluded pilots + 66 confirmation pairs each. N300 remains 11/70 (4 + 7), stopped; original N1000 remains 35/144 cases and zero complete paired pilot worlds. R12 storage exited 1 and was reaped at 2026-10-11T17:38:04.978585Z; no new science or raw retirement. Current actual GCP inventory returns zero VMs and disks; GCS storage remains in use. C4D Standard family grant is 50 vCPU, not a VM capacity guarantee. The first-arm cloud route has source-only independent review, with actual Root issue and activation still pending.
+
+Correction of R75: N120 `independent_full_case_restores=140` was not established. 140 closed cases do not prove 140 independent restorations; the total is unverified and the backup backlog remains incomplete. N30 retains its independently proven 140/140. R75 is retained as dated history. Current evidence: [research-observation-r76.json](../2026-10-12/research-observation-r76.json). Paper remains an 86-page interim manuscript; no whole-goal completion claim.
+
+--- retained dated history ---
+
 # R75 — actual storage continuation and published cloud confirmation entry
 
 Observed 2026-10-11T17:23:57.609925+00:00. N30 and N120 retain 4 pilot plus 66 confirmation pairs each. N300 remains 11/70 pairs; original N1000 remains 35/144 cases with zero complete paired pilot worlds. The same-third N120 storage operator R12 is now actually started under a finite Root supervisor, separate from science. The uncompleted N300 world52008 entry is published in an independent source branch; no new VM is claimed. Current conservative holds are US$84.55 with US$15.45 unallocated; these are reservations, not a reconciled invoice. PR1 is merged and the 86-page interim PDF has been compiled and visually reviewed.
