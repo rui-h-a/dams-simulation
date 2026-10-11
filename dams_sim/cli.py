@@ -329,6 +329,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--backend")
     parser.add_argument("--worlds", type=int, default=3)
     parser.add_argument("--checkpoint-day", type=int)
+    parser.add_argument("--journal-chunk-bytes", type=int, help="lossless longitudinal journal chunk target; run/resume only")
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--native-page-store",type=Path)
     parser.add_argument("--native-page-branch")
@@ -373,14 +374,14 @@ def main(argv: list[str] | None = None) -> int:
                     "parent_manifest_sha256":digest((args.checkpoint.parent/"manifest.json").read_bytes()),
                     "checkpoint_file":args.checkpoint.name,"checkpoint_sha256":digest(args.checkpoint.read_bytes()),
                     "parent_source_sha256":origin["source_sha256"],"parent_config_sha256":origin["config_sha256"]}
-                result = run_world(restored.config, path, restored=restored, restart_origin=restart_origin,
+                result = run_world(restored.config, path, restored=restored, restart_origin=restart_origin,journal_chunk_bytes=args.journal_chunk_bytes,
                     **({'page_options':page_options,'known_latest_floor':known_latest_floor,'native_owner_dir':args.native_owner_dir} if page_options is not None else {}))
             elif args.command == "reproduce":
                 if not 2 <= args.worlds <= 1000:
                     raise ValueError("worlds must be between 2 and 1000")
                 result = reproduce(p, path, args.worlds)
             else:
-                result = run_world(p, path, checkpoint_day=args.checkpoint_day,
+                result = run_world(p, path, checkpoint_day=args.checkpoint_day,journal_chunk_bytes=args.journal_chunk_bytes,
                     **({'page_options':page_options,'known_latest_floor':known_latest_floor,'native_owner_dir':args.native_owner_dir} if page_options is not None else {}))
         print(json.dumps(result, indent=2, allow_nan=False))
         return 0

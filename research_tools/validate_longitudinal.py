@@ -504,6 +504,13 @@ class _RawDailyAccounting:
                         raise ValueError('raw context/coordination reservation differs')
                     if not 0<=value['enterprise_production_fraction']<=1:raise ValueError('raw production constraint fraction invalid')
                 reservations=coordination+.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*original_cooperation+training[i]
+                if p.organization_tasks is not None:
+                    plans=[v for k,e,v in events if k=='organization_plan']
+                    if len(plans)!=1:raise ValueError('organization raw plan missing')
+                    allocation=plans[0]['allocations'][str(i)]
+                    expected_available=max(0.,1-agent['care_hours']-reservations-.05)
+                    if not math.isclose(allocation['available_hours'],expected_available,rel_tol=1e-12,abs_tol=1e-12):raise ValueError('organization planning capacity differs from inherited time budget')
+                    reservations+=allocation['network_hours']+allocation['quality_hours']+allocation['learning_hours']
                 governance[i]=.05 if (1-agent['care_hours']-reservations)*funding>=.05 else 0.
                 if votes[i]['formal_share']!=morning['share'] or votes[i]['participates'] and not governance[i]:
                     raise ValueError('raw vote differs from morning work evidence/time capacity')
@@ -560,7 +567,7 @@ class _RawDailyAccounting:
             self.cash-=material_cost;self.metrics['operating_resource_units']+=material_cost
             self.metrics['enterprise_material_and_logistics_resource_units']+=material_cost
             self.metrics['orders_arrived_units']+=operation_begin['arrivals'];self.metrics['orders_expired_units']+=operation_begin['expired'];self.metrics['delivered_product_units']+=operation_begin['delivered']
-            if present is not None:self.metrics['enterprise_coordination_hours']+=(math.fsum(coordination_service.values())+math.fsum(self.acquisitions.coordination(i) for i in ([] if auto_closure else present)) if self.acquisitions is not None else math.fsum(coordination_service.values()))*funding
+            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(coordination_service.get(i,0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.) for i in ([] if auto_closure else present))*funding
             if record.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw operating stock differs from actual complete history')
             revenue=operation_received
         else:
@@ -693,6 +700,9 @@ def verify_daily_evidence(path,config,state,database,*,config_history=()):
             last=row
         if count!=config.days or state['day']!=config.days:raise ValueError('daily evidence incomplete/oversized horizon')
         accounting.finish()
+        if config.organization_tasks is not None:
+            from research_tools.validate_organization_tasks import verify_organization_accounts
+            verify_organization_accounts(config,state,database)
     finally:
         if journal is not None:journal.close()
         connection.close()
@@ -721,6 +731,7 @@ def verify_summary_evidence(summary,config,state,database):
             'department_count_final':growth['departments'],'site_count_final':growth['sites']})
     if config.enterprise_operations is not None:expected['enterprise_operating_state_final']=state['enterprise_operating_state']
     if config.enterprise_acquisition is not None:expected['enterprise_acquisition_state_final']=state['enterprise_acquisition_state']
+    if config.organization_tasks is not None:expected['organization_tasks_state_final']=state['organization_tasks_state']
     for key,value in expected.items():
         if summary.get(key)!=value:raise ValueError('summary identity/lifecycle differs from retained state: '+key)
     connection=sqlite3.connect(f'file:{Path(database).resolve()}?mode=ro',uri=True)

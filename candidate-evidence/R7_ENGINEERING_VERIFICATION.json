@@ -1,0 +1,125 @@
+{
+  "schema": "DAMS-r7-engineering-verification-1",
+  "observed_utc": "2026-10-11T20:09:47.113885+00:00",
+  "source_sha256": "f2ce5ba098f199dd71cac4cb9ffb34e85a76d0a8e4c4396d33a31072586bc108",
+  "pipeline_driver_sha256": "9b512dea7c29e62d927356a1fcaf6523b0fee85487f415a4ed124425636027fd",
+  "engineering_controls": [
+    {
+      "tests": 116,
+      "wall_seconds": 20.286,
+      "exit_code": 0,
+      "stderr_sha256": "70b41cccaed4f8d2ae3161a9da62565e6732d1c2a05a94d4dc9881f032aefb65",
+      "label": "regression-final-round1.stderr"
+    },
+    {
+      "tests": 116,
+      "wall_seconds": 20.662,
+      "exit_code": 0,
+      "stderr_sha256": "c77198c6e06fa3167205d94e7ef0a3c9e79d04fe89ac987e56747bde8f8b0293",
+      "label": "regression-final-round2.stderr"
+    },
+    {
+      "tests": 56,
+      "wall_seconds": 12.483,
+      "exit_code": 0,
+      "stderr_sha256": "8fb5c0f62f210d763b81850f5a845764fb6cd1349dd7c5005f63d03ce0a5fabd",
+      "label": "inherited-regression-final.stderr"
+    }
+  ],
+  "unique_control_count": 172,
+  "repeated_control_counts_not_new_studies": true,
+  "formal_worlds_added": 0,
+  "formal_study_admitted": false,
+  "empirical_calibration_completed": false,
+  "external_validation_completed": false,
+  "parameter_recovery_completed": false,
+  "model_recovery_test_scope": "exact source/checkpoint/state recovery; not empirical model recovery",
+  "actual_platform": {
+    "python": "3.14.6",
+    "minimum_python": "3.11",
+    "os": "macOS-26.6-arm64-arm-64bit-Mach-O",
+    "architecture": "arm64",
+    "logical_cpus": 12,
+    "physical_ram_bytes": 17179869184,
+    "free_disk_bytes": 102294650880,
+    "gpu_required": false,
+    "network_required_for_run": false,
+    "runtime_dependencies": [],
+    "measured_current_environment": true
+  },
+  "linux_platform_validated": false,
+  "quality_gates": {
+    "syntax_compile_python_files": 256,
+    "all_targeted_and_inherited_controls_passed": true,
+    "existing_cli_import_and_execution_passed": true,
+    "complete_calendar_runtime_and_resume_passed": true,
+    "two_code_stability_checks_passed": true,
+    "source_byte_mutations_during_final_validation": 0,
+    "wheel_build_performed": false
+  },
+  "protected_original_r6_files_verified_unchanged": 283,
+  "base_r6_manifest_sha256": "69cff74b2be65c5a5967129a05b6bd7878efff25633e5ab1b7a3d2f21232b84f",
+  "sixty_day_profile": {
+    "initial_population": 30,
+    "final_active_population": 34,
+    "calendar_days": 60,
+    "policy": "adoption never: effective pre-adoption hierarchy throughout; top-level sublinear is not an adopted DAMS arm",
+    "complete_raw_accounts_verified": true,
+    "pending_at_end_not_hidden": {
+      "unfinished_records": 395,
+      "unfinished_appeals": 10
+    },
+    "checkpoint_day": 23,
+    "full_resumed_state_exact": true,
+    "state_semantic_sha256": "244feb38619f6733a3a29c6a64f532d2382571d0f43b874add9f7c3c76e5d184",
+    "complete_run": {
+      "total_wall_seconds": 1.6501817080425099,
+      "cpu_seconds": 1.493967,
+      "peak_process_rss_mb": 46.5,
+      "output_bytes": 4480335,
+      "simulation_wall_seconds": 1.2814764580107294,
+      "initialization_wall_seconds": 0.027134999982081354,
+      "serialization_wall_seconds": 0.31329650001134723,
+      "hashing_wall_seconds": 0.0025447499938309193
+    },
+    "resume_run": {
+      "total_wall_seconds": 1.3391066659823991,
+      "cpu_seconds": 1.2126219999999999,
+      "peak_process_rss_mb": 50.640625,
+      "output_bytes": 4889254,
+      "simulation_wall_seconds": 1.01088975003222,
+      "initialization_wall_seconds": 1.66997779160738e-07,
+      "serialization_wall_seconds": 0.3047845410183072,
+      "hashing_wall_seconds": 0.0028049999964423478
+    },
+    "checkpoint_full_restore_wall_seconds": 0.33421933301724494,
+    "journal_chunk_target_bytes": 1048576,
+    "lossless_journal_chunks": 61,
+    "physical_io_throughput_measured": false,
+    "measured_output_is_small_engineering_not_long_term_scale_evidence": true
+  },
+  "validation_implementation": {
+    "independent_new_accountant_no_producer_transitions": true,
+    "shared_parser_calendar_random_utilities_disclosed": true,
+    "empirical_independent_validation": false
+  },
+  "read_only_independent_review_scope": "Reviewer exercised pure-state and Engine counterexamples, initial checkpoint/lifecycle/site/empty acquired-guild histories. Final reciprocal-demand/transition and bool outer-schema repairs were author-tested after reviewer cutoff; final version has not yet received a complete independent scientific review.",
+  "prior_failed_controls_preserved": {
+    "initial_targeted_failures": "Author iteration logs1..5 retained; fixes revalidated with iteration6 and full final regression.",
+    "first_broad_regression": "8 old checkpoint tests rejected the default macOS /var symlink temp path; rerun on real SSD TMPDIR passed without guard relaxation.",
+    "runtime_report_format": "Private report initially referenced absent people.active; corrected to existing exited_day without scientific code/output change.",
+    "repeat_restore_receipt": "Second validation correctly refused to overwrite immutable recovery receipt; a separate r2 receipt and separate restored working directory passed."
+  },
+  "provider_calls": 0,
+  "provider_cost_incurred_usd": 0,
+  "paid_budget_or_iam_modified": false,
+  "not_admitted": [
+    "five-year r7 policy-paired engineering profile pending resource limits and explicit adoption treatment",
+    "complete long-term N10k/N50k resources",
+    "parameter identification/recovery",
+    "empirical calibration/held-out validation",
+    "new formal independent-world inference",
+    "two complete independently evolving enterprises for M&A",
+    "wheel distribution and Linux platform certification"
+  ]
+}

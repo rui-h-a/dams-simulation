@@ -450,7 +450,7 @@ class Model:
 
     @classmethod
     def restore(cls, value: dict, *, storage_dir=None) -> Model:
-        if value.get('model_version') in ('longitudinal-1', 'longitudinal-endogenous-growth-1', 'longitudinal-enterprise-causal-3','longitudinal-enterprise-ma-candidate-1','longitudinal-enterprise-ma-candidate-2','longitudinal-enterprise-operations-4','longitudinal-enterprise-integrated-6','longitudinal-enterprise-integrated-6-joint-1'):
+        if value.get('model_version') in ('longitudinal-1', 'longitudinal-endogenous-growth-1', 'longitudinal-enterprise-causal-3','longitudinal-enterprise-ma-candidate-1','longitudinal-enterprise-ma-candidate-2','longitudinal-enterprise-operations-4','longitudinal-enterprise-integrated-6','longitudinal-enterprise-integrated-6-joint-1','longitudinal-enterprise-integrated-7-networks-tasks-1'):
             from .longitudinal_model import LongitudinalEngine
             obj = cls.__new__(cls)
             obj._long = LongitudinalEngine.restore(value, storage_dir=storage_dir)
