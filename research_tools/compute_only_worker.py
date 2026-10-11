@@ -542,7 +542,7 @@ def run_compute(runtime_path, root_path, work_path):
                                 'TEMP':str(temporary),'SQLITE_TMPDIR':str(temporary)})
                 if 'small_enterprise_profile' in runtime:
                     profile_raw=canonical(runtime['small_enterprise_profile'])
-                    work.write('small-enterprise-profile.json',profile_raw,exclusive=True)
+                    work.write('small-enterprise-profile.json',runtime['small_enterprise_profile'],exclusive=True)
                     from research_tools.small_enterprise_cloud import ENV,SHA_ENV
                     env.update({ENV:str(work.path/'small-enterprise-profile.json'),SHA_ENV:sha(profile_raw)})
                 command = [str(root.path / 'run.sh'), '--spec', runtime['spec'], '--scale', str(runtime['scale']),
