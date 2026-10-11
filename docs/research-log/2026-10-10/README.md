@@ -1,3 +1,11 @@
+# Latest verified observation: R59
+
+Dated 2026-10-11T05:17:46.847926+00:00. N30 and N120 retain four pilot and 66 accepted confirmation paired worlds each. N300 retains one complete five-year pilot pair; its next case remains at day 1,205 of 1,917 under the unchanged capacity guard. Original1000 remains 35/144 accepted cases and zero complete paired worlds.
+
+The actual cold-custody continuation was reaped with a strict file-pin interface error before any raw cleanup transaction. All 13 original files of the affected case remain unchanged. Its standard backup and promotion evidence persists. The charged request count is 6,426 with zero pending attempts; the preceding 6,337 immutable request/result prefix was independently reconciled in the Root closed inventory. No new completed custody case or scientific world is counted. A separate repair is unissued and retains the unchanged 10,000-request cap; one of the 42 remaining units is explicitly deferred.
+
+[Actual failure, preserved evidence and bounded repair scope](cold-api-abi-failure-r59.json) · [Full current scientific observation](research-observation-r59.json). The 86-page interim PDF is unchanged; the overall research is unfinished.
+
 ## Newer dated evidence: 2026-10-11
 
 See [the current snapshot](../2026-10-11/README.md). The following R38/R37 records remain unchanged historical observations.

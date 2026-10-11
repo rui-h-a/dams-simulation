@@ -1,0 +1,55 @@
+{
+  "schema": "dams-research-observation-r59-v1",
+  "observation_utc": "2026-10-11T05:17:46.847926+00:00",
+  "prior_public_observation": "research-observation-r58.json",
+  "N30": {
+    "pilot_pairs": 4,
+    "confirmation_pairs": 66,
+    "confirmation_precision": "all four fixed targets accepted; adverse and null findings retained",
+    "complete_remote_full13_case_proofs": 140,
+    "cold_lifecycle_cases": 72
+  },
+  "N120": {
+    "pilot_pairs": 4,
+    "confirmation_pairs": 66,
+    "confirmation_precision": "all four fixed targets accepted",
+    "full_calendars_days": 1917,
+    "initial_population": 120,
+    "final_population_range": [
+      166,
+      179
+    ],
+    "cold_lifecycle_complete_cases": 1
+  },
+  "N300": {
+    "pilot_pairs": 1,
+    "confirmation_pairs": 0,
+    "pilot_target": 4,
+    "initial_population": 300,
+    "first_pair_final_population": 436,
+    "first_pair_calendar_days": 1917,
+    "next_case_checkpoint_day": 1205,
+    "next_case_total_days": 1917,
+    "status": "CAPACITY_BLOCKED; exact checkpoint preserved, no restart"
+  },
+  "original_1000": {
+    "accepted_cases": 35,
+    "case_target": 144,
+    "complete_pilot_paired_worlds": 0,
+    "confirmation_paired_worlds": 0,
+    "status": "CAPACITY_BLOCKED"
+  },
+  "large_formal_batches": {
+    "registered": 10,
+    "new_complete_five_or_ten_year_worlds": 0,
+    "status": "BLOCKED; engineering and external-validity entry conditions remain unaccepted"
+  },
+  "paper": {
+    "pages": 86,
+    "status": "interim; unchanged accepted N30 and N120 results",
+    "main_pdf_sha256": "3383ce869ce6b23b4b12f47da811b3e655bb9e5324d00698c957fbda29bb5a81"
+  },
+  "current_custody_operation": "REAPED_FAILURE; no added completed case",
+  "evidence": "cold-api-abi-failure-r59.json",
+  "final_research_complete": false
+}
