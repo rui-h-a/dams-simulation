@@ -1,5 +1,23 @@
 # DAMS research execution evidence — 2026-10-11
 
+## R50 — actual GCS full-case preservation and paper integration
+
+At 2026-10-11T01:00:58.565558+00:00, N120 remains **61/70** complete pairs: 4 pilot plus **57/66 confirmation**, with nine confirmation pairs remaining. The original CLI is active and 60 existing pairs have been fully revalidated in this continuation; these rechecks are not additional independent worlds. N30 retains 4 pilot plus 66 confirmation pairs, all four precision targets and adverse/null results, and **140/140** full-case off-device recovery proofs.
+
+One closed, 1,917-day N120 case has now actually passed GCS preservation and physical full-file restoration: **13 raw files / 209,053,254 bytes**, **37 unique encoded chunks / 82,676,816 bytes**, plus a 33,918-byte recovery index. All generation-pinned binary reads and all restored SHA-256/strict-EOF checks passed. There were 78 closed archive HTTP attempts, one separately recorded bucket creation and one auth-helper call; helper calls are not a count of its internal HTTP requests. The supervised operation exited 0 in **122.74 seconds**, with **106.11 MiB maximum sampled child RSS**. The saved-evidence peer review did not redownload payloads or rerun model transitions. This is one case's actual binary custody proof, not new scientific data, whole-batch backup, independent model-transition validation or large-scale resource admission.
+
+After verification and process closure, this operation's **50 owned temporary files / 291,730,070 logical bytes** were actually removed. All 13 original files and all remote objects remain. N30 cold lifecycle has **52** distinct completed raw-retirement receipts at the snapshot. Actual external free space is **99.263 GiB**, which is a volume observation rather than an inferred sum of deleted bytes. The original thousand-person study remains **35/144 cases, zero complete pilot paired worlds**. Its unchanged capacity gate and compatible archive-consumption prerequisites remain unmet. N300 and the larger five-/ten-year studies have no completed formal paired worlds.
+
+The new US$8 single-case storage suballocation sits **inside the existing US$34 parent** alongside US$5.50 for N30. Total reservation envelopes remain US$99.55 under the cumulative US$100 cap; reservations and Meter upper bounds are not supplier expenditure. Final provider billing reconciliation remains pending. GCS object storage is now actually in use; no new compute VM was created. Paid-resource cleanup remains outstanding until safe non-GCP preservation has been verified.
+
+The actual preservation measurement is integrated in the English LaTeX paper. The **83-page** PDF rebuilt successfully: all 83 pages were rendered and compared, 71 were pixel-identical to the prior full visual acceptance, and the 12 changed pages were individually inspected again. No new blocking visual defect was found. This does not claim a new individual review of all 83 pages or completion of the whole research. N120 final statistics, original/larger formal studies, external validity and final delivery remain pending.
+
+[Exact R50 evidence](research-observation-r50.json). Earlier observations below retain their historical time and scope.
+
+---
+
+# DAMS research execution evidence — 2026-10-11
+
 ## R49 — existing remote archive custody readback
 
 At 2026-10-11T00:19:26.538434+00:00, the original 1,000-person case completed the real bounded readback of six existing GitHub assets (two correlated repository/provider copies). All 18 GET attempts exited successfully; 2,065,146,004 bytes were streamed and both 1,032,570,880-byte concatenated TAR hashes matched. The child was reaped and its process group was absent. This verifies binary custody, not a new scientific world, full13 model restoration, Lifecycle promotion or permission to retire the original raw case.
