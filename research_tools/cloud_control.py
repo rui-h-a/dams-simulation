@@ -633,6 +633,9 @@ class Ledger:
             expiry = min(now + timedelta(seconds=s["max_seconds"]), utc(d["deadline_utc"]))
             if (expiry - now).total_seconds() < s["max_seconds"]:
                 raise GuardError("entire reserved stage cannot fit before global deadline")
+            # GCP preserves millisecond expiry precision. Floor future holds;
+            # never round past the complete-stage bound or global deadline.
+            expiry = expiry.replace(microsecond=(expiry.microsecond // 1000) * 1000)
             e = {"intent_sha256": intent, "state": "reserved", "reserved_usd": str(stage_cost(self.c, s)),
                  "charged_usd_upper": "0", "reserved_utc": stamp(now), "termination_utc": stamp(expiry),
                  "instance_name": "dams-" + digest([self.c["authorization_id"], s["id"]])[:24],
