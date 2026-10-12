@@ -63,8 +63,8 @@ def stage_capabilities(c, s):
                 or not 0 < money(expected["memory_gib_min"]) < money(expected["memory_gib_max"])
                 or money(expected["memory_gib_max"]) != 31):
             raise GuardError("Standard C4D4 requires exact CPU/architecture and usable/catalog RAM bounds")
-    elif mode == "STANDARD" and machine in ("n2-highmem-2", "n2-highmem-4"):
-        vcpus, memory_gib = {"n2-highmem-2": (2, 16), "n2-highmem-4": (4, 32)}[machine]
+    elif mode == "STANDARD" and machine in ("n2-highmem-2", "n2-highmem-4", "n2-standard-4"):
+        vcpus, memory_gib = {"n2-highmem-2": (2, 16), "n2-highmem-4": (4, 32), "n2-standard-4": (4, 16)}[machine]
         allowed_disks = ("pd-standard", "pd-balanced", "pd-ssd")
         disk_interface = "SCSI"
         quota = {"metric": "N2_CPUS", "info_id": "N2-CPUS-per-project-region",
