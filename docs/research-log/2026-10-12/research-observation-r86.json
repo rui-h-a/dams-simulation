@@ -1,0 +1,134 @@
+{
+  "schema": "DAMS-research-observation-r86-v1",
+  "UTC": "2026-10-12T08:14:29.291553+00:00",
+  "whole_goal_complete": false,
+  "formal_counts": {
+    "N30": {
+      "pilot": 4,
+      "confirmation": 66,
+      "total_pairs": 70,
+      "precision_pass_previously_accepted": true,
+      "negative_results_preserved": true
+    },
+    "N120": {
+      "pilot": 4,
+      "confirmation": 66,
+      "total_pairs": 70,
+      "precision_pass_previously_accepted": true
+    },
+    "N300": {
+      "pilot": 4,
+      "confirmation": 19,
+      "total_pairs": 23,
+      "assigned_pairs": 70,
+      "remaining_confirmation": 47,
+      "initial_population": 300,
+      "days_including_settlement": 1917,
+      "exogenous_growth_not_organic_effect": true
+    },
+    "original_N1000": {
+      "accepted_cases": 35,
+      "assigned_pilot_cases": 144,
+      "complete_pilot_worlds": 0,
+      "confirmation_worlds": 0
+    },
+    "N10000_N50000_conditional_N100000": {
+      "formal_worlds": 0,
+      "integrated_scientific_version_frozen": false
+    }
+  },
+  "actual_new_pair": {
+    "world_id": 52018,
+    "paired_result_sha256": "f2567447fd134deecf17a5c989c30e61f9b187c3a048278a2f5ba9bc6b8554e8",
+    "status": "full-paired-raw-validated",
+    "both_original_cases": [
+      {
+        "case_id": "7f5b4d3ca1300563f1eeabb5ae79552699d912ef04c2fccfa8b1b5721ed3ab3e",
+        "manifest_sha256": "44e9c844db6549818a00fb954032a696c820e76b4a69529681938bc15ac484e3"
+      },
+      {
+        "case_id": "365e339c69f603b6fd026e6f26a027449e950e63d32cf8a29fee31002b1e5b37",
+        "manifest_sha256": "7421ee8a6cf275cbf6dc950ef1ebf11908c6bac744febf5fc27e2a83dea2ebfc"
+      }
+    ],
+    "original_execute_pair_and_full_gate_wall_seconds": 1018.0001803750056,
+    "scientific_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "original_entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+    "producer_wave_width": 1,
+    "prior_failed_day848_checkpoint_preserved": true,
+    "completed_arm_was_not_regenerated": true
+  },
+  "actual_running": {
+    "world_id": 52019,
+    "site": "local_CPU_with_external_data_volume",
+    "owned_supervisor_PID": 45495,
+    "original_function_dispatcher_PID": 45503,
+    "literal_original_main_invoked": false,
+    "original_execute_pair_and_raw_validation_invoked": true,
+    "source_models_runtime_roster_unchanged": true
+  },
+  "operational_reuse": {
+    "old_literal_main_resume_wall_seconds": 2926.3090265,
+    "old_completed_pilots_revalidated": 4,
+    "old_resume_new_worlds": 0,
+    "Root_quiescent22_native_reuse_wall_seconds": 0.2744042919948697,
+    "large_raw_payloads_rehashed_by_reuse": false,
+    "reused_old_pairs_do_not_increment_new_worlds": true,
+    "live_operator_sha256": "02f4fddb641b548fda70a716ea2ae4895f92d830ab4cb0ba6d8e54c0e7f54a50",
+    "true_current_roster_sha256": "4a20d2f1d9f2bea4ea1f8bed3982773252c9deae12609ac5a428901d812c79f2",
+    "independent_counter_found": "roster re-read after entry could accept repeated world IDs",
+    "isolated_roster_amendment_sha256": "0e46ae02373a70b2a0292cfc742d4a083560145bda82976b0c6e47291d60c6da",
+    "independent_amendment_review_sha256": "53e8d36264da0e77c857ca62b3f12d02029ff128b7598063e6cc240180459143",
+    "amendment_control_status": "PASS_ORIGINAL_COUNTER_REFUSED_AND_VALID22_DISPATCH",
+    "amendment_running": false,
+    "live_source_hot_modified": false,
+    "true_loaded_current_roster_drift_detected": false
+  },
+  "cloud": {
+    "historical_VM_use": true,
+    "latest_authenticated_VM_count_at_064844": 0,
+    "GCS_existing_custody_retained": true,
+    "new_paid_resources_this_phase": 0,
+    "current_Iowa_authenticated_N2_CPUS_quota": 200,
+    "current_Iowa_authenticated_SSD_quota_GiB": 500,
+    "current_Iowa_authenticated_standard_disk_quota_GiB": 4096,
+    "actual_catalog_N2_highmem2": {
+      "vcpus": 2,
+      "memory_MiB": 16384
+    },
+    "catalog_not_stock_or_guest_IO_proof": true,
+    "published_existing_R5_branch_commit": "24a13023d3cc2d975fc0f08084d87f3fef0080b8",
+    "actual_clean_release_files": 130,
+    "actual_clean_release_archive_bytes": 3399680,
+    "source_manifest_sha256": "f2ec8ff3450c2b1784fe7fbba6b4e20e526a96e7df8eba138de08152a947a4ec",
+    "original_science_driver_runtime_unchanged": true,
+    "old375GiB_plan_refused_as_insufficient_for_full_guest_encoded_cache_CAS_and_restore": true,
+    "metadata_only_Root_Collector_not_full_guest_archive_bound": true,
+    "N2_pd_standard_delta_pure15_two_rounds_PASS": true,
+    "pd_standard_guest_IO_not_yet_measured": true,
+    "new_Root_selected_handoff_budget_capacity_authority_not_issued": true
+  },
+  "budget": {
+    "cumulative_cap_USD": "100",
+    "retained_holds_upper_USD": "68.80",
+    "unallocated_upper_USD": "31.20",
+    "cleanup_and_uncertainty_USD": "20",
+    "holds_not_invoice_or_cash_balance": true,
+    "supplier_invoice_reconciled": false,
+    "original_global_deadline_UTC": "2026-10-15T08:54:46.960873Z"
+  },
+  "disk": {
+    "workspace_free_GiB": 96.2270622253418,
+    "prior191_retirement_not_counted_again": true,
+    "APFS_workspace_and_backing_device_not_independent_backup": true
+  },
+  "current_blockers": [
+    "Original N1000 actual Root lock/handoff/activation and complete regional capacity/cost route have not yet been issued",
+    "No full formal cloud pair completed",
+    "Integrated N10000/N50000 candidate still lacks frozen calibrated and held-out-validated formal results"
+  ],
+  "paper": {
+    "latest_PDF_is_interim": true,
+    "uncompleted_studies_not_written_as_results": true
+  }
+}
