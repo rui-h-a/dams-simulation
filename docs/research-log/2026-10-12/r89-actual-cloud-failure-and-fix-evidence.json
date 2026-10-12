@@ -1,0 +1,75 @@
+{
+  "schema": "DAMS-r89-actual-premodel-failure-and-minimum-operational-fix",
+  "actual_create_then_cleanup": {
+    "creation_utc": "2026-10-12T12:04:46.770504Z",
+    "failed_native_exact_guard": {
+      "planned_termination_utc": "2026-10-14T16:39:55.187908Z",
+      "provider_returned_termination_utc": "2026-10-14T16:39:55.188Z",
+      "difference_microseconds": 92
+    },
+    "VM_and_PD_absent_UTC": "2026-10-12T12:08:53.463570Z",
+    "pending_operations": 0,
+    "failed_original_child_attempts": 1,
+    "failed_original_ledger_not_reset": true,
+    "formal_samples_added": 0
+  },
+  "fix_publication": {
+    "utc": "2026-10-12T12:23:17.002070+00:00",
+    "branch": "research/small-enterprise-cloud-confirmation-n300-20261012-r1",
+    "parent": "1695fc8874fe4487138010bdc318d9407c4effbe",
+    "commit": "38385cb0c4c2d344be38166a62f76af7983029e4",
+    "all_original_science_and_other_ops_git_blobs_unchanged": true,
+    "full_changed_bytes_readback": true,
+    "changed_files": [
+      "research_tools/cloud_control.py",
+      "tests/test_cloud_expiry_millisecond.py"
+    ],
+    "actual_API_calls": 11,
+    "native_controls": 5,
+    "stable_sweeps": 2,
+    "formal_worlds_added": 0,
+    "provider_Model_calls": 0,
+    "whole_goal_complete": false
+  },
+  "fix_scope": "Floor future expiry to milliseconds only after original full-stage/globalD fit check; strict exact VM validator unchanged",
+  "newly_found_precreate_continuation_gap": "Existing private runtime-phase glue still assumed N2-4/batch32; native cloud_worker.verify_guest lacked N2-2. Isolated operations-only fix pending; no second VM created to discover this.",
+  "fiscal_closure": {
+    "old25_hold": {
+      "permanent_past_unbilled_and_fixture_softdelete_upper_USD": "1.00",
+      "unused_future_closed_USD": "24.00"
+    },
+    "new_future_complete_pair_hold_USD": "25.00",
+    "no_new_create_authority_issued": true,
+    "not_invoice_or_refund": true,
+    "old_scope_counters_histories_and_globalD_retained": true
+  },
+  "original_study_claim_released_after_absence": {
+    "utc": "2026-10-12T12:17:46.953065+00:00",
+    "PID": 70053,
+    "closed": true
+  },
+  "new_current_selection": {
+    "complete_confirmation_cases": 42,
+    "unstarted_confirmation_cases": 90,
+    "world": 52021,
+    "both_arms_unstarted": true,
+    "no_old_completed_case_restarted": true
+  },
+  "GCS_fixture": {
+    "complete_original_and_readback_bytes": 4096,
+    "fixed_generation_requests": 4,
+    "exact_generation_deleted_after_full_readback": true,
+    "not_formal_data_custody": true,
+    "softdelete_retention_cost_still_reserved": true
+  },
+  "engineering_not_formal": {
+    "existing_R10_complete_pair_days": 1947,
+    "five_year_observation_days": 1827,
+    "source_commit": "945a9ae2cd2e434adcb1ca21d701d7998dfbbb76",
+    "buyer_DAMS_minus_hierarchy_output": -307.900626565,
+    "buyer_cash_difference": -3075.011234325,
+    "regret_difference": 260.883138803,
+    "calibration_OOS_formal_acceptance": false
+  },
+  "whole_goal_complete": false
+}

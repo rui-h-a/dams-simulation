@@ -1,0 +1,81 @@
+{
+  "schema": "DAMS-research-observation-r89",
+  "observed_utc": "2026-10-12T12:29:43.231794+00:00",
+  "status_is_dated_snapshot": true,
+  "N30": {
+    "paired_complete": 70,
+    "excluded_pilot": 4,
+    "confirmation_complete": 66,
+    "precision_checks_passed": 4
+  },
+  "N120": {
+    "paired_complete": 70,
+    "excluded_pilot": 4,
+    "confirmation_complete": 66,
+    "precision_checks_passed": 4
+  },
+  "N300": {
+    "paired_complete": 25,
+    "excluded_pilot": 4,
+    "confirmation_complete": 21,
+    "confirmation_remaining": 45,
+    "formal_producer_running": false,
+    "days_per_existing_pair": 1917,
+    "selected_next_world": 52021,
+    "selected_next_both_arms_unstarted": true
+  },
+  "original_N1000": {
+    "validated_cases": 35,
+    "planned_pilot_cases": 144,
+    "full_pilot_worlds": 0,
+    "full_confirmation_worlds": 0
+  },
+  "N10000_primary_N50000_comparison": {
+    "formal_worlds_complete": 0,
+    "integrated_model_scientific_freeze_calibration_OOS": "NOT_COMPLETE"
+  },
+  "GCP": {
+    "used": true,
+    "this_actual_create_success": true,
+    "machine": "n2-highmem-2",
+    "vcpus": 2,
+    "RAM_GiB": 16,
+    "boot_pd_standard_GiB": 550,
+    "new_Model_started": false,
+    "new_source_uploaded": false,
+    "full_cloud_paired_worlds": 0,
+    "authenticated_census": {
+      "UTC": "2026-10-12T12:08:53.463570+00:00",
+      "results": {
+        "instances": 0,
+        "disks": 0,
+        "operations": {
+          "total": 33,
+          "pending": 0
+        }
+      },
+      "Model_started": false,
+      "no_recreate": true
+    }
+  },
+  "budget": {
+    "cumulative_cap_USD": "100",
+    "effective_envelopes_and_holds_upper_USD": "94.80",
+    "unallocated_upper_USD": "5.20",
+    "cleanup_and_uncertainty20_included": true,
+    "past_failed_launch_and_fixture_unbilled_upper_USD": "1.00",
+    "next_complete_pair_future_hold_USD": "25.00",
+    "actual_provider_invoice_reconciled": false,
+    "reserve_is_not_actual_spend": true
+  },
+  "storage_observation": {
+    "workspace_free_GiB": 95.18516540527344,
+    "N300_case_guard_GiB": 96,
+    "scientific_raw_deleted_this_scope": false
+  },
+  "PDF": {
+    "pages": 86,
+    "status": "INTERIM_NO_NEW_FULLFORMAL_RESULT_THIS_SCOPE"
+  },
+  "whole_goal_complete": false
+}
