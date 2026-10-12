@@ -7,6 +7,8 @@ Inherited validators still own lifecycle, cash, queues, and operating accounts.
 """
 from __future__ import annotations
 import collections
+import copy
+import dataclasses
 import json
 import math
 from pathlib import Path
@@ -24,10 +26,11 @@ def _close(a,b,label):
     if not isinstance(a,(int,float)) or isinstance(a,bool) or not math.isfinite(a) or not math.isclose(a,b,rel_tol=1e-11,abs_tol=1e-9):raise ValueError('organization raw mismatch: '+label)
 
 
-def _links(ids,c):
+def _links(ids,c,assignments=None):
     # Independently implemented row construction (no production topology call).
     parents={};depths={};collab={};verify={};groups={str(d):[] for d in range(c.department_count)}
-    for i in ids:groups[str(i%c.department_count)].append(i)
+    membership=lambda i: i%c.department_count if assignments is None else assignments[str(i)]
+    for i in ids:groups[str(membership(i))].append(i)
     for group in groups.values():
         for index,i in enumerate(group):
             parent=group[(index-1)//c.management_span] if index else None
@@ -36,7 +39,7 @@ def _links(ids,c):
     departments=[int(d) for d,g in groups.items() if g];indices={d:k for k,d in enumerate(departments)}
     for i in ids:
         for destination,count,independent in ((collab,c.collaboration_contacts,False),(verify,c.verification_contacts,True)):
-            selected=[];own=i%c.department_count
+            selected=[];own=membership(i)
             for attempt in range(4*count+4):
                 if len(departments)==1:department=own;offset=attempt
                 else:
@@ -63,6 +66,36 @@ def verify_organization_accounts(config,state,database):
     rng=WorldRandom(config.seed,config.world,world_context=config.longitudinal.world_context)
     stocks={str(d):c.initial_dependency_units_per_department for d in range(c.department_count)}
     generated={k:0. for k in stocks};consumed={k:0. for k in stocks};active=set();sites={};metrics=collections.defaultdict(float)
+    base_c=c;structure=None;paid_installations={};completed_installations={}
+    if c.schema_version==2:
+        structure={'department_count':c.department_count,'observed_installed_departments':config.enterprise_growth.initial_departments,
+            'initial_units':dict(stocks),'objectives':[list(w) for w in c.department_objectives],
+            'task_families':{str(d):d for d in range(c.department_count)},
+            'assignments':{str(i):i%c.department_count for i in range(config.n)},'training_remaining':{},'pending':[],'history':[],'replans':[]}
+    def department(person):return person%c.department_count if structure is None else structure['assignments'][str(person)]
+    def split_reference(values,splits):
+        result=dict(values)
+        for row in splits:
+            key=str(row['source_department']);child=str(row['target_department'])
+            portion=len(row['moved_people'])/row['source_member_count']
+            transfer=result[key]*len(row['moved_people'])/row['source_member_count']
+            result[child]=transfer;result[key]=result[key]-transfer
+        return result
+    def plan_reference(assignments,active,old,new):
+        routing=dict(assignments);edges=[]
+        for child in range(old,new):
+            candidates=[]
+            for department_id in range(child):
+                members=sorted(i for i in active if routing[str(i)]==department_id)
+                candidates.append((-len(members),department_id,members))
+            _,source,members=min(candidates)
+            if len(members)<2:return None
+            moving=members[(len(members)+1)//2:]
+            edges.append({'source_department':source,'target_department':child,
+                          'source_member_count':len(members),'moved_people':moving})
+            for person in moving:routing[str(person)]=child
+        return {'splits':edges,'moved_people':sorted({i for row in edges for i in row['moved_people']})}
+
     people_by_token={p['token']:p['id'] for p in state['people']}
     day=0;events=[];last=None;last_plan=None;remaining={}
     l=config.longitudinal;clock=GregorianClock(l);learn={};fatigue={};guilds={};memory={str(g):l.initial_memory for g in range(config.guilds)};exit_sizes={};inventory_guilds=config.guilds
@@ -72,8 +105,78 @@ def verify_organization_accounts(config,state,database):
         for when,kind,ident,payload in rows:
             v=json.loads(payload)
             if when!=day:raise ValueError('organization raw day is not consecutive')
+            if structure is not None:
+                if kind=='infrastructure_requested':paid_installations[v['requested_day']]=copy.deepcopy(v)
+                elif kind=='infrastructure_complete':completed_installations[day]=copy.deepcopy(v)
+                elif kind=='task_reorganization_requested':
+                    installed=completed_installations.get(day);g=config.enterprise_growth
+                    if installed is None or paid_installations.get(installed['requested_day']) is None:
+                        raise ValueError('task split lacks preceding paid installation history')
+                    delta=installed['departments']-structure['observed_installed_departments']
+                    previous=structure['pending'][-1]['target_department_count'] if structure['pending'] else c.department_count
+                    expected={'installation':installed,'completed_installation_day':day,
+                        'previous_department_count':previous,'target_department_count':previous+delta,
+                        'ready_day':day+g.hiring_delay_days,'setup_cost_subset_resource_units':delta*g.department_setup_resource_units}
+                    paid=paid_installations[installed['requested_day']]
+                    if (delta<=0 or v!=expected or installed['ready_day']!=installed['requested_day']+g.construction_delay_days
+                            or day<installed['ready_day'] or paid['setup_cost']<expected['setup_cost_subset_resource_units']):
+                        raise ValueError('task split request/capital/delay differs from actual installation')
+                    structure['observed_installed_departments']=installed['departments'];structure['pending'].append(copy.deepcopy(expected))
+                    metrics['task_reorganization_setup_cost_subset_resource_units']+=expected['setup_cost_subset_resource_units']
+                elif kind=='task_reorganization_planned':
+                    if not structure['pending'] or 'split_plan' in structure['pending'][0]:raise ValueError('task split plan duplicated or unrequested')
+                    q=structure['pending'][0]
+                    if day<max(q['ready_day'],q.get('replan_not_before',0)) or not clock.is_workday(day):raise ValueError('task split planned before calendar readiness')
+                    plan=plan_reference(structure['assignments'],active,c.department_count,q['target_department_count'])
+                    if plan is None:raise ValueError('task split lacks a nonempty local source')
+                    plan['planning_day']=day;expected={**q,'split_plan':plan}
+                    if canonical(v)!=canonical(expected):raise ValueError('task split changes untouched departments/people')
+                    q['split_plan']=plan
+                    for person in plan['moved_people']:
+                        token=str(person);structure['training_remaining'][token]=structure['training_remaining'].get(token,0.)+config.enterprise_operations.entrant_training_workday_units
+                elif kind=='task_reorganization_replan':
+                    if not structure['pending'] or 'split_plan' not in structure['pending'][0] or not clock.is_workday(day):raise ValueError('unplanned task cancellation')
+                    q=structure['pending'][0];plan=q['split_plan'];departed=sorted(set(plan['moved_people'])-active)
+                    if not departed:raise ValueError('task replanning has no departed mover')
+                    expected={'day':day,'installation_requested_day':q['installation']['requested_day'],
+                        'previous_plan':copy.deepcopy(plan),'departed_people':departed,
+                        'served_work_hours_by_person':{str(i):config.enterprise_operations.entrant_training_workday_units-structure['training_remaining'][str(i)] for i in plan['moved_people']},
+                        'cancelled_unserved_hours_by_person':{str(i):structure['training_remaining'][str(i)] for i in plan['moved_people']},
+                        'replan_not_before':day+config.enterprise_growth.hiring_delay_days}
+                    if canonical(v)!=canonical(expected):raise ValueError('task replanning loses sunk time or cancels unserved work as paid')
+                    for person in plan['moved_people']:structure['training_remaining'].pop(str(person))
+                    structure['replans'].append(copy.deepcopy(expected));q.pop('split_plan');q['replan_not_before']=expected['replan_not_before']
+                    metrics['task_reorganization_sunk_work_hours']+=math.fsum(expected['served_work_hours_by_person'].values())
+                    metrics['task_reorganization_cancelled_unserved_hours']+=math.fsum(expected['cancelled_unserved_hours_by_person'].values())
+                elif kind=='task_reorganization_complete':
+                    if not structure['pending'] or 'split_plan' not in structure['pending'][0] or not clock.is_workday(day):raise ValueError('task split without pending paid work plan')
+                    q=structure['pending'][0];old=c.department_count;new=q['target_department_count'];plan=q['split_plan']
+                    if (q['previous_department_count']!=old or day<=plan['planning_day'] or day<q['ready_day']
+                            or not set(plan['moved_people'])<=active
+                            or any(structure['training_remaining'][str(i)]>1e-12 for i in plan['moved_people'])):
+                        raise ValueError('task split precedes actual funded work or changes departed persons')
+                    before={'stocks':dict(stocks),'generated':dict(generated),'consumed':dict(consumed)}
+                    basis=dict(structure['initial_units']);assignments=dict(structure['assignments']);families=dict(structure['task_families'])
+                    after={k:split_reference(value,plan['splits']) for k,value in before.items()};new_basis=split_reference(basis,plan['splits'])
+                    new_assignments=dict(assignments);objectives=list(c.department_objectives)
+                    for edge in plan['splits']:
+                        objectives.append(objectives[edge['source_department']])
+                        structure['task_families'][str(edge['target_department'])]=structure['task_families'][str(edge['source_department'])]
+                        for person in edge['moved_people']:
+                            if new_assignments[str(person)]!=edge['source_department']:raise ValueError('task split source assignment changed')
+                            new_assignments[str(person)]=edge['target_department']
+                    expected={'day':day,**q,'stocks_before':before,'initial_units_before':basis,
+                        'assignments_before':assignments,'stocks_after':after,'initial_units_after':new_basis,'assignments_after':new_assignments,
+                        'task_families_before':families,'task_families_after':dict(structure['task_families']),
+                        'paid_work_hours':len(plan['moved_people'])*config.enterprise_operations.entrant_training_workday_units}
+                    if canonical(v)!=canonical(expected):raise ValueError('task split creates/drops knowledge or changes its closed history')
+                    structure['pending'].pop(0);stocks=after['stocks'];generated=after['generated'];consumed=after['consumed']
+                    structure['initial_units']=new_basis;structure['assignments']=new_assignments
+                    c=dataclasses.replace(base_c,department_count=new,department_objectives=tuple(objectives))
+                    structure['department_count']=new;structure['objectives']=[list(w) for w in objectives];structure['history'].append(copy.deepcopy(expected))
             if kind in ('entry','acquisition_entry'):
                 person=v['person']
+                if structure is not None:structure['assignments'][str(person)]=person%c.department_count
                 if type(person) is not int or person in learn:raise ValueError('organization entry reuses identity')
                 active.add(person);guilds[person]=v['guild'];sites[person]=v['organization_site'] if kind=='entry' else v['site']
                 if kind=='entry':
@@ -111,7 +214,7 @@ def verify_organization_accounts(config,state,database):
             if kind!='day_end':events.append((kind,ident,v));continue
             plans=[p for k,e,p in events if k=='organization_plan'];tasks=[p for k,e,p in events if k=='organization_tasks']
             if len(plans)!=1 or len(tasks)!=1:raise ValueError('organization daily phases missing/duplicated')
-            plan,task=plans[0],tasks[0];links=_links(sorted(active),c)
+            plan,task=plans[0],tasks[0];links=_links(sorted(active),c,None if structure is None else structure['assignments'])
             if type(plan['day']) is not int or plan['day']!=day or plan['topology']!=links:raise ValueError('organization active roster/topology differs from lifecycle')
             present=plan['present_people']
             if any(type(i) is not int for i in present) or present!=sorted(set(present)) or not set(present)<=active:raise ValueError('organization presence roster differs')
@@ -123,11 +226,22 @@ def verify_organization_accounts(config,state,database):
                 request=links['reporting_depth'][key]*c.reporting_hours_per_layer+len(peers)*c.collaboration_hours_per_contact+c.verification_hours_per_member_workday
                 _close(a['requested_network_hours'],request,'network request')
                 available=a['available_hours'];_close(available,max(0.,available),'available capacity')
-                fixed=min(available,request);_close(a['network_hours'],fixed,'network funded capacity')
-                residual=available-fixed;weights=c.department_objectives[i%c.department_count]
-                for field,w in zip(('production_cap_hours','quality_hours','learning_hours'),weights):_close(a[field],residual*w,field)
+                reorganization=0.;still_training=False
+                if structure is not None:
+                    owed=structure['training_remaining'].get(key,0.);reorganization=min(available,owed)
+                    remaining_work=max(0.,owed-reorganization*funding)
+                    if key in structure['training_remaining']:structure['training_remaining'][key]=remaining_work
+                    _close(a['reorganization_hours'],reorganization,'actual reorganization time')
+                    _close(a['remaining_reorganization_hours'],remaining_work,'remaining reorganization obligation')
+                    still_training=remaining_work>1e-12
+                    metrics['task_reorganization_work_hours']+=reorganization*funding
+                network=min(available-reorganization,request);fixed=network+reorganization
+                _close(a['network_hours'],fixed,'network funded capacity')
+                residual=available-fixed;weights=c.department_objectives[department(i)]
+                for field,w in zip(('production_cap_hours','quality_hours','learning_hours'),weights):
+                    _close(a[field],residual*w,field)
                 net+=fixed*funding;quality+=a['quality_hours']*funding;learning+=a['learning_hours']*funding
-                served=max(0.,fixed-links['reporting_depth'][key]*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
+                served=max(0.,network-links['reporting_depth'][key]*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
                 remaining[key]=int((served+1e-12)/c.verification_hours_per_claim)
             metrics['organization_network_hours']+=net;metrics['organization_quality_hours']+=quality;metrics['organization_learning_hours']+=learning
             work=[p for k,e,p in events if k=='work']
@@ -138,8 +252,8 @@ def verify_organization_accounts(config,state,database):
             cooperation=dict(plan['cooperation_by_person'])
             for p in work:cooperation[str(p['person'])]=p['cooperation']
             for p in work:
-                i=p['person'];o=p['organization'];key=str(i%c.department_count);a=plan['allocations'][str(i)]
-                if type(o['task_department']) is not int or o['task_department']!=i%c.department_count:raise ValueError('organization task department differs')
+                i=p['person'];o=p['organization'];key=str(department(i));a=plan['allocations'][str(i)]
+                if type(o['task_department']) is not int or o['task_department']!=department(i):raise ValueError('organization task department differs')
                 _close(o['quality_hours'],a['quality_hours']*funding,'quality work reservation')
                 _close(o['learning_hours'],a['learning_hours']*funding,'learning work reservation')
                 if o['planned_effort']>a['production_cap_hours']*funding+1e-12:raise ValueError('organization production exceeds local objective time')
@@ -168,21 +282,32 @@ def verify_organization_accounts(config,state,database):
                 sd=config.review_error_sd/(1+c.quality_measurement_efficiency*o['quality_hours'])
                 observed=max(0.,p['produced_research_only']+sd*rng.normal('observed_work',day,token))+(p['attack_hours'] if p['fraudulent'] else 0.)
                 _close(p['observed'],observed,'quality-conditioned measurement')
-            potential={key:math.fsum(p['organization']['potential_before_dependencies'] for p in work if str(p['person']%c.department_count)==key) for key in stocks}
-            by_department={key:math.fsum(p['produced_research_only'] for p in work if str(p['person']%c.department_count)==key) for key in stocks}
+            potential={key:math.fsum(p['organization']['potential_before_dependencies'] for p in work if str(department(p['person']))==key) for key in stocks}
+            by_department={key:math.fsum(p['produced_research_only'] for p in work if str(department(p['person']))==key) for key in stocks}
             if type(task['day']) is not int or task['day']!=day or task['morning_stocks']!=stocks:raise ValueError('organization task morning inventory differs')
             used={};factors={}
+            if structure is not None:
+                family_members={family:sorted(k for k in stocks if structure['task_families'][k]==family) for family in range(base_c.department_count)}
+                family_potential={family:math.fsum(potential[k] for k in group) for family,group in family_members.items()}
+                family_stocks={family:math.fsum(stocks[k] for k in group) for family,group in family_members.items()}
+                if task.get('task_families')!=structure['task_families']:raise ValueError('task administrative split changed technology family')
+                ratio=c.dependency_input_units_per_output_work_unit
+                for family,group in family_members.items():
+                    factor=1. if family==0 or ratio==0 or family_potential[family]==0 else min(1.,family_stocks[family-1]/(ratio*family_potential[family]))
+                    downstream=math.fsum(by_department[k] for k in family_members.get(family+1,[]))*ratio
+                    for key in group:
+                        factors[key]=factor;used[key]=downstream*stocks[key]/family_stocks[family] if family_stocks[family] else 0.
             for d in range(c.department_count):
                 key=str(d);_close(task['potential_by_department'][key],potential[key],'department potential sum')
-                f=1. if d==0 or c.dependency_input_units_per_output_work_unit==0 or potential[key]==0 else min(1.,stocks[str(d-1)]/(c.dependency_input_units_per_output_work_unit*potential[key]))
+                f=factors[key] if structure is not None else (1. if d==0 or c.dependency_input_units_per_output_work_unit==0 or potential[key]==0 else min(1.,stocks[str(d-1)]/(c.dependency_input_units_per_output_work_unit*potential[key])))
                 factors[key]=f;_close(task['dependency_factors'][key],f,'dependency fraction')
                 _close(task['produced_by_department'][key],by_department[key],'department actual output')
                 if by_department[key]>potential[key]*f+1e-8:raise ValueError('organization output exceeds dependencies')
-                used[key]=by_department[str(d+1)]*c.dependency_input_units_per_output_work_unit if d+1<c.department_count else 0.
+                if structure is None:used[key]=by_department[str(d+1)]*c.dependency_input_units_per_output_work_unit if d+1<c.department_count else 0.
                 _close(task['consumed_input_units'][key],used[key],'dependency input consumed')
                 if used[key]>stocks[key]+1e-8:raise ValueError('organization consumed uncreated/same-day inputs')
             for p in work:
-                i=p['person'];o=p['organization'];ready=o['potential_before_dependencies']*factors[str(i%c.department_count)]
+                i=p['person'];o=p['organization'];ready=o['potential_before_dependencies']*factors[str(department(i))]
                 if config.enterprise_operations is not None:
                     _close(p['enterprise_unconstrained_potential'],ready,'task constrained enterprise potential')
                 else:_close(p['produced_research_only'],ready,'task constrained output')
@@ -201,7 +326,7 @@ def verify_organization_accounts(config,state,database):
                     claimant=people_by_token.get(token)
                 if claimant is None:raise ValueError('organization verification event lacks retained claimant')
                 candidates=links['verification_candidates'].get(str(claimant))
-                if candidates is None:candidates=[i for i in present if i!=claimant and i%c.department_count!=claimant%c.department_count]
+                if candidates is None:candidates=[i for i in present if i!=claimant and department(i)!=department(claimant)]
                 reviewer=next((i for i in candidates if i in present and remaining.get(str(i),0)>0),None)
                 if kind=='organization_verification_deferred':
                     if reviewer is not None or type(p['person']) is not int or p['person']!=claimant or type(p['ready']) is not int or p['ready']!=day+1:raise ValueError('organization deferral with available reviewer')
@@ -222,7 +347,12 @@ def verify_organization_accounts(config,state,database):
                 key=str(g);decay=2**(-1/l.routine_adjustment_half_life_days)
                 routine[key]=routine[key]*decay if adoptions[key] is not None else min(1.,routine[key]+(1-routine[key])*(1-decay))
             for g,amount in v['routine'].items():_close(amount,routine[str(g)],'organizational routine history')
-            durable={'schema_version':1,'completed_days':day+1,'stocks':dict(stocks),'generated':dict(generated),'consumed':dict(consumed),'last_plan':plan,'review_remaining':remaining}
+            durable={'schema_version':base_c.schema_version,'completed_days':day+1,'stocks':dict(stocks),'generated':dict(generated),'consumed':dict(consumed),'last_plan':plan,'review_remaining':remaining}
+            if structure is not None:
+                installed=v['enterprise_growth_state']['departments']
+                if (type(installed) is not int or structure['observed_installed_departments']!=installed):
+                    raise ValueError('completed installed departments lack their required task reorganization obligation')
+                durable['structure']=copy.deepcopy(structure)
             if canonical(v.get('organization_tasks_state'))!=canonical(durable):raise ValueError('organization day-end durable state differs from independent reconstruction')
             for key,expected in metrics.items():_close(v['metrics_cumulative'].get(key,0.),expected,key)
             last=durable;last_plan=plan;events=[];exit_sizes={};day+=1
@@ -230,7 +360,8 @@ def verify_organization_accounts(config,state,database):
             if len(events)!=config.n or active!=set(range(config.n)) or any(k!='entry' or p.get('initial') is not True or e!=f"initial:{p['person']}" for k,e,p in events):raise ValueError('organization initial checkpoint lacks exact complete initial entries')
             events=[]
         if events or day!=state['day']:raise ValueError('organization raw history is incomplete')
-        if day==0:last={'schema_version':1,'completed_days':0,'stocks':stocks,'generated':generated,'consumed':consumed,'last_plan':None,'review_remaining':{}}
+        if day==0:last={'schema_version':base_c.schema_version,'completed_days':0,'stocks':stocks,'generated':generated,'consumed':consumed,'last_plan':None,'review_remaining':{}}
+        if day==0 and structure is not None:last['structure']=copy.deepcopy(structure)
         for person in learn:
             _close(state['agents'][person]['learning'],learn[person],'final restored learning')
             _close(state['agents'][person]['fatigue'],fatigue[person],'final restored fatigue')

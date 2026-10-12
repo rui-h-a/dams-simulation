@@ -135,7 +135,7 @@ def references_from_snapshot(company,envelope):
         'people':{str(p['id']):f'{company}/person/{p["id"]}' for p in state['people']},
         'guilds':{str(g):f'{company}/guild/{g}' for g in state['guild_alias']},
         'sites':{str(s):f'{company}/site/{s}' for s in range(state['enterprise_growth_state']['sites'])},
-        'departments':{str(d):f'{company}/department/{d}' for d in range(state['config']['organization_tasks']['department_count'])},
+        'departments':{str(d):f'{company}/department/{d}' for d in range(state['organization_tasks_state'].get('structure',{}).get('department_count',state['config']['organization_tasks']['department_count']))},
         'ledger_event_scope':f'{company}/ledger','dependency_scope':f'{company}/department',
         'order_scope':f'{company}/order','shipment_scope':f'{company}/shipment'}
 
