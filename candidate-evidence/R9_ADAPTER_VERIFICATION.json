@@ -1,0 +1,60 @@
+{
+  "schema": "r9-complete-model-observable-adapter-verification-1",
+  "recorded_UTC": "2026-10-12T01:09:16.227792+00:00",
+  "status": "OBSERVABLE_PROVENANCE_AND_SCOPE_ADAPTER_ENGINEERING_PASS_NOT_EMPIRICAL_VALIDATION",
+  "base_r8_public_commit": "cae102c41af8eb1253f005011d700d25c3b75f2b",
+  "model_core_sha256_unchanged": "818bc44ea61e1c4a1fd982f1aedcc1134c3aacec9ff9912bbd111581289c05e8",
+  "source_files": [
+    {
+      "remote": "research_tools/enterprise_validation.py",
+      "local": "research_tools/enterprise_validation.py",
+      "bytes": 31129,
+      "sha256": "c62e1264571877533e3bad33e17ed99b0b34efd311970ff8417b2dcd605fb15e"
+    },
+    {
+      "remote": "tests/test_enterprise_prediction_adapter_r9.py",
+      "local": "tests/test_enterprise_prediction_adapter_r9.py",
+      "bytes": 16821,
+      "sha256": "40e7601c66e4dd4916a6853232e7c70b24382d10e602ec5949092769382fa99a"
+    }
+  ],
+  "actual_handoff_sha256": "3331bacf313c53c1c5550b09849951c26b1029d512230358590b3a8bb4d05ee2",
+  "clean_controls_each_round": 27,
+  "actual_rounds_passed": 2,
+  "Python_AST_syntax_files_passed": 260,
+  "unchanged_baseline_files": 295,
+  "unchanged_original_method_AST_functions": 16,
+  "Model_invocations": 0,
+  "empirical_target_access": false,
+  "provider_calls": 0,
+  "formal_worlds_added": 0,
+  "existing_completed_engineering_data_interoperability_receipt_sha256": "7df57fd2526126552af8ab9af5459ae92e6049d29bbf2fc87cfbf0b15b23c72b",
+  "actual_existing_data_projection_rows_checked": 4,
+  "binding_requires": [
+    "source",
+    "config",
+    "summary",
+    "gate receipt provenance",
+    "actual company seed/world",
+    "full calendar",
+    "explicit observation scope"
+  ],
+  "binding_does_not_authenticate_or_replace_full_raw_gate": true,
+  "explicit_observation_scopes": [
+    "single-enterprise",
+    "buyer-corporate-group final employee/cash stocks",
+    "two-firm-system whole-period flows under distinct names"
+  ],
+  "legacy_v2_ABI_preserved": true,
+  "unacquired_target_excluded_from_corporate_employees": true,
+  "seller_provider_accounts_not_extra_companies": true,
+  "internal_treasury_not_counted_as_revenue": true,
+  "preacquisition_target_flow_not_called_buyer_consolidated_flow": true,
+  "model_resource_units_not_real_currency": true,
+  "calibration_completed": false,
+  "historical_blindness_certified": false,
+  "cross_enterprise_holdout_completed": false,
+  "holdout_access_still_sealed_pending_independent_stewardship": true,
+  "existing_Amazon_only_aggregate_parser_not_extended_or_used": true,
+  "operational_test_command": "PYTHONPATH=.:tests PYTHONNOUSERSITE=1 python3 -B -m unittest -v test_enterprise_validation test_enterprise_prediction_adapter_r9"
+}

@@ -6,8 +6,8 @@ currently supports one aggregate; no enterprise-level empirical fit is claimed.
 Public targets exposed during development are retrospective diagnostics.
 """
 from __future__ import annotations
-from dataclasses import asdict
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass
+from datetime import date, datetime, timedelta, timezone
 import hashlib
 import itertools
 import json
@@ -20,6 +20,64 @@ from .enterprise_observations import DataLabel, validate_split, canonical, parse
 SHA = re.compile(r'[0-9a-f]{64}')
 ROLES = {'calibration':'fit', 'validation':'evaluate_frozen', 'diagnostic':'inspect',
          'training':'design', 'holdout_candidate':'evaluate_locked'}
+
+V2_MODEL = 'longitudinal-enterprise-causal-2'
+R7_MODEL = 'longitudinal-enterprise-integrated-7-networks-tasks-1'
+R8_MODEL = 'longitudinal-enterprise-joint-integration-8'
+OPERATING_COSTS = ('operating_resource_units', 'recruitment_resource_units',
+                   'migration_resource_units', 'infrastructure_setup_resource_units')
+
+
+@dataclass(frozen=True)
+class EntityPredictionBinding:
+    """Bindings supplied by a caller after its existing complete raw gate.
+
+    Summary/config digests cover canonical mappings, not raw file bytes. The
+    gate receipt pin references the caller's native evidence. This type does
+    not execute that validator, authenticate a receipt or certify its truth.
+    """
+    company: str
+    model_version: str
+    model_source_sha256: str
+    config_sha256: str
+    summary_sha256: str
+    gate_receipt_sha256: str
+    seed: int
+    world: int
+    expected_days: int
+    completed_days: int
+
+
+@dataclass(frozen=True)
+class CompletedPredictionBinding:
+    """Explicit complete-calendar and observation-scope provenance only.
+
+    This intentionally has no caller-controlled PASS flag. Valid bindings are
+    not independent raw verification, calibration or external validation.
+    The joint world seed is the buyer config seed; the independently evolving
+    target's seed/world/config remain separately bound in ``entities``.
+    """
+    model_version: str
+    observation_scope: str
+    model_source_sha256: str
+    config_sha256: str
+    summary_sha256: str
+    gate_receipt_sha256: str
+    world_seed: int
+    expected_days: int
+    entities: tuple[EntityPredictionBinding, ...]
+
+
+@dataclass(frozen=True)
+class ExtractedObservables:
+    values: dict
+    units: dict
+    observation_scope: str
+    complete_days: int
+    full_raw_validation_performed: bool = False
+    empirical_calibration_completed: bool = False
+    historical_blindness_certified: bool = False
+    cross_enterprise_holdout_completed: bool = False
 
 
 def require(ok, message):
@@ -116,23 +174,206 @@ def read_employee_target(raw_path, protocol, key, purpose, source_url, *, frozen
             'declared_exposure':label.exposure,'values':{name:parsed['value']},'parser_evidence':parsed}
 
 
-def checked_prediction(summary, *, parameters, world_seed, key, gate_receipt_sha256, config_sha256, model_source_sha256):
-    """Normalize real summary observables, retaining their independent-gate pins.
+def _sha(value):
+    return type(value) is str and SHA.fullmatch(value) is not None
 
-    Receipt SHA alone is provenance binding; caller must independently admit its
-    complete typed fullraw gate, source, seed and config before generating packet.
-    No hidden conversion of organizational model units to real currency is made.
+
+def _positive_int(value):
+    return type(value) is int and value > 0
+
+
+def _amount(value, name, *, nonnegative=True):
+    require(finite(value) and (not nonnegative or value >= 0), 'invalid model amount: '+name)
+    return value
+
+
+def _total(values):
+    try:
+        total=math.fsum(values)
+    except OverflowError:
+        raise ValueError('model amount sum overflows') from None
+    require(finite(total), 'nonfinite model amount total')
+    return total
+
+
+def _margin(revenue, cost):
+    if not revenue:return None
+    value=(revenue-cost)/revenue
+    require(finite(value), 'undefined or nonfinite operating margin')
+    return value
+
+
+def _single_values(summary):
+    require(type(summary) is dict and type(summary.get('enterprise_operating_state_final')) is dict,
+            'actual operating summary required')
+    people=summary.get('active_members_final')
+    require(type(people) is int and people >= 0, 'actual integer employee count required')
+    revenue=_amount(summary['enterprise_operating_state_final'].get('delivered_revenue'), 'delivered revenue')
+    cost=_total(_amount(summary.get(k,0.),k) for k in OPERATING_COSTS)
+    return {'reported_full_time_and_part_time_employees':people,
+            'operating_margin_model_units':_margin(revenue,cost),
+            'settled_revenue_model_resource_units':revenue}
+
+
+def _entity(summary, config, binding, source, horizon, company):
+    require(type(binding) is EntityPredictionBinding and binding.company==company,
+            'typed entity scope binding required')
+    require(all(_sha(getattr(binding,k)) for k in ('model_source_sha256','config_sha256',
+            'summary_sha256','gate_receipt_sha256')), 'entity provenance pins required')
+    require(type(config) is dict and type(summary) is dict, 'canonical actual entity mappings required')
+    require(binding.model_source_sha256==source and digest(config)==binding.config_sha256
+            and digest(summary)==binding.summary_sha256, 'entity source/config/summary drift')
+    require(binding.model_version in (V2_MODEL,R7_MODEL,R8_MODEL)
+            and summary.get('model_version')==binding.model_version, 'unsupported entity model version')
+    require(_positive_int(horizon) and type(config.get('days')) is int and config['days']==horizon
+            and _positive_int(binding.expected_days) and binding.expected_days==horizon
+            and _positive_int(binding.completed_days) and binding.completed_days==horizon
+            and type(summary.get('days_completed')) is int and summary['days_completed']==horizon,
+            'incomplete entity calendar')
+    require(type(config.get('seed')) is int and config['seed']>=0 and type(binding.seed) is int
+            and binding.seed==config['seed'] and type(config.get('world')) is int and config['world']>=0
+            and type(binding.world) is int and binding.world==config['world']
+            and type(summary.get('world')) is int and summary['world']==config['world'], 'entity seed/world drift')
+    # Native summaries do not currently expose seed. Bind the actual config and
+    # native caller's seed instead; reject a conflicting seed when one is present.
+    require('seed' not in summary or type(summary['seed']) is int and summary['seed']==config['seed'],
+            'summary seed differs from actual config')
+    require(_positive_int(config.get('n')) and type(summary.get('n')) is int
+            and summary['n']==config['n'], 'summary population differs from actual config')
+    longitudinal=config.get('longitudinal')
+    require(type(longitudinal) is dict, 'longitudinal calendar required')
+    try:
+        start=date.fromisoformat(longitudinal['calendar_start'])
+    except (KeyError,TypeError,ValueError):
+        raise ValueError('invalid actual Gregorian calendar') from None
+    require(summary.get('calendar_start')==start.isoformat()
+            and summary.get('calendar_end_exclusive')==(start+timedelta(days=horizon)).isoformat(),
+            'summary Gregorian calendar differs')
+    for field in ('closure_day','suspension_day'):
+        value=summary.get(field)
+        require(value is None or type(value) is int and 0<=value<horizon, 'invalid '+field)
+        if value is not None:require(summary.get('active_members_final')==0, 'closed/suspended firm must have zero active employees')
+    return _single_values(summary)
+
+
+def extract_supported_observables(summary, config, binding):
+    """Pure extraction after a separate native complete raw gate.
+
+    r7/v2 are single enterprises. r8 requires an explicit scope: the buyer's
+    final corporate-group employee/cash STOCKS, or the two-company full-period
+    SYSTEM flows under different names. Target pre-acquisition flows must not
+    silently become consolidated buyer revenue. Seller/provider are accounts,
+    never extra operating companies. Model resource units are never dollars.
     """
-    require(all(SHA.fullmatch(v or '') for v in (gate_receipt_sha256,config_sha256,model_source_sha256)),'complete gate/config pins required')
-    require(summary.get('model_version')=='longitudinal-enterprise-causal-2','wrong operating model summary')
-    ops=summary['enterprise_operating_state_final']
-    revenue=ops['delivered_revenue'];cost=math.fsum(summary.get(k,0.) for k in ('operating_resource_units','recruitment_resource_units','migration_resource_units','infrastructure_setup_resource_units'))
+    require(type(binding) is CompletedPredictionBinding, 'typed complete prediction binding required')
+    require(all(_sha(getattr(binding,k)) for k in ('model_source_sha256','config_sha256',
+            'summary_sha256','gate_receipt_sha256')), 'complete prediction provenance pins required')
+    require(type(summary) is dict and type(config) is dict
+            and digest(summary)==binding.summary_sha256 and digest(config)==binding.config_sha256,
+            'prediction summary/config drift')
+    require(_positive_int(binding.expected_days) and type(binding.world_seed) is int
+            and binding.world_seed>=0 and type(binding.entities) is tuple
+            and all(type(e) is EntityPredictionBinding for e in binding.entities), 'invalid complete prediction binding')
+    horizon=binding.expected_days;source=binding.model_source_sha256
+    if binding.model_version in (V2_MODEL,R7_MODEL):
+        require(binding.observation_scope=='single-enterprise' and len(binding.entities)==1,
+                'single enterprise scope must contain exactly one entity')
+        entity=binding.entities[0]
+        require(entity.model_version==binding.model_version and entity.seed==binding.world_seed,
+                'single prediction model/seed drift')
+        values=_entity(summary,config,entity,source,horizon,'single')
+        units={'reported_full_time_and_part_time_employees':'persons',
+               'operating_margin_model_units':'fraction','settled_revenue_model_resource_units':'model_resource_units'}
+    elif binding.model_version==R8_MODEL:
+        require(binding.observation_scope in ('buyer-corporate-group','two-firm-system'),
+                'explicit joint observation scope required')
+        require(set(config)=={'buyer','target','terms'} and type(config['terms']) is dict,
+                'native joint config/terms envelope required')
+        require(len(binding.entities)==2 and {e.company for e in binding.entities}=={'buyer','target'},
+                'exactly two unique operating-unit bindings required; seller is not a company')
+        require(summary.get('status')=='ACTUAL_TWO_EVOLVED_FIRM_HISTORY_ENGINEERING_COMPLETED'
+                and type(summary.get('day')) is int and summary['day']==horizon
+                and summary.get('source_sha256')==source, 'native complete joint result/source required')
+        terms=config['terms'];global_world=terms.get('global_world');offer_day=terms.get('offer_day')
+        require(type(global_world) is int and type(summary.get('initial_two_firm_global_world')) is int
+                and summary['initial_two_firm_global_world']==global_world
+                and type(offer_day) is int and 1<=offer_day<horizon, 'joint world/offer calendar differs')
+        firms=summary.get('firm_summaries');owners=summary.get('owners');mode=summary.get('integration_status')
+        require(type(firms) is dict and set(firms)=={'buyer','target'} and type(owners) is dict
+                and set(owners)=={'buyer','target'} and owners['buyer']=='buyer', 'joint physical-unit roster differs')
+        require(mode in ('declined','integrating','integrated','failed-owned')
+                and owners['target']==('seller' if mode=='declined' else 'buyer'), 'joint actual ownership differs')
+        by_company={e.company:e for e in binding.entities};parts={}
+        for company in ('buyer','target'):
+            require(by_company[company].model_version in (R7_MODEL,R8_MODEL), 'unsupported joint entity version')
+            parts[company]=_entity(firms[company],config[company],by_company[company],source,horizon,company)
+        require(config['buyer']['seed']==binding.world_seed, 'joint buyer world seed differs')
+        require(config['buyer']['longitudinal']==config['target']['longitudinal']
+                or (config['buyer']['longitudinal'].get('calendar_start')==config['target']['longitudinal'].get('calendar_start')
+                    and config['buyer']['longitudinal'].get('holidays',[])==config['target']['longitudinal'].get('holidays',[])),
+                'joint Gregorian calendars differ')
+        require(tuple(config['buyer'].get(k) for k in ('seed','world'))!=tuple(config['target'].get(k) for k in ('seed','world'))
+                or config['buyer']['longitudinal'].get('world_context')!=config['target']['longitudinal'].get('world_context'),
+                'joint target lacks its separate initial identity')
+        offer=summary.get('offer')
+        require(type(offer) is dict and offer.get('day')==offer_day
+                and offer.get('source_sha256')==source and offer.get('target_config_sha256')==digest(config['target'])
+                and offer.get('target_seed')==config['target']['seed'] and offer.get('target_world')==config['target']['world'],
+                'joint offer target provenance differs or offer not reached')
+        provider=_total(_amount(firms[c].get('joint_provider_resource_units',0.),'joint provider') for c in firms)
+        consideration=_total(_amount(firms[c].get('joint_consideration_resource_units',0.),'consideration') for c in firms)
+        treasury=_total(_amount(firms[c].get('joint_treasury_net_resource_units',0.),'internal treasury',nonnegative=False) for c in firms)
+        require(math.isclose(treasury,0.,rel_tol=0,abs_tol=1e-8)
+                and math.isclose(provider,_amount(summary.get('provider_account'),'provider account'),rel_tol=1e-11,abs_tol=1e-8)
+                and math.isclose(consideration,_amount(summary.get('seller_account'),'seller account'),rel_tol=1e-11,abs_tol=1e-8),
+                'joint provider/seller/internal accounts differ')
+        selected=('buyer','target') if owners['target']=='buyer' else ('buyer',)
+        if binding.observation_scope=='buyer-corporate-group':
+            values={'reported_full_time_and_part_time_employees':sum(parts[c]['reported_full_time_and_part_time_employees'] for c in selected),
+                    'corporate_cash_model_resource_units':_total(_amount(firms[c].get('cash_resource_units'),'corporate cash',nonnegative=False) for c in selected)}
+            units={'reported_full_time_and_part_time_employees':'persons','corporate_cash_model_resource_units':'model_resource_units'}
+        else:
+            revenue=_total(parts[c]['settled_revenue_model_resource_units'] for c in firms)
+            cost=_total(_amount(firms[c].get(k,0.),k) for c in firms for k in OPERATING_COSTS)
+            values={'two_firm_system_active_members':sum(parts[c]['reported_full_time_and_part_time_employees'] for c in firms),
+                    'two_firm_system_cash_model_resource_units':_total(_amount(firms[c].get('cash_resource_units'),'system cash',nonnegative=False) for c in firms),
+                    'two_firm_system_settled_revenue_model_resource_units':revenue,
+                    'two_firm_system_operating_margin_model_units':_margin(revenue,cost),
+                    'joint_transaction_and_integration_model_resource_units':provider,
+                    'joint_consideration_model_resource_units':consideration}
+            units={k:('persons' if k=='two_firm_system_active_members' else 'fraction' if k.endswith('margin_model_units') else 'model_resource_units') for k in values}
+    else:
+        raise ValueError('unsupported complete prediction model version')
+    return ExtractedObservables(values,units,binding.observation_scope,horizon)
+
+
+def checked_prediction(summary, *, parameters, world_seed, key, gate_receipt_sha256,
+                       config_sha256, model_source_sha256, config=None, binding=None):
+    """Normalize declared observables without claiming raw or empirical validity.
+
+    Legacy v2 pin-only callers retain their original values/packet ABI. r7/r8
+    callers must supply typed complete-calendar/config/scope bindings. Neither
+    path authenticates native gate receipts or replaces the separate raw gate.
+    """
+    require(all(_sha(v) for v in (gate_receipt_sha256,config_sha256,model_source_sha256)), 'complete gate/config pins required')
+    require(type(world_seed) is int and world_seed>=0 and type(key) is str and key,
+            'actual world seed and target key required')
+    require(type(parameters) is dict and all(type(k) is str and k and finite(v) for k,v in parameters.items()),
+            'finite declared parameter mapping required')
+    if binding is None:
+        require(config is None and summary.get('model_version')==V2_MODEL,
+                'new model predictions require typed complete binding and actual config')
+        require(_positive_int(summary.get('days_completed')), 'incomplete legacy summary')
+        values=_single_values(summary);complete_days=summary['days_completed']
+    else:
+        require(type(binding) is CompletedPredictionBinding
+                and (binding.gate_receipt_sha256,binding.config_sha256,binding.model_source_sha256,binding.world_seed)
+                ==(gate_receipt_sha256,config_sha256,model_source_sha256,world_seed), 'prediction caller/binding provenance differs')
+        extracted=extract_supported_observables(summary,config,binding)
+        values=extracted.values;complete_days=extracted.complete_days
     return {'parameters':parameters,'world_seed':world_seed,'key':key,'config_sha256':config_sha256,
         'gate_receipt_sha256':gate_receipt_sha256,'model_source_sha256':model_source_sha256,
-        'complete_days':summary['days_completed'],'values':{
-            'reported_full_time_and_part_time_employees':summary['active_members_final'],
-            'operating_margin_model_units':(revenue-cost)/revenue if revenue else None,
-            'settled_revenue_model_resource_units':revenue}}
+        'complete_days':complete_days,'values':values}
 
 
 def validate_predictions(protocol, predictions, *, role, parameter_points=None):
