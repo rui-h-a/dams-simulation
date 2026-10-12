@@ -1,0 +1,288 @@
+{
+  "schema": "dams-research-incremental-acceptance-v1",
+  "observed_UTC": "2026-10-12T02:16:31.398710+00:00",
+  "new_formal_confirmation_worlds_since_previous_dated_record": 2,
+  "N300": {
+    "accepted_pairs": 13,
+    "assigned_pairs": 70,
+    "excluded_pilot": 4,
+    "confirmation_complete": 9,
+    "confirmation_assigned": 66,
+    "confirmation_remaining": 57,
+    "next_world_observed": 52009,
+    "original_CLI_PID": 4563,
+    "live_status": "Original producer and child actually observed; dated evidence only"
+  },
+  "new_verified_pairs": [
+    {
+      "world": 52007,
+      "stage": "confirmation",
+      "status": "full-paired-raw-validated",
+      "paired_result_sha256": "7ac56bfaef082b69988e092361cd8ac84c1513afd05616256b4dc6c0f3f9c57c",
+      "arms": [
+        {
+          "case_id": "5afdd1849c8cf6c66b40689ecb1f12e2558e653e28362bb8189e6889fee56d50",
+          "arm": "startup-existing",
+          "regime": "hierarchy",
+          "initial_population": 300,
+          "final_population": 431,
+          "ever_people": 763,
+          "days_completed": 1917,
+          "calendar_start": "2020-01-01",
+          "calendar_end_exclusive": "2025-04-01",
+          "manifest_sha256": "48a15c53be8266ba7d0543d5035faa753d4f3e22640a21bef48fcf2fdb1e71ba",
+          "summary_sha256": "1a11118a4aec1ae1fb724cd8ca977ac6ce33350f74bb7d48e91bd07e5149ee5b",
+          "config_sha256": "e7d7d80f0945b81c4f9730f6701771f22567848c46d8a063bd618cc9a90a6381",
+          "final_state_semantic_sha256": "e1d15ec608f5d16ecc3ed05d8977d80a7c1d52576491a06d705c48203231ec1b",
+          "simulation_wall_seconds": 415.17819274999783,
+          "serialization_wall_seconds": 27.69180354202399,
+          "total_wall_seconds": 444.291510458017,
+          "CPU_seconds": 412.111426,
+          "peak_RSS_MiB": 57.65625,
+          "original_output_bytes": 470325668
+        },
+        {
+          "case_id": "5bc886f18afd8360c62a028d7cc315863868be88a26168e4e687f4a940b035ef",
+          "arm": "startup-founding",
+          "regime": "sublinear",
+          "initial_population": 300,
+          "final_population": 431,
+          "ever_people": 763,
+          "days_completed": 1917,
+          "calendar_start": "2020-01-01",
+          "calendar_end_exclusive": "2025-04-01",
+          "manifest_sha256": "00455f7152afb38334e0c5c3fa0203a216c8f184bb6e5a8ff0365ec31bcab03e",
+          "summary_sha256": "2da46ba790491c1accbfeade544e32bd699287cb40dcd4316130d3540be7ed78",
+          "config_sha256": "36b21ca50d030f62e7b9c482de62c7e04fe6ad809f910815c576cd4116ac44d3",
+          "final_state_semantic_sha256": "d6f9121137eccbe6587aea2ecacaf4149d4ba7e27cf1f9b526aaa7fddbe2dafb",
+          "simulation_wall_seconds": 409.44276116701076,
+          "serialization_wall_seconds": 27.39478779199999,
+          "total_wall_seconds": 437.29998358298326,
+          "CPU_seconds": 414.443738,
+          "peak_RSS_MiB": 62.453125,
+          "original_output_bytes": 509371566
+        }
+      ],
+      "effects": [
+        {
+          "effect": -0.00617844915549548,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 482109.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 482109.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52007
+        },
+        {
+          "effect": -0.00015003159333690577,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52007
+        },
+        {
+          "effect": -0.009335930140083937,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 482109.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 482109.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52007
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52007
+        }
+      ],
+      "observation_years": 5,
+      "calendar_days_including_settlement": 1917,
+      "growth_mode": "declared exogenous workforce targets; not organic growth evidence",
+      "external_validation": false
+    },
+    {
+      "world": 52008,
+      "stage": "confirmation",
+      "status": "full-paired-raw-validated",
+      "paired_result_sha256": "9f22b07d6dc4842a3320976ddd2f362e7c5434b5230d26c82b3086d97cd2944b",
+      "arms": [
+        {
+          "case_id": "5b81f32894f84d6030257b0f07c4dfc0d78069562c4b8531b1f2a7dede76fcca",
+          "arm": "startup-existing",
+          "regime": "hierarchy",
+          "initial_population": 300,
+          "final_population": 430,
+          "ever_people": 797,
+          "days_completed": 1917,
+          "calendar_start": "2020-01-01",
+          "calendar_end_exclusive": "2025-04-01",
+          "manifest_sha256": "09cde1e35b1541de1390cfc43f883640a1998e39505b5d0a17ba64248f560a04",
+          "summary_sha256": "22c27f1306581a9efbaf60eba8ffe4775604bb3e8f40dd6ba9cd16be22840770",
+          "config_sha256": "fb17ab29269d2460cb12c4cc0f5a7da30b99616e55c97dbbf0bc8e1213fc89bc",
+          "final_state_semantic_sha256": "794446bc0dab2a37a322499ca8a1ff9da6dd742a798ed114b66622e65b8ae65e",
+          "simulation_wall_seconds": 455.7575510000461,
+          "serialization_wall_seconds": 27.488810208975337,
+          "total_wall_seconds": 483.8404207089916,
+          "CPU_seconds": 414.597058,
+          "peak_RSS_MiB": 59.234375,
+          "original_output_bytes": 469084675
+        },
+        {
+          "case_id": "0cf5a17cc45a8c3439f497b58d1742ebb6736e9a5c1e03792cb5d505270de6d7",
+          "arm": "startup-founding",
+          "regime": "sublinear",
+          "initial_population": 300,
+          "final_population": 430,
+          "ever_people": 797,
+          "days_completed": 1917,
+          "calendar_start": "2020-01-01",
+          "calendar_end_exclusive": "2025-04-01",
+          "manifest_sha256": "09f9f424073dd4979278ebc744e9ecfc4ead64aeafb6c72938cd418fc4aa04ee",
+          "summary_sha256": "baaf487d58b288b31fe475661157bc080e3c49c6961df4dceee1eb40c73a3ef5",
+          "config_sha256": "e51638c04669ec1be29e1de53e09af3eda91aaa31bb5b9dc1d70909103e03dfd",
+          "final_state_semantic_sha256": "7f35cded37cc2b1d2bcd4f7eb527ae086f6c38e6071d4d334b211451f46a737e",
+          "simulation_wall_seconds": 455.5294277080102,
+          "serialization_wall_seconds": 27.609733249992132,
+          "total_wall_seconds": 483.63589429098647,
+          "CPU_seconds": 415.95054300000004,
+          "peak_RSS_MiB": 64.34375,
+          "original_output_bytes": 507461941
+        }
+      ],
+      "effects": [
+        {
+          "effect": -0.0012495236347316308,
+          "endpoint": "work_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479026.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.01,
+          "treatment_denominator": 479026.0,
+          "unit": "synthetic work units / actual present-member workday",
+          "world": 52008
+        },
+        {
+          "effect": -0.00015657738989549932,
+          "endpoint": "decision_regret_per_decision",
+          "initial_n": 300,
+          "reference_denominator": 5196.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.02,
+          "treatment_denominator": 5196.0,
+          "unit": "synthetic regret units / actual decisions",
+          "world": 52008
+        },
+        {
+          "effect": -0.004457282712525545,
+          "endpoint": "net_resource_gain_per_present_member_workday",
+          "initial_n": 300,
+          "reference_denominator": 479026.0,
+          "stage": "confirmation",
+          "target_halfwidth": 0.05,
+          "treatment_denominator": 479026.0,
+          "unit": "synthetic resource units / actual present-member workday",
+          "world": 52008
+        },
+        {
+          "effect": 0,
+          "endpoint": "closed_by_common_end",
+          "initial_n": 300,
+          "reference_denominator": 1,
+          "stage": "confirmation",
+          "target_halfwidth": 0.1,
+          "treatment_denominator": 1,
+          "unit": "probability, world-level indicator",
+          "world": 52008
+        }
+      ],
+      "observation_years": 5,
+      "calendar_days_including_settlement": 1917,
+      "growth_mode": "declared exogenous workforce targets; not organic growth evidence",
+      "external_validation": false
+    }
+  ],
+  "frozen_science": {
+    "commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+    "model_core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "entry_sha256": "a99521f9fe6121633e8e49c3df8d6a6b8b20dd6db10944d131de4160ad5b1f90",
+    "seed": 20261008,
+    "unchanged": true,
+    "completed_case_generation_restarted": false,
+    "raw_gate": "Existing CheckedLongitudinalCases checks both original arms before paired result and stdout acceptance"
+  },
+  "other_formal_counts": {
+    "N30": {
+      "excluded_pilot": 4,
+      "confirmation_complete": 66,
+      "confirmation_assigned": 66,
+      "four_precision_checks_passed": true
+    },
+    "N120": {
+      "excluded_pilot": 4,
+      "confirmation_complete": 66,
+      "confirmation_assigned": 66,
+      "four_precision_checks_passed": true
+    },
+    "original_N1000": {
+      "verified_cases": 35,
+      "assigned_pilot_cases": 144,
+      "complete_pilot_paired_worlds": 0,
+      "assigned_pilot_paired_worlds": 4
+    },
+    "N10000_complete_formal_worlds": 0,
+    "N50000_complete_formal_worlds": 0,
+    "conditional_N100000_complete_formal_worlds": 0
+  },
+  "storage": {
+    "workspace_free_bytes_observed": 105572659200,
+    "selected_N120_native_full13_offdevice_restore_passed": true,
+    "all_N120_140_case_independent_full13_backup_not_established": true,
+    "original_unique_scientific_data_deleted": false
+  },
+  "GCP": {
+    "previously_actually_used_N2_and_GCS": true,
+    "VM_count_at_last_authenticated_inventory": 0,
+    "PD_count_at_last_authenticated_inventory": 0,
+    "inventory_UTC": "2026-10-12T01:27:52.086245Z",
+    "large_formal_cloud_worlds_complete": 0,
+    "new_paid_resources_in_this_increment": 0,
+    "GCS_final_paid_closeout_pending": true
+  },
+  "budget": {
+    "Master_sha256": "e3e4ebcbbff2d9f52c4b1a128f086d151f65a213681fb9f40959e095bb46ef02",
+    "cumulative_cap_USD": "100",
+    "effective_total_holds_upper_USD": "90.05",
+    "unallocated_upper_USD": "9.95",
+    "supplier_invoice_reconciled": false,
+    "unallocated_upper_is_not_refund_or_new_job_admission": true
+  },
+  "candidate_boundaries": {
+    "R8_commit": "cae102c41af8eb1253f005011d700d25c3b75f2b",
+    "R9_adapter_commit": "5572f10ae9346c08d8e1af73f77803f35eb4cc8e",
+    "r8_r9_not_mixed_into_frozen_pairs": true,
+    "installed_infrastructure_departments_distinct_from_task_departments": true,
+    "endogenous_task_department_remapping_not_yet_validated": true,
+    "external_calibration_and_unseen_enterprise_validity_not_established": true
+  },
+  "PDF": {
+    "pages": 86,
+    "sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "status": "INTERIM; unchanged during this increment"
+  },
+  "root_actual_acceptance_receipt_sha256": "3e368fb72bd2572b0403d5020745deb2901b5c6d4341410475e070e709a96b1c",
+  "whole_goal_complete": false
+}
