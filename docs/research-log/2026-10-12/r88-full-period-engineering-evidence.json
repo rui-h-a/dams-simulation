@@ -1,0 +1,66 @@
+{
+  "schema": "dams-existing-R10-full-period-evidence-r88",
+  "runtime": {
+    "utc": "2026-10-12T09:52:59.335685+00:00",
+    "exit_code": 0,
+    "producer_reaped": true,
+    "owned_pgid_absent": true,
+    "wall_seconds": 266.34989554196363,
+    "CPU_user_seconds": 222.926349,
+    "CPU_system_seconds": 18.258011,
+    "RSS_bytes": 416858112,
+    "result_present": true,
+    "formal_worlds_added": 0,
+    "whole_goal_complete": false
+  },
+  "source_publication": {
+    "branch": "research/enterprise-task-structure-r10-20261012",
+    "parent": "58aea881bdc66b183a235e757bb864c943dce6fe",
+    "commit": "945a9ae2cd2e434adcb1ca21d701d7998dfbbb76",
+    "all33_model_source_blobs_verified": true,
+    "changed_source_files": [
+      "dams_sim/cli.py",
+      "dams_sim/joint_firm.py"
+    ]
+  },
+  "native_restore_and_independent_raw_subset_scope": {
+    "prehistory30": "same original journal hashes, same joint raw records; buyer only declared regime/adoption_mode plus associated config/state hashes differ; target CP30 exact bytes.",
+    "adoption": "DAMS buyer day30 actual cost4resource_units and training; new empty guild day60 adoption costs0; hierarchy never adopts.",
+    "endogenous_growth": "Both arms request30 from past margin and cash/order eligibility, paidsetup24; mature60; adverse60 margin cancels target; request90->ready104->actualhire118 after additional14d lead. Two new entrants cost2resource_units. Workforce_targets empty.",
+    "structure": "installed2 vs task3 are explicit separate layers; one paid24 investment includes10 department setup; reorg uses that subset10 rather than charging again, delays until funded work0.15h and local D0 split at119; old D1 unaffected, initial/generated/consumed tokens conserved; family0 inherited, not new technology stage.",
+    "networks_tasks": "All4 full1947 raw organization accountants independently reconstruct topology/time/stocks. Reporting depth peaks1, finalbuyer0; actual paid network, verification, quality and learning; no deep hierarchy claim.",
+    "M_and_A": "Actual second firm evolves58d with seed732/world94003, source same; snapshot/state/ledger binding preserved, including43 pending rows and cash654.0503439383209; owners move to buyer58, paid integration workdays58/61/62 -> integrated62; seller10/provider1.6 independently derived; autonomy retained, treasury transfers all0.",
+    "periods": "[0,30) shared history; [30,1857)1827 observationdays; [1857,1947)90 settlementdays, no new work events; buyer4/target2 at1857 and buyer2/target2 at1947 after tail negative-margin contraction/layoff.",
+    "resource_units": "Synthetic model resource units/hours/people, no currency conversion."
+  },
+  "whole_period_buyer_DAMS_minus_hierarchy": {
+    "cash_resource_units": -3075.011234325044,
+    "produced_work_units": -307.90062656534474,
+    "decision_regret_units": 260.88313880342014,
+    "revenue_resource_units": -3079.006265653352
+  },
+  "unverified_scope": [
+    "One conditional engineering pair, not formal worlds or inferential replication.",
+    "Calibration/OOS/external validity not completed.",
+    "No decline, failed-owned, centralized takeover, target funding transfer, or nonzero inherited debt realized in this execution.",
+    "Restoration equality uses existing Root native receipt; this independent review did not call Model or restore.",
+    "Raw organization arithmetic and scalar/terms reconciliation are independent subsets, not complete independent economic/model validation.",
+    "Target treasury/policy retain autonomy; target outcomes are identical across two buyer-policy arms.",
+    "Depth max1 here; does not validate deep or multinational enterprise networks.",
+    "End-observation buyer4+target2; tail-induced contraction gives end-settlement buyer2+target2, not inevitable growth or real company forecast."
+  ],
+  "population_boundary": {
+    "initial_unique_people_per_world": 4,
+    "end_observation_people": 6,
+    "end_settlement_people": 4,
+    "settlement_tail_contraction_not_real_company_forecast": true
+  },
+  "original_scheduler_timeout_correction": {
+    "world_timeout_seconds_is_cumulative_across_attempts": true,
+    "prior_two24hour_attempt_description_was_overconservative_and_inaccurate": true,
+    "prior_receipts_preserved": true,
+    "no_deadline_extension_or_ledger_rewrite": true
+  },
+  "formal_worlds_added": 0,
+  "whole_goal_complete": false
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "dams-actual-research-observation-r88",
+  "observed_utc": "2026-10-12T10:46:46.289558+00:00",
+  "N30": {
+    "pilot_excluded": 4,
+    "confirmation": 66,
+    "precision_gates_passed": 4
+  },
+  "N120": {
+    "pilot_excluded": 4,
+    "confirmation": 66,
+    "precision_gates_passed": 4
+  },
+  "N300": {
+    "accepted_pairs": 25,
+    "assigned_pairs": 70,
+    "confirmation_assigned": 66,
+    "confirmation_complete": 21,
+    "confirmation_remaining": 45,
+    "excluded_pilot": 4,
+    "independent_full_raw_verification_performed": false,
+    "last_event_sha256": "1e9d9c78e466a4d5adac586492dc738e953d0326e45374eca939345639413e7b",
+    "observed_utc": "2026-10-12T09:42:51.816313+00:00",
+    "operation_namespace_day": "2026-10-12",
+    "schema": "dams-current-n300-accepted-count-v1",
+    "whole_goal_complete": false,
+    "producer_status": "STOPPED_BEFORE_NEXT_MODEL_DISK_ADMISSION",
+    "terminal_utc": "2026-10-12T09:42:37.582290+00:00",
+    "next_world_id": 52021,
+    "completed_world_id": 52020,
+    "complete_calendar_days": 1917,
+    "initial_population": 300,
+    "free_bytes_observed": 102225694720,
+    "original_floor_GiB": 80,
+    "complete_case_reservation_GiB": 16,
+    "no_source_calendar_seed_or_output_reduction": true
+  },
+  "original_N1000": {
+    "accepted_cases": 35,
+    "assigned_cases": 144,
+    "complete_pilot_worlds": 0,
+    "assigned_pilot_worlds": 4
+  },
+  "formal_scope": {
+    "N10000_complete_worlds": 0,
+    "N50000_complete_worlds": 0,
+    "N100000_conditional_complete_worlds": 0,
+    "new_integrated_scientific_freeze_calibration_OOS_pending": true
+  },
+  "existing_integrated_R10": {
+    "source_sha256": "e92a655667cbdc3212077cc26984fae43bd72342e23d90e6d683815eda08ce68",
+    "profile_sha256": "49c7746e8faeb1c3107fadbaf687d4921384da43b2ce093e792b50b877bc4913",
+    "branch": "research/enterprise-task-structure-r10-20261012",
+    "actual_commit": "945a9ae2cd2e434adcb1ca21d701d7998dfbbb76",
+    "all33_model_remote_blobs_verified": true,
+    "actual_engineering_pair_complete": true,
+    "full_calendar_days": 1947,
+    "observation_days": 1827,
+    "pre_adoption_days": 30,
+    "settlement_days": 90,
+    "independent_mechanism_subset_review_pass": true,
+    "formal_worlds_added": 0,
+    "calibration_OOS": false
+  },
+  "GCP": {
+    "historical_N2_compute_used": true,
+    "retained_GCS_custody": true,
+    "latest_authenticated_census_utc": "2026-10-12T09:17:40.980618+00:00",
+    "instances": 0,
+    "disks": 0,
+    "pending_operations": 0,
+    "new_complete_formal_cloud_pairs": 0,
+    "regional_closeout_source_wiring_pass": true,
+    "actual_constructor_IAP_GCS_provider_whole_job_admission_pending": true
+  },
+  "PDF": {
+    "pages": 86,
+    "status": "INTERIM_UNCHANGED_THIS_STAGE",
+    "PR3": "DRAFT_PARALLEL_NOT_COMPUTATION_GATE"
+  },
+  "whole_goal_complete": false
+}
