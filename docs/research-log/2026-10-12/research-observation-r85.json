@@ -1,0 +1,116 @@
+{
+  "schema": "DAMS-dated-research-observation-r85",
+  "observed_utc": "2026-10-12T06:55:52.184628+00:00",
+  "dated_snapshot_not_permanent_liveness_claim": true,
+  "formal_results": {
+    "N30": {
+      "paired_total": 70,
+      "excluded_pilot": 4,
+      "confirmation": 66,
+      "predeclared_precision_gates_passed": 4,
+      "adverse_and_zero_results_preserved": true
+    },
+    "N120": {
+      "paired_total": 70,
+      "excluded_pilot": 4,
+      "confirmation": 66,
+      "predeclared_precision_gates_passed": 4
+    },
+    "N300": {
+      "accepted_pairs": 22,
+      "assigned_pairs": 70,
+      "confirmation_assigned": 66,
+      "confirmation_complete": 18,
+      "confirmation_remaining": 48,
+      "excluded_pilot": 4,
+      "independent_full_raw_verification_performed": false,
+      "last_event_sha256": "31c1700a3c7ff27c4e167b5a0a57baac6d6867ee2cfee2d94d67214ba3acdd70",
+      "observed_utc": "2026-10-12T06:00:05.333177+00:00",
+      "operation_namespace_day": "2026-10-12",
+      "schema": "dams-current-n300-accepted-count-v1",
+      "whole_goal_complete": false,
+      "initial_population": 300,
+      "calendar_days": 1917,
+      "population_growth": "frozen exogenous workforce-target scenario; not organic-growth evidence"
+    },
+    "original_N1000": {
+      "accepted_cases": 35,
+      "assigned_cases": 144,
+      "remaining_cases": 109,
+      "prefix_or_intermediate_cases": 28,
+      "complete_strategy_trajectories": 7,
+      "complete_paired_pilot_worlds": 0,
+      "assigned_pilot_worlds": 4,
+      "confirmation_worlds": 0
+    },
+    "integrated_N10000_N50000_and_conditional_N100000": {
+      "complete_formal_worlds": 0,
+      "full_integrated_scientific_version_frozen": false,
+      "empirical_calibration_and_unseen_enterprise_validation_passed": false
+    }
+  },
+  "actual_N300_execution": {
+    "capacity_guard_stop_utc": "2026-10-12T06:14:28.648810+00:00",
+    "checkpoint_retained": true,
+    "resume_utc": "2026-10-12T06:45:30.840697+00:00",
+    "current_entry_PID": 36631,
+    "process_snapshot_live": true,
+    "same_original_scientific_core_driver_entry_runtime_and_roster": true,
+    "completed_cases_not_restarted_as_new_worlds": true,
+    "root_entry_floor_GiB": 97,
+    "first_producer_reservation_GiB": 96,
+    "simulation_and_raw_validation_phase_not_inferred_from_PID_alone": true,
+    "new_paired_worlds_not_inferred_from_this_resume": true
+  },
+  "GCP": {
+    "UTC": "2026-10-12T06:48:44.908137+00:00",
+    "authenticated_readonly_commands": 3,
+    "VMs": 0,
+    "PDs": 0,
+    "operations": 31,
+    "pending_operations": 0,
+    "provider_mutations": 0,
+    "GCS_custody_not_removed": true,
+    "supplier_invoice_reconciled": false
+  },
+  "budget": {
+    "cumulative_authorization_USD": "100",
+    "retained_envelopes_and_holds_USD_upper": "68.80",
+    "unallocated_USD_upper": "31.20",
+    "cleanup_and_uncertainty_reserve_USD": "20",
+    "holds_are_not_invoice_totals_or_cash_balance": true,
+    "no_new_paid_compute_grant_or_resource_create_this_stage": true
+  },
+  "storage_retirement": {
+    "UTC": "2026-10-12T06:43:35.596025+00:00",
+    "issuer": "ROOT",
+    "status": "QUALIFIED191_CLOSED_DERIVED_REPRESENTATIONS_RETIRED",
+    "retired_files": 191,
+    "retired_logical_bytes_not_reclaim": 1923836200,
+    "original97GiB_entry_met": true,
+    "all_proofs_and_original481_post_guard_pass": true,
+    "original_canonical_vault_raw_science_or_incomplete_case_deleted": false,
+    "unknown_SHA63_files_retained": true,
+    "formal_worlds_added": 0,
+    "provider_Model_SQL_auth_calls": 0
+  },
+  "storage_actual": {
+    "research_volume_available_GiB": 97.68563079833984,
+    "actual_research_volume_statvfs_increase_bytes": 1932759040,
+    "backing_volume_delta_bytes": 0,
+    "same_physical_external_device_not_independent_backup": true
+  },
+  "public_operational_source": {
+    "commit": "55321193f277922e6d6045164a26aa8dccf26796",
+    "branch": "research/original-longitudinal-cloud-return-r5-20261012",
+    "base_scientific_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f",
+    "changed32_files_remote_full_EOF_SHA_readback": true,
+    "original_scientific_core_driver_run_and_runtime_unchanged": true,
+    "pure_N2_profile_controls": 14,
+    "two_Root_portable_stable_rounds": true,
+    "actual_machine_allocation_or_complete_case_not_implied": true
+  },
+  "specific_remaining_cloud_work": "Root complete-case capacity, full-lifecycle cost, genuine live assignment/return registry and preservation references must be issued consistently before create; not waiting for all N300 or all historical cold backups. No cloud formal pair has completed.",
+  "PDF": "Existing 86-page interim manuscript; PR3 remains draft; no new final PDF certification this stage.",
+  "whole_goal_complete": false
+}

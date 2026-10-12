@@ -1,0 +1,16 @@
+{
+  "schema": "DAMS-r85-actual-incremental-evidence-pointers",
+  "observed_utc": "2026-10-12T06:55:52.184628+00:00",
+  "public_operational_commit": "55321193f277922e6d6045164a26aa8dccf26796",
+  "new_formal_worlds_not_inferred_from_engineering": true,
+  "evidence_SHA256": {
+    "public_changed32_fullbyte": "e500123259c714ce1972e4886c23482a1cf20caced896b51b3ba383412958dba",
+    "Root_parent13_fullbyte_and_selected_absence": "4991f6d18de957ad04f8c685965a3da1c9ed8f070876dcc89137832c91d6c6c2",
+    "Root_qualified191_retirement": "2332ccadd2d57d28f1e76379bd4964afa2ef0f836857ee9923287cb472dec114",
+    "Root_qualified191_authority": "1ece90a9fd731d2833b8d6b9963e015a36dfb7f6c0e3bb8060dbdb8ce2186e0b",
+    "fresh_provider_readonly3": "942b3df29a6f43c5bfd449c6948ca1c7157c8708439c28dd4409ee44c4f8c5e0",
+    "Root_original_N300_CLI_resume": "6025de3e32b0d682e928a3828106e06423c2298ae62c329d2bd84e404e0e8d5d"
+  },
+  "not_supplier_bill_or_completed_cloud_pair": true,
+  "whole_goal_complete": false
+}
