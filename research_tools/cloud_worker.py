@@ -912,7 +912,7 @@ def root_block_interface(sys_dev_block=Path('/sys/dev/block'), root_device=None)
     """Resolve root's block device, partitions and all device-mapper slaves."""
     device = os.stat('/').st_dev if root_device is None else root_device
     key = str(os.major(device)) + ':' + str(os.minor(device))
-    visited, namespaces = set(), set()
+    visited, namespaces, scsi_disks, interfaces = set(), set(), set(), set()
 
     def resolve(node):
         try:
@@ -930,12 +930,26 @@ def root_block_interface(sys_dev_block=Path('/sys/dev/block'), root_device=None)
         namespace = next((name for name in names if re.fullmatch(r'nvme\d+n\d+', name)), None)
         if namespace and any(re.fullmatch(r'nvme\d+', name) for name in names):
             namespaces.add(namespace)
+            interfaces.add('NVME')
             return True
+        disk = next((part for part in (node, *node.parents) if re.fullmatch(r'sd[a-z]+', part.name)), None)
+        if disk is not None and disk.parent.name == 'block':
+            address, target, host = disk.parent.parent, disk.parent.parent.parent, disk.parent.parent.parent.parent
+            if (re.fullmatch(r'\d+:\d+:\d+:\d+', address.name)
+                    and target.name == 'target' + ':'.join(address.name.split(':')[:3])
+                    and host.name == 'host' + address.name.split(':')[0]):
+                scsi_disks.add(disk.name)
+                interfaces.add('SCSI')
+                return True
         return False
 
     verified = resolve(Path(sys_dev_block) / key)
-    return {'root_device': key, 'interface': 'NVME' if verified else 'unverified',
-            'nvme_namespaces': sorted(namespaces) if verified else []}
+    interface = next(iter(interfaces)) if verified and len(interfaces) == 1 else 'unverified'
+    result = {'root_device': key, 'interface': interface,
+              'nvme_namespaces': sorted(namespaces) if interface == 'NVME' else []}
+    if interface == 'SCSI':
+        result['scsi_disks'] = sorted(scsi_disks)
+    return result
 
 
 def verify_guest(runtime, measurements):
@@ -959,7 +973,9 @@ def verify_guest(runtime, measurements):
     if (not isinstance(expected, dict) or set(expected) != required or expected['architecture'] != 'x86_64'
             or type(expected['vcpus']) is not int or expected['vcpus'] <= 0):
         raise GuardError("frozen guest CPU/architecture expectations are incomplete")
-    if mode == 'STANDARD' and (machine not in ('m3-ultramem-32', 'm3-ultramem-64', 'm3-ultramem-128')
+    if mode == 'STANDARD' and (machine not in ('c4d-highmem-4', 'n2-highmem-2', 'n2-highmem-4',
+                                                               'm3-ultramem-32', 'm3-ultramem-64', 'm3-ultramem-128',
+                                                               'c4n-highcpu-192', 'c4n-highmem-192')
                                or expected['vcpus'] != int(machine.rsplit('-', 1)[-1])):
         raise GuardError("unsupported or inconsistent frozen Standard guest profile")
     if scheduling.get('automatic_restart') != 'FALSE' or scheduling.get('on_host_maintenance') != 'TERMINATE':
@@ -976,13 +992,20 @@ def verify_guest(runtime, measurements):
         minimum, maximum = Decimal(str(expected['memory_gib_min'])), Decimal(str(expected['memory_gib_max']))
     except (InvalidOperation, ValueError):
         raise GuardError("frozen memory range is invalid") from None
+    if machine in ('c4n-highcpu-192', 'c4n-highmem-192') or (mode == 'STANDARD' and machine in ('c4d-highmem-4', 'n2-highmem-2', 'n2-highmem-4')):
+        nominal = Decimal({'c4n-highcpu-192': 384, 'c4n-highmem-192': 1488,
+                           'c4d-highmem-4': 31, 'n2-highmem-2': 16, 'n2-highmem-4': 32}[machine])
+        if (mode != 'STANDARD' or not minimum.is_finite() or not maximum.is_finite()
+                or maximum != nominal or not 0 < minimum < maximum):
+            raise GuardError("frozen guest RAM differs from the explicit catalog shape or usable margin")
     memory = measurements.get('guest_memory_total_bytes')
     if (not minimum.is_finite() or not maximum.is_finite() or not 0 < minimum < maximum
             or type(memory) is not int or not minimum * 2**30 <= memory <= maximum * 2**30):
         raise GuardError("measured guest memory is outside the frozen usable range")
-    if (measurements.get('guest_boot_disk_metadata_interface') != 'NVME'
-            or measurements.get('guest_root_block', {}).get('interface') != 'NVME'):
-        raise GuardError("guest root block device is not verified as NVMe")
+    interface = 'SCSI' if machine in ('n2-highmem-2', 'n2-highmem-4') else 'NVME'
+    if (measurements.get('guest_boot_disk_metadata_interface') != interface
+            or measurements.get('guest_root_block', {}).get('interface') != interface):
+        raise GuardError("guest root block device differs from the frozen profile interface")
     return {**receipt, 'hardware_frozen_verified': True, 'expected_guest': expected,
             'guest_architecture': measurements['guest_architecture'], 'guest_cpu_count': measurements['guest_cpu_count'],
             'guest_cpu_affinity_count': len(affinity), 'guest_memory_total_bytes': memory,

@@ -1,0 +1,25 @@
+{
+  "batch_max_output_bytes": 206158430208,
+  "batch_max_output_files": 0,
+  "checkpoint_interval_days": 90,
+  "checkpoint_interval_seconds": 600.0,
+  "cooperative_stop_grace_seconds": 300.0,
+  "cpu_budget": 2,
+  "deadline_utc": "2026-10-15T08:54:46.960873+00:00",
+  "max_events": 1000000000,
+  "max_output_bytes": 50299409408,
+  "max_retries": 1,
+  "max_workers": 2,
+  "memory_budget_bytes": 4294967296,
+  "min_free_disk_bytes": 85899345920,
+  "per_world_output_files": 0,
+  "per_world_rss_bytes": 2147483648,
+  "provenance": {
+    "environment": "local-macos-formal-longitudinal",
+    "packaged_commit": "ed2279a9957dc6849f34a57014fc377b1339f46f"
+  },
+  "stop_cutoff_utc": "2026-10-15T08:59:46.960873+00:00",
+  "version": 1,
+  "workers_auto": false,
+  "world_timeout_seconds": 86400.0
+}
