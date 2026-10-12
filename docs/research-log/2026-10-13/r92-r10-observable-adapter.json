@@ -1,0 +1,50 @@
+{
+  "schema": "DAMS-R92-retained-R10-engineering-observable-adapter-1",
+  "branch": "research/enterprise-task-structure-r10-20261012",
+  "source_commit": "b6ac7a3e9e2be30dd7cbb48ac6c774b9c5275821",
+  "base_commit": "945a9ae2cd2e434adcb1ca21d701d7998dfbbb76",
+  "published_files": [
+    {
+      "path": "research_tools/enterprise_validation.py",
+      "blob_sha": "64e99ff8a6ffb5c24c055d8f1168130dd065467c",
+      "local_sha256": "a7e8812ccfc7443123bf0fb56d1085632f57c2b067ca28edb95bec68bc93b334",
+      "complete_utf8_readback_equal": true
+    },
+    {
+      "path": "tests/test_enterprise_prediction_adapter_r10.py",
+      "blob_sha": "6d8d7726a5a9f6f67cb133048488a560dbaff185",
+      "local_sha256": "0e49e35b30eca10a43d60e7c059045a0d2f577a12c2fb4215a6913fc27733c70",
+      "complete_utf8_readback_equal": true
+    },
+    {
+      "path": "docs/research-log/2026-10-13/r92-r10-observable-adapter.md",
+      "blob_sha": "727bc880d43d7f48b16944fd8e5d1153f0ca2272",
+      "local_sha256": "586b53a9d3cb15cc8345c34eb0db1258e3cda3a2810bdc792dcc8a2326b0bdab",
+      "complete_utf8_readback_equal": true
+    }
+  ],
+  "full_remote_UTF8_readback_equal": true,
+  "original_33_model_core_SHA256": "e92a655667cbdc3212077cc26984fae43bd72342e23d90e6d683815eda08ce68",
+  "model_core_changed": false,
+  "original_raw_and_profile_changed": false,
+  "retained_existing_full_calendar_engineering_pairs": 1,
+  "initial_people": 4,
+  "observation_end_people": 6,
+  "settlement_end_people": 4,
+  "calendar_days": 1947,
+  "controls": {
+    "R10_retained_input": 19,
+    "prior_R9_adapter": 14,
+    "validation_protocol": 13,
+    "independent_outer_binding_and_packet_integrity_attacks": 5,
+    "R10_integration_skips_without_explicit_private_input_ENV": 19
+  },
+  "checked_export": "packet.to_dict() or export_r10_engineering_packet; dataclasses.asdict alone is not an integrity gate",
+  "formal_worlds_added": 0,
+  "new_Model_or_SQL_or_provider_calls": 0,
+  "empirical_calibration_completed": false,
+  "cross_enterprise_holdout_completed": false,
+  "complete_independent_economic_validation": false,
+  "unfavourable_original_engineering_results_retained": true,
+  "formal_N10000_or_N50000_results_added": 0
+}
