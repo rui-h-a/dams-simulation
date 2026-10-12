@@ -71,13 +71,17 @@ def _verify_owned_checkpoint_bytes(path,item,identities):
 def run_world(p: Config, path: Path, *, checkpoint_day: int | None = None, restored: Model | None = None, restart_origin: dict | None = None,
               checkpoint_interval_days: int | None = None, checkpoint_interval_seconds: float = 60,
               stop_requested=None, metadata_extra: dict | None = None,page_options=None,native_owner_dir=None,known_latest_floor=None,journal_chunk_bytes=None,
-              joint_target_config: Config | None = None, joint_terms=None) -> dict:
-    if joint_target_config is not None or joint_terms is not None:
-        if joint_target_config is None or joint_terms is None or restored is not None or restart_origin is not None or page_options is not None or stop_requested is not None or metadata_extra is not None or native_owner_dir is not None or known_latest_floor is not None or checkpoint_interval_days is not None or journal_chunk_bytes not in (None,1048576):
+              joint_target_config: Config | None = None, joint_terms=None,joint_preservation_guard=None) -> dict:
+    if joint_target_config is not None or joint_terms is not None or joint_preservation_guard is not None:
+        if joint_target_config is None or joint_terms is None or restart_origin is not None or page_options is not None or metadata_extra is not None or native_owner_dir is not None or known_latest_floor is not None or journal_chunk_bytes not in (None,1048576):
             raise ValueError('joint two-firm entry requires exact complete pair inputs; unsupported runtime refused')
         from .joint_firm import run_joint_world
         return run_joint_world(p,joint_target_config,path,joint_terms,
-            checkpoint_days=(() if checkpoint_day is None else (checkpoint_day,)))
+            checkpoint_days=(() if checkpoint_day is None else (checkpoint_day,)),
+            checkpoint_interval_days=checkpoint_interval_days,
+            checkpoint_interval_seconds=checkpoint_interval_seconds,
+            stop_requested=stop_requested,restored=restored,
+            preservation_guard=joint_preservation_guard)
     wall, cpu = time.monotonic(), time.process_time()
     if journal_chunk_bytes is not None and p.longitudinal is None:
         raise ValueError('journal chunks require an opt-in longitudinal model')

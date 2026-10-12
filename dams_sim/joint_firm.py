@@ -513,20 +513,122 @@ class JointRun:
         return verify_cash_records(self.records)
 
 
-def run_joint_world(buyer_config,target_config,path,terms,*,checkpoint_days=()):
+def run_joint_world(buyer_config,target_config,path,terms,*,checkpoint_days=(),
+                    checkpoint_interval_days=None,checkpoint_interval_seconds=60,
+                    stop_requested=None,restored=None,preservation_guard=None):
     """Existing CLI integration API; no provider, private future target disclosure.
 
     Two entity histories constitute ONE two-firm engineering world. Repeated
     restore tails are recovery controls, never additional independent worlds.
+    A caller may supply a source-bound preservation guard that validates its
+    actual still-live save lease and returns None, or raises. It is not a JSON
+    authority flag. A raised cooperative guard cannot authorize later writes;
+    without a separate valid preservation lease it leaves prior files intact.
     """
-    run=JointRun(buyer_config,target_config,path,terms)
+    import time
+    if any(type(day) is not int or not 0<=day<=buyer_config.days for day in checkpoint_days):
+        raise ValueError('joint explicit checkpoint calendar invalid')
+    if checkpoint_interval_days is not None and (type(checkpoint_interval_days) is not int or not 1<=checkpoint_interval_days<=buyer_config.days):
+        raise ValueError('joint periodic checkpoint interval invalid')
+    if (type(checkpoint_interval_seconds) not in (int,float) or not math.isfinite(checkpoint_interval_seconds)
+            or checkpoint_interval_seconds<=0 or stop_requested is not None and not callable(stop_requested)
+            or preservation_guard is not None and not callable(preservation_guard)):
+        raise ValueError('joint checkpoint seconds/stop callback invalid')
+    periodic=checkpoint_interval_days is not None or checkpoint_interval_seconds!=60
+    controlled=periodic or stop_requested is not None or restored is not None or preservation_guard is not None
+    wall=time.monotonic()
+    if preservation_guard is not None and preservation_guard() is not None:
+        raise ValueError('joint preservation guard must validate a live lease or raise, not return authority flags')
+    if time.monotonic()-wall>min(buyer_config.max_wall_seconds,target_config.max_wall_seconds):
+        raise TimeoutError('joint deadline exceeded before constructor; no Model started')
+    if restored is None:
+        run=JointRun(buyer_config,target_config,path,terms)
+    else:
+        if (not isinstance(restored,JointRun) or restored.failed
+                or restored.root.absolute()!=Path(path).absolute()
+                or restored.source!=source_hash() or restored._terms_sha!=digest(canonical(asdict(terms)))
+                or set(restored._all())!={'buyer','target'}
+                or any(canonical(m.config.to_dict())!=canonical(c.to_dict()) for m,c in zip((restored._all()['buyer'],restored._all()['target']),
+                                                 (buyer_config,target_config)))
+                or any(m.day!=restored.day or m.failed_day for m in restored._all().values())):
+            raise ValueError('joint restored runtime source/config/calendar/root differs')
+        run=restored
+        run.validate_joint_metadata()
+    last_checkpoint_day=run.day;last_checkpoint_time=wall
+    latest=None;writes_blocked=False;typed_stop_guard_failed=False
+    def compute_boundary():
+        if time.monotonic()-wall>min(buyer_config.max_wall_seconds,target_config.max_wall_seconds):
+            raise TimeoutError('joint whole-attempt deadline exceeded; completion refused')
+    def write_guard():
+        nonlocal writes_blocked
+        if writes_blocked:raise PermissionError('joint writes already refused by the save lease')
+        try:
+            if preservation_guard is None:compute_boundary()
+            elif preservation_guard() is not None:
+                raise ValueError('joint preservation guard must validate a live lease or raise, not return authority flags')
+        except BaseException:
+            writes_blocked=True
+            raise
+    def check_stop():
+        nonlocal typed_stop_guard_failed
+        if stop_requested is None:return
+        try:stopped=stop_requested()
+        except (InterruptedError,TimeoutError):
+            typed_stop_guard_failed=True
+            raise
+        if stopped:
+            checkpoint()
+            raise InterruptedError('joint interrupted at a synchronized completed-day boundary; checkpoint retained')
+    def checkpoint():
+        nonlocal latest,last_checkpoint_day,last_checkpoint_time
+        write_guard()
+        p=run.root/f'joint-day-{run.day:06d}.json'
+        if latest is not None and latest['day']==run.day:
+            if file_digest(p)!=latest['sha256']:
+                raise ValueError('joint owned same-day checkpoint bytes changed')
+            run.validate_joint_metadata()
+        else:
+            run.snapshot(p)
+            latest={'file':p.name,'day':run.day,'bytes':p.stat().st_size,'sha256':file_digest(p)}
+        write_guard()
+        last_checkpoint_day=run.day;last_checkpoint_time=time.monotonic()
+        return latest
+    def runtime(status,exit_code,error_type=None,*,pending=False):
+        value={'schema':'dams-joint-runtime-1','status':status,'exit_code':exit_code,
+            'days_completed':run.day,'horizon_days':run.horizon,'source_sha256':run.source,
+            'complete':status=='complete' and run.day==run.horizon,
+            'latest_checkpoint':latest,'total_wall_seconds':time.monotonic()-wall,
+            'firm_days':{name:m.day for name,m in run._all().items()},
+            'formal_worlds_added':0,'calibration_OOS':False}
+        if error_type is not None:value['error_type']=error_type
+        p=run.root/('joint-runtime.pending.json' if pending else 'joint-runtime.json')
+        write_guard();atomic_json(p,value)
+        if status=='complete':compute_boundary()
+        write_guard()
+        return p
     try:
+        if controlled:write_guard()
         atomic_json(run.root/'predeclared-scenario.json',{'source_sha256':run.source,'terms':asdict(terms),
             'buyer_config':buyer_config.to_dict(),'target_config':target_config.to_dict(),
             'engineering_only':True,'formal_worlds_added':0,'calibration_OOS':False})
-        for day in sorted(set((*checkpoint_days,run.horizon))):
-            run.run(day);run.snapshot(run.root/f'joint-day-{day:06d}.json')
-        run.validate_joint_metadata()
+        if not controlled:
+            # The disabled runtime path retains the original complete-run order.
+            for day in sorted(set((*checkpoint_days,run.horizon))):
+                compute_boundary();run.run(day);compute_boundary()
+                run.snapshot(run.root/f'joint-day-{day:06d}.json');compute_boundary()
+        else:
+            runtime('running',None)
+            while run.day<run.horizon:
+                check_stop();compute_boundary()
+                for m in run._all().values():m.check_resources()
+                run.step();compute_boundary()
+                if (run.day in checkpoint_days or run.day==run.horizon
+                        or periodic and
+                        (checkpoint_interval_days is not None and run.day-last_checkpoint_day>=checkpoint_interval_days or
+                         time.monotonic()-last_checkpoint_time>=checkpoint_interval_seconds)):
+                    checkpoint();compute_boundary();runtime('running',None)
+            check_stop();compute_boundary();checkpoint();compute_boundary()
+        run.validate_joint_metadata();compute_boundary()
         result={'status':'ACTUAL_TWO_EVOLVED_FIRM_HISTORY_ENGINEERING_COMPLETED',
             'initial_two_firm_global_world':terms.global_world,'corporate_operating_unit_acquisition':True,
             'day':run.day,'source_sha256':run.source,'owners':run.owners,'integration_status':run.status,
@@ -534,5 +636,36 @@ def run_joint_world(buyer_config,target_config,path,terms,*,checkpoint_days=()):
             'seller_account':run.seller_account,'provider_account':run.provider_account,
             'firm_summaries':{k:m.summary() for k,m in run._all().items()},
             'formal_worlds_added':0,'calibration_OOS':False}
-        atomic_json(run.root/'joint-result.json',result);return result
+        compute_boundary()
+        if controlled:write_guard()
+        # Serialize and fsync both potentially expensive complete documents
+        # under pending names. They are not accepted completion artifacts.
+        # Check the whole-attempt boundary after both writes before publishing
+        # either accepted name; an overrun retains the pending failure prefix.
+        pending_result=run.root/'joint-result.pending.json'
+        atomic_json(pending_result,result)
+        compute_boundary()
+        pending_runtime=runtime('complete',0,pending=True) if controlled else None
+        compute_boundary()
+        if controlled:write_guard()
+        pending_result.replace(run.root/'joint-result.json')
+        if pending_runtime is not None:pending_runtime.replace(run.root/'joint-runtime.json')
+        return result
+    except BaseException as error:
+        if controlled:
+            if isinstance(error,(InterruptedError,TimeoutError)) and not writes_blocked:
+                # Only the explicit still-valid save lease may preserve a new
+                # boundary after a compute/outer-guard refusal. Never infer a
+                # current writer right from a stale handoff or stop exception.
+                if preservation_guard is None:
+                    if typed_stop_guard_failed:writes_blocked=True
+                elif not run.failed and (latest is None or latest['day']!=run.day):
+                    checkpoint()
+            if not writes_blocked:
+                try:runtime('stopped' if isinstance(error,InterruptedError) else 'failed',1,type(error).__name__)
+                except (TimeoutError,PermissionError):
+                    # No late failure-sidecar write is entitled to outlive the
+                    # denied lease. The original exception and old files stay.
+                    error.add_note('joint failure metadata not written: save lease refused')
+        raise
     finally:run.close()
