@@ -1,0 +1,79 @@
+{
+  "budget": {
+    "actual_provider_invoice_reconciliation_pending": true,
+    "cleanup_and_uncertainty_in_total_USD": "20",
+    "cumulative_authorization_USD": "100",
+    "current_parent_upper_USD": "29.00",
+    "holds_are_not_actual_billed_spend": true,
+    "no_optimistic_refund": true,
+    "nonadditive_archive_child_in_parent_USD": "3.00",
+    "total_envelopes_and_holds_upper_USD": "98.84",
+    "unallocated_upper_USD": "1.16"
+  },
+  "gcp": {
+    "RAM_GiB": 16,
+    "actual_VM_acquired": true,
+    "actual_frozen_formal_model_checkpoint_observed": true,
+    "boot_PD_GiB": 550,
+    "four_prior_zone_stockouts_retained": true,
+    "frozen_core_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+    "full_raw_restore_or_cloud_scientific_acceptance_claim": false,
+    "machine_type": "n2-standard-4",
+    "native_doctor_and_joint_capacity_pass": true,
+    "source_commit": "7c6ee864987686a2b0315168e9dc2ae5481cf5f4",
+    "source_manifest_sha256": "1efd72627dd9080f495df9f1d8f2774bce860ffb425f3b4ea4ae144386dccb6b",
+    "vcpus": 4
+  },
+  "larger_current_targets": {
+    "N100000_conditional_full_formal_worlds": 0,
+    "N10000_full_formal_worlds": 0,
+    "N50000_full_formal_worlds": 0
+  },
+  "n120": {
+    "accepted_paired_worlds": 70,
+    "confirmation": 66,
+    "excluded_pilot": 4
+  },
+  "n30": {
+    "accepted_paired_worlds": 70,
+    "adverse_and_null_results_retained": true,
+    "confirmation": 66,
+    "excluded_pilot": 4
+  },
+  "n300": {
+    "accepted_paired_worlds": 25,
+    "cloud_accepted_paired_worlds": 0,
+    "cloud_full_calendar_days": 1917,
+    "cloud_guardian_stopped_pending": true,
+    "cloud_initial_population": 300,
+    "cloud_native_checkpoint_days": [
+      90,
+      180,
+      270,
+      360
+    ],
+    "cloud_terminal_present": false,
+    "cloud_world": 52021,
+    "confirmation": 21,
+    "confirmation_remaining": 45,
+    "excluded_pilot": 4,
+    "local_capacity_paused": true
+  },
+  "observed_utc": "2026-10-12T14:31:42.290951+00:00",
+  "original_n1000": {
+    "accepted_cases": 35,
+    "assigned_pilot_worlds": 4,
+    "complete_pilot_worlds": 0,
+    "complete_single_strategy_trajectories": 7,
+    "confirmation_worlds": 0,
+    "prefix_or_intermediate": 28,
+    "remaining_pilot_cases": 109
+  },
+  "paper": {
+    "pages": 86,
+    "sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "status": "INTERIM_UNCHANGED_NO_NEW_CLOUD_RESULT_INTEGRATED"
+  },
+  "schema": "DAMS-actual-research-observation-r90-1",
+  "whole_goal_complete": false
+}

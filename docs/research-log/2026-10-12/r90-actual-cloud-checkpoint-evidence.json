@@ -1,0 +1,98 @@
+{
+  "actual_poll_checkpoint_rows": [
+    {
+      "ack_present": false,
+      "ack_sha256": null,
+      "attempt": "attempt-000",
+      "case_id": "382d633b7a6c3c8632b716eb2dce5e6d5f2e766647384a3a7eb295b65f874db4",
+      "config_sha256": "20f669e6623b20f52aa90c13351723bf889954689d7a964f09ac672970f867a8",
+      "day": 90,
+      "generation": "84cd247b4e8578de8321aba327efa148ceb4d92b9d273d274bfb68908d4e1130",
+      "group_sha256": "1e1e5444e80038316dd09ad1dbfb06e370b390f31305915f1af219d7935d18ec",
+      "kind": "checkpoint",
+      "manifest_bytes": 4239,
+      "manifest_sha256": "683922a661a0ab1cb4c42040f533f494ebb6dbe951d1fa7cc519979c10302485",
+      "seal_bytes": 336,
+      "seal_sha256": "175ebb44e0561e0080dfc3386fc2a114639f870fbe5b5dd27d9d9517315516a9"
+    },
+    {
+      "ack_present": false,
+      "ack_sha256": null,
+      "attempt": "attempt-000",
+      "case_id": "382d633b7a6c3c8632b716eb2dce5e6d5f2e766647384a3a7eb295b65f874db4",
+      "config_sha256": "20f669e6623b20f52aa90c13351723bf889954689d7a964f09ac672970f867a8",
+      "day": 180,
+      "generation": "1ce6f765b9283645919613f1c863f2df6281194476c6aa601ed23467298e74ba",
+      "group_sha256": "745072546e2a271375febb6eddee5792a540064c6c171914368048bab6ae2a6b",
+      "kind": "checkpoint",
+      "manifest_bytes": 5196,
+      "manifest_sha256": "32ce4396b3f6172468574df54bf6de0adb2112451e5e61afc4db76426d31153e",
+      "seal_bytes": 336,
+      "seal_sha256": "d9d1fbc62757fb062bdcdffa316bc477d42bd02e2e1b5753211db868fdd85bfa"
+    },
+    {
+      "ack_present": false,
+      "ack_sha256": null,
+      "attempt": "attempt-000",
+      "case_id": "382d633b7a6c3c8632b716eb2dce5e6d5f2e766647384a3a7eb295b65f874db4",
+      "config_sha256": "20f669e6623b20f52aa90c13351723bf889954689d7a964f09ac672970f867a8",
+      "day": 270,
+      "generation": "f57c317347037da7d1e7b0161bce568426e38542ffc9ab0be6d84bd07d441f61",
+      "group_sha256": "bd24987d3b47e7f05eeebe06304acaa0e19f28f2ff827efb418ce16ffdab2e13",
+      "kind": "checkpoint",
+      "manifest_bytes": 5428,
+      "manifest_sha256": "15b989f47905698195fc4c827491d0bdb2574e9fa7b959615ca07a169a81f7de",
+      "seal_bytes": 337,
+      "seal_sha256": "1e649ee7512d08b542359e8bf729fbc9097f8560797a516f76d03f385acd8c57"
+    },
+    {
+      "ack_present": false,
+      "ack_sha256": null,
+      "attempt": "attempt-000",
+      "case_id": "382d633b7a6c3c8632b716eb2dce5e6d5f2e766647384a3a7eb295b65f874db4",
+      "config_sha256": "20f669e6623b20f52aa90c13351723bf889954689d7a964f09ac672970f867a8",
+      "day": 360,
+      "generation": "dda7b81dddb64d9fb97f289cf8514f9cd262752ac7533e900e0d4d37c337d928",
+      "group_sha256": "522ce83b1f78d97ef9434b7b5880e1602f0c4054c148562a8b26c47650ce9b40",
+      "kind": "checkpoint",
+      "manifest_bytes": 5661,
+      "manifest_sha256": "cfe860bb1a3abc0e9385601acdd94dd8f6cf68e25c9340074cfebf6a17367e34",
+      "seal_bytes": 337,
+      "seal_sha256": "6a1dc7f487d81c1aa6ddc4641ee793af17e4c40e0a857f6fdac972e8ce269756"
+    }
+  ],
+  "actual_poll_sha256": "4722307b246da6c4fbef94758b16399d79574be0fd58eb94f34d0e3e408fbfa1",
+  "full_offGCP_preservation_and_bill_closeout_pending": true,
+  "interpretation": {
+    "engineering_tests_not_formal_worlds": true,
+    "enterprise_R10_not_mixed_into_f9_samples": true,
+    "no_Amazon_reconstruction_or_external_validity_claim": true,
+    "population_growth_remains_exogenous_comparator": true,
+    "synthetic_f9_governance_research": true
+  },
+  "observed_utc": "2026-10-12T14:31:42.290951+00:00",
+  "root_control": {
+    "Root_recovery_helper_failures_retained": true,
+    "failed_startup_full_metadata_hashes_preserved": true,
+    "first_actual_worker_failed_before_Model_spawn": true,
+    "full_raw_checkpoint_gate_and_final_gate_still_required": true,
+    "guardian_and_scientific_accepted_counts_distinct": true,
+    "guest_original_run_sh_mode": "0600",
+    "initial_full_admission_retained": true,
+    "no_original_scientific_case_restarted": true,
+    "owner_execute_mode_corrected_to": "0700",
+    "recovery_reuses_already_admitted_runtime_with_all_native_case_and_node_cutoffs_unchanged": true,
+    "run_sh_source_bytes_unchanged": true,
+    "services_activation_initial_success_not_Model_success": true
+  },
+  "runtime_sha256": "420ababd99dcb88e12a8a27cf84e10d3d0a2a5594139764602166d0881bb404b",
+  "schema": "DAMS-r90-actual-runtime-evidence-1",
+  "scientific_pair_complete": false,
+  "spool_high_water": {
+    "history_sha256": "0c635a54c671ca900aabfb3c04f3ce38929dd63da545ddbf741c507eae36cf79",
+    "previous_sha256": "b3e3a15895b0dc6b4f0603e4a1e78f8738fd8840239ee8c4d8b6e36cd07d486c",
+    "reserved_bytes": 46363927,
+    "schema": "dams-compute-only-transfer-v1",
+    "sequence": 4
+  }
+}
