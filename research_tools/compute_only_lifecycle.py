@@ -27,12 +27,12 @@ MAX_IO=32*1024**2
 def finite(n,maxvalue):require(type(n)is int and 0<n<=maxvalue,'explicit lifecycle bound');return n
 
 class Live:
-    def __init__(self,entry,options,*,g=None,popen=subprocess.Popen,archive_backends=None):
+    def __init__(self,entry,options,*,g=None,popen=subprocess.Popen,archive_backends=None,regional_closure=None):
         self.entry=entry;self.c=entry.c;self.s=entry.stage;self.o=options;self.raw=blob(options);self.stack=ExitStack();self.popen=popen
         self.g=g;self.vm=None;self.disk=None;self.remote_context=None;self.runtime=None;self.closed=False;self.collector=None
         try:
             self.regional = options.get('schema') == REGIONAL_SCHEMA if isinstance(options,dict) else False
-            require(isinstance(options,dict) and set(options)==(FIELDS|{'workload_admission','regional_archive','capacity_plan'} if self.regional else FIELDS) and options['schema']in (SCHEMA,REGIONAL_SCHEMA) and options['phase']in (PHASES|{'regional-archive-start','regional-archive-status','regional-layout','regional-enroll','regional-capacity'} if self.regional else PHASES),'live lifecycle exact options')
+            require(isinstance(options,dict) and set(options)==(FIELDS|{'workload_admission','regional_archive','capacity_plan'} if self.regional else FIELDS) and options['schema']in (SCHEMA,REGIONAL_SCHEMA) and options['phase']in (PHASES|{'regional-archive-start','regional-archive-status','regional-terminal-start','regional-terminal-status','regional-layout','regional-enroll','regional-capacity'} if self.regional else PHASES),'live lifecycle exact options')
             self.workload = None
             if self.regional:
                 from research_tools.same_region_archive import root_admission
@@ -122,6 +122,26 @@ class Live:
             if options['phase']!='launch' and not archive:
                 self._load_provider()
                 if self.host_path is None:self.load_host_enrollment()
+            if self.regional and options['phase']!='launch' and regional_closure is not None:
+                from research_tools.same_region_archive import RootRegionalClosure
+                require(isinstance(regional_closure,RootRegionalClosure) and self.collector.archive is None,
+                        'regional Root metadata proof adapter differs')
+                self.load_runtime()
+                require(regional_closure.p['job']['runtime_sha256']==digest(blob(self.runtime))
+                    and regional_closure.p['job']['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk}))
+                    and regional_closure.e['source_manifest_sha256']==entry.manifest_sha
+                    and regional_closure.e['root_admission_sha256']==options['workload_admission']['sha256']
+                    and regional_closure.e['custody_epoch']==self.workload['custody_epoch']
+                    and regional_closure.e['deadline_utc']==self.e['termination_utc']
+                    and regional_closure.e['global_deadline_utc']==self.c['global_deadline_utc']
+                    and regional_closure.e['gcs_config']['bucket']==self.workload['bucket']
+                    and regional_closure.e['gcs_config']['prefix']==self.workload['prefix'],
+                        'regional Root enrolled actual provider/runtime/IAM differs')
+                self.collector.archive=regional_closure.attach(self.collector)
+                regional_closure.bind_live(self)
+            if self.regional and options['phase']in ('ack','closeout'):
+                require(getattr(self.collector.archive,'regional_root',False),
+                        'regional ACK/closeout requires Root proof adapter, no full-raw fallback')
             self.check()
         except BaseException:self.stack.close();raise
 
@@ -150,6 +170,7 @@ class Live:
             c['regional_workload_admission_sha256']=self.o['workload_admission']['sha256']
             c['regional_global_deadline_utc']=self.c['global_deadline_utc']
             if self.o['capacity_plan'] is not None:c['regional_capacity_plan_sha256']=self.o['capacity_plan']['sha256']
+            if getattr(self.collector.archive,'regional_root',False):c['regional_proof_nonce']=self.collector.archive.e['nonce']
         if self.regional and self.o['regional_archive'] is not None:
             c['regional_archive_bundle_sha256']=self.o['regional_archive']['sha256']
             bundle=parse(self.entry.reference(self.o['regional_archive']))
@@ -373,11 +394,21 @@ class Live:
         require(self.regional and self.o['capacity_plan'] is not None,'explicit Root joint capacity plan required')
         self.load_runtime();self._fresh_provider()
         raw=self.entry.reference(self.o['capacity_plan']);plan=parse(raw);bounds=plan['bounds']
-        require(bounds['scientific_raw_upper_bytes']>=self.runtime['runtime_limits']['batch_max_output_bytes']
+        raw_upper=self.runtime['runtime_limits']['batch_max_output_bytes']; recovery_upper=0
+        if self.runtime.get('preservation_profile',{}).get('schema')=='DAMS-frozen-selected-science-preservation-1':
+            from research_tools.frozen_science_cloud import selected_storage_bound
+            subset=selected_storage_bound(self.runtime.get('original_selected_case'),
+                                          self.runtime['preservation_profile'],self.runtime['runtime_limits'])
+            # Parent input is a distinct existing category, not an extra raw
+            # output case and not counted a second time in raw_upper.
+            raw_upper=self.runtime['preservation_profile']['raw_bytes']
+            recovery_upper=subset['parent_input_upper_bytes']
+        require(bounds['scientific_raw_upper_bytes']>=raw_upper
             and bounds['spool_upper_bytes']>=parse(self.entry.reference(self.o['transfer']))['max_spool_bytes']
             and bounds['collector_cache_upper_bytes']>=parse(self.entry.reference(self.o['transfer']))['max_transfer_bytes']
             and bounds['local_cas_upper_bytes']>=parse(self.entry.reference(self.o['transfer']))['max_transfer_bytes']
             and bounds['raw_lease_upper_bytes']>=self.runtime['runtime_limits']['max_output_bytes']
+            and bounds['recovery_input_upper_bytes']>=recovery_upper
             and bounds['safety_floor_bytes']>=self.runtime['runtime_limits']['min_free_disk_bytes'], 'capacity plan understates original frozen workspaces')
         result=parse(self.exchange('regional-capacity',raw))
         require(result['plan_sha256']==digest(raw) and result['source_manifest_sha256']==self.entry.manifest_sha
@@ -393,11 +424,32 @@ class Live:
         # Root config ref is an enrollment bundle, exact route bytes are inside.
         bundle=parse(self.entry.reference(self.o['regional_archive']))
         request={'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']}
-        return parse(self.exchange('regional-archive-start',blob(request)))
+        return parse(self.exchange('regional-archive-start',blob(request),bound=65536))
     def regional_archive_status(self):
         require(self.regional and self.o['regional_archive'] is not None,'explicit guest archive required')
         self.load_runtime();bundle=parse(self.entry.reference(self.o['regional_archive']))
-        return parse(self.exchange('regional-archive-status',blob({'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']})))
+        return parse(self.exchange('regional-archive-status',blob({'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']}),bound=256*1024))
+    def regional_terminal_start(self):
+        self.load_runtime();bundle=parse(self.entry.reference(self.o['regional_archive']))
+        require(getattr(self.collector.archive,'regional_root',False),'regional terminal needs Root proof enrollment')
+        return parse(self.exchange('regional-terminal-start',blob({'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']}),bound=65536))
+    def regional_terminal_status(self):
+        self.load_runtime();bundle=parse(self.entry.reference(self.o['regional_archive']))
+        return parse(self.exchange('regional-terminal-status',blob({'config_path':bundle['config_path'],'config_sha256':bundle['config_sha256']}),bound=256*1024))
+    def regional_proof_reader(self,generation,*,kind='generation'):
+        """Authenticated existing exchange; <=1MiB spans in original 8MiB ABI."""
+        self.load_runtime();require(getattr(self.collector.archive,'regional_root',False),'Root regional proof enrollment required')
+        meta=parse(self.exchange('regional-proof-layout',blob({'kind':kind,'generation':generation}),bound=65536))
+        require(meta['nonce']==self.collector.archive.e['nonce'] and meta['runtime_sha256']==digest(blob(self.runtime))
+            and meta['source_manifest_sha256']==self.entry.manifest_sha and type(meta['bytes'])is int
+            and 0<meta['bytes']<=MAX_IO and re.fullmatch('[0-9a-f]{64}',meta['sha256']),
+            'Root authenticated proof layout differs')
+        output=bytearray()
+        for offset in range(0,meta['bytes'],1024**2):
+            length=min(1024**2,meta['bytes']-offset)
+            raw=self.exchange('regional-proof-read',blob({'sha256':meta['sha256'],'bytes':meta['bytes'],'offset':offset,'length':length}),bound=length)
+            require(isinstance(raw,bytes) and len(raw)==length,'Root proof span differs');output.extend(raw)
+        raw=bytes(output);require(digest(raw)==meta['sha256'],'Root entire original proof metadata SHA differs');return raw
     def load_runtime(self):
         runtime_raw=self.entry.reference(self.o['runtime']);transfer_raw=self.entry.reference(self.o['transfer'])
         self.runtime=parse(runtime_raw);transfer=parse(transfer_raw)
@@ -405,8 +457,13 @@ class Live:
         from research_tools.compute_only_worker import validate_runtime,verify_identity
         validate_runtime(self.runtime)
         require(self.runtime.get('preservation_profile') == self.s.get('preservation_profile')
-                and self.runtime.get('small_enterprise_profile') == self.s.get('small_enterprise_profile'),
+                and self.runtime.get('small_enterprise_profile') == self.s.get('small_enterprise_profile')
+                and self.runtime.get('original_selected_case') == self.s.get('original_selected_case'),
                 'runtime preservation profile differs from the root-admitted stage')
+        if 'original_selected_case' in self.s:
+            require(self.runtime['original_selected_activation']['prior_evaluation_sha256']
+                    ==self.s['selected_handoff_evaluation']['sha256'],
+                    'actual activation loses immutable before-provider assessment')
         doctor=parse(read(self.events,self.s['id']+'-doctor.json')[0]);r=self.runtime
         require(r['source_commit']==self.c['source_commit']and r['source_manifest_sha256']==self.entry.manifest_sha and r['spec']==self.s['spec']and r['scale']==self.s['scale'],'runtime scientific source/selection')
         require(r['deadline_utc']==self.e['termination_utc']and r['provider_identity_sha256']==digest(blob({'vm':self.vm,'disk':self.disk}))and r['transfer_config_sha256']==digest(blob(transfer)),'runtime provider/transfer/fixed expiry')
@@ -459,6 +516,7 @@ class Live:
         return result
     def ack(self):
         self.load_runtime();g=self.o['ack_generation'];require(isinstance(g,str)and re.fullmatch('[0-9a-f]{64}',g),'exact ACK generation')
+        if getattr(self.collector.archive,'regional_root',False):self.collector.archive.ack_guard(g)
         raw=read(self.collector.state,g+'.ACK.json')[0];a=parse(raw)
         require(a['stage_id']==self.s['id']and a['source_sha256']==source_hash()and a['generation']==g,'accepted ACK differs')
         if self.collector.archive is not None:
@@ -475,6 +533,8 @@ class Live:
                 self.collector._guard_files(group.path/'cases'/m['case_id']/m['attempt'],retained['files'])
         return parse(self.exchange('ack',raw))
     def pull_terminal(self):
+        if self.regional:require(getattr(self.collector.archive,'regional_root',False),
+                'regional terminal requires Root proof adapter, no full-raw fallback')
         if self.collector.archive is not None:return self._pull_archive_terminal()
         self.load_runtime();roster_raw=self.exchange('terminal-roster');roster=parse(roster_raw)
         require(roster['source_sha256']==source_hash()and roster['runtime_sha256']==digest(blob(self.runtime))and roster['case_payloads_require_original_collector']is True,'terminal inventory binding')
@@ -584,7 +644,8 @@ class Live:
         from research_tools.compute_only_archive import terminal_case_tree
         noncase=[f for f in roster['files'] if not terminal_case_tree(f['path'])]
         require(all(f['bytes']<=MAX_IO for f in noncase),'archive terminal non-case metadata bound')
-        required=sum(f['bytes']for f in noncase)+len(noncase)*8192+len(roster_raw)+MAX_IO
+        index_margin=len(read(self.collector.state,'terminal-archive-index.json',MAX_IO)[0])+8192 if getattr(a,'regional_root',False) else MAX_IO
+        required=sum(f['bytes']for f in noncase)+len(noncase)*8192+len(roster_raw)+index_margin
         for root in self.terminal_copies:
             self.collector.codec.require_capacity(root.path,required,self.collector.config['min_free_bytes'])
         for f in noncase:
@@ -645,13 +706,23 @@ class Live:
         if matching:
             require(str(matching[0]['id'])==str(self.vm['id'])and all(matching[0].get('labels',{}).get(k)==v for k,v in cc.labels(self.c,self.s).items()),'cleanup instance replaced/foreign')
             if preservation_gate is not None:preservation_gate()
+            self._vm_delete_requested=True
             command(['gcloud','compute','instances','delete',name,'--project='+self.c['project'],'--zone='+zone,'--quiet'])
+        if preservation_gate is not None and getattr(self.collector.archive,'regional_root',False):
+            # Subsequent orphan-disk cleanup cannot read a deleted VM. Retain
+            # the already accepted native proofs, independently recheck GCS,
+            # and record the now single persistent copy before any disk delete.
+            rows=command(['gcloud','compute','instances','list','--project='+self.c['project'],'--format=json'])
+            require(not any(v.get('name')==name and v.get('zone','').rsplit('/',1)[-1]==zone for v in rows),
+                    'regional custody transition lacks provider VM absence')
+            self.collector.archive.mark_vm_absent()
         disks=command(['gcloud','compute','disks','list','--project='+self.c['project'],'--format=json'])
         boot=self.vm['disks'][0]['source'].rsplit('/',1)[-1]
         for disk in disks:
             if disk.get('name')!=boot or disk.get('zone','').rsplit('/',1)[-1]!=zone:continue
             require(self.disk is not None and str(disk['id'])==str(self.disk['id'])and not disk.get('users'),'boot disk identity/users unverified')
             if preservation_gate is not None:preservation_gate()
+            self._disk_delete_requested=True
             command(['gcloud','compute','disks','delete',boot,'--project='+self.c['project'],'--zone='+zone,'--quiet'])
         rows=command(['gcloud','compute','instances','list','--project='+self.c['project'],'--format=json'])
         disks=command(['gcloud','compute','disks','list','--project='+self.c['project'],'--format=json'])
@@ -824,7 +895,9 @@ class Live:
             absence=self.delete(preservation_gate=guard)
             return {'terminal':preserved,'census':census,'cleanup':absence,'science_complete':False}
         except BaseException:
-            self.ledger.event(self.s['id'],state='uncertain',failure='normal closeout refused; preservation unverified, no active delete requested, absolute expiry unchanged',science_verified=False)
+            self.ledger.event(self.s['id'],state='uncertain',failure='normal closeout refused or cleanup unresolved; holds retained, absolute expiry unchanged',
+                vm_delete_requested=getattr(self,'_vm_delete_requested',False),
+                disk_delete_requested=getattr(self,'_disk_delete_requested',False),science_verified=False)
             raise
     def run(self):return getattr(self,self.o['phase'].replace('-','_'))()
     def close(self):
@@ -832,8 +905,8 @@ class Live:
     def __enter__(self):return self
     def __exit__(self,*args):self.close()
 
-def execute(entry,options,*,archive_backends=None):
+def execute(entry,options,*,archive_backends=None,regional_closure=None):
     try:
-        with Live(entry,options,archive_backends=archive_backends)as live:return live.run()
+        with Live(entry,options,archive_backends=archive_backends,regional_closure=regional_closure)as live:return live.run()
     except RuntimeError as error:
         raise ValueError('compute lifecycle refused:'+type(error).__name__) from None

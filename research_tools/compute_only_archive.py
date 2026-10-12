@@ -729,6 +729,19 @@ class ArchiveClosure:
                     raw=self.c.codec.decode_chunk(self.fetch(backend,'objects/'+part['encoded_sha256']+'.z',part['encoded_bytes'],part['encoded_sha256']),part)
                     h.update(raw);size+=len(raw)
                 require(size==file['bytes'] and h.hexdigest()==file['sha256'],'archive terminal full decode differs')
+            # Original full-decode observation, not a caller-provided PASS flag.
+            terminal_raw=read(self.c.state,'regional-producer-terminal.json')[0] if getattr(self,'regional_terminal_export',False) else None
+            if terminal_raw is not None:
+                receipt={'schema':'dams-compute-terminal-archive-restoration-v1',
+                    'profile_sha256':self.profile_sha,'job_sha256':self.job_sha,'backup_binding':backend.binding,
+                    'roster_sha256':digest(rr),'index_sha256':digest(ir),
+                    'files':[{'path':f['path'],'bytes':f['bytes'],'sha256':f['sha256']}for f in index['files']],
+                    'verification':'fresh-full-terminal-decode','source_sha256':self.p['job']['source_sha256'],
+                    'runtime_sha256':self.p['job']['runtime_sha256'],'producer_terminal_sha256':digest(terminal_raw)}
+                name=backend.binding['backup_id']+'.terminal.receipt.json';raw=blob(receipt)
+                try:old=read(self.c.state,name)[0]
+                except FileNotFoundError:self.c.state.write_new(name,raw)
+                else:require(old==raw,'regional terminal full-restoration receipt changed')
         self.c.check();return {'storage_engineering_version':PROFILE_SCHEMA,'roster_sha256':digest(rr),
             'archive_index_sha256':digest(ir),'all_terminal_bytes_full_decode_verified':True,
             'two_independently_restorable_backups':True,'external_persistence':self.p['mode']=='external-persistent',

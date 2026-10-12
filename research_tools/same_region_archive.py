@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import re
 import stat
+import threading
 import time
 from urllib.parse import quote
 
@@ -496,8 +497,483 @@ class ProofReuse:
         closure.c.check(); return copies
 
 
+ROOT_PROOF_METADATA_SCHEMA = 'dams-same-region-root-proof-metadata-v1'
+
+
+def generation_proof_metadata(closure, generation, *, context, route_sha256,
+        custody_epoch, root_admission_sha256, producer_terminal_sha256,
+        collector_head, meter_head, auth_head, max_bytes=16*1024**2):
+    """Export original immutable proof bytes after the original guest ACK guard.
+
+    Metadata transport only. This does not admit Root ACK, terminal preservation,
+    DELETE, an off-GCP copy, or a new restoration. Both original ACK guards still
+    execute with the existing native full-gate/custody policy.
+    """
+    import base64
+    require(type(max_bytes) is int and 0 < max_bytes <= 32*1024**2,
+            'regional proof metadata export bound differs')
+    for value in (generation, route_sha256, custody_epoch, root_admission_sha256,
+                  producer_terminal_sha256):
+        require(isinstance(value, str) and SHA.fullmatch(value), 'regional proof pin differs')
+    manifest, ack_raw = closure.ack_guard(generation)
+    context_fields = {'stage_id', 'source_sha256', 'runtime_sha256',
+                      'provider_identity_sha256', 'source_manifest_sha256', 'deadline_utc'}
+    require(all(k in context for k in context_fields)
+            and all(k not in context or context[k] == v for k, v in closure.p['job'].items()),
+            'regional proof original context differs')
+    documents = {'profile.json': closure.profile_raw, 'ACK.json': ack_raw}
+    with ExitStack() as stack:
+        group=Directory(closure.groups.path/generation);stack.callback(group.close)
+        names = ['manifest.json', 'seal.json', 'scientific-gate.json', 'index.json',
+                 'binding.json', 'full-restoration-reuse.json']
+        names += [b.binding['backup_id']+'.receipt.json' for b in closure.backends]
+        require(len(names) == len(set(names)) and len(closure.backends) == 2,
+                'regional proof requires two exact receipt documents')
+        for name in names:
+            documents[name] = read(group, name, max_bytes)[0]
+        require(sum(len(raw) for raw in documents.values()) <= max_bytes,
+                'regional proof metadata original byte budget exceeded')
+        mr = documents['manifest.json']; sr = documents['seal.json']
+        gr = documents['scientific-gate.json']; ir = documents['index.json']
+        reuse = parse(documents['full-restoration-reuse.json'])
+        policy = closure.proof_reuse
+        require(isinstance(policy, ProofReuse)
+                and policy.route_sha == route_sha256 and policy.epoch == custody_epoch,
+                'regional proof original reuse policy differs')
+        expected_reuse = policy._binding(closure, mr, sr, gr, ir)
+        require(all(reuse.get(k) == v for k, v in expected_reuse.items()),
+                'regional proof reuse bytes differ')
+        require(parse(mr) == manifest, 'regional proof ACK/manifest differs')
+        # Export cannot race an immutable receipt/ACK replacement. The existing
+        # native guard rechecks both backend contents/custody, not envelope flags.
+        current, current_ack = closure.ack_guard(generation)
+        require(current == manifest and current_ack == ack_raw,
+                'regional proof ACK changed during export')
+        for name in names:
+            require(read(group, name, max_bytes)[0] == documents[name],
+                    'regional proof immutable document changed during export')
+        # Custody guards can consume retained meter/auth attempts. Capture the
+        # final floors after them, not the pre-export values.
+        heads = {k: value() if callable(value) else value for k, value in
+                 [('collector', collector_head), ('meter', meter_head), ('auth', auth_head)]}
+        envelope = {'schema': ROOT_PROOF_METADATA_SCHEMA, 'generation': generation,
+            'context': {**closure.p['job'], **{k: context[k] for k in sorted(context_fields)},
+                **({'root_proof_nonce':context['regional_proof_nonce']} if 'regional_proof_nonce' in context else {})},
+            'route_sha256': route_sha256, 'custody_epoch': custody_epoch,
+            'root_admission_sha256': root_admission_sha256,
+            'producer_terminal_sha256': producer_terminal_sha256, 'heads': heads,
+            'documents': {n: {'bytes': len(data), 'sha256': digest(data),
+                'base64': base64.b64encode(data).decode('ascii')} for n, data in documents.items()}}
+        raw = blob(envelope)
+        require(len(raw) <= max_bytes, 'regional proof encoded metadata budget exceeded')
+    return raw
+
+
+def root_proof_metadata_bindings(bundle_raw, expected, *, max_bytes=16*1024**2):
+    """Verify exact Root-pinned metadata bytes/cross-links; never authorize ACK.
+
+    The caller must retain the independently established expected bytes, heads
+    and context. Fresh Root GCS custody probes, terminal/full-roster proof and
+    durable per-generation admission are deliberately NOT claimed here.
+    """
+    import base64
+    require(isinstance(bundle_raw, bytes) and type(max_bytes) is int
+            and 0 < max_bytes <= 32*1024**2 and len(bundle_raw) <= max_bytes,
+            'Root regional proof metadata bound differs')
+    bundle = parse(bundle_raw)
+    fields = {'schema', 'generation', 'context', 'route_sha256', 'custody_epoch',
+              'root_admission_sha256', 'producer_terminal_sha256', 'heads', 'documents'}
+    require(isinstance(bundle, dict) and set(bundle) == fields
+            and bundle['schema'] == ROOT_PROOF_METADATA_SCHEMA
+            and isinstance(expected, dict) and set(expected) == ((fields-{'schema', 'documents'}) | {'document_sha256'}),
+            'Root regional proof exact contract differs')
+    for key in fields-{'schema', 'documents'}:
+        require(bundle[key] == expected[key], 'Root regional proof expected pin differs')
+    hashes = expected['document_sha256']; encoded = bundle['documents']
+    require(isinstance(hashes, dict) and isinstance(encoded, dict)
+            and set(hashes) == set(encoded), 'Root regional proof document roster differs')
+    documents = {}
+    for name, item in encoded.items():
+        require(isinstance(name, str) and '/' not in name and '\\' not in name
+                and isinstance(item, dict) and set(item) == {'bytes', 'sha256', 'base64'}
+                and type(item['bytes']) is int and item['bytes'] >= 0
+                and isinstance(item['base64'], str), 'Root regional proof document shape differs')
+        data = base64.b64decode(item['base64'], validate=True)
+        require(len(data) == item['bytes'] and digest(data) == item['sha256'] == hashes[name],
+                'Root regional proof original document bytes differ')
+        documents[name] = parse(data)
+    required = {'profile.json', 'ACK.json', 'manifest.json', 'seal.json',
+                'scientific-gate.json', 'index.json', 'binding.json', 'full-restoration-reuse.json'}
+    require(required <= set(documents), 'Root regional proof necessary documents missing')
+    profile = documents['profile.json']; ack = documents['ACK.json']
+    m = documents['manifest.json']; seal = documents['seal.json']
+    gate = documents['scientific-gate.json']; index = documents['index.json']
+    reuse = documents['full-restoration-reuse.json']; binding = documents['binding.json']
+    from research_tools.compute_only_archive import PROFILE_SCHEMA, GATE_SCHEMA, INDEX_SCHEMA, RECEIPT_SCHEMA
+    from dams_sim.transfer_spool import SCHEMA as ACK_SCHEMA
+    require(profile.get('schema') == PROFILE_SCHEMA and profile.get('mode') == 'external-persistent'
+            and isinstance(profile.get('job'), dict)
+            and all(bundle['context'].get(k) == v for k, v in profile['job'].items()),
+            'Root regional proof archive job differs')
+    job_sha = digest(canonical(profile['job'])); generation = bundle['generation']
+    require(m.get('generation') == seal.get('generation') == ack.get('generation')
+            == gate.get('generation') == index.get('generation') == generation
+            and seal.get('manifest_sha256') == ack.get('manifest_sha256')
+            == index.get('manifest_sha256') == hashes['manifest.json']
+            and seal.get('manifest_bytes') == encoded['manifest.json']['bytes']
+            and m.get('group_sha256') == seal.get('group_sha256') == ack.get('group_sha256')
+            == index.get('group_sha256'), 'Root regional proof sealed/ACK group differs')
+    require(ack.get('schema') == ACK_SCHEMA
+            and all(ack.get(k) == m.get(k) == bundle['context'].get(k) for k in ('stage_id', 'source_sha256'))
+            and gate.get('schema') == GATE_SCHEMA and index.get('schema') == INDEX_SCHEMA
+            and gate.get('profile_sha256') == index.get('profile_sha256') == hashes['profile.json']
+            and gate.get('job_sha256') == index.get('job_sha256') == job_sha
+            and index.get('seal_sha256') == hashes['seal.json']
+            and index.get('scientific_gate_sha256') == binding.get('scientific_gate_sha256') == hashes['scientific-gate.json']
+            and binding.get('index_sha256') == hashes['index.json']
+            and gate.get('gate') == ack.get('gate')
+            and gate.get('individual_case_only') is True
+            and gate.get('full_study_gate') is False and gate.get('science_complete') is False,
+            'Root regional proof original gate/index binding differs')
+    roster = {p['name']: {'bytes': p['codec']['raw_bytes'], 'sha256': p['codec']['raw_sha256']} for p in m['files']}
+    require(len(roster) == len(m['files']) and index.get('files') == m['files'] and gate.get('files') == roster,
+            'Root regional proof raw roster differs')
+    require(reuse.get('schema') == PROOF_SCHEMA and reuse.get('route_sha256') == bundle['route_sha256']
+            and reuse.get('custody_epoch') == bundle['custody_epoch']
+            and reuse.get('profile_sha256') == hashes['profile.json'] and reuse.get('job_sha256') == job_sha
+            and all(reuse.get(k) == hashes[n] for k, n in (
+                ('manifest_sha256','manifest.json'), ('seal_sha256','seal.json'),
+                ('gate_sha256','scientific-gate.json'), ('index_sha256','index.json')))
+            and reuse.get('backup_bindings') == profile['backup_bindings']
+            and reuse.get('copies') == ack.get('copies'), 'Root regional proof reuse binding differs')
+    backends = profile['backup_bindings']
+    require(len(backends) == 2 and len({b['backup_id'] for b in backends}) == 2
+            and len(ack['copies']) == 2 and len({r['restoration_id'] for r in ack['copies']}) == 2,
+            'Root regional proof two restoration bindings differ')
+    for backend, copy in zip(backends, ack['copies']):
+        name = backend['backup_id']+'.receipt.json'; require(name in documents, 'Root regional proof restoration receipt missing')
+        r = documents[name]
+        require(hashes[name] == copy['receipt_sha256'] and r.get('schema') == RECEIPT_SCHEMA
+                and r.get('backup_binding') == backend and r.get('restoration_id') == copy['restoration_id']
+                and r.get('profile_sha256') == hashes['profile.json'] and r.get('job_sha256') == job_sha
+                and r.get('generation') == generation and r.get('manifest_sha256') == hashes['manifest.json']
+                and r.get('index_sha256') == hashes['index.json'] and r.get('scientific_gate_sha256') == hashes['scientific-gate.json']
+                and r.get('group_sha256') == copy.get('group_sha256') == m['group_sha256']
+                and r.get('files') == roster and r.get('gate') == copy.get('gate') == ack['gate']
+                and r.get('individual_case_only') is True and r.get('full_study_gate') is False
+                and r.get('science_complete') is False
+                and r.get('verification') == 'fresh-full-decode-to-sink-and-original-scientific-gate',
+                'Root regional proof original restoration receipt differs')
+    return {'schema': 'dams-same-region-root-proof-metadata-binding-result-v1',
+            'generation': generation, 'proof_sha256': digest(bundle_raw),
+            'metadata_bindings_verified': True, 'closeout_admissible': False,
+            'Root_original_scientific_gate_executed': False,
+            'fresh_Root_GCS_custody_verified': False, 'terminal_preservation_verified': False}
+
+
+class RootRegionalClosure:
+    """Existing regional route's Root metadata custody/ACK adapter.
+
+    Readers are Root-owned authenticated exchange callbacks, not guest supplied
+    assertions. Initial bytes are pinned only after package/job/nonce checks.
+    The separately injected custody probe must query fixed GCS generations.
+    No scientific constructor, full Root raw lease, or new cloud actor is used.
+    """
+    regional_root = True
+
+    def __init__(self, enrollment_raw, enrollment_sha256, *, proof_reader=None,
+                 terminal_reader=None, custody_probe):
+        require(isinstance(enrollment_raw,bytes) and digest(enrollment_raw)==enrollment_sha256,
+                'Root regional enrollment SHA differs')
+        self.raw=enrollment_raw;self.enrollment_sha=enrollment_sha256;self.e=parse(enrollment_raw)
+        fields={'schema','nonce','profile','profile_sha256','source_manifest_sha256','route_sha256',
+                'custody_epoch','root_admission_sha256','deadline_utc','global_deadline_utc',
+                'gcs_config','minimum_heads'}
+        require(set(self.e)==fields and self.e['schema']=='dams-same-region-root-closure-enrollment-v1'
+                and callable(custody_probe) and all(f is None or callable(f)for f in (proof_reader,terminal_reader)),
+                'Root regional closure needs enrolled authenticated readers and independent probe')
+        self.p=self.e['profile'];require(self.p['mode']=='external-persistent'
+            and SHA.fullmatch(self.e['profile_sha256']),'Root regional profile differs')
+        self.value_sha=digest(blob(self.e))
+        for k in ('nonce','source_manifest_sha256','route_sha256','custody_epoch','root_admission_sha256'):
+            require(isinstance(self.e[k],str) and SHA.fullmatch(self.e[k]),'Root regional enrollment pin differs')
+        from research_tools.cloud_control import utc
+        require(utc(self.e['deadline_utc'])<=utc(self.e['global_deadline_utc']), 'Root regional node expiry extends global D')
+        require(len(self.p['backup_bindings'])==2
+                and len({r['backup_id']for r in self.p['backup_bindings']})==2
+                and len({r['locator']for r in self.p['backup_bindings']})==2,
+                'Root regional distinct enrolled backups required')
+        gcs=self.e['gcs_config']
+        require(isinstance(gcs,dict) and set(gcs)=={'binding','bucket','prefix','config_sha256'}
+            and gcs['binding']in self.p['backup_bindings'] and SHA.fullmatch(gcs['config_sha256'])
+            and gcs['binding']['locator']=='gs://'+gcs['bucket']+'/'+gcs['prefix'],
+            'Root regional GCS config/persistent locator differs')
+        self.proof_reader=proof_reader;self.terminal_reader=terminal_reader;self.custody_probe=custody_probe
+        self.c=None;self.accepted={};self.terminal=None;self.producer_terminal_sha=None;self.vm_absent=False
+        # Native Collector.close releases ArchiveClosure leases. This Root
+        # metadata adapter never owns a full-raw lease or a guest Directory.
+        self.leases=()
+
+    def attach(self, collector):
+        require(self.c is None or self.c is collector,'Root regional Collector changed')
+        self.c=collector
+        require(all(self.p['job'][k]==collector.config[k] for k in
+                    ('stage_id','source_sha256','pipeline_driver_sha256','spec_sha256','inventory_sha256','assignment_sha256')),
+                'Root regional original assignment/source differs')
+        self.check();return self
+
+    def bind_live(self,live):
+        # The default reader is the already enrolled host-key/package/runtime
+        # exchange, not a public JSON endpoint or caller-provided PASS boolean.
+        if self.proof_reader is None:self.proof_reader=live.regional_proof_reader
+        if self.terminal_reader is None:self.terminal_reader=lambda roster_sha:live.regional_proof_reader('0'*64,kind='terminal')
+        require(all(callable(f)for f in (self.proof_reader,self.terminal_reader,self.custody_probe)),
+                'Root regional read/probe interfaces missing')
+
+    def check(self):
+        # Collector.check calls archive.check; never call Collector.check here.
+        require(digest(blob(self.e))==self.value_sha,'Root regional enrollment mutated')
+        if self.c is not None:self.c.state.check()
+
+    def _context(self):
+        return {**self.p['job'],'source_manifest_sha256':self.e['source_manifest_sha256'],
+            'deadline_utc':self.e['deadline_utc'],'root_proof_nonce':self.e['nonce']}
+
+    def _write(self,name,raw):
+        require(self.c is not None,'Root regional Collector not attached')
+        try:old=read(self.c.state,name,max(len(raw),32*1024**2))[0]
+        except FileNotFoundError:
+            self.c._reserve('metadata',len(raw)+1,digest(raw));self.c.state.write_new(name,raw)
+            require(read(self.c.state,name,max(len(raw),32*1024**2))[0]==raw,'Root regional durable readback differs')
+        else:require(old==raw,'Root regional immutable proof replaced')
+
+    def _heads(self,heads,*,commit=False):
+        require(isinstance(heads,dict) and set(heads)=={'collector','meter','auth'},'Root regional heads differ')
+        names=sorted(n for n in os.listdir(self.c.state.fd)if re.fullmatch(r'regional-heads-[0-9]{8}\.json',n))
+        old=parse(read(self.c.state,names[-1])[0])['heads'] if names else self.e['minimum_heads']
+        from research_tools.compute_only_backend_factory import Factory
+        fence=object.__new__(Factory);fence.minimum=old['meter'];fence._floor(heads['meter'])
+        for role,key,sha in [('collector','sequence','sha256'),('auth','count','last_sha256')]:
+            a,b=old[role],heads[role]
+            require(type(b[key])is int and b[key]>=a[key] and (b[key]!=a[key] or b.get(sha)==a.get(sha)),
+                    'Root regional retained head rollback')
+            if role=='collector':
+                require(b['requests']>=a['requests'] and b['bytes']>=a['bytes'],'Root regional Collector holds rolled back')
+        if commit and (not names or old!=heads):
+            self._write(f'regional-heads-{len(names)+1:08d}.json',blob({'heads':heads}))
+
+    def _objects(self,objects,custody):
+        expected=sorted(set(tuple(r)for r in objects));backends=self.p['backup_bindings']
+        require(len(custody)==2,'Root regional both custody inventories missing')
+        gcs=self.e['gcs_config'];gcs_seen=0
+        for backend,rows in zip(backends,custody):
+            require(isinstance(rows,list) and len(rows)==len(expected)
+                and [(r['key'],r['bytes'],r['sha256'])for r in rows]==expected,
+                'Root regional custody exact object inventory differs')
+            for pin in rows:
+                require(pin['binding_sha256']==digest(blob(backend)) and SHA.fullmatch(pin['config_sha256']),
+                        'Root regional custody backend/config differs')
+                if backend==gcs['binding']:
+                    require(pin['config_sha256']==gcs['config_sha256'] and pin.get('custody_epoch')==self.e['custody_epoch']
+                        and isinstance(pin.get('generation'),str) and pin['generation'].isdigit(),
+                        'Root regional fixed GCS generation pin missing')
+                    meta=self.custody_probe(gcs,pin)
+                    require(isinstance(meta,dict) and meta.get('bucket')==gcs['bucket']
+                        and meta.get('name')==gcs['prefix']+'/'+pin['key'] and meta.get('generation')==pin['generation']
+                        and meta.get('size')==str(pin['bytes']) and meta.get('contentType')=='application/octet-stream'
+                        and meta.get('contentEncoding')is None,'Root independent fixed GCS custody differs')
+                    gcs_seen+=1
+                else:
+                    native=pin.get('generation')
+                    require(isinstance(native,list) and len(native)==5
+                        and all(type(v)is int and v>=0 for v in native) and native[1]>0 and native[2]==pin['bytes'],
+                            'Root regional authenticated native CAS custody missing')
+        require(gcs_seen==len(expected),'Root regional enrolled GCS missing from backup pair')
+
+    def _generation(self,generation):
+        self.check()
+        raw=read(self.c.state,'regional-proof-'+generation+'.json',32*1024**2)[0] if self.vm_absent else self.proof_reader(generation)
+        bundle=parse(raw)
+        require(bundle.get('generation')==generation and bundle.get('context')==self._context()
+            and all(bundle.get(k)==self.e[k]for k in ('route_sha256','custody_epoch','root_admission_sha256')),
+            'Root authenticated package/job/nonce proof differs')
+        if not self.vm_absent:self._heads(bundle['heads'])
+        expected={k:bundle[k]for k in ('generation','context','route_sha256','custody_epoch',
+                    'root_admission_sha256','producer_terminal_sha256','heads')}
+        expected['document_sha256']={k:v['sha256']for k,v in bundle['documents'].items()}
+        # First actual result hashes are admitted from the enrolled exchange;
+        # they are not expected before the Model has produced its results.
+        root_proof_metadata_bindings(raw,expected,max_bytes=32*1024**2)
+        import base64
+        docs={k:base64.b64decode(v['base64'],validate=True)for k,v in bundle['documents'].items()}
+        m,seal=self.c._validate_group(docs['manifest.json'],docs['seal.json'])
+        require(digest(docs['profile.json'])==self.e['profile_sha256'],'Root actual archive profile differs')
+        reuse=parse(docs['full-restoration-reuse.json']);gr=docs['scientific-gate.json'];ir=docs['index.json']
+        objects=ProofReuse._objects(None,m,docs['manifest.json'],docs['seal.json'],gr,ir)
+        require(reuse.get('objects')==[list(r)for r in objects],'Root regional whole encoded object list differs')
+        self._objects(objects,reuse['custody'])
+        name='regional-proof-'+generation+'.json'
+        try:previous=parse(read(self.c.state,name,32*1024**2)[0])
+        except FileNotFoundError:self._write(name,raw)
+        else:
+            require({k:v for k,v in previous.items()if k!='heads'}=={k:v for k,v in bundle.items()if k!='heads'},
+                    'Root regional original proof content/custody replaced')
+        self._write(f'regional-observation-{generation}-{digest(blob(bundle["heads"]))}.json',blob({'heads':bundle['heads'],'proof_sha256':digest(raw)}))
+        self._write(generation+'.ACK.json',docs['ACK.json'])
+        if not self.vm_absent:self._heads(bundle['heads'],commit=True)
+        self.accepted[generation]=(m,docs['ACK.json'],bundle);return self.accepted[generation]
+
+    def ack_guard(self,generation):
+        m,raw,bundle=self._generation(generation);return m,raw
+
+    def terminal_closure(self,snapshot,*,source_sha256,runtime_sha256):
+        require(snapshot.get('schema')=='dams-compute-live-poll-v1'
+            and snapshot.get('science_complete')is False
+            and snapshot.get('source_sha256')==source_sha256==self.p['job']['source_sha256']
+            and snapshot.get('runtime_sha256')==runtime_sha256==self.p['job']['runtime_sha256'],
+            'Root regional closed snapshot job differs')
+        ids=snapshot.get('reservation_generations');sealed=snapshot.get('sealed_generations');head=snapshot.get('spool_high_water')
+        require(isinstance(ids,list) and len(ids)==len(set(ids)) and isinstance(sealed,list)
+            and snapshot.get('unsealed_generations')==[] and isinstance(head,dict)
+            and type(head.get('sequence'))is int and head['sequence']==len(ids)
+            and len(sealed)==len(ids) and {r['generation']for r in sealed}==set(ids),
+            'Root regional every reservation must be sealed')
+        manifests={};terminal_shas=set()
+        for row in sealed:
+            m,ar,b=self._generation(row['generation']);docs=b['documents']
+            require(row.get('ack_present')is True and digest(ar)==row.get('ack_sha256')
+                and docs['manifest.json']['sha256']==row['manifest_sha256'] and docs['manifest.json']['bytes']==row['manifest_bytes']
+                and docs['seal.json']['sha256']==row['seal_sha256'] and docs['seal.json']['bytes']==row['seal_bytes']
+                and all(m[k]==row[k]for k in ('generation','case_id','attempt','kind','day','config_sha256','group_sha256')),
+                'Root regional actual sealed generation/guest ACK differs')
+            manifests[row['generation']]=m;terminal_shas.add(b['producer_terminal_sha256'])
+        require(len(terminal_shas)<=1,'Root regional original producer changed across generations')
+        require({n[:-9]for n in os.listdir(self.c.state.fd)if n.endswith('.ACK.json')}==set(ids),
+                'Root regional retained generation set rolled back')
+        self.producer_terminal_sha=next(iter(terminal_shas),None);return manifests
+
+    def native_roster_matches(self,m,files,*,case_prefix=None):
+        from research_tools.compute_only_archive import ArchiveClosure
+        return ArchiveClosure.native_roster_matches(m,files,case_prefix=case_prefix)
+
+    def roster(self,m):
+        return {p['name']:{'bytes':p['codec']['raw_bytes'],'sha256':p['codec']['raw_sha256']}for p in m['files']}
+
+    def terminal_archive(self,roster_raw,read_range,*,runtime=None):
+        # No case read_range is invoked on Root. The actual guest terminal
+        # archival gate already streams ALL files through the original codec.
+        self.check()
+        raw=read(self.c.state,'regional-terminal-proof.json',32*1024**2)[0] if self.vm_absent else self.terminal_reader(digest(roster_raw))
+        require(isinstance(raw,bytes) and len(raw)<=32*1024**2,'Root terminal proof metadata bound')
+        b=parse(raw)
+        require(b.get('schema')=='dams-same-region-root-terminal-proof-v1' and b.get('context')==self._context()
+            and b.get('nonce')==self.e['nonce'],'Root authenticated terminal package/job/nonce differs')
+        import base64
+        required={'profile.json','terminal/index.json','terminal/roster.json','terminal/binding.json','producer-terminal.json'}
+        required|={r['backup_id']+'.terminal.receipt.json'for r in self.p['backup_bindings']}
+        require(isinstance(b.get('documents'),dict) and set(b['documents'])==required,'Root terminal necessary exact document set differs')
+        docs={}
+        for name,v in b['documents'].items():
+            require(isinstance(v,dict) and set(v)=={'bytes','sha256','base64'}
+                and type(v['bytes'])is int and 0<=v['bytes']<=32*1024**2,'Root terminal original document shape differs')
+            data=base64.b64decode(v['base64'],validate=True)
+            require(len(data)==v['bytes'] and digest(data)==v['sha256'],'Root terminal original proof bytes differ');docs[name]=data
+        require(docs['terminal/roster.json']==roster_raw
+                and digest(docs['profile.json'])==self.e['profile_sha256'],'Root terminal source roster/profile differs')
+        roster=parse(roster_raw);index=parse(docs['terminal/index.json']);job_sha=digest(canonical(self.p['job']))
+        from dams_sim.transfer_spool import MAX_METADATA_BYTES
+        from research_tools.compute_only_remote import name as native_name
+        require(len(roster_raw)<=MAX_METADATA_BYTES and roster.get('schema')=='dams-compute-terminal-roster-v1'
+            and roster.get('source_sha256')==self.p['job']['source_sha256']
+            and roster.get('runtime_sha256')==self.p['job']['runtime_sha256'] and roster.get('science_complete')is False
+            and roster.get('case_payloads_require_original_collector')is True
+            and isinstance(roster.get('files'),list) and len(roster['files'])<=8192
+            and b.get('profile_sha256')==self.e['profile_sha256'] and b.get('job_sha256')==job_sha,
+            'Root terminal native job/roster quota differs')
+        for f in roster['files']:
+            native_name(f['path'])
+            require(type(f['bytes'])is int and f['bytes']>=0 and SHA.fullmatch(f['sha256'])
+                and isinstance(f.get('identity'),list) and len(f['identity'])==6
+                and all(type(v)is int and v>=0 for v in f['identity'])
+                and f['identity'][1]>0 and f['identity'][2]==f['bytes'] and f['identity'][5]==1,
+                'Root terminal private native file identity differs')
+        require(len({f['path']for f in roster['files']})==len(roster['files'])
+            and roster.get('namespace')==[{'path':f['path'],'bytes':f['bytes']}for f in roster['files']]
+            and isinstance(runtime,dict) and digest(blob(runtime))==self.p['job']['runtime_sha256']
+            and sum(f['bytes']for f in roster['files'])<=runtime['runtime_limits']['batch_max_output_bytes'],
+            'Root terminal whole native namespace/runtime bound differs')
+        owner=parse(docs['producer-terminal.json']);owner_sha=digest(docs['producer-terminal.json'])
+        require(owner==roster['terminal'] and owner.get('runtime_sha256')==self.p['job']['runtime_sha256']
+            and owner.get('inputs_unchanged')is True and owner.get('owned_pipeline_group_verification',{}).get('owned_pipeline_group_absent')is True
+            and b.get('producer_terminal_sha256')==owner_sha
+            and (self.producer_terminal_sha is None or self.producer_terminal_sha==owner_sha),
+            'Root terminal original closed native owner differs')
+        require(type(owner['owned_pipeline_group_verification'].get('owned_pipeline_group_id'))is int
+            and owner['owned_pipeline_group_verification']['owned_pipeline_group_id']>1,
+            'Root terminal closed native process group identity differs')
+        require(index.get('schema')=='dams-compute-terminal-archive-index-v1'
+            and index.get('profile_sha256')==self.e['profile_sha256'] and index.get('job_sha256')==job_sha
+            and index.get('roster_sha256')==digest(roster_raw) and index.get('science_complete')is False and index.get('full_study_gate')is False
+            and index.get('terminal_runtime')==runtime
+            and [(f['path'],f['bytes'],f['sha256'])for f in index['files']]==[(f['path'],f['bytes'],f['sha256'])for f in roster['files']],
+            'Root terminal ALL native files/runtime/index differ')
+        objects=[('terminal/index.json',len(docs['terminal/index.json']),digest(docs['terminal/index.json'])),
+                 ('terminal/roster.json',len(roster_raw),digest(roster_raw))]
+        for f in index['files']:
+            descriptor=self.c.codec.validate_manifest(f['descriptor'])
+            require(descriptor['raw_bytes']==f['bytes'] and descriptor['raw_sha256']==f['sha256']
+                and f['scientific_status']in ('separately-accepted-generation','unvalidated-terminal-evidence'),
+                'Root terminal full descriptor/forensic status differs')
+            objects.extend(('objects/'+c['encoded_sha256']+'.z',c['encoded_bytes'],c['encoded_sha256'])for c in descriptor['chunks'])
+        ordered=[{'path':f['path'],'bytes':f['bytes'],'sha256':f['sha256']}for f in roster['files']]
+        for backend in self.p['backup_bindings']:
+            receipt=parse(docs[backend['backup_id']+'.terminal.receipt.json'])
+            require(receipt.get('schema')=='dams-compute-terminal-archive-restoration-v1'
+                and receipt.get('profile_sha256')==self.e['profile_sha256'] and receipt.get('job_sha256')==job_sha
+                and receipt.get('backup_binding')==backend and receipt.get('roster_sha256')==digest(roster_raw)
+                and receipt.get('index_sha256')==digest(docs['terminal/index.json']) and receipt.get('files')==ordered
+                and receipt.get('verification')=='fresh-full-terminal-decode'
+                and receipt.get('source_sha256')==self.p['job']['source_sha256'] and receipt.get('runtime_sha256')==self.p['job']['runtime_sha256']
+                and receipt.get('producer_terminal_sha256')==owner_sha,'Root terminal complete restoration receipt differs')
+        binding=parse(docs['terminal/binding.json'])
+        require(binding.get('index_sha256')==digest(docs['terminal/index.json']) and type(binding.get('reservation'))is int
+            and 0<binding['reservation']<=b['heads']['collector']['sequence'],'Root terminal reserved index differs')
+        if not self.vm_absent:self._heads(b['heads'])
+        self._objects(objects,b['custody'])
+        self._write('terminal-archive-index.json',docs['terminal/index.json'])
+        self._write('terminal-archive-roster.json',roster_raw)
+        try:previous=parse(read(self.c.state,'regional-terminal-proof.json',32*1024**2)[0])
+        except FileNotFoundError:self._write('regional-terminal-proof.json',raw)
+        else:require({k:v for k,v in previous.items()if k!='heads'}=={k:v for k,v in b.items()if k!='heads'},
+                    'Root regional terminal original evidence replaced')
+        if not self.vm_absent:self._heads(b['heads'],commit=True)
+        self.terminal=(raw,roster_raw,runtime);return index
+
+    def mark_vm_absent(self):
+        # This is a custody transition after provider-verified VM absence,
+        # never authority to delete an unverified VM or its unique GCS results.
+        require(self.terminal is not None,'Root regional VM absence lacks terminal preservation')
+        self.vm_absent=True
+        self.terminal_guard()
+        self._write('regional-vm-absence-custody.json',blob({'schema':'dams-regional-vm-absence-custody-v1',
+            'enrollment_sha256':self.enrollment_sha,'terminal_proof_sha256':digest(read(self.c.state,'regional-terminal-proof.json',32*1024**2)[0]),
+            'persistent_GCS_copies':1,'unique_GCS_must_not_be_deleted':True,'science_complete':False}))
+
+    def terminal_guard(self):
+        require(self.terminal is not None,'Root regional terminal preservation not admitted')
+        raw,roster,runtime=self.terminal
+        self.terminal_archive(roster,lambda *a:(_ for _ in ()).throw(ValueError('Root raw transfer forbidden')),runtime=runtime)
+        index_raw=read(self.c.state,'terminal-archive-index.json',32*1024**2)[0]
+        return {'roster_sha256':digest(roster),'archive_index_sha256':digest(index_raw),
+            'all_terminal_bytes_full_decode_verified':True,'two_independently_restorable_backups_at_validation':True,
+            'current_independently_restorable_backups':1 if self.vm_absent else 2,
+            'VM_local_CAS_currently_present':not self.vm_absent,
+            'post_VM_DELETE_persistent_GCS_copies':1,'GCS_unique_custody_must_not_be_deleted':True,
+            'full_study_gate':False,'science_complete':False}
+
+
 def guest_collect(config_path, config_sha256, *, context, metadata_transport=None,
-                  gcs_transport=None):
+                  gcs_transport=None, terminal=False):
     """One sealed generation, on actual research VM, original scientific gate.
 
     Root precreates/seals the VM-local refs and native anchors after doctor.
@@ -580,6 +1056,51 @@ def guest_collect(config_path, config_sha256, *, context, metadata_transport=Non
             def spool_check(deadline_monotonic=None):
                 guard.check(); original_check(deadline_monotonic)
             spool._check = spool_check
+            if terminal:
+                from research_tools.compute_only_remote import operation, spool_snapshot
+                snapshot={'schema':'dams-compute-live-poll-v1','source_sha256':context['source_sha256'],
+                    'runtime_sha256':context['runtime_sha256'],**spool_snapshot(context,Path(context['work_root'])),
+                    'science_complete':False}
+                collector.archive.terminal_closure(snapshot,source_sha256=context['source_sha256'],
+                    runtime_sha256=context['runtime_sha256'])
+                rr=operation('terminal-roster',context,b'');runtime=parse(stable(Path(context['work_root'])/'compute-runtime.json'))
+                tr=stable(Path(context['work_root'])/'compute-terminal.json')
+                require(digest(tr)==closed_producer_sha,'regional terminal producer changed')
+                try:old=read(collector.state,'regional-producer-terminal.json')[0]
+                except FileNotFoundError:collector.state.write_new('regional-producer-terminal.json',tr)
+                else:require(old==tr,'regional original producer terminal bytes differ')
+                collector.archive.regional_terminal_export=True
+                def ranges(f,offset,length):
+                    guard.check();return operation('terminal-read',context,blob({'file':f,'offset':offset,'length':length}))
+                try:old=read(collector.state,'terminal-archive-roster.json')[0]
+                except FileNotFoundError:collector.archive.terminal_archive(rr,ranges,runtime=runtime)
+                else:
+                    require(old==rr,'regional native terminal roster changed');collector.archive.terminal_guard()
+                documents={'profile.json':collector.archive.profile_raw,
+                    'terminal/index.json':read(collector.state,'terminal-archive-index.json')[0],
+                    'terminal/roster.json':rr,'terminal/binding.json':read(collector.state,'terminal-archive-binding.json')[0],
+                    'producer-terminal.json':tr}
+                for backend in built:
+                    n=backend.binding['backup_id']+'.terminal.receipt.json';documents[n]=read(collector.state,n)[0]
+                objects=[('terminal/index.json',len(documents['terminal/index.json']),digest(documents['terminal/index.json'])),
+                    ('terminal/roster.json',len(rr),digest(rr))]
+                for f in parse(documents['terminal/index.json'])['files']:
+                    objects.extend(('objects/'+c['encoded_sha256']+'.z',c['encoded_bytes'],c['encoded_sha256'])for c in f['descriptor']['chunks'])
+                custody=reuse._custody(collector.archive,sorted(set(objects)))
+                require(require_closed_producer(context)==closed_producer_sha and operation('terminal-roster',context,b'')==rr,
+                        'regional complete native namespace changed during terminal proof')
+                import base64
+                proof={'schema':'dams-same-region-root-terminal-proof-v1',
+                    'context':{**profile['job'],'source_manifest_sha256':context['source_manifest_sha256'],
+                        'deadline_utc':context['deadline_utc'],'root_proof_nonce':context['regional_proof_nonce']},
+                    'nonce':context['regional_proof_nonce'],'producer_terminal_sha256':closed_producer_sha,
+                    'profile_sha256':collector.archive.profile_sha,'job_sha256':collector.archive.job_sha,
+                    'heads':{'collector':collector.head,'meter':meter.snapshot(),'auth':token.snapshot()},
+                    'documents':{n:{'bytes':len(data),'sha256':digest(data),'base64':base64.b64encode(data).decode('ascii')}
+                        for n,data in documents.items()},'custody':custody}
+                proof_raw=blob(proof);require(len(proof_raw)<=32*1024**2,'regional terminal proof metadata bound')
+                return {'schema':'dams-same-region-terminal-collected-v1','proof_metadata':proof,
+                    'proof_metadata_sha256':digest(proof_raw),'full_study_gate':False,'science_complete':False}
             # Capture only the native immutable sealed descriptor under writer
             # lock. Chunk I/O, science and both restores happen after release.
             with spool._locked():
@@ -602,6 +1123,14 @@ def guest_collect(config_path, config_sha256, *, context, metadata_transport=Non
                     guard.check(); return io.BytesIO(data)
                 result = collector.collect(mr, sr, fetch, metadata_tickets=[t1, t2],
                                            parent_generations=config['parent_generations'])
+            # Export the full original metadata proof before original pruning.
+            # A bound/readback failure leaves spool payloads available for the
+            # existing exact-generation reconciliation path.
+            proof_raw = generation_proof_metadata(collector.archive, generation,
+                context=context, route_sha256=reuse.route_sha, custody_epoch=a['custody_epoch'],
+                root_admission_sha256=config['root_admission']['sha256'],
+                producer_terminal_sha256=closed_producer_sha, collector_head=lambda:collector.head,
+                meter_head=meter.snapshot, auth_head=token.snapshot)
             # Only an unchanged closed producer may enter original ACK/pruning.
             # This first route intentionally does not claim streaming collection
             # during an active producer; reconciliation can decode a full group.
@@ -624,11 +1153,19 @@ def guest_collect(config_path, config_sha256, *, context, metadata_transport=Non
             return {'schema': 'dams-same-region-generation-collected-v1', 'generation': generation,
                 'ack_sha256': digest(result['ack_bytes']), 'ack_applied': True,
                 'collector_head': collector.head, 'meter_head': meter.snapshot(), 'auth_head': token.snapshot(),
+                'proof_metadata': parse(proof_raw), 'proof_metadata_sha256': digest(proof_raw),
                 'actual_original_scientific_gate': parse(result['ack_bytes'])['gate'],
                 'producer_terminal_sha256': closed_producer_sha, 'active_producer_supported': False,
                 'full_study_gate': False, 'science_complete': False,
                 'GCP_external_final_preservation_complete': False}
 
+
+
+def _proof_job_context(context):
+    # These six fields describe the selected config or this one exchange, not
+    # the immutable host/package/job/nonce enrollment retained by BEGIN.
+    return {k:v for k,v in context.items()if k not in ('regional_archive_route_sha256',
+        'regional_archive_bundle_sha256','action','input_sha256','input_bytes','output_bound')}
 
 
 def background_operation(action, request, *, context, runner=None):
@@ -643,18 +1180,19 @@ def background_operation(action, request, *, context, runner=None):
     from research_tools.compute_only_remote import stable, path, write
     from research_tools.cloud_control import utc
     runner = runner or subprocess.run
-    require(action in ('regional-archive-start', 'regional-archive-status'), 'unknown archive service action')
+    require(action in ('regional-archive-start', 'regional-archive-status','regional-terminal-start','regional-terminal-status'), 'unknown archive service action')
+    terminal=action.startswith('regional-terminal-')
     config_path = path(request['config_path']); raw = stable(config_path)
     require(digest(raw) == request['config_sha256'] == context['regional_archive_route_sha256']
             and config_path.parent == Path(context['work_root'])/'regional-archive'/'metadata',
             'archive service Root private config pin differs')
     config = parse(raw); generation = config['generation']; require(SHA.fullmatch(generation), 'archive generation differs')
     result_dir = path(Path(context['work_root'])/'regional-archive'/'results')
-    result_path = result_dir/(request['config_sha256']+'.json')
-    unit = 'dams-regional-archive-' + generation[:32]
+    result_path = result_dir/(('terminal-' if terminal else '')+request['config_sha256']+'.json')
+    unit = ('dams-regional-terminal-' if terminal else 'dams-regional-archive-') + generation[:32]
     # The generation has one enrolled writer even if a second config changes
     # floors. Root must reconcile the original BEGIN rather than spawning anew.
-    begin = result_dir/(generation+'.BEGIN.json')
+    begin = result_dir/(('terminal' if terminal else generation)+'.BEGIN.json')
     existing = None
     if os.path.lexists(begin):
         existing = parse(stable(begin))
@@ -665,10 +1203,14 @@ def background_operation(action, request, *, context, runner=None):
         receipt = parse(stable(result_path))
         require(existing is not None and receipt['config_sha256'] == request['config_sha256'],
                 'archive service terminal receipt missing original ownership')
+        # The immutable result can contain >8MiB of proof documents. Status is
+        # bounded control metadata; only layout/spans transport those bytes.
+        if isinstance(receipt.get('outcome'),dict) and 'proof_metadata'in receipt['outcome']:
+            receipt={**receipt,'outcome':{k:v for k,v in receipt['outcome'].items()if k!='proof_metadata'}}
         return {'schema': 'dams-regional-archive-service-status-v1', 'unit': unit,
                 'state': 'TERMINAL', 'receipt_sha256': digest(stable(result_path)),
                 'receipt': receipt, 'new_run': False, 'science_complete': False}
-    if action == 'regional-archive-start' and existing is None:
+    if action.endswith('-start') and existing is None:
         remaining = utc(context['deadline_utc']).timestamp()-time.time()
         require(remaining > 30, 'archive service cannot fit absolute stop/reaping margin')
         encoded = base64.b64encode(blob(context)).decode()
@@ -680,10 +1222,13 @@ def background_operation(action, request, *, context, runner=None):
             '/usr/bin/python3', '-B', '-m', 'research_tools.same_region_archive',
             '--config='+str(config_path), '--config-sha256='+request['config_sha256'],
             '--context='+encoded, '--receipt='+str(result_path)]
+        if terminal:argv.append('--terminal')
         first = {'schema':'dams-regional-archive-service-BEGIN-v1', 'unit':unit,
                  'config_sha256':request['config_sha256'], 'generation':generation,
                  'argv_sha256':digest(blob(argv)), 'deadline_utc':context['deadline_utc'],
-                 'owned_model_execution':False}
+                 'owned_model_execution':False,'context_sha256':digest(blob(context)),
+                 'config_path':str(config_path),'terminal':terminal,
+                 'stable_context_sha256':digest(blob(_proof_job_context(context)))}
         write(begin, blob(first))
         # Ambiguous spawn is retained and is never auto-retried. Root can inspect
         # the unit journal/BEGIN and exact meter/collector heads to recover.
@@ -704,13 +1249,98 @@ def background_operation(action, request, *, context, runner=None):
             'new_run':False,'science_complete':False}
 
 
+def retained_proof_metadata(context,kind,generation):
+    """Bounded native proof read after successful original owned service.
+
+    Body receipts remain immutable. Floors are freshly replayed from the same
+    native job; the Root custody callback independently checks current GCS.
+    No new archive service, scientific gate, authentication or Model is spawned.
+    """
+    from research_tools.compute_only_remote import stable,path
+    from research_tools import persistent_backend_budget_meter as bm
+    require(kind in ('generation','terminal') and SHA.fullmatch(generation), 'regional proof selection differs')
+    root=path(Path(context['work_root'])/'regional-archive'/'results')
+    begin=parse(stable(root/(('terminal' if kind=='terminal' else generation)+'.BEGIN.json')))
+    stable_context=_proof_job_context(context)
+    require(begin.get('stable_context_sha256')==digest(blob(stable_context)) and begin.get('terminal',False)==(kind=='terminal'),
+            'regional proof original authenticated job/nonce differs')
+    result=parse(stable(root/(('terminal-' if kind=='terminal' else '')+begin['config_sha256']+'.json'),32*1024**2))
+    require(result.get('exit_code')==0 and all(result.get(k)==context[k]for k in
+        ('source_manifest_sha256','runtime_sha256','provider_identity_sha256')),
+        'regional proof service failed or crossed actual job')
+    outcome=result['outcome'];proof=outcome['proof_metadata'];original=blob(proof)
+    require(digest(original)==outcome['proof_metadata_sha256'] and proof['context']['root_proof_nonce']==context['regional_proof_nonce'],
+            'regional proof immutable service bytes differ')
+    config_raw=stable(begin['config_path']);require(digest(config_raw)==begin['config_sha256'],'regional retained config changed')
+    config=parse(config_raw);ad_raw=stable(config['admission']['path'])
+    require(digest(ad_raw)==config['admission']['sha256'],'regional original Collector admission bytes changed')
+    ad=parse(ad_raw)
+    from research_tools.compute_only_control import Collector
+    native=object.__new__(Collector);native.config=ad;native.admission_sha=config['admission']['sha256']
+    native._history_lock=threading.RLock()
+    with ExitStack() as stack:
+        for attr,location in [('state',Path(ad['state_dir'])),('records',Path(ad['state_dir'])/'reservations'),
+                             ('results',Path(ad['state_dir'])/'results')]:
+            directory=Directory(location);stack.callback(directory.close);setattr(native,attr,directory)
+        require(parse(read(native.state,'binding.json')[0])=={'admission_sha256':native.admission_sha},
+                'regional native Collector original binding changed')
+        with native.locked():native._history();head=native._head
+    # Native replay refuses counter rollback; minimum floors are never renewed.
+    meter=bm.Meter(config['meter']['path'],config_sha256=config['meter']['sha256']);meter_head=meter.snapshot()
+    root_raw=stable(config['root_admission']['path'])
+    require(digest(root_raw)==config['root_admission']['sha256'],'regional original workload admission bytes changed')
+    from research_tools.cloud_control import utc
+    auth_replay=object.__new__(MetadataToken)
+    auth_replay.minimum=config['minimum_auth']
+    auth_replay.binding=blob({'schema':'dams-workload-auth-binding-v1','admission_sha256':digest(blob(parse(root_raw))),
+        'instance_id':str(context['instance_id']),'zone':context['zone'],
+        'deadline':utc(context['deadline_utc']).timestamp(),'max_auth_requests':config['max_auth_requests']})
+    auth_replay.state=Directory(config['auth_state_dir'])
+    try:
+        initial=config['auth_state_identity']
+        require(set(initial)=={'dev','ino','initial_ctime_ns'} and list(identity(os.fstat(auth_replay.state.fd))[:2])==[initial['dev'],initial['ino']],
+                'regional native auth state custody changed')
+        with auth_replay._lock():
+            require(read(auth_replay.state,'binding.json')[0]==auth_replay.binding,'regional native auth original binding changed')
+            auth=auth_replay._history()
+            require(auth['count']<=config['max_auth_requests'],'regional native auth allowance exceeded')
+    finally:auth_replay.state.close()
+    proof={**proof,'heads':{'collector':head,'meter':meter_head,'auth':auth}}
+    # Recheck the existing VM-local CAS against the original pinned bytes and
+    # native identities; cached service summaries alone are not fresh custody.
+    import base64
+    if kind=='generation':
+        custody=parse(base64.b64decode(proof['documents']['full-restoration-reuse.json']['base64'],validate=True))['custody']
+    else:custody=proof['custody']
+    profile=parse(base64.b64decode(proof['documents']['profile.json']['base64'],validate=True))
+    job_sha=digest(canonical(profile['job']))
+    for item,backend,rows in zip(config['backends'],profile['backup_bindings'],custody):
+        opts=parse(stable(item['config']['path']))
+        require(digest(stable(item['config']['path']))==item['config']['sha256'],'regional original backend config changed')
+        if opts['kind']!='external-cas':continue
+        cas=pb.ExternalCASBackend(item['config']['path'],item['config']['sha256'],
+                stable(item['enrollment']['path']),job_sha)
+        try:
+            for pin in rows:
+                require(pin['binding_sha256']==digest(blob(backend)) and cas._pin(pin['key'])['generation']==pin['generation'],
+                        'regional native CAS custody changed')
+                stream=cas.read(pin['key']);h=hashlib.sha256();size=0
+                try:
+                    while block:=stream.read(65536):h.update(block);size+=len(block)
+                finally:stream.close()
+                require(size==pin['bytes'] and h.hexdigest()==pin['sha256'],'regional native CAS full bytes changed')
+        finally:cas.close()
+    require(require_closed_producer(context)==proof['producer_terminal_sha256'],'regional proof original producer owner changed')
+    raw=blob(proof);require(len(raw)<=32*1024**2,'regional proof native metadata bound');return raw
+
+
 def main(argv=None):
     import argparse
     import base64
     from research_tools.compute_only_remote import write, path, package, context as identity_context
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',required=True); parser.add_argument('--config-sha256',required=True)
-    parser.add_argument('--context',required=True); parser.add_argument('--receipt',required=True)
+    parser.add_argument('--context',required=True); parser.add_argument('--receipt',required=True);parser.add_argument('--terminal',action='store_true')
     args = parser.parse_args(argv); receipt = Path(args.receipt)
     require(not os.path.lexists(receipt) and receipt.parent ==
             Path('/var/lib/dams-compute/regional-archive/results'), 'private exclusive archive result path required')
@@ -718,7 +1348,7 @@ def main(argv=None):
     started = time.monotonic(); outcome = None; code = 1
     try:
         require(digest(Path(__file__).read_bytes()) == IMPORT_SHA, 'archive executable source changed')
-        outcome = guest_collect(args.config,args.config_sha256,context=c); code = 0
+        outcome = guest_collect(args.config,args.config_sha256,context=c,terminal=args.terminal); code = 0
     except BaseException as error:
         # Preserve failure without raw exception or credential-bearing causes.
         outcome = {'status':'FAILED_REQUIRES_ROOT_RECONCILIATION','error_type':type(error).__name__,

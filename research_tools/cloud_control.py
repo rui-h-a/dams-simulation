@@ -63,8 +63,9 @@ def stage_capabilities(c, s):
                 or not 0 < money(expected["memory_gib_min"]) < money(expected["memory_gib_max"])
                 or money(expected["memory_gib_max"]) != 31):
             raise GuardError("Standard C4D4 requires exact CPU/architecture and usable/catalog RAM bounds")
-    elif mode == "STANDARD" and machine == "n2-highmem-4":
-        allowed_disks = ("pd-balanced", "pd-ssd")
+    elif mode == "STANDARD" and machine in ("n2-highmem-2", "n2-highmem-4"):
+        vcpus, memory_gib = {"n2-highmem-2": (2, 16), "n2-highmem-4": (4, 32)}[machine]
+        allowed_disks = ("pd-standard", "pd-balanced", "pd-ssd")
         disk_interface = "SCSI"
         quota = {"metric": "N2_CPUS", "info_id": "N2-CPUS-per-project-region",
                  "dimensions": {"region": c["region"]}}
@@ -73,8 +74,8 @@ def stage_capabilities(c, s):
         catalog = c["price_snapshot"].get("machines", {}).get(machine, {})
         # The machine API may omit architecture. This explicit upstream planning
         # declaration never substitutes for the actual image and guest doctor.
-        if (type(catalog.get("vcpus")) is not int or catalog["vcpus"] != 4
-                or money(catalog.get("memory_gib", 0)) != 32
+        if (type(catalog.get("vcpus")) is not int or catalog["vcpus"] != vcpus
+                or money(catalog.get("memory_gib", 0)) != memory_gib
                 or catalog.get("architecture") not in (None, "X86_64")
                 or s.get("architecture_declaration") != "official-n2-x86_64"
                 or not catalog.get("zone") or c["zones"] != [catalog["zone"]]
@@ -84,9 +85,9 @@ def stage_capabilities(c, s):
         if (not isinstance(expected, dict)
                 or set(expected) != {"architecture", "vcpus", "memory_gib_min", "memory_gib_max"}
                 or expected["architecture"] != "x86_64" or type(expected["vcpus"]) is not int
-                or expected["vcpus"] != 4
+                or expected["vcpus"] != vcpus
                 or not 0 < money(expected["memory_gib_min"]) < money(expected["memory_gib_max"])
-                or money(expected["memory_gib_max"]) != 32):
+                or money(expected["memory_gib_max"]) != memory_gib):
             raise GuardError("Standard N2 requires exact CPU/architecture and usable/catalog RAM bounds")
     elif mode == "STANDARD" and machine in ("m3-ultramem-32", "m3-ultramem-64", "m3-ultramem-128"):
         allowed_disks = ("pd-balanced", "pd-ssd", "hyperdisk-balanced")

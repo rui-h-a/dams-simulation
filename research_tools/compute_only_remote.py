@@ -257,12 +257,37 @@ def operation(action,c,raw,get_identity=None):
         require(Path(bundle['config_path']).parent==base and sha(stable(bundle['config_path']))==bundle['config_sha256']==c['regional_archive_route_sha256'],'regional top config differs')
         return blob({'schema':'dams-regional-archive-enrolled-v1','bundle_sha256':sha(raw),'config_sha256':bundle['config_sha256'],'files':len(seen),'science_complete':False})
     runtime=parse(stable(work/'compute-runtime.json'));require(sha(blob(runtime))==c['runtime_sha256'],'remote runtime drift')
-    if action in ('regional-archive-start','regional-archive-status'):
+    if action in ('regional-archive-start','regional-archive-status','regional-terminal-start','regional-terminal-status'):
         require(c.get('regional_archive_route_sha256') is not None,'regional archive not enrolled')
         request=parse(raw)
         require(set(request)=={'config_path','config_sha256'} and request['config_sha256']==c['regional_archive_route_sha256'],'regional archive request pin differs')
         from research_tools.same_region_archive import background_operation
         return blob(background_operation(action,request,context=c))
+    if action in ('regional-proof-layout','regional-proof-read'):
+        require(c.get('regional_proof_nonce') is not None,'Root proof nonce not enrolled')
+        request=parse(raw);root=path(work/'regional-archive'/'results')
+        if action=='regional-proof-layout':
+            require(set(request)=={'kind','generation'},'regional proof layout selection differs')
+            from research_tools.same_region_archive import retained_proof_metadata
+            data=retained_proof_metadata(c,request['kind'],request['generation']);h=sha(data)
+            target=root/('root-read-'+h+'.json')
+            if os.path.lexists(target):require(stable(target,BOUND)==data,'regional immutable proof read changed')
+            else:write(target,data)
+            return blob({'sha256':h,'bytes':len(data),'nonce':c['regional_proof_nonce'],
+                'runtime_sha256':c['runtime_sha256'],'source_manifest_sha256':c['source_manifest_sha256']})
+        require(set(request)=={'sha256','bytes','offset','length'} and isinstance(request['sha256'],str)
+            and re.fullmatch('[0-9a-f]{64}',request['sha256']) and type(request['bytes'])is int and 0<=request['bytes']<=BOUND
+            and type(request['offset'])is int and type(request['length'])is int
+            and 0<=request['offset']<=request['bytes'] and 0<request['length']<=1024**2
+            and request['offset']+request['length']<=request['bytes'],'regional proof bounded span differs')
+        target=path(root/('root-read-'+request['sha256']+'.json'));before=anchor(target.stat())
+        require(before[2]==request['bytes'],'regional proof immutable byte size differs')
+        fd=os.open(target,os.O_RDONLY|os.O_NOFOLLOW)
+        try:
+            require(anchor(os.fstat(fd))==before,'regional proof FD replaced');os.lseek(fd,request['offset'],os.SEEK_SET)
+            out=os.read(fd,request['length']);require(len(out)==request['length'] and anchor(os.fstat(fd))==before
+                and anchor(target.stat())==before,'regional proof immutable range drift');return out
+        finally:os.close(fd)
     if action=='regional-archive':
         require(c.get('regional_archive_route_sha256') is not None, 'regional archive is not Root enrolled')
         request=parse(raw)

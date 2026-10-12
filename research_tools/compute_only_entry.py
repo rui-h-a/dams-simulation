@@ -469,18 +469,30 @@ class PhaseContinuation:
 
 
 
-def execute(c,folder):
+def execute(c,folder,*,regional_closure=None):
+    # Root controller may inject only the existing native proof adapter. JSON,
+    # guest callbacks and legacy personal-token backend factories cannot supply it.
+    if regional_closure is not None:
+        from research_tools.same_region_archive import RootRegionalClosure
+        require(isinstance(regional_closure,RootRegionalClosure),
+                'Root regional closure must be the native bounded adapter')
     with Entry(c,state=folder) as entry:
         succeeded=False
         try:
             phase=entry.options['phase']
+            require(regional_closure is None or phase=='lifecycle',
+                    'Root regional proof adapter is lifecycle-only')
             if phase=='plan': result=entry.plan()
             elif phase=='prepare': result=entry.prepare()
             elif phase=='collect': result=entry.collect()
             elif phase=='lifecycle':
                 from research_tools.compute_only_lifecycle import execute as live_execute
                 options=parse(entry.reference(entry.options['lifecycle']))
-                result=live_execute(entry, options, archive_backends=entry.archive_backends(options['collector_admission']))
+                if regional_closure is not None:
+                    from research_tools.compute_only_lifecycle import REGIONAL_SCHEMA
+                    require(options['schema']==REGIONAL_SCHEMA,'Root regional adapter cannot alter legacy lifecycle')
+                backends=None if regional_closure is not None else entry.archive_backends(options['collector_admission'])
+                result=live_execute(entry, options, archive_backends=backends,regional_closure=regional_closure)
             else: raise ValueError('COMPUTE_ONLY_PHASE_UNWIRED:'+phase+':'+UNWIRED[phase])
             succeeded=True
             return result
