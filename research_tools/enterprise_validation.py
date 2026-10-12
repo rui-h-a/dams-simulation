@@ -4,9 +4,11 @@ Prediction packets must come from complete independently checked executions.
 This module verifies packet provenance bindings, not their truth. Report parsing
 currently supports one aggregate; no enterprise-level empirical fit is claimed.
 Public targets exposed during development are retrospective diagnostics.
+Retained R10 narrow engineering evidence has a separate observable packet and
+cannot be promoted to calibration/validation prediction packets by this adapter.
 """
 from __future__ import annotations
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import date, datetime, timedelta, timezone
 import hashlib
 import itertools
@@ -24,8 +26,61 @@ ROLES = {'calibration':'fit', 'validation':'evaluate_frozen', 'diagnostic':'insp
 V2_MODEL = 'longitudinal-enterprise-causal-2'
 R7_MODEL = 'longitudinal-enterprise-integrated-7-networks-tasks-1'
 R8_MODEL = 'longitudinal-enterprise-joint-integration-8'
+R10_MODEL = 'longitudinal-enterprise-task-structure-10'
 OPERATING_COSTS = ('operating_resource_units', 'recruitment_resource_units',
                    'migration_resource_units', 'infrastructure_setup_resource_units')
+
+
+@dataclass(frozen=True)
+class ObservableEvidenceFile:
+    path: str
+    sha256: str
+
+
+@dataclass(frozen=True)
+class R10EngineeringEvidence:
+    """Retained native engineering metadata, never a complete raw/empirical gate.
+
+    Caller-pinned original bytes are checked against one another. These pins
+    do not authenticate the issuer or replace the independent raw validator.
+    Outer joint execution is still R8; its schema-two constituents are R10.
+    """
+    arm: str
+    profile: ObservableEvidenceFile
+    scenario: ObservableEvidenceFile
+    joint_result: ObservableEvidenceFile
+    execution_receipt: ObservableEvidenceFile
+    supervisor_terminal: ObservableEvidenceFile
+    narrow_review_receipt: ObservableEvidenceFile
+    mechanism_review: ObservableEvidenceFile
+
+
+@dataclass(frozen=True)
+class EngineeringObservablePacket:
+    model_version: str
+    outer_joint_model_version: str
+    model_source_sha256: str
+    arms: tuple[dict, ...]
+    evidence: tuple[R10EngineeringEvidence, ...]
+    evidence_class: str = field(default='existing-conditional-synthetic-engineering-observables',init=False)
+    formal_worlds_added: int = field(default=0,init=False)
+    full_raw_validation_performed: bool = field(default=False,init=False)
+    complete_independent_model_validation: bool = field(default=False,init=False)
+    empirical_calibration_completed: bool = field(default=False,init=False)
+    historical_blindness_certified: bool = field(default=False,init=False)
+    cross_enterprise_holdout_completed: bool = field(default=False,init=False)
+    content_sha256: str = field(init=False)
+
+    def __post_init__(self):
+        require(self.model_version==R10_MODEL and self.outer_joint_model_version==R8_MODEL
+                and _sha(self.model_source_sha256),'engineering packet model/source identity differs')
+        object.__setattr__(self,'content_sha256','')
+        body=asdict(self);body.pop('content_sha256')
+        object.__setattr__(self,'content_sha256',digest(body))
+
+    def to_dict(self):
+        """Checked export; frozen dataclasses alone do not freeze nested maps."""
+        return export_r10_engineering_packet(self)
 
 
 @dataclass(frozen=True)
@@ -35,6 +90,8 @@ class EntityPredictionBinding:
     Summary/config digests cover canonical mappings, not raw file bytes. The
     gate receipt pin references the caller's native evidence. This type does
     not execute that validator, authenticate a receipt or certify its truth.
+    R10 is a separate engineering projection requiring actual referenced narrow
+    receipts; its binding does not assert a complete independent raw gate.
     """
     company: str
     model_version: str
@@ -46,6 +103,7 @@ class EntityPredictionBinding:
     world: int
     expected_days: int
     completed_days: int
+    engineering_evidence: R10EngineeringEvidence | None = None
 
 
 @dataclass(frozen=True)
@@ -215,6 +273,134 @@ def _single_values(summary):
             'settled_revenue_model_resource_units':revenue}
 
 
+def _evidence_json(ref):
+    """Anchored no-follow read with byte pin and duplicate/nonfinite rejection."""
+    import os
+    import stat
+    require(type(ref) is ObservableEvidenceFile and _sha(ref.sha256)
+            and type(ref.path) is str and Path(ref.path).is_absolute(),'typed original evidence file required')
+    path=Path(ref.path);before=path.lstat()
+    def native(s):return (s.st_dev,s.st_ino,s.st_mode,s.st_nlink,s.st_size,s.st_mtime_ns,s.st_ctime_ns)
+    require(stat.S_ISREG(before.st_mode) and before.st_nlink==1 and before.st_size<=16*1024**2,
+            'unsafe/unbounded original observable evidence')
+    fd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW)
+    try:
+        require(native(os.fstat(fd))==native(before),'evidence open identity drift')
+        with os.fdopen(fd,'rb',closefd=False) as stream:raw=stream.read(16*1024**2+1)
+        require(native(os.fstat(fd))==native(before) and native(path.lstat())==native(before)
+                and hashlib.sha256(raw).hexdigest()==ref.sha256,'original observable evidence bytes drift')
+    finally:os.close(fd)
+    def pairs(items):
+        value={}
+        for k,v in items:
+            require(k not in value,'duplicate original observable JSON key');value[k]=v
+        return value
+    value=json.loads(raw,object_pairs_hook=pairs,
+        parse_constant=lambda _:(_ for _ in ()).throw(ValueError('nonfinite original observable JSON')))
+    require(type(value) is dict,'original observable evidence must be a mapping')
+    return value
+
+
+def _r10_evidence(evidence):
+    require(type(evidence) is R10EngineeringEvidence and evidence.arm in ('hierarchy','dams'),
+            'R10 requires retained typed engineering evidence; a hex-only raw-gate pin is insufficient')
+    values={name:_evidence_json(getattr(evidence,name)) for name in
+            ('profile','scenario','joint_result','execution_receipt','supervisor_terminal','narrow_review_receipt','mechanism_review')}
+    profile=values['profile'];scenario=values['scenario'];joint=values['joint_result']
+    root=values['execution_receipt'];narrow=values['narrow_review_receipt'];review=values['mechanism_review']
+    terminal=values['supervisor_terminal']
+    from dams_sim.organization_tasks import STRUCTURE_VERSION
+    from dams_sim.storage import source_hash
+    source=source_hash()
+    require(STRUCTURE_VERSION==R10_MODEL and profile.get('schema')=='existing-r10-exact-preregistration-proposal-1'
+            and profile.get('model_source',{}).get('runtime_core_33_sha256')==source,
+            'R10 original source/profile differs')
+    require(root.get('status')=='ONE_EXISTING_R10_FULL_PERIOD_ENGINEERING_PAIR_AND_NATIVE_RESTORE_COMPLETED'
+            and root.get('source_sha256')==source and root.get('profile_sha256')==evidence.profile.sha256
+            and type(root.get('formal_worlds_added')) is int and root['formal_worlds_added']==0
+            and root.get('empirical_calibration_or_OOS') is False
+            and root.get('independent_full_model_verification') is False,
+            'original complete engineering execution receipt required')
+    require(narrow.get('status')=='EXISTING_FULL_PERIOD_ENGINEERING_MECHANISM_SUBSET_REVIEW_PASS'
+            and narrow.get('source_SHA')==source and narrow.get('profile_SHA')==evidence.profile.sha256
+            and type(narrow.get('formal_worlds_added')) is int and narrow['formal_worlds_added']==0
+            and narrow.get('empirical_calibration_or_OOS') is False
+            and narrow.get('complete_independent_model_validation') is False,
+            'original narrow review scope/source differs; no complete independent gate is claimed')
+    require(review.get('schema')=='DAMS-existing-R10-full-period-independent-mechanism-review-1'
+            and review.get('status')=='NARROW_EXISTING_MECHANISM_AND_RAW_ACCOUNTING_SUBSETS_PASS_WITH_EXPLICIT_UNEXERCISED_SCOPE'
+            and review.get('source_core_sha256')==source and review.get('profile_sha256')==evidence.profile.sha256
+            and review.get('Root_terminal_sha256')==evidence.supervisor_terminal.sha256
+            and type(review.get('formal_worlds_added')) is int and review['formal_worlds_added']==0
+            and review.get('empirical_calibration_or_OOS') is False,
+            'original referenced mechanism review differs')
+    require(type(terminal.get('exit_code')) is int and terminal['exit_code']==0
+            and terminal.get('producer_reaped') is True and terminal.get('owned_pgid_absent') is True
+            and terminal.get('result_present') is True and type(terminal.get('formal_worlds_added')) is int
+            and terminal['formal_worlds_added']==0 and terminal.get('whole_goal_complete') is False,
+            'original closed engineering supervisor terminal differs')
+    links=narrow.get('evidence_files')
+    require(type(links) is list and any(v.get('path')==Path(evidence.mechanism_review.path).name
+            and v.get('sha256')==evidence.mechanism_review.sha256 for v in links),
+            'narrow receipt does not bind the actual mechanism review bytes')
+    arms=profile.get('arms');completed=root.get('arms')
+    require(type(arms) is list and len(arms)==2 and {v.get('name') for v in arms}=={'hierarchy','dams'}
+            and type(completed) is list and len(completed)==2 and {v.get('arm') for v in completed}=={'hierarchy','dams'},
+            'original engineering two-arm roster differs')
+    arm=next(v for v in arms if v['name']==evidence.arm)
+    finished=next(v for v in completed if v['arm']==evidence.arm)
+    config={'buyer':scenario.get('buyer_config'),'target':scenario.get('target_config'),'terms':scenario.get('terms')}
+    expected={'buyer':arm.get('buyer_config'),'target':arm.get('target_config'),'terms':arm.get('joint_terms')}
+    horizon=profile.get('calendar',{}).get('full_horizon_days')
+    require(_positive_int(horizon) and canonical(config)==canonical(expected)
+            and scenario.get('source_sha256')==source and scenario.get('engineering_only') is True
+            and type(scenario.get('formal_worlds_added')) is int and scenario['formal_worlds_added']==0
+            and scenario.get('calibration_OOS') is False,
+            'predeclared engineering scenario/config differs')
+    require(finished.get('status')=='ACTUAL_TWO_EVOLVED_FIRM_HISTORY_ENGINEERING_COMPLETED'
+            and finished.get('complete_calendar_days')==horizon
+            and finished.get('native_full_history_restore_and_joint_accounting_pass') is True
+            and canonical(finished.get('summaries'))==canonical(joint.get('firm_summaries'))
+            and root.get('full_calendar_days')==horizon
+            and type(joint.get('formal_worlds_added')) is int and joint['formal_worlds_added']==0
+            and joint.get('calibration_OOS') is False,
+            'retained joint summaries/full-horizon/native-restore receipt differs')
+    raw=review.get('full_original_artifact_pins')
+    require(type(raw) is list and raw and len({v.get('path') for v in raw})==len(raw),
+            'original raw metadata pin roster missing/duplicate')
+    for name,ref in (('predeclared-scenario.json',evidence.scenario),('joint-result.json',evidence.joint_result)):
+        matches=[v for v in raw if v.get('path')==evidence.arm+'/'+name]
+        require(len(matches)==1 and matches[0].get('sha256')==ref.sha256,
+                'original mechanism receipt does not bind projected raw bytes')
+    return values,config,source,horizon
+
+
+def _r10_state_shape(summary, config):
+    from dams_sim.config import Config
+    validated=Config.from_dict(config).validate()
+    require(canonical(validated.to_dict())==canonical(config),'R10 actual full Config differs from canonical schema')
+    tasks=config.get('organization_tasks');state=summary.get('organization_tasks_state_final')
+    require(type(tasks) is dict and type(tasks.get('schema_version')) is int and tasks['schema_version']==2
+            and type(state) is dict and set(state)=={'schema_version','completed_days','stocks','generated',
+                'consumed','last_plan','review_remaining','structure'}
+            and type(state['schema_version']) is int and state['schema_version']==2
+            and type(state['completed_days']) is int and state['completed_days']==config['days'],
+            'R10 requires exact complete schema-two task state/config')
+    structure=state['structure'];count=summary.get('task_department_count_final')
+    require(type(structure) is dict and _positive_int(count)
+            and type(structure.get('department_count')) is int and structure['department_count']==count,
+            'R10 final task structure shape differs')
+    expected={str(v) for v in range(count)}
+    for name in ('stocks','generated','consumed'):
+        require(type(state[name]) is dict and set(state[name])==expected
+                and all(finite(v) and v>=0 for v in state[name].values()),'R10 task stock map shape differs')
+    # Dynamic final task departments can exceed initial departments. The
+    # installed enterprise departments and task-layer departments are distinct.
+    require(type(structure.get('pending')) is list and type(structure.get('history')) is list
+            and type(state['review_remaining']) is dict and type(state['last_plan']) is dict,
+            'R10 final task structure metadata missing')
+
+
 def _entity(summary, config, binding, source, horizon, company):
     require(type(binding) is EntityPredictionBinding and binding.company==company,
             'typed entity scope binding required')
@@ -223,8 +409,27 @@ def _entity(summary, config, binding, source, horizon, company):
     require(type(config) is dict and type(summary) is dict, 'canonical actual entity mappings required')
     require(binding.model_source_sha256==source and digest(config)==binding.config_sha256
             and digest(summary)==binding.summary_sha256, 'entity source/config/summary drift')
-    require(binding.model_version in (V2_MODEL,R7_MODEL,R8_MODEL)
+    require(binding.model_version in (V2_MODEL,R7_MODEL,R8_MODEL,R10_MODEL)
             and summary.get('model_version')==binding.model_version, 'unsupported entity model version')
+    tasks=config.get('organization_tasks')
+    if tasks is not None:
+        require(type(tasks) is dict and type(tasks.get('schema_version')) is int
+                and tasks['schema_version'] in (1,2),'unknown organization task schema')
+        if tasks['schema_version']==2:
+            require(binding.model_version==R10_MODEL,'schema-two tasks cannot be relabeled as an older model')
+        else:
+            require(binding.model_version in (R7_MODEL,R8_MODEL),'schema-one task model version differs')
+        task_state=summary.get('organization_tasks_state_final')
+        require(type(task_state) is dict and type(task_state.get('schema_version')) is int
+                and task_state['schema_version']==tasks['schema_version'], 'task state/config schema differs')
+    if binding.model_version==R10_MODEL:
+        values,actual,original_source,original_horizon=_r10_evidence(binding.engineering_evidence)
+        require(company in ('buyer','target') and canonical(config)==canonical(actual[company])
+                and canonical(summary)==canonical(values['joint_result']['firm_summaries'][company])
+                and source==original_source and horizon==original_horizon
+                and binding.gate_receipt_sha256==binding.engineering_evidence.narrow_review_receipt.sha256,
+                'R10 entity summary/config/source/receipt does not bind its retained engineering evidence')
+        _r10_state_shape(summary,config)
     require(_positive_int(horizon) and type(config.get('days')) is int and config['days']==horizon
             and _positive_int(binding.expected_days) and binding.expected_days==horizon
             and _positive_int(binding.completed_days) and binding.completed_days==horizon
@@ -305,8 +510,18 @@ def extract_supported_observables(summary, config, binding):
                 and owners['target']==('seller' if mode=='declined' else 'buyer'), 'joint actual ownership differs')
         by_company={e.company:e for e in binding.entities};parts={}
         for company in ('buyer','target'):
-            require(by_company[company].model_version in (R7_MODEL,R8_MODEL), 'unsupported joint entity version')
+            require(by_company[company].model_version in (R7_MODEL,R8_MODEL,R10_MODEL), 'unsupported joint entity version')
             parts[company]=_entity(firms[company],config[company],by_company[company],source,horizon,company)
+        r10=[e for e in binding.entities if e.model_version==R10_MODEL]
+        if r10:
+            require(len(r10)==2 and r10[0].engineering_evidence==r10[1].engineering_evidence
+                    and binding.gate_receipt_sha256==r10[0].engineering_evidence.narrow_review_receipt.sha256,
+                    'R10 joint constituents require one exact retained engineering receipt')
+            original,original_config,original_source,original_horizon=_r10_evidence(r10[0].engineering_evidence)
+            require(canonical(summary)==canonical(original['joint_result'])
+                    and canonical(config)==canonical(original_config)
+                    and source==original_source and horizon==original_horizon,
+                    'R10 outer joint result/terms must match retained original engineering evidence')
         require(config['buyer']['seed']==binding.world_seed, 'joint buyer world seed differs')
         require(config['buyer']['longitudinal']==config['target']['longitudinal']
                 or (config['buyer']['longitudinal'].get('calendar_start')==config['target']['longitudinal'].get('calendar_start')
@@ -366,6 +581,8 @@ def checked_prediction(summary, *, parameters, world_seed, key, gate_receipt_sha
         require(_positive_int(summary.get('days_completed')), 'incomplete legacy summary')
         values=_single_values(summary);complete_days=summary['days_completed']
     else:
+        require(not any(e.model_version==R10_MODEL for e in getattr(binding,'entities',())),
+                'R10 narrow engineering observables cannot enter calibration/validation prediction packets')
         require(type(binding) is CompletedPredictionBinding
                 and (binding.gate_receipt_sha256,binding.config_sha256,binding.model_source_sha256,binding.world_seed)
                 ==(gate_receipt_sha256,config_sha256,model_source_sha256,world_seed), 'prediction caller/binding provenance differs')
@@ -374,6 +591,55 @@ def checked_prediction(summary, *, parameters, world_seed, key, gate_receipt_sha
     return {'parameters':parameters,'world_seed':world_seed,'key':key,'config_sha256':config_sha256,
         'gate_receipt_sha256':gate_receipt_sha256,'model_source_sha256':model_source_sha256,
         'complete_days':complete_days,'values':values}
+
+
+def project_r10_engineering_observables(evidence):
+    """Pure retained-metadata projection, no Model/SQL/full raw gate or fitting.
+
+    Exact file pins and receipt semantics establish which original engineering
+    metadata is projected. They do not upgrade narrow accounting to complete
+    independent validation. Outer joint version stays R8; firms stay R10.
+    """
+    require(type(evidence) is tuple and len(evidence)==2
+            and {e.arm for e in evidence if type(e) is R10EngineeringEvidence}=={'hierarchy','dams'},
+            'exact typed two-arm R10 engineering evidence required')
+    outputs=[];sources=set()
+    for item in evidence:
+        values,config,source,horizon=_r10_evidence(item);sources.add(source)
+        summary=values['joint_result'];entities=[];firms={}
+        for company in ('buyer','target'):
+            cfg=config[company];firm=summary['firm_summaries'][company]
+            entity=EntityPredictionBinding(company,R10_MODEL,source,digest(cfg),digest(firm),
+                item.narrow_review_receipt.sha256,cfg['seed'],cfg['world'],horizon,firm['days_completed'],item)
+            extracted=_entity(firm,cfg,entity,source,horizon,company)
+            firms[company]={'model_version':R10_MODEL,'config_sha256':digest(cfg),'summary_sha256':digest(firm),
+                'seed':cfg['seed'],'world':cfg['world'],'initial_population':cfg['n'],'complete_days':horizon,
+                'values':extracted,'units':{'reported_full_time_and_part_time_employees':'persons',
+                    'operating_margin_model_units':'fraction','settled_revenue_model_resource_units':'model_resource_units'}}
+            entities.append(entity)
+        scopes={}
+        for scope in ('buyer-corporate-group','two-firm-system'):
+            binding=CompletedPredictionBinding(R8_MODEL,scope,source,digest(config),digest(summary),
+                item.narrow_review_receipt.sha256,config['buyer']['seed'],horizon,tuple(entities))
+            scopes[scope]=asdict(extract_supported_observables(summary,config,binding))
+        outputs.append({'arm':item.arm,'firms':firms,'scopes':scopes,
+            'gate_scope':'retained narrow mechanism/accounting subsets and Root native-restore receipt metadata'})
+    require(len(sources)==1,'R10 engineering pair source mismatch')
+    return EngineeringObservablePacket(R10_MODEL,R8_MODEL,sources.pop(),tuple(outputs),evidence)
+
+
+def export_r10_engineering_packet(packet):
+    """Verify content integrity and reproject original refs before exporting.
+
+    Checksums are not issuer authentication. Reprojection is metadata-only and
+    never asserts that the separately referenced native raw gate is complete.
+    """
+    require(type(packet) is EngineeringObservablePacket,'typed R10 engineering packet required')
+    body=asdict(packet);checksum=body.pop('content_sha256')
+    require(_sha(checksum) and digest(body)==checksum,'engineering packet nested content changed after projection')
+    fresh=asdict(project_r10_engineering_observables(packet.evidence));fresh.pop('content_sha256')
+    require(canonical(body)==canonical(fresh),'engineering packet differs from original retained evidence projection')
+    return {**body,'content_sha256':checksum}
 
 
 def validate_predictions(protocol, predictions, *, role, parameter_points=None):
