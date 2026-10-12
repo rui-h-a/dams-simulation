@@ -1,0 +1,53 @@
+{
+  "schema": "DAMS-r91-control-recovery-validation-1",
+  "source_commit": "29c111ae1d4ab62b266d7c0eaad2643391997565",
+  "original_executed_source_commit": "7c6ee864987686a2b0315168e9dc2ae5481cf5f4",
+  "candidate_source_manifest_sha256": "e3e07850e0f51684feab1ac143cc6493055f348dde65a4db8f358609a8336baa",
+  "changed_operational_sources": [
+    "research_tools/compute_only_remote.py",
+    "research_tools/compute_only_worker.py",
+    "research_tools/same_region_archive.py",
+    "research_tools/small_enterprise_cloud.py"
+  ],
+  "all_other_original_runtime_sources_byte_identical": true,
+  "new_source_deployed": false,
+  "source_files_sha256": {
+    "research_tools/compute_only_worker.py": "a59b0ca3c29ddf82eaecab283d3d7ccbff6b575388084f6280a80305615ee589",
+    "research_tools/compute_only_remote.py": "8c1ca55e28edee9c2236aea2e4cbc70e99f4f8d7ff538687a1b9de644e622eae",
+    "research_tools/same_region_archive.py": "65d3bf0b6318f7e5e6244e86d006cdd02cf64462a63c2683bf2aff65f6b6f058",
+    "research_tools/small_enterprise_cloud.py": "3bc75a02ab11e07312595bba519a6fc9a217009f12baf6e77326ccd58fcdbb8a",
+    "tests/test_compute_control_faults.py": "726b48bf48d133da9cfb4c84e6b711beacb6a6054b5c0c3eb59c2090ece414b8",
+    "tests/test_small_enterprise_cloud_resume.py": "4e451958f2b8960bc5b3de34d2315c6d95b25a6ceaaf7d1881e84abf9ad87d12",
+    "tests/test_small_enterprise_cloud_parameterized.py": "c7f2d217c18e621694593d3bc2cb57af46fb8692fc591d77e13e36db6efa0ac0",
+    "tests/test_same_region_archive.py": "29753e012dd6c82d53dc44f1c27f5c5aa0f9b4c04206c56dbdfdcab1150034fc",
+    "tests/test_small_enterprise_entry.py": "b73aca92d6591322574b1aa287b628901a57ad2cd42218bc9bbba1dea7d7bf75"
+  },
+  "combined_tests": [
+    {
+      "tests": 162,
+      "errors": 0,
+      "failures": 0,
+      "seconds": 96.38399879197823,
+      "sources_stable": true,
+      "log_sha256": "19c2d02d489892dedcedc07888420f1f7af0c7ea9e597cd356519bb2bf426c17"
+    },
+    {
+      "tests": 162,
+      "errors": 0,
+      "failures": 0,
+      "seconds": 96.69750858301995,
+      "sources_stable": true,
+      "log_sha256": "a89484b7b4217d3fb54c8c75b1629230c85a4d3565153a0fc23cc8cdf888d5f6"
+    }
+  ],
+  "independent_control_tests": 14,
+  "independent_resume_tests": 12,
+  "native_supervision_controls_include_real_child_stop_and_reap": true,
+  "scope": "local engineering and native filesystem controls; external hardware/package attestation boundaries mocked in local supervision tests",
+  "GCP_calls_in_tests": 0,
+  "formal_worlds_added": 0,
+  "exact_historical_first_trigger_proven": false,
+  "first_exception_receipt_does_not_reconstruct_missing_old_exception": true,
+  "forensic_export_is_unvalidated_evidence": true,
+  "initial_counterexamples_and_failed_test_logs_retained": true
+}
