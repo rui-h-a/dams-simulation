@@ -271,9 +271,11 @@ class LeaseGuard:
         require(not self.closed and self.stable(self.config_path) == self.config_raw
                 and self.stable(self.work.path/'compute-runtime.json') == self.runtime_raw,
                 'archive original config/runtime custody changed')
-        now = max(time.time(), self.wall+time.monotonic()-self.monotonic)
-        require(now < self.deadline, 'archive original node cutoff reached')
+        def now():
+            return max(time.time(), self.wall+time.monotonic()-self.monotonic)
+        require(now() < self.deadline, 'archive original node cutoff reached')
         self.previous = self.worker.lease(self.work, self.context['runtime_sha256'], 120, now, self.previous)
+        require(now() < self.deadline, 'archive original node cutoff reached')
 
     def cancelled(self):
         self.check(); return False

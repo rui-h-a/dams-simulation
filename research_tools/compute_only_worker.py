@@ -35,9 +35,13 @@ RUNTIME_FIELDS = {'schema', 'source_commit', 'source_manifest_sha256', 'spec', '
                   'controller_lease_timeout_seconds', 'transfer_config_sha256'}
 
 
-def require(ok, reason):
+def require(ok, reason, *, guard_id=None, expected=None, actual=None):
     if not ok:
-        raise GuardError(reason)
+        error = GuardError(reason)
+        error.guard_id = guard_id
+        error.expected = expected
+        error.actual = actual
+        raise error
 
 
 def canonical(value):
@@ -170,6 +174,53 @@ class Directory:
         finally:
             os.close(fd)
 
+    def read_lease(self, name='controller-heartbeat.json', *, attempts=3, bound=4096):
+        """A legal atomic lease rotation is retried; immutable reads stay strict.
+
+        In-place writes, aliases, permission changes and malformed files still
+        refuse. An opened inode can become unlinked only when its exact pathname
+        has been atomically replaced by a distinct private regular inode.
+        """
+        require(name == 'controller-heartbeat.json' and attempts == 3 and bound == 4096,
+                'lease read contract changed', guard_id='lease_read_contract')
+        for _ in range(attempts):
+            self.check()
+            path = lexical(self.path / name)
+            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+            try:
+                before = os.fstat(fd)
+                require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1
+                        and before.st_uid == self.initial.st_uid
+                        and stat.S_IMODE(before.st_mode) == 0o600 and before.st_size <= bound,
+                        'lease file is not bounded private regular bytes', guard_id='lease_file_shape')
+                data = bytearray()
+                while True:
+                    block = os.read(fd, min(65536, bound + 1 - len(data)))
+                    if not block:
+                        break
+                    data.extend(block)
+                    require(len(data) <= bound, 'lease file exceeds bound', guard_id='lease_file_shape')
+                after = os.fstat(fd)
+                current = os.stat(path, follow_symlinks=False)
+                self.check()
+                require((before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns,
+                         before.st_mode, before.st_uid, before.st_gid)
+                        == (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns,
+                            after.st_mode, after.st_uid, after.st_gid),
+                        'lease inode changed during read', guard_id='lease_inplace_change')
+                if (current.st_dev, current.st_ino) == (before.st_dev, before.st_ino):
+                    require(anchor(before) == anchor(after) == anchor(current),
+                            'lease inode changed during read', guard_id='lease_inplace_change')
+                    return bytes(data), anchor(current)
+                require(after.st_nlink == 0 and stat.S_ISREG(current.st_mode)
+                        and current.st_nlink == 1 and current.st_dev == before.st_dev
+                        and current.st_uid == before.st_uid and current.st_gid == before.st_gid
+                        and stat.S_IMODE(current.st_mode) == 0o600 and current.st_size <= bound,
+                        'lease replacement is not an atomic private version', guard_id='lease_rotation_shape')
+            finally:
+                os.close(fd)
+        raise GuardError('lease rotated beyond bounded reads')
+
     def write(self, name, value, *, exclusive=False):
         require('/' not in name and name not in ('', '.', '..'), 'unsafe guest receipt name')
         self.check()
@@ -245,6 +296,90 @@ class Clock:
 
     def now(self):
         return max(time.time(), self.wall + time.monotonic() - self.monotonic)
+
+
+class GuardHistory:
+    """Create-only first failure; later diagnostics never overwrite its cause."""
+    INPUT_GUARDS = {'source_identity', 'configuration', 'original_limits'}
+    SAFE_REASONS = {
+        'controller lease expired or future dated', 'controller lease rolled back',
+        'controller lease changed without sequence advancement', 'controller lease time rolled back',
+        'invalid controller lease', 'invalid bounded JSON', 'guest file changed during read',
+        'frozen guest input changed', 'frozen guest configuration changed',
+        'guest input changed at terminal cutoff', 'guest directory namespace changed',
+        'lease inode changed during read', 'lease replacement is not an atomic private version',
+        'lease rotated beyond bounded reads', 'lease file is not bounded private regular bytes',
+        'paired actual backing device free floor exhausted', 'whole paired cumulative output byte cap reached',
+        'whole paired cumulative output file cap reached',
+        'guest input changed before launch', 'scientific deadline elapsed during guest preflight',
+        'owned pipeline did not stop before hard cutoff',
+    }
+
+    def __init__(self, work, clock, runtime_sha, source_manifest_sha, start_utc):
+        self.work, self.clock = work, clock
+        self.runtime_sha, self.source_manifest_sha = runtime_sha, source_manifest_sha
+        self.start_utc = start_utc
+        self.started_monotonic = time.monotonic()
+        self.first = None
+        self.secondary = []
+        self.additional_count = 0
+        self.input_failed = False
+        self.receipt = None
+
+    @staticmethod
+    def detail(value):
+        if value is None or type(value) in (bool, int):
+            return value
+        if type(value) is float:
+            return value if math.isfinite(value) else None
+        if isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value):
+            return value
+        if isinstance(value, dict) and len(value) <= 12:
+            return {key: GuardHistory.detail(item) for key, item in value.items()
+                    if key in {'max_age_seconds', 'future_seconds', 'age_seconds', 'sequence',
+                               'source_identity_seconds', 'output_scan_seconds', 'pre_lease_seconds'}}
+        return 'redacted'
+
+    def record(self, error, guard_id, phase, control, timings=None):
+        if guard_id in self.INPUT_GUARDS:
+            self.input_failed = True
+        now = self.clock.now()
+        chain = []
+        current = error
+        for _ in range(3):
+            if current is None:
+                break
+            reason = str(current) if isinstance(current, GuardError) else ''
+            chain.append({'exception_type': type(current).__name__,
+                          'reason': reason if reason in self.SAFE_REASONS else 'unspecified_guard_failure',
+                          'errno': current.errno if isinstance(current, OSError) else None})
+            current = current.__cause__ or current.__context__
+        item = {'schema': 'DAMS-first-guard-failure-1',
+                'guard_id': getattr(error, 'guard_id', None) or guard_id, 'check_stage': guard_id,
+                'phase': phase, 'UTC': datetime.fromtimestamp(now, timezone.utc).isoformat(),
+                'monotonic_seconds_since_execution_start': time.monotonic() - self.started_monotonic,
+                'cause_chain': chain, 'expected': self.detail(getattr(error, 'expected', None)),
+                'actual': self.detail(getattr(error, 'actual', None)),
+                'last_controller_sequence': control.get('sequence') if control else None,
+                'lease_age_seconds': now - utc(control['observed_utc']).timestamp() if control else None,
+                'runtime_sha256': self.runtime_sha, 'source_manifest_sha256': self.source_manifest_sha,
+                'execution_start_utc': self.start_utc,
+                'check_timings_seconds': self.detail(timings or {}), 'science_complete': False}
+        if self.first is None:
+            self.first = item
+            leaf = 'first-guard-fault-' + sha(canonical({'runtime': self.runtime_sha, 'start': self.start_utc})) + '.json'
+            try:
+                self.work.write(leaf, item, exclusive=True)
+                self.receipt = {'file': leaf, 'sha256': sha(canonical(item)), 'durably_saved': True}
+            except (GuardError, OSError, ValueError) as persistence_error:
+                # An inability to write diagnostics cannot prevent cooperative stop.
+                self.receipt = {'file': leaf, 'durably_saved': False,
+                                'exception_type': type(persistence_error).__name__}
+        else:
+            self.additional_count += 1
+            if len(self.secondary) < 16:
+                self.secondary.append(item)
+        return self.first['cause_chain'][0]['exception_type']
 
 
 def reap_timeout(clock, hard):
@@ -402,20 +537,29 @@ def verify_executing_source(root, observations):
 
 
 def lease(work, runtime_sha, timeout, now, previous=None):
-    data, _ = work.read('controller-heartbeat.json')
+    data, _ = work.read_lease()
     value = parse(data)
     require(isinstance(value, dict) and set(value) == {'schema', 'runtime_sha256', 'sequence', 'observed_utc'}
             and value['schema'] == 'DAMS-compute-controller-lease-1'
             and value['runtime_sha256'] == runtime_sha and type(value['sequence']) is int
-            and value['sequence'] >= 0 and isinstance(value['observed_utc'], str), 'invalid controller lease')
+            and value['sequence'] >= 0 and isinstance(value['observed_utc'], str),
+            'invalid controller lease', guard_id='lease_binding', expected=runtime_sha)
     observed = utc(value['observed_utc']).timestamp()
-    require(now - timeout <= observed <= now + 5, 'controller lease expired or future dated')
+    # Obtain the rollback-resistant clock AFTER the versioned read. The source
+    # and output scans preceding this call must not date a new lease in the future.
+    now = now() if callable(now) else now
+    require(now - timeout <= observed <= now + 5, 'controller lease expired or future dated',
+            guard_id='lease_time', expected={'max_age_seconds': timeout, 'future_seconds': 5},
+            actual={'age_seconds': now - observed, 'sequence': value['sequence']})
     if previous is not None:
-        require(value['sequence'] >= previous['sequence'], 'controller lease rolled back')
+        require(value['sequence'] >= previous['sequence'], 'controller lease rolled back',
+                guard_id='lease_sequence', expected=previous['sequence'], actual=value['sequence'])
         if value['sequence'] == previous['sequence']:
-            require(value == previous, 'controller lease changed without sequence advancement')
+            require(value == previous, 'controller lease changed without sequence advancement',
+                    guard_id='lease_same_sequence', expected=sha(canonical(previous)), actual=sha(data))
         else:
-            require(observed >= utc(previous['observed_utc']).timestamp(), 'controller lease time rolled back')
+            require(observed >= utc(previous['observed_utc']).timestamp(), 'controller lease time rolled back',
+                    guard_id='lease_time_sequence', expected=utc(previous['observed_utc']).timestamp(), actual=observed)
     return value
 
 
@@ -471,7 +615,7 @@ def run_compute(runtime_path, root_path, work_path):
             verify_executing_source(root, package)
             transfer, transfer_anchor = work.read('transfer-config.json')
             require(sha(transfer) == runtime['transfer_config_sha256'], 'frozen transfer configuration differs')
-            control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], clock.now())
+            control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], clock.now)
             verification = verify_identity(runtime, measured_guest())
             limits = {**runtime['runtime_limits'], 'provenance': {
                 **runtime['runtime_limits'].get('provenance', {}),
@@ -522,13 +666,24 @@ def run_compute(runtime_path, root_path, work_path):
                     from research_tools.frozen_science_cloud import check_output_capacity
                     check_output_capacity(output, preservation)
                 out.write('cloud-execution.json', execution, exclusive=True)
-                check_files(root, package)
-                if preservation is not None:
-                    guard_original_limits(work, original_limits)
-                require(work.read(runtime_path.name) == (data, initial)
-                        and work.read('transfer-config.json') == (transfer, transfer_anchor), 'guest input changed before launch')
-                control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], clock.now(), control)
-                require(clock.now() < soft, 'scientific deadline elapsed during guest preflight')
+                history = GuardHistory(work, clock, runtime_sha, runtime['source_manifest_sha256'],
+                                       execution['start_utc'])
+                guard_id = 'source_identity'
+                try:
+                    check_files(root, package)
+                    if preservation is not None:
+                        guard_id = 'original_limits'
+                        guard_original_limits(work, original_limits)
+                    guard_id = 'configuration'
+                    require(work.read(runtime_path.name) == (data, initial)
+                            and work.read('transfer-config.json') == (transfer, transfer_anchor), 'guest input changed before launch')
+                    guard_id = 'controller_lease'
+                    control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], clock.now, control)
+                    guard_id = 'pipeline_deadline'
+                    require(clock.now() < soft, 'scientific deadline elapsed during guest preflight')
+                except (GuardError, OSError, ValueError) as caught:
+                    history.record(caught, guard_id, 'prelaunch', control)
+                    raise
                 env = dict(os.environ)
                 for name in ('DAMS_CLOUD_PRIVATE_CONFIG', 'DAMS_CLOUD_STATE_DIR', 'GOOGLE_APPLICATION_CREDENTIALS'):
                     env.pop(name, None)
@@ -558,8 +713,12 @@ def run_compute(runtime_path, root_path, work_path):
                     nonlocal stop_requested
                     stop_requested = True
                 with os.fdopen(logfd, 'wb') as log:
-                    process = subprocess.Popen(command, cwd=root.path, env=env, stdout=log,
-                                               stderr=subprocess.STDOUT, start_new_session=True)
+                    try:
+                        process = subprocess.Popen(command, cwd=root.path, env=env, stdout=log,
+                                                   stderr=subprocess.STDOUT, start_new_session=True)
+                    except (OSError, ValueError, subprocess.SubprocessError) as caught:
+                        history.record(caught, 'pipeline_launch', 'prelaunch', control)
+                        raise
                     try:
                         work.write('process.json', {'pid': process.pid, 'runtime_sha256': runtime_sha,
                                                    'start_utc': stamp(), 'deadline_utc': runtime['deadline_utc']}, exclusive=True)
@@ -570,23 +729,41 @@ def run_compute(runtime_path, root_path, work_path):
                         while True:
                             now = clock.now()
                             if term_at is None:
+                                guard_id = 'source_identity'
+                                timings = {}
+                                iteration_started = time.monotonic()
                                 try:
                                     check_files(root, package)
+                                    timings['source_identity_seconds'] = time.monotonic() - iteration_started
+                                    guard_id = 'output_namespace'
                                     work.check(); out.check()
+                                    guard_id = 'output_capacity'
+                                    scan_started = time.monotonic()
                                     paired_capacity=paired_nonphase_capacity(output,work.path,runtime)
+                                    timings['output_scan_seconds'] = time.monotonic() - scan_started
                                     if preservation is not None:
                                         check_output_capacity(output, preservation)
+                                        guard_id = 'original_limits'
                                         guard_original_limits(work, original_limits)
+                                    guard_id = 'configuration'
                                     require(work.read(runtime_path.name) == (data, initial)
                                             and work.read('transfer-config.json') == (transfer, transfer_anchor),
                                             'frozen guest configuration changed')
-                                    control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], now, control)
+                                    guard_id = 'controller_lease'
+                                    timings['pre_lease_seconds'] = time.monotonic() - iteration_started
+                                    control = lease(work, runtime_sha, runtime['controller_lease_timeout_seconds'], clock.now, control)
                                 except (GuardError, OSError, ValueError) as caught:
-                                    error = type(caught).__name__
-                                    reason = 'input_or_controller_guard'
+                                    error = history.record(caught, guard_id, 'running', control, timings)
+                                    if reason == 'pipeline_exit':
+                                        reason = 'input_or_controller_guard'
                                     stop_requested = True
+                                # Scans and lease reads never extend a deadline by
+                                # continuing to use the pre-scan timestamp.
+                                now = clock.now()
                                 if now >= soft:
-                                    reason = ('operational_deadline' if preservation is not None else 'scientific_deadline'); stop_requested = True
+                                    if reason == 'pipeline_exit':
+                                        reason = ('operational_deadline' if preservation is not None else 'scientific_deadline')
+                                    stop_requested = True
                                 elif stop_requested and reason == 'pipeline_exit':
                                     reason = 'service_signal'
                                 if stop_requested:
@@ -623,13 +800,24 @@ def run_compute(runtime_path, root_path, work_path):
                         absent = wait_pipeline_group_absent(process.pid, (runtime['preservation_profile']['operational_hard_stop_utc']
                                                              if preservation is not None else runtime['runtime_limits']['stop_cutoff_utc']),
                                                             max_wait_seconds=max(0, min(2, hard - clock.now())))
-                    except BaseException:
+                    except BaseException as caught:
                         # The direct parent may have exited while owned descendants remain.
+                        # Stop and reap before diagnostic filesystem I/O; a broken
+                        # receipt path must never keep an owned producer alive.
                         try:
                             os.killpg(process.pid, signal.SIGKILL)
                         except ProcessLookupError:
                             pass
-                        process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None else 2))
+                        try:
+                            process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None else 2))
+                        finally:
+                            if isinstance(caught, (GuardError, OSError, ValueError, subprocess.SubprocessError)):
+                                try:
+                                    history.record(caught, 'pipeline_supervision', 'running', control)
+                                except Exception:
+                                    # Retain the original exception when even the
+                                    # bounded diagnostic recorder is unavailable.
+                                    pass
                         raise
                     finally:
                         if process.poll() is None:
@@ -640,27 +828,47 @@ def run_compute(runtime_path, root_path, work_path):
                             process.wait(timeout=(reap_timeout(clock, hard) if preservation is not None else 2))
                         for sig, handler in previous_handlers.items():
                             signal.signal(sig, handler)
-                work.check(); out.check()
+                terminal_inputs_verified = False
+                guard_id = 'output_namespace'
                 try:
+                    work.check(); out.check()
+                    guard_id = 'source_identity'
                     check_files(root, package)
-                    paired_capacity=paired_nonphase_capacity(output,work.path,runtime)
                     if preservation is not None:
+                        guard_id = 'original_limits'
                         guard_original_limits(work, original_limits)
+                    guard_id = 'configuration'
                     require(work.read(runtime_path.name) == (data, initial)
                             and work.read('transfer-config.json') == (transfer, transfer_anchor),
                             'guest input changed at terminal cutoff')
+                    terminal_inputs_verified = True
+                    guard_id = 'output_capacity'
+                    paired_capacity=paired_nonphase_capacity(output,work.path,runtime)
                 except (GuardError, OSError, ValueError) as caught:
-                    error = type(caught).__name__
-                    reason = 'input_or_controller_guard'
+                    error = history.record(caught, guard_id, 'terminal_recheck', control)
+                    if reason == 'pipeline_exit':
+                        reason = 'input_or_controller_guard'
                 phase_totals=None
                 if phase is not None:
                     try:phase_totals=phase.check()
                     except (OSError,ValueError,RuntimeError) as caught:
-                        error=type(caught).__name__;reason='bounded_storage_terminal_guard'
+                        error=history.record(caught, 'output_capacity', 'terminal_recheck', control)
+                        if reason == 'pipeline_exit':reason='bounded_storage_terminal_guard'
                 terminal = {**execution, 'end_utc': stamp(), 'exit_code': code, 'stop_reason': reason,
                             'guard_error_type': error, 'last_controller_sequence': control['sequence'],
                             'owned_pipeline_group_verification': absent, 'transfer_ack_verified': False,
-                            'inputs_unchanged': error is None, 'science_complete': False}
+                            'inputs_unchanged': terminal_inputs_verified and not history.input_failed,
+                            'input_integrity': {'verified_at_start': True,
+                                                'verified_at_terminal': terminal_inputs_verified,
+                                                'input_guard_failed': history.input_failed},
+                            'control_state': {'stop_requested': stop_requested,
+                                              'controller_guard_failed': bool(history.first and
+                                                  history.first['check_stage'] == 'controller_lease')},
+                            'output_integrity': {'full_raw_scientific_gate_passed': False},
+                            'first_guard_failure': history.first, 'first_guard_receipt': history.receipt,
+                            'secondary_guard_failures': history.secondary,
+                            'secondary_guard_failure_count': history.additional_count,
+                            'science_complete': False}
                 if phase is not None:
                     terminal['bounded_phase_storage']={'schema':'dams-bounded-phase-storage-v1',
                         'logical_bytes':phase_totals,'raw_limit':phase.value['raw_bytes'],

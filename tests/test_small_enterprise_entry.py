@@ -1,4 +1,11 @@
-"""Finite shell-entry controls using a recording tool, never the research model."""
+"""Finite shell-entry controls using recording tools, never provider or Model.
+
+The retained 7c6 entry permits an explicitly configured private controller after
+locked dependency bootstrap, requires persistent state, and bypasses that
+controller for preparation. The earlier blanket cloud-config refusal is an
+obsolete test contract. A fake tool's zero exit proves argv routing only; it
+neither validates a private account nor accepts scientific/paid execution.
+"""
 from __future__ import annotations
 
 import json
@@ -163,16 +170,63 @@ class SmallEnterpriseEntry(unittest.TestCase):
     def test_unknown_argument_is_refused(self):
         self.assert_refused_before_tools(self.small_args() + ["--confirmation-worlds", "1"])
 
-    def test_private_cloud_config_is_not_silently_ignored(self):
-        self.assert_refused_before_tools(
-            self.small_args(), extra_env={"DAMS_CLOUD_PRIVATE_CONFIG": "private-config.json"},
-        )
+    def test_private_cloud_config_missing_state_refuses_before_controller_or_model(self):
+        result, calls = self.invoke(*self.small_args(),
+            extra_env={"DAMS_CLOUD_PRIVATE_CONFIG": "private-config.json"})
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("private persistent state directory required", result.stderr)
+        # The current route admits dependency preparation, then refuses the
+        # missing durable state before any controller or model invocation.
+        self.assertEqual(self.execution_calls(calls), [
+            ["sync", "--locked", "--extra", "analysis", "--python", "3.14.2", "--offline"],
+        ])
+        self.assertFalse(any(call and call[0] == "run" for call in calls))
 
-    def test_cloud_config_is_also_refused_during_prepare(self):
-        self.assert_refused_before_tools(
-            self.small_args() + ["--prepare-only"],
-            extra_env={"DAMS_CLOUD_PRIVATE_CONFIG": "private-config.json"},
-        )
+    def test_explicit_private_config_and_state_dispatch_exact_controller_arguments(self):
+        private = self.root / "private configuration.json"
+        private.write_text('{"recording_fixture_only":true}\n'); private.chmod(0o600)
+        state = self.root / "persistent recording state"; state.mkdir()
+        result, calls = self.invoke(*self.small_args("300"), extra_env={
+            "DAMS_CLOUD_PRIVATE_CONFIG": str(private), "DAMS_CLOUD_STATE_DIR": str(state)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.execution_calls(calls), [
+            ["sync", "--locked", "--extra", "analysis", "--python", "3.14.2", "--offline"],
+            ["run", "--no-sync", "python", "research_tools/cloud_control.py", "execute",
+             "--private-config", str(private), "--state-dir", str(state),
+             "--spec", "small-enterprise-5y", "--scale", "300"],
+        ])
+        # No local study/model dispatch was silently substituted for the
+        # explicit private controller. The recording tool runs no provider.
+        self.assertFalse(any("research_tools.small_enterprise" in call or "dams_sim" in call
+                             for call in calls))
+
+    def test_private_cloud_config_prepare_bypasses_controller_with_explicit_limits(self):
+        result, calls = self.invoke(*self.small_args(), "--prepare-only", extra_env={
+            "DAMS_CLOUD_PRIVATE_CONFIG": "private-config.json", "DAMS_CLOUD_STATE_DIR": "retained state"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.execution_calls(calls), [
+            ["sync", "--locked", "--extra", "analysis", "--python", "3.14.2", "--offline"],
+            ["run", "--no-sync", "python", "-m", "research_tools.small_enterprise",
+             "--population", "120", "--output", "study results/retained world",
+             "--runtime-limits", "admitted settings/runtime.json", "--prepare-only"],
+        ])
+        self.assertFalse(any("research_tools/cloud_control.py" in call or "pipeline" in call
+                             for call in calls))
+
+    def test_private_cloud_config_prepare_without_limits_records_inventory_and_doctor(self):
+        result, calls = self.invoke("--spec", "small-enterprise-5y", "--scale", "300",
+            "--prepare-only", extra_env={"DAMS_CLOUD_PRIVATE_CONFIG": "private-config.json"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.execution_calls(calls), [
+            ["sync", "--locked", "--extra", "analysis", "--python", "3.14.2", "--offline"],
+            ["run", "--no-sync", "python", "-c",
+             "from research_tools.small_enterprise import spec; import sys; print(spec(int(sys.argv[1]))[1])", "300"],
+            ["run", "--no-sync", "python", "-m", "dams_sim", "doctor"],
+        ])
+        # No persistent paid-controller state is needed for this inventory-only
+        # route, and neither a paid controller nor Model pipeline is invoked.
+        self.assertFalse(any("research_tools/cloud_control.py" in call or "pipeline" in call
+                             for call in calls))
 
     def test_online_sync_stays_locked(self):
         result, calls = self.invoke(*self.small_args(), extra_env={"DAMS_OFFLINE_DEPENDENCIES": "0"})

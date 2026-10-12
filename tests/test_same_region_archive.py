@@ -278,7 +278,7 @@ class Controls(unittest.TestCase):
         (work/'compute-runtime.json').write_bytes(runtime);config=work/'config.json';config.write_bytes(b'root-config')
         context={'work_root':str(work),'runtime_sha256':pb.digest(runtime),'deadline_utc':'2030-01-01T00:00:00Z'}
         row={'schema':'DAMS-compute-controller-lease-1','runtime_sha256':pb.digest(runtime),'sequence':0,'observed_utc':stamp()}
-        heartbeat=work/'controller-heartbeat.json';heartbeat.write_bytes(pb.blob(row))
+        heartbeat=work/'controller-heartbeat.json';heartbeat.write_bytes(pb.blob(row));heartbeat.chmod(0o600)
         return context,config,heartbeat,row
     def test_original_120_second_lease_expires_without_extension(self):
         from datetime import datetime,timezone
@@ -301,6 +301,22 @@ class Controls(unittest.TestCase):
             def altered(p):return b'changed executable' if p==Path(a.__file__) else original(p)
             with patch.object(Path,'read_bytes',altered),self.assertRaisesRegex(ValueError,'running helper source changed'):
                 guard.check()
+        finally:guard.close()
+    def test_lease_validation_samples_clock_after_versioned_read(self):
+        from datetime import datetime,timezone
+        context,config,heartbeat,row=self.lease_fixture();guard=a.LeaseGuard(context,config,b'root-config')
+        try:
+            start=guard.wall;observed=[start]
+            native=guard.worker.Directory.read_lease
+            def read(directory,*args,**kwargs):
+                updated={**row,'sequence':1,'observed_utc':datetime.fromtimestamp(start+6,timezone.utc).isoformat()}
+                heartbeat.write_bytes(pb.blob(updated))
+                result=native(directory,*args,**kwargs);observed[0]=start+7;return result
+            with patch.object(a.time,'time',side_effect=lambda:observed[0]), \
+                 patch.object(guard.worker.Directory,'read_lease',new=read):
+                guard.check()
+            self.assertEqual(guard.previous['sequence'],1)
+            self.assertEqual(guard.deadline,1893456000.)
         finally:guard.close()
     def test_same_region_zero_media_rejects_foreign_namespace_and_legacy(self):
         receipt=root();manifest=b'actual pinned source manifest';receipt['source_manifest_sha256']=pb.digest(manifest)
@@ -395,8 +411,10 @@ class Controls(unittest.TestCase):
         for name,sha in originals.items():
             if name.startswith('dams_sim/') or name in ('research_tools/small_enterprise.py','research_tools/validate_longitudinal.py'):
                 self.assertEqual(pb.digest((SOURCE/name).read_bytes()),sha,name)
-        self.assertEqual(pb.digest((SOURCE/'research_tools/small_enterprise_cloud.py').read_bytes()),
-            'fa63eed805bc8fd41fe71b1a317876e68e1c3f9ef0fb81dc27f039a64f37586f')
+        # The immutable scientific modules above remain pinned. The explicitly
+        # versioned cloud selector now has same-case resume controls; its old
+        # operational SHA is not a scientific source freeze. Native refusal,
+        # restoration and counterexamples are in test_small_enterprise_cloud_resume.
     def restoration_fixture(self):
         self.fix=BackendFixture(self.path);groups=self.path/'groups';groups.mkdir();records=self.path/'records';records.mkdir()
         generation='a'*64;group_path=groups/generation;group_path.mkdir();group=Directory(group_path)

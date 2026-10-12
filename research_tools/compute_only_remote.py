@@ -181,6 +181,11 @@ def spool_snapshot(c,work):
 
 def operation(action,c,raw,get_identity=None):
     context(c,get_identity)
+    if action in ('forensic-terminal-roster','forensic-terminal-read'):
+        # The Root-delivered inline helper reads closed evidence only. Do not
+        # import a possibly changed guest package to preserve unaccepted bytes.
+        work=path(c['work_root']);terminal=parse(stable(work/'compute-terminal.json'))
+        return closed_terminal_transport(c,work,terminal,action.removeprefix('forensic-'),raw,forensic=True)
     if action=='upload':return blob(upload(c,raw))
     root,m=package(c);sys.path[:0]=[str(root),str(root/'research_tools')]
     # The inline helper itself must be among the root-approved uploaded bytes.
@@ -221,7 +226,7 @@ def operation(action,c,raw,get_identity=None):
         for n in (('acks',) if phase is not None else ('spool','acks')):
             require(not os.path.lexists(work/n),'preexisting spool requires reconciliation');os.mkdir(work/n,0o700)
         for n,value in (('compute-runtime.json',r),('transfer-config.json',t),('controller-heartbeat.json',lease)):write(work/n,blob(value))
-        with w.directory(work) as d:w.lease(d,sha(blob(r)),r['controller_lease_timeout_seconds'],time.time())
+        with w.directory(work) as d:w.lease(d,sha(blob(r)),r['controller_lease_timeout_seconds'],w.Clock().now)
         require(time.time()<w.utc(r['runtime_limits']['deadline_utc']).timestamp(),'science cutoff before activation')
         result=subprocess.run(['/bin/bash',str(root/'cloud/compute-only-services.sh')],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=min(30,max(1,w.utc(r['runtime_limits']['deadline_utc']).timestamp()-time.time())))
         require(result.returncode==0,'service activation unknown');return blob({'runtime_sha256':sha(blob(r)),'services_activated':True,'phase_storage':phase,'science_complete':False})
@@ -299,7 +304,7 @@ def operation(action,c,raw,get_identity=None):
         require(v['runtime_sha256']==c['runtime_sha256'] and v['sequence']==previous['sequence']+1,'lease exact successor')
         require(w.utc(v['observed_utc'])>=w.utc(previous['observed_utc']),'lease time rollback')
         write(work/'controller-heartbeat.json',raw,old)
-        with w.directory(work) as d:w.lease(d,c['runtime_sha256'],runtime['controller_lease_timeout_seconds'],time.time(),previous)
+        with w.directory(work) as d:w.lease(d,c['runtime_sha256'],runtime['controller_lease_timeout_seconds'],w.Clock().now,previous)
         return blob({'heartbeat_sha256':sha(raw),'sequence':v['sequence']})
     if action=='ack':
         a=parse(raw);require(a['stage_id']==c['stage_id'] and a['source_sha256']==c['source_sha256'] and re.fullmatch('[0-9a-f]{64}',a['generation']),'ACK target')
@@ -321,38 +326,88 @@ def operation(action,c,raw,get_identity=None):
     terminal=parse(stable(work/'compute-terminal.json'))
     require(terminal['runtime_sha256']==c['runtime_sha256'] and terminal['owned_pipeline_group_verification']['owned_pipeline_group_absent'] is True,'terminal/owned group missing')
     require(terminal['inputs_unchanged'] is True,'terminal source guard failed')
+    return closed_terminal_transport(c,work,terminal,action,raw)
+
+def terminal_census(c,output):
+    """Bound the complete namespace before payload I/O; retain native identities."""
+    require(type(c['max_terminal_files']) is int and c['max_terminal_files']>0
+        and type(c['max_terminal_bytes']) is int and c['max_terminal_bytes']>0,
+        'invalid terminal admitted bound')
+    files=[];directories=[];total=0
+    for parent,dirs,names in os.walk(output,followlinks=False):
+        deadline(c);dirs.sort();parent=path(parent);info=parent.lstat()
+        require(stat.S_ISDIR(info.st_mode),'terminal non-directory namespace')
+        directories.append((parent.relative_to(output).as_posix(),info.st_dev,info.st_ino,
+                            info.st_mode,info.st_uid,info.st_gid))
+        for d in dirs:
+            require(stat.S_ISDIR((parent/d).lstat().st_mode),'terminal symlink directory')
+        for n in sorted(names):
+            deadline(c);p=parent/n;st=p.lstat()
+            require(stat.S_ISREG(st.st_mode) and st.st_nlink==1,'terminal nonregular leaf')
+            total+=st.st_size
+            require(len(files)+1<=c['max_terminal_files'] and total<=c['max_terminal_bytes'],
+                    'terminal admitted bound')
+            files.append({'path':p.relative_to(output).as_posix(),'bytes':st.st_size,
+                          'identity':list(anchor(st))})
+    return files,directories
+
+def closed_terminal_transport(c,work,terminal,action,raw,*,forensic=False):
+    require(terminal['runtime_sha256']==c['runtime_sha256']
+        and terminal['owned_pipeline_group_verification']['owned_pipeline_group_absent'] is True,
+        'terminal/owned group missing')
+    if not forensic:
+        require(terminal['inputs_unchanged'] is True,'terminal source guard failed')
+    else:
+        admission=c.get('forensic_admission')
+        fields={'schema','runtime_sha256','source_manifest_sha256','terminal_sha256',
+                'max_terminal_files','max_terminal_bytes','deadline_utc','read_only','science_acceptance'}
+        require(isinstance(admission,dict) and set(admission)==fields
+            and admission['schema']=='DAMS-root-readonly-forensic-admission-1'
+            and admission['read_only'] is True and admission['science_acceptance'] is False
+            and all(admission[k]==c[k] for k in ('runtime_sha256','source_manifest_sha256',
+                'max_terminal_files','max_terminal_bytes','deadline_utc'))
+            and admission['terminal_sha256']==sha(stable(work/'compute-terminal.json')),
+            'explicit bounded forensic admission differs')
+    require(type(terminal['owned_pipeline_group_verification']['owned_pipeline_group_id']) is int
+        and terminal['owned_pipeline_group_verification']['owned_pipeline_group_id']>1,
+        'invalid closed producer group')
     pid=terminal['owned_pipeline_group_verification']['owned_pipeline_group_id']
     try:os.killpg(pid,0)
     except ProcessLookupError:pass
     else:raise ValueError('owned pipeline group still exists')
     output=path(work/'output')
     if action=='terminal-roster':
-        files=[];namespace=[];total=0
-        for parent,dirs,names in os.walk(output,followlinks=False):
-            dirs.sort();path(parent)
-            for d in dirs:require(stat.S_ISDIR((Path(parent)/d).lstat().st_mode),'terminal symlink directory')
-            for n in sorted(names):
-                p=Path(parent)/n;st=p.lstat();require(stat.S_ISREG(st.st_mode) and st.st_nlink==1,'terminal nonregular leaf')
-                rel=p.relative_to(output).as_posix();namespace.append({'path':rel,'bytes':st.st_size})
-                # Preserve all stable native bytes, including interrupted-case
-                # SQLite sidecars; this is forensic transport, never state admission.
-                before=anchor(st);h=hashlib.sha256();fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)
-                try:
-                    while True:
-                        deadline(c);block=os.read(fd,65536)
-                        if not block:break
-                        h.update(block)
-                    require(anchor(os.fstat(fd))==before and anchor(p.lstat())==before,'terminal roster source drift')
-                finally:os.close(fd)
-                total+=st.st_size;files.append({'path':rel,'bytes':st.st_size,'sha256':h.hexdigest(),'identity':list(before)})
-                require(len(files)<=c['max_terminal_files'] and total<=c['max_terminal_bytes'],'terminal admitted bound')
-        return blob({'schema':'dams-compute-terminal-roster-v1','files':files,'namespace':namespace,'terminal':terminal,
-            'source_sha256':c['source_sha256'],'runtime_sha256':c['runtime_sha256'],'case_payloads_require_original_collector':True,'stable_case_bytes_preserved_as_unvalidated_evidence':True,'science_complete':False})
+        initial,directories=terminal_census(c,output);files=[]
+        namespace=[{'path':f['path'],'bytes':f['bytes']} for f in initial]
+        for file in initial:
+            p=path(output/file['path']);before=tuple(file['identity'])
+            require(anchor(p.lstat())==before,'terminal roster source drift')
+            # Interrupted-case SQLite sidecars are transported as unvalidated
+            # evidence. Read at most the pre-admitted size plus one EOF byte.
+            h=hashlib.sha256();fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK)
+            try:
+                require(anchor(os.fstat(fd))==before,'terminal roster source drift')
+                count=0
+                while True:
+                    deadline(c);block=os.read(fd,min(65536,file['bytes']+1-count))
+                    if not block:break
+                    count+=len(block)
+                    require(count<=file['bytes'],'terminal roster source exceeded admitted bytes')
+                    h.update(block)
+                require(count==file['bytes'] and anchor(os.fstat(fd))==before
+                    and anchor(p.lstat())==before,'terminal roster source drift')
+            finally:os.close(fd)
+            files.append({**file,'sha256':h.hexdigest()})
+        final,final_directories=terminal_census(c,output)
+        require(final==initial and final_directories==directories,
+                'terminal roster namespace changed during read')
+        return blob({'schema':('dams-compute-forensic-roster-v1' if forensic else 'dams-compute-terminal-roster-v1'),'files':files,'namespace':namespace,'terminal':terminal,
+            'source_sha256':c['source_sha256'],'runtime_sha256':c['runtime_sha256'],'case_payloads_require_original_collector':True,'stable_case_bytes_preserved_as_unvalidated_evidence':True,**({'forensic_admission_sha256':sha(blob(admission)),'input_integrity_is_not_scientific_acceptance':True,'source_integrity_status':'UNVALIDATED'} if forensic else {}),'science_complete':False})
     require(action=='terminal-read','unknown remote operation')
     req=parse(raw);require(set(req)=={'file','offset','length'},'terminal read shape');v=req['file'];p=output/name(v['path'])
     require(type(req['offset']) is int and type(req['length']) is int and 0<=req['offset']<=v['bytes'] and 0<=req['length']<=4*1024**2 and req['offset']+req['length']<=v['bytes'],'terminal range')
     require(list(anchor(path(p).lstat()))==v['identity'],'terminal file replaced')
-    fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)
+    fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK)
     try:
         require(list(anchor(os.fstat(fd)))==v['identity'],'terminal FD replaced');os.lseek(fd,req['offset'],os.SEEK_SET);data=os.read(fd,req['length'])
         # bounded range itself may not end at EOF; do not overread the next range.

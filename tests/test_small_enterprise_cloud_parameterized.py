@@ -34,8 +34,11 @@ from dams_sim.spec import case_key
 
 frozen_limits = json.loads((FROZEN_FIXTURES/'n300-wave-runtime.json').read_bytes())
 LIMITS = copy.deepcopy(frozen_limits)
+# Current original pair admission: 8192 files per retained attempt and
+# 32798 whole-pair slots including finite retries and administrative leaves.
+# These are engineering fixtures; no actual runtime or scientific row changes.
 LIMITS.update(max_output_bytes=16*1024**3, batch_max_output_bytes=32*1024**3+256*1024**2,
-              batch_max_output_files=20000, per_world_output_files=10000,
+              batch_max_output_files=32798, per_world_output_files=8192,
               max_workers=1, cpu_budget=1)
 
 def synthetic_snapshot():
@@ -232,7 +235,16 @@ class ParameterizedSelector(unittest.TestCase):
             self.assertFalse((output/'single-arm-result.json').exists())
             self.assertFalse((output/'cases').exists())
 
-    def test_17_original_frozen_science_and_worker_files_are_byte_identical(self):
+    def test_17_original_frozen_scientific_sources_are_byte_identical(self):
+        """Keep original scientific byte pins; versioned worker is operational.
+
+        The historical 72-file manifest is preserved, including its old worker
+        entry. Worker/controller behavior is independently checked by
+        test_compute_control_faults.py: native atomic lease rotation, fresh
+        clock and first-error controls, real child stop/reap, and explicit
+        unvalidated forensic transport. Their versioned repairs are not a
+        scientific transition or a claim that the old worker bytes are intact.
+        """
         # The full 72-file original manifest remains available for provenance.
         # Archive/controller infrastructure may be independently versioned; it
         # is not a frozen scientific transition and is tested by its own suite.
@@ -242,8 +254,7 @@ class ParameterizedSelector(unittest.TestCase):
         frozen_names.update({'research_tools/small_enterprise.py',
                              'research_tools/validate_longitudinal.py',
                              'research_tools/validate_pipeline.py',
-                             'research_tools/recovery_checks.py',
-                             'research_tools/compute_only_worker.py'})
+                             'research_tools/recovery_checks.py'})
         for name in sorted(frozen_names):
             with self.subTest(name=name):
                 path=SOURCE/name

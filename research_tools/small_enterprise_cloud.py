@@ -451,6 +451,456 @@ def _case_writer(profile):
         directory.matches(name, owner.fileno())
         directory.check()
 
+RESUME_SCHEMA = 'DAMS-small-enterprise-resume-envelope-1'
+RESUME_GRANT_SCHEMA = 'DAMS-small-enterprise-root-resume-admission-1'
+_RESUME_CAPABILITY_TOKEN = object()
+
+
+class _ResumeAdmission:
+    # Internal helpers cannot opt into recovery with an arbitrary callback.
+    # The only supported constructor is after the public sealed grant checks.
+    def __init__(self, check, lifetime, output_root, token):
+        require(token is _RESUME_CAPABILITY_TOKEN, 'sealed resume admission required')
+        self._check=check;self.lifetime=lifetime;self.output_root=Path(output_root)
+    def __call__(self):return self._check()
+
+
+def _resume_file(path):
+    """No-follow full-byte digest with anchored parent and native identity."""
+    path=Path(path).absolute()
+    directory=Directory(path.parent)
+    fd=None
+    try:
+        info=os.stat(path.name,dir_fd=directory.fd,follow_symlinks=False)
+        require(stat.S_ISREG(info.st_mode) and info.st_nlink==1,
+                'resume tree special or multiply linked file')
+        native=list(_OperationOutputs.native(info))
+        fd=directory.open(path.name,os.O_RDONLY|os.O_NONBLOCK)
+        require(list(_OperationOutputs.native(os.fstat(fd)))==native,'resume open identity changed')
+        sha=hashlib.sha256();count=0
+        while block:=os.read(fd,1024*1024):sha.update(block);count+=len(block)
+        directory.matches(path.name,fd)
+        require(list(_OperationOutputs.native(os.fstat(fd)))==native and count==info.st_size,
+                'resume input changed during full read')
+        directory.check()
+        return {'native':native,'sha256':sha.hexdigest(),'bytes':count}
+    finally:
+        if fd is not None:os.close(fd)
+        directory.close()
+
+
+def _resume_tree(path):
+    """Closed tree identity, full bytes and SHA; no ignored temporary evidence."""
+    path = Path(path).absolute()
+    require(path.is_dir() and all(not p.is_symlink() for p in (path,*path.parents)),
+            'resume output is absent or symlinked')
+    dirs = {}; files = {}
+    for item in [path,*sorted(path.rglob('*'))]:
+        info = item.lstat(); rel = str(item.relative_to(path))
+        require(not item.is_symlink(), 'resume tree symlink')
+        if stat.S_ISDIR(info.st_mode):
+            dirs[rel] = [info.st_dev,info.st_ino]
+        else:
+            require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1,
+                    'resume tree special or multiply linked file')
+            files[rel] = _resume_file(item)
+    return {'directories':dirs,'files':files}
+
+
+def _resume_sources():
+    root = Path(__file__).resolve().parents[1]
+    paths = [p for directory in ('dams_sim','research_tools')
+             for p in (root/directory).rglob('*.py')]
+    paths += [root/name for name in ('pyproject.toml','requirements.lock','run.sh')
+              if (root/name).is_file()]
+    require(all(p.is_file() and not p.is_symlink() for p in paths), 'resume source symlink')
+    return {str(p.relative_to(root)):_resume_file(p)['sha256'] for p in sorted(paths)}
+
+
+def _resume_arm_states(profile, output):
+    arms=profile['arm_profiles'] if profile['schema']==PAIR_SCHEMA else [profile]
+    result=[]
+    for arm in arms:
+        child=Path(output)/arm['selected_arm'] if profile['schema']==PAIR_SCHEMA else Path(output)
+        case=child/'cases'/arm['selected_case_id']
+        attempts=sorted(p for p in case.glob('attempt-*') if p.is_dir())
+        prior_started=False;prior_complete=False
+        # Current and create-only retained operational census/receipt evidence
+        # cannot be discarded merely because a case directory went missing.
+        for file in Path(output).rglob('*.json'):
+            relative=str(file.relative_to(output))
+            if '/cases/' in '/'+relative or file.stat().st_size>8*1024**2:continue
+            value=json.loads(file.read_bytes())
+            if type(value) is dict:
+                records=value.get('records',[]) if value.get('schema')=='DAMS-stopped-case-census-1' else []
+                for record in records:
+                    if record.get('case_id')==arm['selected_case_id']:
+                        prior_started |= record.get('classification')!='unstarted'
+                        prior_complete |= record.get('classification')=='complete'
+                if value.get('case_id')==arm['selected_case_id'] and value.get('status')=='COMPLETE_INDIVIDUAL_FULL_RAW_VERIFIED':
+                    prior_started=True;prior_complete=True
+                for receipt in value.get('completed_arm_receipts',[]):
+                    if receipt.get('case_id')==arm['selected_case_id']:prior_started=True;prior_complete=True
+            elif type(value) is list:
+                for record in value:
+                    if (type(record) is dict and 'attempt' in record and 'status' in record
+                            and record.get('case_id')==arm['selected_case_id']):
+                        prior_started=True;prior_complete |= record.get('status')=='complete'
+        complete=[p for p in attempts if (p/'manifest.json').is_file()
+                  and json.loads((p/'manifest.json').read_bytes()).get('status')=='complete']
+        require(not prior_started or attempts, 'retained started/complete evidence lacks original case tree')
+        require(not prior_complete or complete, 'retained complete evidence lacks original complete marker')
+        require(not case.exists() or attempts, 'existing case tree lacks original attempts')
+        result.append({'case_id':arm['selected_case_id'],'arm':arm['selected_arm'],
+                       'state':'COMPLETE' if complete else 'PARTIAL' if attempts else 'UNSTARTED',
+                       'attempt_names':[p.name for p in attempts]})
+    return result
+
+
+def resume_envelope(profile, limits, output):
+    """Measure inputs for a Root-issued grant; this measurement issues no grant."""
+    validate_profile(profile,limits)
+    runtime = limits if isinstance(limits,RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    tree = _resume_tree(output)
+    require(tree['files'], 'resume requires retained original operation evidence')
+    require(len(tree['files'])<=runtime.batch_max_output_files
+            and sum(v['bytes'] for v in tree['files'].values())<=runtime.batch_max_output_bytes,
+            'resume tree exceeds original finite file/byte bounds')
+    return {'schema':RESUME_SCHEMA,'profile_sha256':digest(canonical(profile)),
+            'runtime_limits_sha256':digest(canonical(runtime.to_dict())),
+            'source_sha256':CORE,'pipeline_driver_sha256':DRIVER,
+            'sources':_resume_sources(),'output':str(Path(output).absolute()),
+            'tree':tree,'arm_states':_resume_arm_states(profile,output),'original_deadline':runtime.deadline,
+            'original_stop_cutoff':runtime.stop_cutoff}
+
+
+def _resume_descriptor(descriptor):
+    require(type(descriptor) is dict and set(descriptor)=={'path','sha256'}
+            and type(descriptor['path']) is str and Path(descriptor['path']).is_absolute()
+            and type(descriptor['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',descriptor['sha256']),
+            'Root referenced proof descriptor differs')
+    return _profile(descriptor['path'],descriptor['sha256'])
+
+
+def _resume_parent_authorization(descriptor, common):
+    require(descriptor.get('sha256')==common['parent_authorization_sha256'],
+            'Root original parent authorization digest differs')
+    value,native=_resume_descriptor(descriptor)
+    binding={k:common[k] for k in ('issued_by','original_profile_sha256',
+             'original_runtime_limits_sha256','source_sha256','pipeline_driver_sha256',
+             'case_ids','original_deadline')}
+    expected={**binding,'schema':'DAMS-small-enterprise-parent-authorization-1',
+              'source_refs':value.get('source_refs')}
+    require(canonical(value)==canonical(expected), 'Root original parent authorization semantic binding differs')
+    refs=value['source_refs']
+    require(type(refs) is list and 1<=len(refs)<=32, 'Root original parent source references missing')
+    anchors=[(Path(descriptor['path']),native)]
+    for item in refs:
+        require(type(item) is dict and set(item)=={'path','sha256'}
+                and type(item['path']) is str and Path(item['path']).is_absolute()
+                and type(item['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',item['sha256']),
+                'Root parent original source descriptor differs')
+        observed=_resume_file(item['path'])
+        require(observed['sha256']==item['sha256'], 'Root original parent source bytes differ')
+        anchors.append((Path(item['path']),tuple(observed['native'])))
+    return anchors
+
+
+def _resume_referenced_proof(descriptor, expected, flag):
+    require(type(descriptor) is dict and set(descriptor)=={'path','sha256'}
+            and type(descriptor['path']) is str and Path(descriptor['path']).is_absolute()
+            and type(descriptor['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',descriptor['sha256']),
+            'Root referenced proof descriptor differs')
+    value,native=_profile(descriptor['path'],descriptor['sha256'])
+    expected={**expected,flag:True,'evidence':value.get('evidence')}
+    require(canonical(value)==canonical(expected), 'Root referenced proof semantic binding differs')
+    evidence=value['evidence']
+    require(type(evidence) is list and 1<=len(evidence)<=32, 'Root proof evidence roster missing or unbounded')
+    anchors=[(Path(descriptor['path']),native)]
+    seen=set()
+    for item in evidence:
+        require(type(item) is dict and set(item)=={'path','sha256'}
+                and type(item['path']) is str and Path(item['path']).is_absolute()
+                and type(item['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',item['sha256'])
+                and item['path'] not in seen,'Root proof evidence descriptor differs')
+        seen.add(item['path']);observed=_resume_file(item['path'])
+        require(observed['sha256']==item['sha256'],'Root proof referenced evidence bytes differ')
+        anchors.append((Path(item['path']),tuple(observed['native'])))
+        leaf,leaf_native=_resume_descriptor(item)
+        leaf_schema=('DAMS-small-enterprise-closed-dispatch-evidence-1'
+                     if flag=='owned_producers_absent' else 'DAMS-small-enterprise-ledger-admission-evidence-1')
+        leaf_expected={k:v for k,v in expected.items() if k not in ('schema','evidence')}
+        leaf_expected.update(schema=leaf_schema,parent_authorization=leaf.get('parent_authorization'))
+        require(canonical(leaf)==canonical(leaf_expected),
+                'Root underlying typed evidence semantic binding differs')
+        anchors.extend(_resume_parent_authorization(leaf['parent_authorization'],expected))
+    return anchors
+
+
+def resume(profile, limits, output, envelope, *, grant_path, grant_sha256,
+           root_lifetime_check):
+    """Opt-in exact-case recovery. Only a pinned typed Root grant admits it.
+
+    The caller's lifetime check additionally enforces its original shared ledger
+    and cross-host dispatch ownership. It cannot replace the sealed grant, source,
+    filesystem, profile, checkpoint, deadline or original raw gates.
+    """
+    import time
+    require(callable(root_lifetime_check), 'Root lifetime check required')
+    measured = resume_envelope(profile,limits,output)
+    require(canonical(measured)==canonical(envelope), 'resume envelope input identity differs')
+    runtime = limits if isinstance(limits,RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    require(len(canonical(envelope))<=8*1024**2, 'resume envelope exceeds bounded metadata')
+    envelope_sha = digest(canonical(envelope))
+    grant,grant_native = _profile(grant_path,grant_sha256)
+    expected = {'schema':RESUME_GRANT_SCHEMA,'envelope_sha256':envelope_sha,
+                'issued_by':'Root','original_profile_sha256':measured['profile_sha256'],
+                'original_runtime_limits_sha256':measured['runtime_limits_sha256'],
+                'original_arm_states_sha256':digest(canonical(measured['arm_states'])),
+                'original_deadline':runtime.deadline,'owned_producers_absent':True,
+                'shared_budget_admitted':True,'parent_authorization_sha256':grant.get('parent_authorization_sha256'),
+                'closed_dispatch_proof':grant.get('closed_dispatch_proof'),
+                'ledger_admission':grant.get('ledger_admission'),
+                'expires_epoch':grant.get('expires_epoch')}
+    require(canonical(grant)==canonical(expected)
+            and type(grant['parent_authorization_sha256']) is str
+            and re.fullmatch(r'[0-9a-f]{64}',grant['parent_authorization_sha256'])
+            and type(grant['expires_epoch']) in (int,float)
+            and time.time()<grant['expires_epoch']==runtime.deadline,
+            'typed Root resume grant differs or expired')
+    common={'issued_by':'Root','original_profile_sha256':measured['profile_sha256'],
+            'original_runtime_limits_sha256':measured['runtime_limits_sha256'],
+            'original_arm_states_sha256':digest(canonical(measured['arm_states'])),
+            'source_sha256':CORE,'pipeline_driver_sha256':DRIVER,
+            'case_ids':[v['case_id'] for v in measured['arm_states']],
+            'original_deadline':runtime.deadline,
+            'parent_authorization_sha256':grant['parent_authorization_sha256'],
+            'envelope_sha256':envelope_sha,'native_tree_sha256':digest(canonical(measured['tree']))}
+    proof_anchors=[]
+    for key,schema,flag in (
+            ('closed_dispatch_proof','DAMS-small-enterprise-closed-dispatch-proof-1','owned_producers_absent'),
+            ('ledger_admission','DAMS-small-enterprise-ledger-admission-proof-1','shared_budget_admitted')):
+        proof_anchors.extend(_resume_referenced_proof(grant[key],{**common,'schema':schema},flag))
+    source_pins = measured['sources']
+    # Only these exact original operational leaves are rewritten by the original
+    # execution ABI. All original attempts, raw/checkpoint bytes and exit-time
+    # accounting remain pinned throughout recovery.
+    mutable={'paired-operation.json','pair-result.json','single-arm-result.json',
+             'small-operation.json','case_statuses.json',
+             'confirmation-operation/case_inventory.json',
+             'confirmation-operation/manifest.json','confirmation-operation/case_census.json'}
+    def retained_guard():
+        for relative,anchor in measured['tree']['directories'].items():
+            path=Path(output)/relative
+            info=path.lstat()
+            require(stat.S_ISDIR(info.st_mode) and [info.st_dev,info.st_ino]==anchor,
+                    'original resume directory identity changed')
+        for relative,anchor in measured['tree']['files'].items():
+            local=relative
+            if profile['schema']==PAIR_SCHEMA:
+                for arm in SELECTED_ARMS:
+                    if local.startswith(arm+'/'):local=local[len(arm)+1:];break
+            if local in mutable:continue
+            require(_resume_file(Path(output)/relative)==anchor,
+                    'original raw/checkpoint/attempt evidence changed during resume')
+    def lifetime():
+        for path,anchor in proof_anchors:
+            directory=Directory(path.parent)
+            try:
+                info=os.stat(path.name,dir_fd=directory.fd,follow_symlinks=False)
+                require(stat.S_ISREG(info.st_mode) and _OperationOutputs.native(info)==anchor,
+                        'Root referenced proof/evidence identity changed')
+                directory.check()
+            finally:directory.close()
+        require(time.time()<grant['expires_epoch'], 'original resume deadline expired')
+        require(_profile(grant_path,grant_sha256)[1]==grant_native, 'Root grant changed')
+        require(root_lifetime_check(envelope_sha) is True,
+                'Root lifetime/producer/budget admission failed')
+    def gate():
+        require(time.time()<grant['expires_epoch'] and time.time()<runtime.deadline,
+                'original resume deadline expired')
+        require(_profile(grant_path,grant_sha256)[1]==grant_native, 'Root grant changed')
+        require(_resume_sources()==source_pins and source_hash()==CORE and driver_hash()==DRIVER,
+                'resume source changed')
+        require(digest(canonical(profile))==measured['profile_sha256']
+                and digest(canonical(runtime.to_dict()))==measured['runtime_limits_sha256'],
+                'resume profile or original bounds changed')
+        lifetime()
+        require(_profile(grant_path,grant_sha256)[1]==grant_native, 'Root grant changed')
+        require(_resume_sources()==source_pins, 'resume source changed during admission')
+        retained_guard()
+        _resume_whole_bounds(output,runtime)
+        require(time.time()<grant['expires_epoch'], 'Root resume admission expired during checking')
+    admission = _ResumeAdmission(gate,lifetime,output,_RESUME_CAPABILITY_TOKEN)
+    arms = profile['arm_profiles'] if profile['schema']==PAIR_SCHEMA else [profile]
+    with ExitStack() as stack:
+        for arm in arms: stack.enter_context(_case_writer(arm))
+        # Both cases are locked before final exact input read or administrative writes.
+        gate()
+        require(canonical(_resume_tree(output))==canonical(measured['tree']),
+                'resume input changed after lock acquisition')
+        administrative=_resume_administrative_paths(output)
+        predicted_files=len(administrative)+3+1
+        predicted_bytes=sum(p.stat().st_size for p in administrative)+len(canonical(envelope))+len(canonical(grant))+4096
+        _resume_whole_bounds(output,runtime,additional_files=predicted_files,additional_bytes=predicted_bytes)
+        _retain_resume_administration(output, envelope_sha, envelope, grant)
+        if profile['schema']==PAIR_SCHEMA:
+            return _execute_pair_owned(profile,limits,output,resume_gate=admission)
+        return _execute_owned(profile,limits,output,resume_gate=admission)
+
+
+def _resume_administrative_paths(output):
+    mutable={'paired-operation.json','pair-result.json','single-arm-result.json',
+             'small-operation.json','case_statuses.json',
+             'confirmation-operation/case_inventory.json',
+             'confirmation-operation/manifest.json','confirmation-operation/case_census.json'}
+    result=[]
+    for file in Path(output).rglob('*.json'):
+        local=str(file.relative_to(output))
+        for arm in SELECTED_ARMS:
+            if local.startswith(arm+'/'):local=local[len(arm)+1:];break
+        if local in mutable:result.append(file)
+    return sorted(result)
+
+
+def _resume_whole_bounds(output, runtime, *, additional_files=0,additional_bytes=0):
+    from dams_sim.scheduler import output_files,disk_bytes
+    require(output_files(Path(output))+additional_files<=runtime.batch_max_output_files,
+            'resume whole-tree file reservation exhausted')
+    require(disk_bytes(Path(output))+additional_bytes<=runtime.batch_max_output_bytes,
+            'resume whole-tree byte reservation exhausted')
+
+
+def _resume_run(scheduler, configs, admission, output):
+    """Joined bounded monitor stops the original Scheduler on Root revocation."""
+    import threading
+    done=threading.Event();failure=[]
+    def monitor():
+        while not done.wait(.25):
+            try:admission.lifetime()
+            except BaseException as error:
+                failure.append(error);scheduler.stop();return
+    admission()
+    runtime=scheduler.limits
+    # Reserve one full next original attempt plus exit and result publication.
+    # Further retries are checked again through Scheduler's _elapsed ABI.
+    original_elapsed=scheduler._elapsed
+    def elapsed(attempts):
+        admission()
+        _resume_whole_bounds(output,runtime,
+            additional_files=runtime.per_world_output_files+8,
+            additional_bytes=max(int(c.max_output_mb*1_000_000) for c in configs)+65536)
+        return original_elapsed(attempts)
+    scheduler._elapsed=elapsed
+    thread=threading.Thread(target=monitor,name='dams-original-resume-lifetime',daemon=False)
+    thread.start()
+    try:return scheduler.run(configs)
+    finally:
+        done.set();thread.join()
+        if failure:raise ValueError('Root resume lifetime revoked during owned Scheduler') from failure[0]
+        admission()
+
+
+def _retain_resume_administration(output, envelope_sha, envelope, grant):
+    """Create-only originals of every administrative leaf rewritten on recovery."""
+    output = Path(output).absolute()
+    directory = output/('resume-evidence-'+envelope_sha)
+    require(not os.path.lexists(directory), 'resume envelope already consumed')
+    # Open all ancestry with the same no-follow directory discipline as execution.
+    holder = _OperationOutputs(output, pair_mode=True)
+    try:
+        target = holder._child(holder.root,directory.name)
+        for file in _resume_administrative_paths(output):
+            relative = file.relative_to(output)
+            name = digest(canonical(str(relative)))+'.json'
+            info = file.lstat()
+            require(stat.S_ISREG(info.st_mode) and info.st_nlink==1 and info.st_size<=8*1024**2,
+                    'resume administrative evidence is not bounded regular bytes')
+            before = _OperationOutputs.native(info)
+            safe=_resume_file(file)
+            fd_read=Directory(file.parent)
+            try:
+                readfd=fd_read.open(file.name,os.O_RDONLY|os.O_NONBLOCK)
+                try:
+                    chunks=[]
+                    while block:=os.read(readfd,65536):chunks.append(block)
+                    raw=b''.join(chunks);fd_read.matches(file.name,readfd)
+                finally:os.close(readfd)
+            finally:fd_read.close()
+            require(digest(raw)==safe['sha256'],'resume administrative digest changed')
+            require(_OperationOutputs.native(file.lstat())==before,
+                    'resume administrative input changed')
+            fd=target.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL)
+            try:
+                view=memoryview(raw)
+                while view:
+                    count=os.write(fd,view);require(count>0,'resume preservation short write');view=view[count:]
+                os.fsync(fd);target.matches(name,fd);os.fsync(target.fd)
+            finally:os.close(fd)
+            require(holder.read(target,name)==raw, 'resume preservation readback differs')
+        holder.write(target,'resume-envelope.json',envelope)
+        holder.write(target,'root-admission.json',grant)
+        holder.write(target,'preservation.json',{'schema':RESUME_SCHEMA,'envelope_sha256':envelope_sha,
+                    'original_administration_preserved':True,'formal_samples_added':0})
+    finally: holder.close()
+
+
+def _resume_elapsed(attempts):
+    """Conservative closed wall accounting; checkpoint age is not a terminal."""
+    import math
+    total=0.
+    for attempt in attempts:
+        samples=[];closed=False
+        for path,field in ((attempt.parent/(attempt.name+'-exit.json'),'attempt_wall_seconds'),
+                           (attempt/'manifest.json','total_wall_seconds'),
+                           (attempt/'checkpoint-index.json','attempt_elapsed_wall_seconds')):
+            if not path.is_file():continue
+            value=json.loads(path.read_bytes())
+            if field not in value:continue
+            number=value[field]
+            require(type(number) in (int,float) and math.isfinite(number) and number>=0,
+                    'original attempt elapsed record invalid')
+            samples.append(number)
+            if path.name==attempt.name+'-exit.json':closed=True
+            if path.name=='manifest.json' and value.get('status') in ('failed','complete','checkpointed'):
+                closed=True
+        require(closed and samples, 'original closed attempt elapsed evidence missing')
+        total+=max(samples)
+    return total
+
+
+def _validated_complete_arm(profile, limits, output, rows, identity):
+    selected=next(r for r in rows if r['case_id']==profile['selected_case_id'])
+    attempts=sorted(p for p in (Path(output)/'cases'/selected['case_id']).glob('attempt-*') if p.is_dir())
+    runtime=limits if isinstance(limits,RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    require(_resume_elapsed(attempts)<runtime.world_timeout_seconds,
+            'original cumulative world-attempt time budget exhausted')
+    complete=[]
+    for attempt in attempts:
+        marker=attempt/'manifest.json'
+        if marker.is_file() and json.loads(marker.read_bytes()).get('status')=='complete':
+            complete.append(attempt)
+    require(len(complete)<=1,'multiple complete attempts cannot become one reused arm')
+    if not complete:
+        if attempts:
+            require(any((p/'checkpoint-index.json').is_file() for p in attempts),
+                    'partial case lacks original checkpoint; refusing regeneration')
+            for attempt in attempts:
+                index=attempt/'checkpoint-index.json'
+                if index.is_file():
+                    snapshots=json.loads(index.read_bytes()).get('snapshots',[])
+                    require(snapshots and all(type(v.get('day')) is int
+                            and v['day']<selected['config']['days'] for v in snapshots),
+                            'horizon checkpoint lacks original complete evidence; refusing regeneration')
+        return None
+    reader=study.CheckedLongitudinalCases(Path(output),{k:identity[k] for k in
+        ('source_sha256','pipeline_driver_sha256','spec_sha256')})
+    runtime=limits if isinstance(limits,RuntimeLimits) else RuntimeLimits.from_dict(limits)
+    value=reader.validate_case(selected,complete[0],expected_provenance=runtime.provenance)
+    require(reader.result()['unique_complete_cases']==1,'reused arm original full raw gate missing')
+    return complete[0],value
+
+
 def execute(profile, limits, output):
     validate_profile(profile, limits)
     if profile['schema']==PAIR_SCHEMA:
@@ -461,8 +911,10 @@ def execute(profile, limits, output):
     with _case_writer(profile):
         return _execute_owned(profile, limits, output)
 
-def _execute_pair_owned(profile, limits, output):
+def _execute_pair_owned(profile, limits, output, *, resume_gate=None):
     """Retain each child's evidence; failed second arm can never certify a pair."""
+    require(resume_gate is None or type(resume_gate) is _ResumeAdmission,
+            'sealed resume admission required')
     output = Path(output).absolute()
     outputs = _OperationOutputs(output,pair_mode=True)
     import fcntl
@@ -471,11 +923,26 @@ def _execute_pair_owned(profile, limits, output):
         with os.fdopen(fd,'a+b') as owner:
             require(os.fstat(owner.fileno()).st_nlink==1, 'unsafe pair operation lock')
             fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
-            require(not outputs.observed, 'paired operation already has state; preserve original resume/verification path')
+            if resume_gate is None:
+                require(not outputs.observed, 'paired operation already has state; preserve original resume/verification path')
+            else:
+                resume_gate()
+                raw=outputs.read(outputs.root,'paired-operation.json')
+                require(raw is not None, 'resume paired intent missing')
+                prior=json.loads(raw)
+                require(canonical(prior.get('profile'))==canonical(profile)
+                        and canonical(prior.get('full_confirmation_pair_assignment'))==canonical(assignment(profile,limits)),
+                        'resume paired intent changed')
+                require(outputs.read(outputs.root,'pair-result.json') is None,
+                        'completed pair already accepted; recovery cannot regenerate it')
+                require(type(prior.get('completed_arm_receipts')) is list
+                        and len(prior['completed_arm_receipts'])<len(SELECTED_ARMS),
+                        'both arm receipts already accepted; verify lost pair evidence without re-execution')
             children = []
             for arm in profile['arm_profiles']:
                 path = output/arm['selected_arm']
-                require(not os.path.lexists(path), 'paired child already has state; preserve existing arm evidence')
+                if resume_gate is None:
+                    require(not os.path.lexists(path), 'paired child already has state; preserve existing arm evidence')
                 children.append(outputs._child(outputs.root,arm['selected_arm']))
             intended = {'schema':'DAMS-small-enterprise-paired-operation-1',
                         'profile':profile,'full_confirmation_pair_assignment':assignment(profile,limits),
@@ -487,7 +954,10 @@ def _execute_pair_owned(profile, limits, output):
                 outputs.check()
                 # Same original Scheduler/raw gate as single-arm execution. UID
                 # locks for BOTH original cases are already held by execute().
-                _execute_owned(arm,limits,child.path)
+                if resume_gate is None:
+                    _execute_owned(arm,limits,child.path)
+                else:
+                    _execute_owned(arm,limits,child.path,resume_gate=resume_gate)
                 outputs.check()
                 observed = _OperationOutputs(child.path)
                 try:
@@ -507,9 +977,12 @@ def _execute_pair_owned(profile, limits, output):
                                      'manifest_sha256':result['manifest_sha256']})
                 finally:
                     observed.close()
+                if resume_gate is not None:resume_gate()
                 intended['completed_arm_receipts']=list(accepted)
                 outputs.write(outputs.root,'paired-operation.json',intended)
+            if resume_gate is not None:resume_gate()
             validate_pair_profile(profile,limits)
+            if resume_gate is not None:resume_gate()
             outputs.write(outputs.root,'pair-result.json',
                           {'status':'COMPLETE_PAIRED_WORLD_FULL_RAW_VERIFIED',
                            'profile_sha256':digest(canonical(profile)),
@@ -518,9 +991,12 @@ def _execute_pair_owned(profile, limits, output):
                            'full_study_complete':False,'empirical_validation':False})
     finally:
         outputs.close()
+        if resume_gate is not None:resume_gate()
 
 
-def _execute_owned(profile, limits, output):
+def _execute_owned(profile, limits, output, *, resume_gate=None):
+    require(resume_gate is None or type(resume_gate) is _ResumeAdmission,
+            'sealed resume admission required')
     validate_profile(profile,limits);limits,declaration,rows=plan(limits, world=profile['selected_world'])
     output=Path(output).absolute()
     outputs=_OperationOutputs(output)
@@ -531,10 +1007,13 @@ def _execute_owned(profile, limits, output):
         require(stat.S_ISREG(os.fstat(owner.fileno()).st_mode) and os.fstat(owner.fileno()).st_nlink==1,'operation lock is not owned regular bytes')
         fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
         case_path = output/'cases'/profile['selected_case_id']
-        require(not os.path.lexists(case_path),
-                'selected case already has local state; preserve original resume/verification path')
-        require(outputs.read(outputs.root,'single-arm-result.json') is None,
-                'accepted single-arm result exists; completed case cannot be regenerated')
+        if resume_gate is None:
+            require(not os.path.lexists(case_path),
+                    'selected case already has local state; preserve original resume/verification path')
+            require(outputs.read(outputs.root,'single-arm-result.json') is None,
+                    'accepted single-arm result exists; completed case cannot be regenerated')
+        else:
+            resume_gate()
         intended={'profile':profile,'full_confirmation_pair_assignment':assignment(profile,limits)}
         raw=outputs.read(outputs.root,'small-operation.json')
         if raw is not None:
@@ -547,6 +1026,20 @@ def _execute_owned(profile, limits, output):
         selected=next(r for r in rows if r['case_id']==profile['selected_case_id'])
         identity={'schema_version':3,'source_sha256':CORE,'pipeline_driver_sha256':DRIVER,'spec_sha256':profile['study_sha256']}
         stage=outputs.stage
+        if resume_gate is not None:
+            completed=_validated_complete_arm(profile,limits,output,rows,identity)
+            accepted=outputs.read(outputs.root,'single-arm-result.json')
+            if accepted is not None:
+                require(completed is not None, 'accepted receipt lacks complete original raw case')
+                result=json.loads(accepted)
+                require(result.get('status')=='COMPLETE_INDIVIDUAL_FULL_RAW_VERIFIED'
+                        and canonical(result.get('profile'))==canonical(profile)
+                        and result.get('case_id')==profile['selected_case_id']
+                        and result.get('manifest_sha256')==file_digest(completed[0]/'manifest.json')
+                        and result.get('summary')==completed[1]['summary'],
+                        'reused complete arm receipt differs from original raw gate')
+                resume_gate()
+                return
         from research_tools.compute_only_control import parse
         prior=outputs.read(stage,'case_inventory.json')
         require(prior is None or canonical(parse(prior))==canonical(rows),'operation full inventory changed')
@@ -571,8 +1064,17 @@ def _execute_owned(profile, limits, output):
         try:
             # The original constructor creates no workers. Preserve all declared
             # rows before it can refuse resources, then census its empty prefix.
-            outputs.check();scheduler=Scheduler(output,limits,DRIVER);outputs.check()
-            scheduler.run([Config.from_dict(selected['config'])])
+            outputs.check()
+            if resume_gate is not None:resume_gate()
+            scheduler=Scheduler(output,limits,DRIVER);outputs.check()
+            if resume_gate is not None:
+                # Operational wall-accounting adapter only; original transitions,
+                # frozen Scheduler source and complete Config stay unchanged.
+                scheduler._elapsed=_resume_elapsed
+            configs=[Config.from_dict(selected['config'])]
+            if resume_gate is None:scheduler.run(configs)
+            else:_resume_run(scheduler,configs,resume_gate,resume_gate.output_root)
+            if resume_gate is not None:resume_gate()
             outputs.check()
             require(scheduler.owned_workers_absent,'selected worker ownership not closed')
             validate_profile(profile,limits)
@@ -582,6 +1084,7 @@ def _execute_owned(profile, limits, output):
             require(attempts,'selected attempt missing')
             value=reader.validate_case(selected,attempts[-1],expected_provenance=limits.provenance)
             require(reader.result()['unique_complete_cases']==1,'individual full raw gate missing')
+            if resume_gate is not None:resume_gate()
             outputs.write(outputs.root,'single-arm-result.json',{'status':'COMPLETE_INDIVIDUAL_FULL_RAW_VERIFIED',
                 'profile':profile,'case_id':selected['case_id'],'manifest_sha256':file_digest(attempts[-1]/'manifest.json'),
                 'summary':value['summary'],'paired_world_complete':False,'full_study_complete':False,
@@ -595,7 +1098,9 @@ def _execute_owned(profile, limits, output):
                 meta.update(status='partial',exit_code=1,partial_census_exact=True,
                             case_census_sha256=census_sha)
                 outputs.write(stage,'manifest.json',meta)
-    finally: outputs.close()
+    finally:
+        outputs.close()
+        if resume_gate is not None:resume_gate()
 
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
