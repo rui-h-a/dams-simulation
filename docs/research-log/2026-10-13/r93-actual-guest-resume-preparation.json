@@ -1,0 +1,68 @@
+{
+  "schema": "DAMS-R93-actual-guest-same-pair-resume-preparation-1",
+  "observed_utc": "2026-10-12T20:05:15.948079Z",
+  "world": 52021,
+  "operations_commit": "29c111ae1d4ab62b266d7c0eaad2643391997565",
+  "bridge_sha256": "e9ade75d05b708a19b1d387651aa811a365396b48d9630cca133a19fc988863d",
+  "operations_manifest_sha256": "01dd1822cc48c494fdf36c1be525b15947f5292c982ba30458044ef52ab14819",
+  "original_f9_scientific_core_unchanged": true,
+  "original_7c_source_not_overwritten": true,
+  "isolated_source_package_files_uploaded": 74,
+  "actual_guest_prepare_exit_code": 0,
+  "actual_guest_native_envelope_sha256": "3ad78976afbaa4c8f71725058b45a6d1ce3596d6232ecf5dbf171a7ac66f1f83",
+  "actual_guest_native_states": [
+    {
+      "arm": "startup-existing",
+      "case_id": "382d633b7a6c3c8632b716eb2dce5e6d5f2e766647384a3a7eb295b65f874db4",
+      "state": "PARTIAL",
+      "attempt_names": [
+        "attempt-000"
+      ]
+    },
+    {
+      "arm": "startup-founding",
+      "case_id": "4f808aa929a45f99c05e05bed6a0d992f545f576e9b03ddd6ef86823c4ffd7a7",
+      "state": "UNSTARTED",
+      "attempt_names": []
+    }
+  ],
+  "original_case_closed_seconds": 227.70718774199986,
+  "original_partial_resume_day": 900,
+  "initial_population": 300,
+  "planned_calendar_days": 1917,
+  "original_controller_sequence_floor": 24,
+  "VM_start_commands_cumulative": 10,
+  "readiness_intents_cumulative": 6,
+  "prior_counters_errors_and_original_limits_retained": true,
+  "hardware": {
+    "machine_type": "custom-2-16384-ext",
+    "guest_cpu_count": 2,
+    "guest_memory_total_bytes": 16774381568,
+    "guest_architecture": "x86_64"
+  },
+  "current_original_VM_status": "TERMINATED",
+  "current_original_PD_status": "READY",
+  "PD_sizeGb": "550",
+  "original_VM_and_PD_ID_verified": true,
+  "cleanup_verified": true,
+  "all_research_billing_closed": false,
+  "provider_command_high_water": 148,
+  "Root_paired_scientific_grant_issued": false,
+  "Model_resumed": false,
+  "scientific_ticks_advanced": 0,
+  "complete_cloud_pairs": 0,
+  "N300_accepted_pairs": 25,
+  "N300_assigned_pairs": 70,
+  "N10000_formal_pairs": 0,
+  "N50000_formal_pairs": 0,
+  "engineering_review": {
+    "bridge_author_controls_per_stable_round": 10,
+    "independent_bridge_controls": 16,
+    "known_annotated_result_reader_controls": 8,
+    "original_collector_state_not_rewritten": true,
+    "known_false_annotations_preserved": true,
+    "scope": "exact prior result format compatibility and same-case operational handoff; no Model or provider work by reviewer"
+  },
+  "remaining_action": "Root shared-budget read-through and finite lease renewal above retained sequence; exact typed paired grant bound to real guest envelope/operational hardware segment; actual service and current PID/terminal observer dispatch; full raw/custody acceptance",
+  "whole_goal_complete": false
+}
