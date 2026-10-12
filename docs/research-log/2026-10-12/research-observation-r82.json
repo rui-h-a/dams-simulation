@@ -1,0 +1,165 @@
+{
+  "schema": "dams-research-observation-r82",
+  "observation_UTC": "2026-10-12T01:05:45.269964+00:00",
+  "evidence_not_perpetual_running_claim": true,
+  "effective_scope": {
+    "N10000": "primary formal study not completed",
+    "N50000": "full-model scale comparison not completed",
+    "N100000": "conditional extension requiring prospective method and resource admission",
+    "larger_scales": "future research; not this manuscript final gate",
+    "core_mechanisms_not_waived": true
+  },
+  "formal": {
+    "N30": {
+      "excluded_pilot_pairs": 4,
+      "confirmation_pairs": 66,
+      "planned_confirmation_pairs": 66,
+      "precision_metrics_passed": 4,
+      "final_population_range": [
+        41,
+        45
+      ]
+    },
+    "N120": {
+      "excluded_pilot_pairs": 4,
+      "confirmation_pairs": 66,
+      "planned_confirmation_pairs": 66,
+      "precision_metrics_passed": 4,
+      "final_population_range": [
+        166,
+        179
+      ]
+    },
+    "N300": {
+      "excluded_pilot_pairs": 4,
+      "confirmation_pairs": 7,
+      "remaining_confirmation_pairs": 59,
+      "complete_single_strategy_trajectories": 23,
+      "initial_population": 300,
+      "accepted_final_population_range": [
+        430,
+        438
+      ],
+      "calendar_days": 1917,
+      "live_producer_pid": 4563,
+      "live_process_row": "4563 01:28:28 100.0  89216 Rs",
+      "cached_pairs_revalidated_this_resumption": [
+        42000,
+        42001,
+        42002,
+        42003,
+        52000,
+        52001,
+        52002,
+        52003
+      ],
+      "cached_revalidation_is_not_new_world": true,
+      "stdout_sha256": "0c7bc760ebac11f547c58fd6b4a22e5cbb00a68a340fcd9447f06ccf85d0577e",
+      "stderr_bytes": 0,
+      "source_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+      "source_or_completed_results_not_hotpatched": true
+    },
+    "original_N1000": {
+      "verified_cases": 35,
+      "planned_pilot_cases": 144,
+      "prefix_or_intermediate": 28,
+      "complete_strategy_trajectories": 7,
+      "complete_pilot_pairs": 0,
+      "planned_pilot_pairs": 4,
+      "confirmation_pairs": 0
+    },
+    "N10000_N50000_conditional_N100000_complete_formal_worlds": 0,
+    "new_formal_pairs_this_phase": 0
+  },
+  "storage": {
+    "N30_all140_full_original13_offdevice_recovery_proof_retained": true,
+    "N120_all140_full_original13_offdevice_recovery_proved": false,
+    "selected_N120_world": 51016,
+    "selected_N120_strategy": "hierarchy",
+    "selected_N120_case_id": "241c6f66529d50842e735af92297faca292420034204f73a37a526a188a1b4c6",
+    "calendar_days": 1917,
+    "original13_raw_bytes": 209356609,
+    "normalized_lossless_TAR_bytes": 76175360,
+    "TAR_sha256": "5acbb0648f0ac5289b6a477a0ddbfc4f2318718359059c8475cc2a31ef018395",
+    "two_actual_private_remote_full13_native_SHA_EOF_restores_passed": true,
+    "remote_copies_same_provider_domain": true,
+    "SSD_vs_remote_distinct_failure_domain": true,
+    "native_original_vault_retired_redundant_raw_paths": 12,
+    "original_manifest_and_complete_archive_retained": true,
+    "default_retention_seconds": 86400,
+    "registration_epoch_not_reset": true,
+    "old_false_owner_and_failure_evidence_preserved": true,
+    "cold_receipt_sha256": "2b7323dde652e443f2e1d895e735ae4f2450f098d84b53e62c35adf45a75f456",
+    "concurrent_statvfs_delta_workspace_bytes": 1060864,
+    "concurrent_statvfs_delta_external_backing_bytes": 1048576,
+    "logical_unlinked_bytes_not_physical_release": 209350111,
+    "spaces_at_observation_bytes": {
+      "workspace": 105574801408,
+      "external_backing": 105574825984,
+      "internal": 20423921664
+    },
+    "two_external_volumes_are_one_physical_SSD": true
+  },
+  "isolated_r8": {
+    "branch": "research/enterprise-joint-integration-r8-20261012",
+    "public_commit": "cae102c41af8eb1253f005011d700d25c3b75f2b",
+    "full_public_files_verified": 6,
+    "model_core_sha256": "818bc44ea61e1c4a1fd982f1aedcc1134c3aacec9ff9912bbd111581289c05e8",
+    "actual_90_day_global_worlds": 1,
+    "paired_buyer_strategies": 2,
+    "independently_evolved_companies_per_strategy": 2,
+    "whole_history_and_pending_state_moved_as_owned_subsidiary": true,
+    "initial_people_per_firm": 30,
+    "final_people_per_firm": 70,
+    "initial_system_people": 60,
+    "final_system_people": 140,
+    "not_flattened_merger": true,
+    "portable_controls_passed": 19,
+    "independent_cash_scope_entity_day_checks": 360,
+    "full_original_result_sha256": "46e1fd43f7fb829a0411db66f2c7dec8e17af93c604c980b609d25b55782afd6",
+    "final_source_data_closure_sha256": "f88cddababdd37e5e26e2eba9ed526be18ad76b1bda30613a8fdee3276921e53",
+    "wall_seconds": 31.730252958019264,
+    "sampled_peak_RSS_bytes": 76791808,
+    "normal_exit_reaped": true,
+    "formal_samples_added": 0,
+    "calibration_or_OOS_completed": false,
+    "runtime_missing_file_watchdog_limitation_retained": true,
+    "final_mandatory_source_raw_full_verification_pass": true,
+    "SSD_Git_branch_objects_actual_fetched_full_file_verified": true
+  },
+  "GCP": {
+    "actual_prior_compute_and_GCS_used": true,
+    "latest_authenticated_inventory_UTC": "2026-10-12T00:54:34.090786+00:00",
+    "VMs": 0,
+    "persistent_disks": 0,
+    "non_DONE_compute_operations": 0,
+    "actual_prior_N2_creates": 7,
+    "actual_C4D_stockout_attempts": 3,
+    "latest_N2_paired_pipeline_failed_file_admission_before_Model": true,
+    "complete_formal_GCP_paired_worlds": 0,
+    "inventory_receipt_sha256": "014ba0db416aacf9e36b94405487ce7413d62b64010c70c8fdec07cfec1fb1f4",
+    "new_paid_compute_this_phase": false,
+    "GCS_and_project_final_billing_closeout_not_complete": true,
+    "master_budget_sha256": "608e1e548a9cf5e32a19184ff7d625c99d504d182153f88dc6f0475bfd87ae0e",
+    "cumulative_cap_USD": 100,
+    "existing_total_holds_USD": 99.95,
+    "unallocated_upper_USD": 0.05,
+    "cleanup_reserve_USD_included": 20,
+    "previous_uncertain_N2_upper_USD": 0.41,
+    "supplier_invoice_reconciled": false,
+    "old_deadlines_attempts_and_holds_not_reset": true
+  },
+  "paper": {
+    "pages": 86,
+    "main_PDF_sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "status": "INTERIM",
+    "no_unfinished_candidate_or_engineering_outputs_inserted_as_formal_results": true
+  },
+  "real_next_work": {
+    "existing_N300_cli": "Continue unchanged; no restart of completed worlds.",
+    "new_model_prediction_adapter": "Fix demonstrated old-v2-only parsing in an isolated successor, retain empirical/holdout gates.",
+    "cost_reallocation": "Readonly inspect actual expired obligations; no optimistic refund or new paid admission.",
+    "formal_N10000": "Requires complete frozen integrated mechanism study, prospective precision and full workload resource admission; not claimed ready."
+  },
+  "whole_goal_complete": false
+}

@@ -1,0 +1,11 @@
+# R82: actual continuation and isolated model delivery
+
+N30 and N120 each retain 4 excluded pilot pairs plus 66 accepted confirmation pairs and four precision checks. N300 remains 11/70 accepted pairs; its original frozen CLI is actively revalidating cached results. Cached verification adds no independent worlds. The original N1000 pilot remains 35/144 cases and zero full paired worlds. N10000/N50000/conditional N100000 formal complete worlds remain zero.
+
+One closed N120 case now has two actual SSD-external private remote copies, full original 13-file native recovery, and an original-vault 12-path cold transition. The manifest and complete archive remain. Original registration and 86400-second retention are unchanged. Observed concurrent free-space increases were 1,060,864 bytes and 1,048,576 bytes, not the 209,350,111 logical bytes unlinked. The two remote copies share a provider failure domain. This is not proof of all 140 N120 cases.
+
+The isolated [r8 source](https://github.com/rui-h-a/dams-simulation/commit/cae102c41af8eb1253f005011d700d25c3b75f2b) was actually published and all six files fully read back. Two firms evolve independently for 30 days before the offer; ownership transfers an entire operating unit with history and unresolved obligations. The buyer supplies real treasury, policy and coordination controls. Two buyer strategies completed 90 calendar days, with 30 to 70 people per firm. This is one global engineering world, not a formal five-year experiment or external calibration. Original monitor and portability failures are retained. Scalar cash review is independent; native full-model validation still shares some mechanisms.
+
+The latest authenticated GCP inventory reports zero VMs, zero persistent disks and no unfinished compute operations. GCP has actually been used; the latest paid paired attempt failed before the Model. GCS/project fee closure remains pending. Existing holds are not invoice spending, and the expired ten-attempt scope has not been reset. The unchanged 86-page PDF is interim.
+
+Full numeric facts, source hashes, data distinctions and remaining work are in [the dated observation](research-observation-r82.json). The current manuscript scope remains N10000 primary, N50000 scale comparison, and prospective conditional N100000; core mechanisms and scientific requirements remain.
