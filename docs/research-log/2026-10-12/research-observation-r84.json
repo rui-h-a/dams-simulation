@@ -1,0 +1,113 @@
+{
+  "schema": "dams-research-observation-r84-v1",
+  "observed_utc": "2026-10-12T05:53:29.458557+00:00",
+  "source_of_count": "existing original complete-paired-raw gate receipts; metadata acceptance observer, not a new Root full-raw validation",
+  "N30": {
+    "pilot_excluded": 4,
+    "confirmation": 66,
+    "paired_total": 70,
+    "four_precision_checks_passed": true
+  },
+  "N120": {
+    "pilot_excluded": 4,
+    "confirmation": 66,
+    "paired_total": 70,
+    "four_precision_checks_passed": true
+  },
+  "N300": {
+    "accepted_pairs": 21,
+    "assigned_pairs": 70,
+    "confirmation_assigned": 66,
+    "confirmation_complete": 17,
+    "confirmation_remaining": 49,
+    "excluded_pilot": 4,
+    "independent_full_raw_verification_performed": false,
+    "last_event_sha256": "f611ed60dbd947408462d0b9eed2eb3350d299c6b53b1b71bc5d38d1a81f5706",
+    "observed_utc": "2026-10-12T05:32:51.527042+00:00",
+    "operation_namespace_day": "2026-10-12",
+    "schema": "dams-current-n300-accepted-count-v1",
+    "whole_goal_complete": false
+  },
+  "N300_actual_live_processes": [
+    {
+      "pid": 3273,
+      "ppid": 58827,
+      "elapsed": "02:23:06",
+      "state": "Ss"
+    },
+    {
+      "pid": 4562,
+      "ppid": 58827,
+      "elapsed": "06:16:12",
+      "state": "Ss"
+    },
+    {
+      "pid": 4563,
+      "ppid": 4562,
+      "elapsed": "06:16:12",
+      "state": "Ss"
+    }
+  ],
+  "original_N1000": {
+    "accepted_cases": 35,
+    "planned_cases": 144,
+    "prefix_or_intermediate_cases": 28,
+    "complete_single_strategy_cases": 7,
+    "complete_pilot_worlds": 0,
+    "planned_pilot_worlds": 4,
+    "confirmation_worlds": 0,
+    "cases_remaining": 109
+  },
+  "current_paper_full_model_scale": {
+    "N10000_complete_formal_worlds": 0,
+    "N50000_complete_formal_worlds": 0,
+    "N100000_conditional_complete_formal_worlds": 0,
+    "integrated_scientific_model_frozen": false
+  },
+  "frozen_N300_scientific_source_commit": "e49e2d6db480a376115d236c2cd91a88e5422aa3",
+  "N300_complete_pair_calendar_days": 1917,
+  "growth_interpretation": "Existing workforce_targets conditional scenario; population change is not evidence of organic growth caused by DAMS.",
+  "storage_free_bytes": {
+    "APFS_external_workspace": 103641083904,
+    "ExFAT_backing_same_physical_SSD": 105561194496
+  },
+  "original_N1000_local_admission": {
+    "single_case_with_floor_required_bytes": 136198755328,
+    "minimum_floor_bytes": 85899345920,
+    "not_passed": true,
+    "must_not_gate_an_otherwise_qualified_same_region_cloud_case": true
+  },
+  "GCP": {
+    "last_authenticated_inventory_observed_utc": "2026-10-12T04:26:44.385884Z",
+    "VMs_at_that_observation": 0,
+    "persistent_disks_at_that_observation": 0,
+    "new_VM_or_PD_created_since_that_observation": 0,
+    "prior_N2_and_GCS_actually_used": true,
+    "latest_preserved_long_term_cloud_attempt_completed_scientific_pairs": 0,
+    "existing_GCS_custody_retained": true,
+    "new_paid_study_admitted_this_record": false
+  },
+  "fiscal": {
+    "total_cap_USD": "100",
+    "holds_upper_USD": "68.80",
+    "unallocated_upper_USD": "31.20",
+    "cleanup20_included_retained": true,
+    "unused_future_purpose_closed_USD": "21.25",
+    "refund_USD": "0",
+    "supplier_invoice_reconciled": false,
+    "Master_sha256": "b8f33b10e67a84b74c7fd70a77d0ec7a5713b9362a69665eabbff39634811e70"
+  },
+  "paper": {
+    "pages": 86,
+    "pdf_sha256": "61c1444ec59523bdabc1b51fb7deacccce0f47052c0d7b493642a90f5215a2d3",
+    "status": "INTERIM",
+    "PR3_parallel_static_review_complete": true,
+    "PR3_not_merged_or_PDF_rebuilt": true,
+    "PR3_remaining_symbol_fix": "Use vartheta for behavior/environment vector; theta is already proposal truth."
+  },
+  "latest_user_review_full_read": {
+    "bytes": 17230,
+    "sha256": "a13bf201bb9edabd402d4eca64a8d3cf80a8e424f6f6ee97ef3c35ea17fd7c87"
+  },
+  "whole_goal_complete": false
+}
