@@ -1,0 +1,129 @@
+{
+  "schema": "dams-r87-existing-research-continuation-v1",
+  "observed_at_utc": "2026-10-12T09:26:52.089959+00:00",
+  "issued_by": "ROOT",
+  "latest_user_attachment": {
+    "bytes": 17230,
+    "sha256": "a13bf201bb9edabd402d4eca64a8d3cf80a8e424f6f6ee97ef3c35ea17fd7c87",
+    "full_EOF_read": true
+  },
+  "formal_progress": {
+    "N30": {
+      "pilot": 4,
+      "confirmation": 66,
+      "validated_pairs": 70,
+      "four_precision_gates_pass": true,
+      "adverse_results_preserved": true
+    },
+    "N120": {
+      "pilot": 4,
+      "confirmation": 66,
+      "validated_pairs": 70,
+      "four_precision_gates_pass": true
+    },
+    "N300": {
+      "pilot": 4,
+      "confirmation": 20,
+      "validated_pairs": 24,
+      "assigned_pairs": 70,
+      "remaining_confirmation": 46,
+      "initial_n": 300,
+      "last_two_worlds_final_population": {
+        "52018": [
+          430,
+          430
+        ],
+        "52019": [
+          432,
+          432
+        ]
+      },
+      "calendar_days": 1917,
+      "population_growth_mode": "external workforce targets, not evidence of causal organic growth"
+    },
+    "original_N1000": {
+      "validated_cases": 35,
+      "assigned_cases": 144,
+      "full_pilot_worlds": 0,
+      "pilot_target": 4,
+      "confirmation": 0
+    },
+    "N10000_N50000_conditional_N100000": {
+      "complete_formal_worlds": 0,
+      "integrated_model_freeze_calibration_OOS_pending": true
+    }
+  },
+  "formal_execution": {
+    "start": {
+      "utc": "2026-10-12T09:24:59.182568+00:00",
+      "status": "EXACT_FROZEN_RESEARCH_CLI_RUNNING_NOT_SCIENTIFICALLY_COMPLETE",
+      "producer_pid": 58777,
+      "owned_pgid": 58777,
+      "supervisor_pid": 58773,
+      "initial_population": 300,
+      "calendar_days": 1917,
+      "paid_GCP_calls": 0
+    },
+    "observed_utc": "2026-10-12T09:26:52.085409+00:00",
+    "ps": "58777 58773  99.0  38720 01:53 Rs",
+    "stderr_bytes": 0,
+    "terminal_present": false,
+    "world": 52020,
+    "old_pairs_reused_not_regenerated": 24,
+    "reuse_cumulative_seconds": 0.19013129093218595,
+    "current_phase": "original execute_pair; closed single arm may be revalidated/reused by original Scheduler; new Model child not yet separately attested",
+    "operator_sha256": "ae00094b16d582105f7d2f166bb9eece6199dd17f33e2cafe79e40524aea8f77",
+    "supervisor_sha256": "bdabfdec5101ce59f07328518a7539ca075ccd52402154e67110cf4c0425b038",
+    "frozen_science_source_unchanged": true
+  },
+  "storage_actual": {
+    "closed_synthetic61_retired_after_full_local_and_remote_reconstruction": true,
+    "unique_archive_tar_bytes": 1966080,
+    "source_raw_bytes": 375607296,
+    "actual_workspace_available_delta_bytes": 369049600,
+    "backing_Extreme_available_delta_bytes": 0,
+    "physical_backing_release_not_claimed": true,
+    "original_formal_raw_deleted": 0,
+    "first_case_original_minimum_free_bytes": 103079215104,
+    "Root_operational_admission_bytes": 103112769536,
+    "science_or_runtime_output_caps_reduced": false
+  },
+  "cloud": {
+    "actually_used_historically": "Standard N2 compute and GCS custody",
+    "latest_authenticated_census": {
+      "UTC": "2026-10-12T09:17:40.980618+00:00",
+      "authenticated_readonly_commands": 3,
+      "VMs": 0,
+      "PDs": 0,
+      "operations": 31,
+      "pending_operations": 0,
+      "provider_mutations": 0,
+      "GCS_custody_not_removed": true,
+      "supplier_invoice_reconciled": false
+    },
+    "new_paid_VM_this_operation": false,
+    "complete_formal_cloud_paired_worlds": 0,
+    "specific_current_blocker": "Regional guest archive evidence still needs Root independent exact-generation custody, terminal/census and safe delete wiring; existing isolated source amendment in progress. Not waiting all N300 or all historical cold data.",
+    "source_package_commit": "24a13023d3cc2d975fc0f08084d87f3fef0080b8",
+    "source_package_files": 130,
+    "source_package_tar_bytes": 3399680,
+    "original_parent_raw_gate_pass": true,
+    "current_cost_arithmetic_upper_USD": "30.45322856911507080718813333",
+    "current_unallocated_upper_USD": "31.20",
+    "supplier_invoice_reconciled": false,
+    "arithmetic_is_not_paid_or_native_capacity_admission": true,
+    "global_deadline_unchanged": "2026-10-15T08:54:46.960873Z"
+  },
+  "paper": {
+    "pages": 86,
+    "status": "INTERIM",
+    "PR3": "draft parallel, does not gate computation",
+    "final_goal_complete": false
+  },
+  "existing_candidate": {
+    "R10_full_period_profile_source_reviewed": true,
+    "full_period_integrated_engineering_execution_under_this_profile": false,
+    "additional_causal_and_external_validation_gaps_retained": true
+  },
+  "whole_goal_complete": false
+}

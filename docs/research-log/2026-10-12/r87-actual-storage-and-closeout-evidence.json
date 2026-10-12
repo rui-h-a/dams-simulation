@@ -1,0 +1,168 @@
+{
+  "schema": "dams-r87-actual-storage-and-caller-evidence-v1",
+  "prior_r3_terminal": {
+    "utc": "2026-10-12T08:33:56.251475+00:00",
+    "producer_exit_code": 1,
+    "producer_reaped": true,
+    "owned_pgid_absent": true,
+    "status": "INCOMPLETE_PRESERVED",
+    "wall_seconds": 3454.4539422499947,
+    "CPU_user_seconds": 3182.707372,
+    "CPU_system_seconds": 57.838927,
+    "maxrss_native_bytes_on_macos": 91193344,
+    "source_study_runtime_post_guard": true,
+    "final_independent_acceptance": false,
+    "whole_goal_complete": false
+  },
+  "synthetic61_actual_lossless_archive": {
+    "status": "EXACT61_LOSSLESS_SOURCE_AND_DECODED_FULL_SHA_PASS_NOT_REMOTE_NOT_RETIRED",
+    "utc": "2026-10-12T09:12:10.557516+00:00",
+    "raw_bytes": 375607296,
+    "unique_encoded_bytes": 1841085,
+    "tar_bytes": 1966080,
+    "tar_sha256": "a1e82b4222642499428d36ee006fb31104a870821bb47f9aec21ed701e947207",
+    "manifest_sha256": "e62fb983c69827e3f15cbba1f43878e5056b9b095a1ba40d68ea0cfe7d5941ac",
+    "wall_seconds": 3.4627242910210043,
+    "no_Model_SQL_provider_calls": true,
+    "source_files_deleted": 0
+  },
+  "synthetic61_actual_named_retirement": {
+    "utc": "2026-10-12T09:14:32.583441+00:00",
+    "status": "EXACT61_CLOSED_SYNTHETIC_LOSSLESS_RETIREMENT_PASS",
+    "retired_count": 61,
+    "logical_bytes": 375607296,
+    "free_before": {
+      "/Volumes/DAMS-Workspace": 102911102976,
+      "/Volumes/Extreme SSD": 105565388800
+    },
+    "free_after": {
+      "/Volumes/DAMS-Workspace": 103280152576,
+      "/Volumes/Extreme SSD": 105565388800
+    },
+    "actual_available_delta": {
+      "/Volumes/DAMS-Workspace": 369049600,
+      "/Volumes/Extreme SSD": 0
+    },
+    "physical_device_release_inferred_from_logical_size": false,
+    "original_raw_deleted": 0,
+    "formal_worlds_added": 0,
+    "model_calls": 0,
+    "SQL_calls": 0,
+    "GCP_calls": 0,
+    "wall_seconds": 4.7632707910379395,
+    "retirement_authority_sha256": "4507465d2772be87391b27b6bd87d3576b102d4145dd1edbfd16142c1df5b380"
+  },
+  "remote61_full_byte_recovery_receipt": {
+    "sha256": "30c0bc04b7a5d9027c87f2d9d39b9a7ca8b0b5ef52d47cfa167565d9cb280a6d",
+    "bytes": 601
+  },
+  "remote_scope": "private GitHub asset; same remote provider, independent from external SSD; not a formal sample",
+  "prior_root_synthetic61_draft_tag_failure_retained": true,
+  "canonical_source_recipes_original_failure_evidence_and_exact61_recovery_manifest_retained": true,
+  "original_complete_parent_gate": {
+    "UTC": "2026-10-12T08:14:07.527436+00:00",
+    "status": "EXISTING_PARENT_ORIGINAL_COMPLETE_RAW_GATE_PASS",
+    "case_id": "a2fedfd7c76e1ca1f7e75bf8625b783d7cf3642f7a04673de8eeb3d2284fc79e",
+    "days": 366,
+    "source_sha256": "4daf690d216ad819674a232fdd3d9de66a901d4a49c56fe6f626ed1f2e351605",
+    "driver_sha256": "65dde680a01d471e35ca47a6a588e445166b94736e91dddc0bf19189ddec6095",
+    "validator_sha256": "55300a9b6850080c902d025abfa4b673794b9aac70d7aa214afab6a10b4f2214",
+    "manifest_sha256": "2f89a869ec0e04a6a13969a93501b40c447b60120696886f8ad094765f41a0cb",
+    "state_semantic_sha256": "d90d2debbf315f3c195129dad17838e9922a4208a013700c04f327264001848a",
+    "wall_seconds": 61.247503916034475,
+    "new_scientific_worlds": 0,
+    "existing_original_cases_accepted_count_unchanged": 35,
+    "provider_calls": 0,
+    "raw_or_source_mutations": 0,
+    "lock_released_after_gate_not_a_current_handoff_authority": true
+  },
+  "cloud_all_flow_proposal_not_authority": {
+    "UTC": "2026-10-12T08:50:57.277122+00:00",
+    "status": "COMPLETE_BOUND_ARITHMETIC_ONLY_NOT_ACTUAL_NATIVE_OR_PAID_ADMISSION",
+    "original_single_case_2attempts_24h_each_unchanged": true,
+    "complete_guest_encoded_representations_not_Root_metadata": {
+      "scientific_raw_upper_bytes": 100632373248,
+      "spool_upper_bytes": 103079215104,
+      "collector_cache_upper_bytes": 103079215104,
+      "local_cas_upper_bytes": 103079215104,
+      "raw_lease_upper_bytes": 103079215104,
+      "recovery_input_upper_bytes": 2147483648,
+      "metadata_and_boot_upper_bytes": 68719476736,
+      "safety_floor_bytes": 85899345920
+    },
+    "planned_peak_bytes": 669715539968,
+    "planned_peak_GiB": "623.7212009429931640625",
+    "nominal_guest_disk_GiB": 700,
+    "true_guest_native_statvfs_required": true,
+    "same_region_Root_closeout_proof_connection_not_yet_implemented": true,
+    "fee_components_upper_USD": {
+      "VM52hours_N2_2CPU16GiB": "6.812728",
+      "700GiB_standard_disk_until_globalD": "2.764115184665342083333333333",
+      "96GiB_GCS_until_D_plus168h_softdelete": "0.8208472895972169226567777776",
+      "96GiB_final_Asia_download": "11.52",
+      "bounded_storage_operations": "3",
+      "IPv4_52hours_and_control_allowance": "0.460"
+    },
+    "margin_multiplier": "1.2",
+    "full_upper_USD": "30.45322856911507080718813333",
+    "master_unallocated_upper_USD": "31.20",
+    "arithmetic_fits_current_upper_allocation": true,
+    "actual_supplier_spend_or_invoice_not_claimed": true,
+    "provider_VM_mutations": 0,
+    "Model_SQL_calls": 0,
+    "rate_basis": {
+      "N2_2CPU16GiB": "Half retained within24h Iowa N2-4 0.262028 USD/hour rate; same linear CPU/RAM family. This is a derived quoted rate, not billed usage.",
+      "pd_standard": "current official disks-image-pricing Iowa .000054795 GiBh",
+      "egress": "current official GCS Asia excludingChina .12 GiB",
+      "GCS": "retained conservative .0000356161 GiBh; greater than current official Iowa .000027397",
+      "quoted_timestamp_retained_not_reset": "2026-10-11T19:02:21.828456+00:00"
+    },
+    "full_held_future_not_reallocated_or_issued_by_this_record": true,
+    "true_stock_IO_and_archive_endpoint_admission_not_claimed": true
+  },
+  "current_authenticated_provider_census": {
+    "UTC": "2026-10-12T09:17:40.980618+00:00",
+    "authenticated_readonly_commands": 3,
+    "VMs": 0,
+    "PDs": 0,
+    "operations": 31,
+    "pending_operations": 0,
+    "provider_mutations": 0,
+    "GCS_custody_not_removed": true,
+    "supplier_invoice_reconciled": false
+  },
+  "whole_goal_complete": false,
+  "actual_N300_r4_execution": {
+    "start": {
+      "utc": "2026-10-12T09:24:59.182568+00:00",
+      "status": "EXACT_FROZEN_RESEARCH_CLI_RUNNING_NOT_SCIENTIFICALLY_COMPLETE",
+      "producer_pid": 58777,
+      "owned_pgid": 58777,
+      "supervisor_pid": 58773,
+      "initial_population": 300,
+      "calendar_days": 1917,
+      "paid_GCP_calls": 0
+    },
+    "observed_utc": "2026-10-12T09:26:52.085409+00:00",
+    "ps": "58777 58773  99.0  38720 01:53 Rs",
+    "stderr_bytes": 0,
+    "terminal_present": false,
+    "world": 52020,
+    "old_pairs_reused_not_regenerated": 24,
+    "reuse_cumulative_seconds": 0.19013129093218595,
+    "current_phase": "original execute_pair; closed single arm may be revalidated/reused by original Scheduler; new Model child not yet separately attested",
+    "operator_sha256": "ae00094b16d582105f7d2f166bb9eece6199dd17f33e2cafe79e40524aea8f77",
+    "supervisor_sha256": "bdabfdec5101ce59f07328518a7539ca075ccd52402154e67110cf4c0425b038",
+    "frozen_science_source_unchanged": true
+  },
+  "operational_source_controls": {
+    "controls": 18,
+    "rounds": 2,
+    "full24_native_and_original_rows_Root_gate": true,
+    "formal_scientific_tests_replaced": false,
+    "source_freeze_receipt": {
+      "sha256": "0bc7398f0967980340bfadd00c907f47262069f3c6a54ccdf1eb4434d369328c",
+      "bytes": 4670
+    }
+  }
+}
