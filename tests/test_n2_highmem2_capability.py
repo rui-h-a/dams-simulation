@@ -130,6 +130,17 @@ class DeltaControls(unittest.TestCase):
         del c['price_snapshot']['standard_vm_usd_per_hour'];c['price_snapshot']['spot_vm_usd_per_hour']={s['machine_type']:'.001'}
         with self.assertRaises(ERROR):C['stage_vm_rate'](c,s)
         self.assertEqual(Decimal('.1517')*48,Decimal('7.2816'))
+    def test_15_explicit_N2_standard_disk_keeps_interface_and_existing_price_guard(self):
+        for cpu in (2,4):
+            c,s,r,m,e,vm=fixtures(cpu,disk='pd-standard')
+            self.assertEqual(C['stage_capabilities'](c,s)['disk_interface'],'SCSI')
+            argv=C['_create_command'](c,s,e,'asia-east1-b','fixture-startup',compute_only=True)
+            self.assertIn('--boot-disk-type=pd-standard',argv)
+            self.assertTrue(W['verify_guest'](r,m)['hardware_frozen_verified'])
+            self.assertIs(C['_validate_instance'](c,s,e,vm,compute_only=True),vm)
+        c,s,*_=fixtures(disk='pd-standard');s['disk_type']='local-ssd'
+        with self.assertRaises(ERROR):C['stage_capabilities'](c,s)
+
     def test_14_module_AST_only_two_existing_functions_changed(self):
         for file,allowed in (('cloud_control.py',{'stage_capabilities'}),('cloud_worker.py',{'verify_guest'})):
             a=ast.parse((BASELINE/(file+'.txt')).read_bytes());b=ast.parse((SOURCE/'research_tools'/file).read_bytes())

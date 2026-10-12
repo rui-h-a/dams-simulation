@@ -65,7 +65,7 @@ def stage_capabilities(c, s):
             raise GuardError("Standard C4D4 requires exact CPU/architecture and usable/catalog RAM bounds")
     elif mode == "STANDARD" and machine in ("n2-highmem-2", "n2-highmem-4"):
         vcpus, memory_gib = {"n2-highmem-2": (2, 16), "n2-highmem-4": (4, 32)}[machine]
-        allowed_disks = ("pd-balanced", "pd-ssd")
+        allowed_disks = ("pd-standard", "pd-balanced", "pd-ssd")
         disk_interface = "SCSI"
         quota = {"metric": "N2_CPUS", "info_id": "N2-CPUS-per-project-region",
                  "dimensions": {"region": c["region"]}}
