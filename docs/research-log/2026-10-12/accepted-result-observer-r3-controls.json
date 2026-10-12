@@ -1,0 +1,64 @@
+{
+  "actual_first_bounded_sync": {
+    "API_calls_including_Root_parent_GET": 22,
+    "Model_calls": 0,
+    "accepted_pairs": 16,
+    "confirmation_complete": 12,
+    "new_formal_worlds": [
+      52009,
+      52010,
+      52011
+    ],
+    "observed_utc": "2026-10-12T03:28:59.660576+00:00",
+    "provider_calls": 0,
+    "remote_original_byte_readback_pass": true
+  },
+  "counter_loss_original_failure_preserved": true,
+  "independent_controller_review": {
+    "API_BEGIN_and_immutable_witnesses": 22,
+    "blockers": [],
+    "initial_journal_records": 50,
+    "limitations": [
+      "Controller restart requires Root partial reconciliation using retained grant/plan/journal; it does not reset its enrollment or counters.",
+      "API error identity/class is retained; transport stdout/stderr payloads are not retained by that controller."
+    ]
+  },
+  "private_controller_credentials_authority_and_journal_published": false,
+  "pure_mock_control_rounds": [
+    {
+      "exit_code": 0,
+      "tests": 31,
+      "wall_seconds": 0.8689754999941215
+    },
+    {
+      "exit_code": 0,
+      "tests": 31,
+      "wall_seconds": 0.8565458750235848
+    }
+  ],
+  "same_enrollment_same_counter_original_absolute_deadline_required": true,
+  "schema": "dams-accepted-result-observer-r3-source-controls-1",
+  "scientific_limits": [
+    "Observer reuses receipts written after the original two-arm complete raw gate; observer itself does not validate raw truth, read SQLite or restore a scientific Model.",
+    "Fixed original N300 source; not an R8/R10 or N10000 validator.",
+    "Four pilots are excluded; only the sixty-six assigned confirmation identities form the formal independent sample.",
+    "Effects including negative or undefined values are retained; observed_utc is an observation timestamp rather than an asserted completion timestamp.",
+    "Mock controls, engineering acceptance and metadata publication do not establish calibration or external validity."
+  ],
+  "source": [
+    {
+      "bytes": 46557,
+      "path": "research_tools/accepted_result_observer.py",
+      "sha256": "61c377569adbfecbd006a10f057a1a91b31039e249c8fd84d331755e32f5b0da"
+    },
+    {
+      "bytes": 29006,
+      "path": "tests/test_accepted_result_observer.py",
+      "sha256": "d97499525edac45942b485207780de4031e1e34b1a18c78812344390a55c88ab"
+    }
+  ],
+  "source_stable_two_rounds": true,
+  "source_status": "bounded metadata observer; no scientific entry replacement",
+  "syntax_pass": true,
+  "whole_goal_complete": false
+}
