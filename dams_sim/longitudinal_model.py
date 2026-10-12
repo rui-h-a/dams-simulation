@@ -59,6 +59,7 @@ class LongitudinalEngine:
         self.ledger=ExactLedger(storage_dir,page_options=page_options,journal_chunk_bytes=journal_chunk_bytes)
         self._native_owner=None
         self.day=0; self.failed_day=False
+        self.joint_control=None; self._joint_pending_control=None
         self.agents=[]; self.people=[]; self.slots={}; self.slot_guild={}
         self.guild_alias={g:g for g in range(config.guilds)}
         self.target=config.n; self.demand=1.
@@ -291,6 +292,8 @@ class LongitudinalEngine:
         self._topology()
 
     def policy(self, guild):
+        if self.joint_control is not None and self.joint_control['policy'] is not None:
+            return tuple(self.joint_control['policy'])
         if self.acquisitions is not None:
             prior=self.acquisitions.policy(guild)
             if prior is not None:return prior
@@ -429,14 +432,40 @@ class LongitudinalEngine:
         except BaseException:
             self.ledger.rollback();self.failed_day=True;raise
 
+    def set_joint_control(self, control):
+        """One completed-day-boundary control from the r8 ownership coordinator.
+
+        Treasury transfers are not revenue or loans. All effects enter the
+        existing daily transaction, its journal and exact cash conservation.
+        """
+        from .joint_firm import validate_control
+        if self.failed_day or self.ledger.db.in_transaction:
+            raise ValueError('joint control requires a complete day boundary')
+        self._joint_pending_control=validate_control(control,self.day)
+
     def _step(self):
         from .model import Claim,clip
         p,l,day=self.config,self.l,self.day
         before=dict(self.metrics)
+        control=self._joint_pending_control
+        if control is not None:
+            from .joint_firm import validate_control, VERSION
+            validate_control(control,day)
+            expense=control['consideration']+control['provider_cost']
+            if self.cash+control['cash_delta']<expense:
+                raise ValueError('joint transfer cannot spend absent real cash')
+            self.cash+=control['cash_delta']-expense
+            self.metrics['joint_treasury_net_resource_units']+=control['cash_delta']
+            self.metrics['joint_consideration_resource_units']+=control['consideration']
+            self.metrics['joint_provider_resource_units']+=control['provider_cost']
+            self.joint_control=control;self.version=VERSION
+            self.ledger.add_journal(day,'joint_owned_control',f'joint:{day}',control)
+        self._joint_pending_control=None
         creating=l.work_creation_stop_day is None or day<l.work_creation_stop_day
         if l.closure_day==day:self.closed_day=day
         if l.suspension_day==day:self.suspended_day=day
         acquisition_cost=self._acquisition_begin_day()
+        if control is not None:acquisition_cost+=control['consideration']+control['provider_cost']
         operation_received=operation_borrowed=0.
         operation_begin=None
         if self.operations is not None:
@@ -507,6 +536,9 @@ class LongitudinalEngine:
         # an indivisible governance operation into a free vote.
         cooperation={i:clip(self.agents[i].reciprocity*snapshot[i][1]*(1-snapshot[i][2])) for i in present}
         acquisition_coordination={i:(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.) for i in present}
+        if self.joint_control is not None:
+            for i in acquisition_coordination:acquisition_coordination[i]+=self.joint_control['coordination_hours']
+            self.metrics['joint_coordination_reserved_hours']+=len(present)*self.joint_control['coordination_hours']*funding
         coordination={i:0. for i in present};coordination_readiness={}
         coordination_plan=None
         if self.operations is not None:
@@ -722,6 +754,7 @@ class LongitudinalEngine:
                 row[key+'_daily']=self.metrics.get(key,0.)-before.get(key,0.)
                 row[key+'_cumulative']=self.metrics.get(key,0.)
         self.ledger.add_journal(day,'day_end',f'day:{day}',{**({'enterprise_growth_state':self.enterprise.to_dict()} if self.enterprise is not None else {}),**({'enterprise_operating_state':self.operations.to_dict()} if self.operations is not None else {}),**({'enterprise_acquisition_state':self.acquisitions.to_dict()} if self.acquisitions is not None else {}),**({'organization_tasks_state':self.organization.to_dict()} if self.organization is not None else {}),'date':self.clock.at(day).isoformat(),'active':len(active),'present':len(present),'output':daily_output,'cash':self.cash,'closed_day':self.closed_day,'suspended_day':self.suspended_day,'adoption_days':self.adoption,
+            **({'joint_control':self.joint_control} if self.joint_control is not None else {}),
             'metrics_daily':{k:self.metrics[k]-before.get(k,0.) for k in self.metrics},'metrics_cumulative':dict(self.metrics),
             'memory':self.memory,'routine':self.routine,'review_backlog_records':backlog,'appeal_backlog_records':self.ledger.pending_count('appeal')})
         self.day+=1
@@ -762,6 +795,7 @@ class LongitudinalEngine:
         if self.operations is not None:value['enterprise_operating_state']=self.operations.to_dict()
         if self.acquisitions is not None:value['enterprise_acquisition_state']=self.acquisitions.to_dict()
         if self.organization is not None:value['organization_tasks_state']=self.organization.to_dict()
+        if self.joint_control is not None:value['joint_control']=copy.deepcopy(self.joint_control)
         if self._state_hash_codec!=LEGACY_STATE_HASH_CODEC:value['state_hash_codec']=self._state_hash_codec
         return value
 
@@ -857,6 +891,10 @@ class LongitudinalEngine:
         obj.acquisitions=EnterpriseAcquisitionState.restore(obj.config,value.get('enterprise_acquisition_state'),value['day']) if obj.config.enterprise_acquisition is not None else None
         if obj.acquisitions is None and 'enterprise_acquisition_state' in value:raise ValueError('unexpected acquisition state')
         obj.version = ORGANIZATION_MODEL_VERSION if obj.config.organization_tasks is not None else JOINT_MODEL_VERSION if obj.config.joint_population is not None else ACQUISITION_MODEL_VERSION if obj.acquisitions is not None else CAUSAL_MODEL_VERSION if obj.config.enterprise_operations is not None else GROWTH_MODEL_VERSION if obj.config.enterprise_growth is not None else cls.version
+        obj.joint_control=None;obj._joint_pending_control=None
+        if 'joint_control' in value:
+            from .joint_firm import validate_control,VERSION
+            obj.joint_control=validate_control(value['joint_control'],value['day']-1);obj.version=VERSION
         obj.enterprise = (EnterpriseGrowthState.restore(obj.config,value.get('enterprise_growth_state'),value['day'])
             if obj.config.enterprise_growth is not None else None)
         obj.operations = EnterpriseOperatingState.restore(obj.config,value.get('enterprise_operating_state'),value['day'],sites=obj.enterprise.sites) if obj.config.enterprise_operations is not None else None
@@ -903,6 +941,7 @@ class LongitudinalEngine:
                 if last is None or last[2]!='day_end' or canonical(json.loads(last[4]).get('organization_tasks_state'))!=canonical(self.organization.to_dict()):raise ValueError('organization state differs from final raw day')
         if not math.isfinite(self.cash) or self.cash<0:raise ValueError('cash is nonfinite/negative')
         expected=self.config.n*self.l.initial_cash_per_member-self.metrics.get('recruitment_resource_units',0)-self.metrics.get('migration_resource_units',0)-self.metrics.get('operating_resource_units',0)-self.metrics.get('infrastructure_setup_resource_units',0)+self.metrics.get('revenue_resource_units',0)+self.metrics.get('financing_inflow_resource_units',0)
+        expected+=self.metrics.get('joint_treasury_net_resource_units',0.)-self.metrics.get('joint_consideration_resource_units',0.)-self.metrics.get('joint_provider_resource_units',0.)
         if self.acquisitions is not None:
             expected+=self.metrics.get('acquisition_cash_received_resource_units',0.)-sum(self.metrics.get(k,0.) for k in ('acquisition_consideration_resource_units','acquisition_transaction_resource_units','acquisition_integration_resource_units','acquisition_evidence_review_resource_units'))
             self.acquisitions.validate(self.config,self.day)
@@ -943,6 +982,7 @@ class LongitudinalEngine:
                     if canonical(value.get(name))!=canonical(state):
                         raise ValueError('operating recovery differs from final committed journal: '+name)
                 if self.acquisitions is not None and canonical(value.get('enterprise_acquisition_state'))!=canonical(self.acquisitions.to_dict()):raise ValueError('acquisition recovery differs from final committed journal')
+                if getattr(self,'joint_control',None) is not None and canonical(value.get('joint_control'))!=canonical(self.joint_control):raise ValueError('joint control differs from final committed journal')
         if self.config.enterprise_growth is not None:
             self.enterprise.validate(self.config,self.day)
             if self.target!=self.enterprise.target or len(self.slots)>self.enterprise.capacity:
@@ -1175,6 +1215,10 @@ def validate_persisted_state(state,database,*,expected_source_sha256=None):
     acquisitions=EnterpriseAcquisitionState.restore(config,state.get('enterprise_acquisition_state'),state['day']) if config.enterprise_acquisition is not None else None
     if acquisitions is None and 'enterprise_acquisition_state' in state:raise ValueError('unexpected acquisition persisted state')
     expected_model = ORGANIZATION_MODEL_VERSION if config.organization_tasks is not None else JOINT_MODEL_VERSION if config.joint_population is not None else ACQUISITION_MODEL_VERSION if acquisitions is not None else CAUSAL_MODEL_VERSION if operations is not None else GROWTH_MODEL_VERSION if enterprise is not None else 'longitudinal-1'
+    joint_control=None
+    if 'joint_control' in state:
+        from .joint_firm import validate_control,VERSION
+        joint_control=validate_control(state['joint_control'],state['day']-1);expected_model=VERSION
     if l is None or state.get('model_version')!=expected_model or type(state.get('state_schema_version')) is not int or state.get('state_schema_version')!=1:raise ValueError('persisted longitudinal schema differs')
     codec=state.get('state_hash_codec',LEGACY_STATE_HASH_CODEC)
     if codec not in (STATE_HASH_CODEC,LEGACY_STATE_HASH_CODEC):raise ValueError('unknown persisted longitudinal hash codec')
@@ -1210,7 +1254,7 @@ def validate_persisted_state(state,database,*,expected_source_sha256=None):
     try:
         ledger.validate_schema()
         view=SimpleNamespace(config=config,l=l,clock=clock,day=day,agents=agents,people=people,cash=state['cash'],metrics=state['metrics'],ledger=ledger,
-            operations=operations,enterprise=enterprise,acquisitions=acquisitions,organization=organization,guild_count=guild_count,site_count=enterprise.sites if enterprise is not None else config.sites,target=state['target'],slots=slots,guild_alias=aliases)
+            operations=operations,enterprise=enterprise,acquisitions=acquisitions,organization=organization,joint_control=joint_control,guild_count=guild_count,site_count=enterprise.sites if enterprise is not None else config.sites,target=state['target'],slots=slots,guild_alias=aliases)
         LongitudinalEngine.validate_semantics(view)
         if organization is not None:
             from research_tools.validate_organization_tasks import verify_organization_accounts

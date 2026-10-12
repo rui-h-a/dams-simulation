@@ -159,6 +159,8 @@ class _RawDailyAccounting:
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
         self.operations=EnterpriseOperatingState(config) if config.enterprise_operations is not None else None
         self.acquisitions=EnterpriseAcquisitionState(config) if config.enterprise_acquisition is not None else None
+        self.joint_control=None
+        if 'joint_control' in state:self.supported=self.supported|{'joint_treasury_net_resource_units','joint_consideration_resource_units','joint_provider_resource_units','joint_coordination_reserved_hours'}
         if self.acquisitions is not None:self.supported=self.supported|{'acquired_people','acquisition_cash_received_resource_units','acquisition_consideration_resource_units','acquisition_transaction_resource_units','acquisition_integration_resource_units','acquisition_evidence_review_resource_units'}
         self.market_rng=WorldRandom(config.seed,config.world,world_context=config.longitudinal.world_context)
         if self.operations is not None:self.supported=self.supported | {"financing_inflow_resource_units","enterprise_legal_and_interest_resource_units","enterprise_material_and_logistics_resource_units","enterprise_coordination_hours","orders_arrived_units","orders_expired_units","delivered_product_units","enterprise_coordination_requested_workdays","enterprise_coordination_served_workdays"}
@@ -179,6 +181,7 @@ class _RawDailyAccounting:
         return next((config for end,config in self.config_history if day<end),self.config)
 
     def policy(self,guild,p):
+        if self.joint_control is not None and self.joint_control['policy'] is not None:return tuple(self.joint_control['policy'])
         if self.acquisitions is not None:
             value=self.acquisitions.policy(guild)
             if value is not None:return value
@@ -204,11 +207,23 @@ class _RawDailyAccounting:
 
     def verify(self,day,events,record):
         p=self.at(day);l=p.longitudinal;clock=GregorianClock(l);before=dict(self.metrics)
+        controls=[v for k,e,v in events if k=='joint_owned_control']
+        if controls:
+            from dams_sim.joint_firm import validate_control
+            if len(controls)!=1 or record.get('joint_control')!=controls[0]:raise ValueError('raw joint unique day control differs')
+            self.joint_control=validate_control(controls[0],day)
+            c=self.joint_control
+            if self.cash+c['cash_delta']<c['consideration']+c['provider_cost']:raise ValueError('raw joint absent treasury funds')
+            self.cash+=c['cash_delta']-c['consideration']-c['provider_cost']
+            self.metrics['joint_treasury_net_resource_units']+=c['cash_delta']
+            self.metrics['joint_consideration_resource_units']+=c['consideration']
+            self.metrics['joint_provider_resource_units']+=c['provider_cost']
+        elif self.joint_control is not None or record.get('joint_control') is not None:raise ValueError('raw owned joint day control missing')
         working=clock.is_workday(day);creating=l.work_creation_stop_day is None or day<l.work_creation_stop_day
         if l.closure_day==day:self.closed=day
         if l.suspension_day==day:self.suspended=day
         operating=self.closed is None and self.suspended is None
-        acquisition_cost=0.
+        acquisition_cost=(self.joint_control['consideration']+self.joint_control['provider_cost']) if self.joint_control is not None else 0.
         if self.acquisitions is not None:
             effects,expected=self.acquisitions.begin_day(day,working=working,operating=operating,
                 cash=self.cash,growth=self.enterprise,debt=self.operations.debt,
@@ -436,7 +451,7 @@ class _RawDailyAccounting:
                 trust=self.number(value['morning_trust'],'coordination morning trust',high=1.)
                 fatigue=self.number(value['morning_fatigue'],'coordination morning fatigue',high=1.)
                 cooperation=max(0.,min(1.,agent['reciprocity']*trust*(1-fatigue)))
-                other=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation+training[i]+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)
+                other=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation+training[i]+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)+(self.joint_control['coordination_hours'] if self.joint_control is not None else 0.)
                 capacity=self.operations.coordination_capacity(agent['care_hours'],other)
                 if value['site']!=agent['site'] or value['service_capacity']!=capacity:raise ValueError('raw coordination actual available time differs')
                 coordination_inputs[i]=value;people.append((i,agent['site'],capacity))
@@ -494,7 +509,7 @@ class _RawDailyAccounting:
                 original_cooperation=max(0.,min(1.,agent['reciprocity']*morning['trust']*(1-morning['fatigue'])))
                 expected_cooperation=0. if attack_active and p.attack=='freeride' and i in attackers else original_cooperation
                 if value['cooperation']!=expected_cooperation:raise ValueError('raw cooperation differs from morning evidence')
-                coordination=(coordination_service.get(i,0.) if self.operations is not None else 0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)
+                coordination=(coordination_service.get(i,0.) if self.operations is not None else 0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)+(self.joint_control['coordination_hours'] if self.joint_control is not None else 0.)
                 if self.operations is not None:
                     ci=coordination_inputs[i]
                     if morning['trust']!=ci['morning_trust'] or morning['fatigue']!=ci['morning_fatigue']:raise ValueError('raw coordination/work morning state differs')
@@ -567,7 +582,8 @@ class _RawDailyAccounting:
             self.cash-=material_cost;self.metrics['operating_resource_units']+=material_cost
             self.metrics['enterprise_material_and_logistics_resource_units']+=material_cost
             self.metrics['orders_arrived_units']+=operation_begin['arrivals'];self.metrics['orders_expired_units']+=operation_begin['expired'];self.metrics['delivered_product_units']+=operation_begin['delivered']
-            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(coordination_service.get(i,0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.) for i in ([] if auto_closure else present))*funding
+            if present is not None:self.metrics['enterprise_coordination_hours']+=math.fsum(coordination_service.get(i,0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)+(self.joint_control['coordination_hours'] if self.joint_control is not None else 0.) for i in ([] if auto_closure else present))*funding
+            if self.joint_control is not None and present is not None:self.metrics['joint_coordination_reserved_hours']+=len([] if auto_closure else present)*self.joint_control['coordination_hours']*funding
             if record.get('enterprise_operating_state')!=self.operations.to_dict():raise ValueError('raw operating stock differs from actual complete history')
             revenue=operation_received
         else:
