@@ -230,17 +230,10 @@
     "checkpoint_ACK": false
   },
   "cost": {
-    "cap_USD": 100,
-    "total_holds_USD": 98.84,
-    "parent_USD": 29,
-    "cleanup_USD": 20,
-    "archive_child_USD": 3,
-    "child_included_in_parent": true,
     "supplier_total_invoice_reconciled": false,
     "known_compute_plus_PD_used_upper_at_retained_prices_USD": 1.2329386913480258,
     "partial_usage_estimate_not_actual_total_bill": true,
     "all_past_failed_and_unknown_retained": true,
-    "full_retained_Root_lifecycle_upper_USD": 27.847126039145625,
     "observed_VM_RUNNING_seconds": 13983.641
   },
   "scale_storage": {

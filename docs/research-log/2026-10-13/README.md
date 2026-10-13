@@ -4,7 +4,7 @@
 
 同一操作套件lease窄修復後，最新凍結b6ab30d8的flow5仍在父程序退出後群組存活判定拒絕；兩制度48日與CP3恢復通過，Collector及全raw封存未開始，整套E2E FAILED（d1db6028）。唯一優先修復是有限、具名owned程序群組觀察與自然回收驗收；清理成功不能改判PASS。原VM最後provider截點06:23:15Z為TERMINATED／550GB PD READY／pending0，23 start／19 readiness不是成果。
 
-N300仍25/70（確認21/66），一萬／五萬正式仍0；同一c9大型整合微型90+10日与原始治理帳目通過，但校準/OOS及正式凍結未完。最新資源水位83.1GiB低於完整量測所需120／240GiB。費用部分compute+PD估算US$1.232939，完整實付帳單未知；cap100、holds98.84與原失敗/截止/預扣保留。以下段落均為歷史截點。
+N300仍25/70（確認21/66），一萬／五萬正式仍0；同一c9大型整合微型90+10日与原始治理帳目通過，但校準/OOS及正式凍結未完。最新資源水位83.1GiB低於完整量測所需120／240GiB。費用部分compute+PD估算US$1.232939，完整實付帳單未知；原失敗、截止與預扣紀錄保留。以下段落均為歷史截點。
 
 [完整當前報告](operations-convergence.md) · [結構化當前計數](operations-convergence-current.json)
 
