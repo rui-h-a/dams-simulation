@@ -1,8 +1,8 @@
 {
   "schema": "dams-operation-convergence-current-v1",
-  "observed_utc": "2026-10-13T05:13:10.602636+00:00",
+  "observed_utc": "2026-10-13T06:23:15.530777+00:00",
   "timezone": "Asia/Tokyo",
-  "observed_Asia_Tokyo": "2026-10-13T14:13:10.602636+09:00",
+  "observed_Asia_Tokyo": "2026-10-13T15:23:15.530777+09:00",
   "dated_snapshot_not_future_running_assertion": true,
   "accepted_new_formal_cloud_pairs": 0,
   "accepted_cloud_pairs_total": 0,
@@ -16,18 +16,18 @@
   "N10000_formal_pairs": 0,
   "N50000_formal_pairs": 0,
   "N100000_status": "conditional_not_admitted",
-  "last_independently_native_restored_cloud_day": 900,
+  "last_independently_native_restored_cloud_day": 1080,
   "later_checkpoint_filename_days": [
     990,
     1080
   ],
-  "later_attempt002_full_offGCP_custody_and_native_restore_passed": false,
+  "later_attempt002_full_offGCP_custody_and_native_restore_passed": true,
   "original_cloud_source_commit": "7c6ee864987686a2b0315168e9dc2ae5481cf5f4",
   "original_cloud_model_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
   "operations_source_commit": "29c111ae1d4ab62b266d7c0eaad2643391997565",
-  "cumulative_original_VM_start_commands": 22,
-  "cumulative_readiness_intents": 18,
-  "active_owned_activity": "data-only transfer controlled abort; VM TERMINATED, original PD READY, pending operations0",
+  "cumulative_original_VM_start_commands": 23,
+  "cumulative_readiness_intents": 19,
+  "active_owned_activity": "A022 complete off-GCP raw and original native checkpoint1080 restoration PASS. Fullflow5 after lease fix FAILED at post-parent process-group closure; supervisor repair and retained-case entry parameterization are independent local work. Original VM last verified TERMINATED; no scientific resume.",
   "A019_cause": {
     "property": "pipeline.Requires",
     "same_dependency_members": true,
@@ -81,22 +81,71 @@
     "isolated_pure_model_compute_seconds": null,
     "formal_worlds_added": 0,
     "provider_calls": 0,
-    "prior_engineering_failures_and_exact_old_sources_preserved": true
+    "prior_engineering_failures_and_exact_old_sources_preserved": true,
+    "latest_source_manifest_sha256": "b6ab30d8b89b406700e373c30d9da772d4e91c109f3c357bf294611a083745ce",
+    "latest_complete_flow_passed": false,
+    "latest_flow4": {
+      "both_arms_day48": true,
+      "actual_CP3_interrupt_and_same_case001_resume_passed": true,
+      "complete_Collector_custody_restore": false,
+      "failure": "real Collector worker Directory.read_lease rejected lease_file_shape at first fstat",
+      "failure_receipt_sha256": "70cac1c8fcabe374e1339836a3c9b2d27b255c50fbbb45189f2f43cf8b457178",
+      "elapsed_seconds": 21.911,
+      "formal_provider_calls": 0,
+      "old_engineering_success_cannot_prove_latest_source_pass": true,
+      "source_visible_possible_atomic_rotation_race": "open -> first fstat can observe old unlinked inode before existing replacement retry",
+      "first_native_at_failure_recorded": false
+    },
+    "historical_fullflow_manifest_sha256": "8a80e65388758cdc1456df9fb7bba550c1d72894dd6654b79f8d87daa2d558af",
+    "lease_rotation_fix": {
+      "operations_core_sha256": "12e7bdd2596b708379875c3c3139a88385c9b341c96f0d90f6e715b74bd6bfe1",
+      "true_FD_rotation_counterexample": true,
+      "actual_difference_and_negative_checks": 17,
+      "independently_reviewed": true,
+      "original_worker_scientific_source_and_driver_unchanged": true,
+      "rejection_not_seen_in_flow5": true
+    },
+    "latest_flow5": {
+      "both_arms_day48": true,
+      "CP3_interrupt_and_same_case001_resume_passed": true,
+      "Collector_invoked": false,
+      "complete_raw_custody_or_archive_restore_passed": false,
+      "failure": "supervise rejects parent exited while owned descendants remained; first positive group probe had no member identity snapshot",
+      "failure_forensics_receipt_sha256": "d1db602820a2625d08c73365b1114e6697ae5a160e48e9887fa9db40bcd2326b",
+      "bounded_execution_receipt_sha256": "861688aadacd9759e587555463aaf1d38a8f8cc18ce28a5ca01cd28cfb5baacd",
+      "elapsed_seconds": 23.463,
+      "retained_raw_files": 277,
+      "retained_raw_bytes": 6625463,
+      "retained_directories": 209,
+      "all_owned_groups_absent_after_cleanup": true,
+      "source_SHA_and_native_unchanged": true,
+      "automatic_retry": false,
+      "provider_calls": 0,
+      "formal_pairs_added": 0
+    }
   },
   "remaining_single_operation_path": [
-    "Complete latest attempt002 raw custody; the retained transport repeatedly revalidates original history in its per-read gate.",
-    "Parameterize retained-case resume for its actual latest complete checkpoint and spent attempts; do not reuse CP900/A013 old authority."
+    "Repair same-package supervised process exit: bounded observation of true owned pid/start/pgid/ppid/status, require natural verified group absence; unknown or persistent descendants still fail after bounded cleanup. Preserve current fullflow5 evidence and frozen sources.",
+    "Parameterize the existing retained-case scientific execution for the actual restored checkpoint1080 and next attempt003, retaining all spent attempts, budget, source and deadlines; do not reuse CP900 or reset counters.",
+    "Continue the same first arm to its frozen endpoint and execute the unstarted second arm, then full raw independent verification and restoration; no all-N300 prerequisite for the separate large-model line."
   ],
   "model_integration_parallel": {
-    "original_fourfirm_full_daily_summary_reader_passed": true,
-    "new_model_native_run_passed": false,
-    "remaining": [
-      "exact portable entry/profile source binding",
-      "lossless actual morning ballot observations including absent members",
-      "aggregate resources admitted before both firm allocations"
-    ],
+    "source_sha256": "c9e1ce9f0b21e0564abc56c4be64cc64c3e7209b9e4218502ab9182c597e3377",
+    "source_manifest_sha256": "4a641e5aa682b432b5b23677cfcad84f7c639ebdc3eed7e7fb5652d445c121aa",
+    "new_model_native_90plus10_days_both_arms_passed": true,
+    "actual_runtime_seconds": 14.402853665989824,
+    "peak_RSS_bytes": 68190208,
+    "independent_100_day_raw_governance_credit_journal_accounting_passed": true,
+    "morning_observations": 800,
+    "morning_without_work": 224,
+    "independent_receipt_sha256": "b3d3d4a7b7495f6203061c4f87a4ea679de130e3e9c2b02a6e24d44ac54fce13",
+    "individual_complete_state_at_day90_passed": true,
+    "individual_complete_JSON_state_at_day100_not_emitted": true,
+    "formal_worlds_added": 0,
     "calibration_completed": false,
-    "out_of_sample_validation_completed": false
+    "out_of_sample_validation_completed": false,
+    "scale_measurement_dispatched": false,
+    "scale_measurement_storage_residence_admission_passed": false
   },
   "PDF": {
     "pages": 86,
@@ -118,7 +167,7 @@
     "old_failure_and_full_precharged_debt_retained": true,
     "priority_fix": "reuse full source-bound closed-floor proof with every-read native/namespace/head/admission checks and full validation before and after wire"
   },
-  "final_readonly_provider_command_sequence": 298,
+  "final_readonly_provider_command_sequence": 313,
   "provider_status": {
     "VM": "TERMINATED",
     "PD": "READY",
@@ -126,5 +175,80 @@
     "pending_operations": 0,
     "original_identity_and_expiry_verified": true,
     "new_provider_mutations": 0
-  }
+  },
+  "A022": {
+    "whole_wire_bytes": 288121187,
+    "object_count": 990,
+    "files": 528,
+    "directories": 124,
+    "raw_bytes": 668413553,
+    "TAR_bytes": 669255680,
+    "whole_wire_object_TAR_file_SHA_verified": true,
+    "directory_modes_verified": true,
+    "complete_current_attempt002_and_all_raw_sources_states": true,
+    "custody_receipt_sha256": "06ff1a5f254ede3553a0615af23ad5be39d9b76a9613813233e66067de0cb873",
+    "VM_stopped_verified": true,
+    "actual_controller_source_sha256": "657405be9bf3dc77224409e838396d4d76a39ab0888f4291088fdb360eb223e8",
+    "actual_floor_reuse_source_sha256": "f9b288cba19253fc07eff37feb5c73d3b55feacf52e203f1fc1244752299d37e",
+    "Model_calls": 0,
+    "science_acceptance": false,
+    "checkpoint_ACK": false,
+    "independent_byte_audit_receipt_sha256": "f8af4d57b8adde0bd6dd50a59a4bcb2bbdadd1c9edf9d8b9b7482bba481ea86e"
+  },
+  "latest_original_attempts_metadata": {
+    "checkpoint_header_candidate_day": 1080,
+    "full_JSON_SQLite_SHA_checked": true,
+    "native_model_restored": true,
+    "closed_attempts_elapsed_seconds": [
+      227.70718774199986,
+      110.84263694500001,
+      249.05376072500002
+    ],
+    "closed_attempts_elapsed_total_seconds": 587.6035854119999,
+    "isolated_pure_model_CPU_seconds": null,
+    "other_arm": "UNSTARTED",
+    "next_attempt": 3,
+    "remaining_recovery_attempts_under_current_admission": 0,
+    "native_restore_api_returned_once": true,
+    "native_restore_acceptance": true,
+    "latest_review_failure": null,
+    "native_review_elapsed_seconds": 81.081563,
+    "native_review_peak_RSS_bytes": 58212352,
+    "native_review_new_ticks": 0,
+    "last_restored_day": 1080,
+    "active_people": 358,
+    "retained_people": 529,
+    "full_history_rows": 1080,
+    "new_restorable_days_verified": 180,
+    "new_scientific_days_computed_this_review": 0,
+    "native_restore_receipt_sha256": "2261bc51c5901b6becde730d88e0f8f91ce3c9dd67ee4cb49f1e83a0aa184019",
+    "outer_receipt_sha256": "da18b9834df582240b5ad989f5e0d4b0c686cdd0ce589cd25a8ccf15751abdb5",
+    "native_review_attempts": 3,
+    "native_restore_API_calls_all_reviews": 2,
+    "prior_review_errors_preserved": true,
+    "scientific_result_acceptance": false,
+    "checkpoint_ACK": false
+  },
+  "cost": {
+    "cap_USD": 100,
+    "total_holds_USD": 98.84,
+    "parent_USD": 29,
+    "cleanup_USD": 20,
+    "archive_child_USD": 3,
+    "child_included_in_parent": true,
+    "supplier_total_invoice_reconciled": false,
+    "known_compute_plus_PD_used_upper_at_retained_prices_USD": 1.2329386913480258,
+    "partial_usage_estimate_not_actual_total_bill": true,
+    "all_past_failed_and_unknown_retained": true,
+    "full_retained_Root_lifecycle_upper_USD": 27.847126039145625,
+    "observed_VM_RUNNING_seconds": 13983.641
+  },
+  "scale_storage": {
+    "actual_available_bytes_last_native_review": 89218785280,
+    "actual_available_GiB": 83.09146881103516,
+    "required_measurement_residence_GiB_N10000": 120,
+    "required_measurement_residence_GiB_N50000": 240,
+    "admitted": false
+  },
+  "report_updated_utc": "2026-10-13 07:08:50 UTC"
 }

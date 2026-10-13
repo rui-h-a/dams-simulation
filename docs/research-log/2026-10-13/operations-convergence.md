@@ -1,13 +1,31 @@
-The cloud pair is still incomplete: accepted cloud pairs remain **0**, N300 remains **25/70** (4 pilots and 21/66 confirmation pairs), and 10k/50k formal pairs remain 0. The original model/driver, raw failures, attempts and cumulative cost/deadline controls are retained.
+GCP 確實已進入，而且 world 52021 曾真正執行模擬；完整正式雲端配對仍是 0。一萬人主研究與五萬人完整比較尚未啟動。這個工作時段新增正式配對為 0，不能以工程驗證、版本、文件或開機數代替。
 
-The fixed six-module operation package now passed an actual short full flow without Git ancestry or inherited developer environment: real Scheduler and atomic worker lease, day-3 checkpoint, deliberate interruption, same-case restoration, both arms through day 48, original Collector full raw gates with two restorations, complete archive and full file restoration. The two copies share a storage-device failure domain. This is one eight-person engineering pair, zero formal samples and zero provider calls. It does not establish the complete GCP/systemd deployment path. The exact package and full-flow receipt hashes are recorded in [the dated observation](operations-convergence-current.json).
+最新 provider 查核截點為 2026-10-13 06:23:15 UTC（臺灣14:23、日本15:23）：原 VM TERMINATED、550 GB 原磁碟 READY、待處理操作0。累計23筆 start、19筆 readiness，均不是科學樣本；此為有時間戳的查核，不保證之後的狀態。停止 VM 後，磁碟與 GCS 的保存費用仍須管理。
 
-An earlier engineering attempt was stopped by source identity protection because Root changed operation files while it ran. The interruption, day-12 partial recovery, elapsed time and exact prior sources are preserved. The final full flow used immutable checked sources throughout.
+| 項目 | 實際驗收狀態 | 本工作時段新增正式成果 |
+|---|---|---:|
+| N300 完整配對 | 25/70；其中確認研究21/66，另4組排除pilot | 0 |
+| 完整正式雲端配對 | 0 | 0 |
+| world 52021 | 第一制度未完成1917日；另一制度UNSTARTED | 0 |
+| 一萬人正式主研究 | 尚未啟動 | 0 |
+| 五萬人完整模型比較 | 尚未啟動 | 0 |
+| 十萬人 | 條件式，尚未准入 | 0 |
+| 正式論文 | 86頁INTERIM；尚無新增正式結果可整合 | 0 |
 
-The latest failed data capture was caused by the order of `systemd`'s `Requires` dependency list, with identical unit members and all four configuration files' SHA/native identities. Safe data-only custody now retains unknown scientific/configuration acceptance separately from raw byte preservation. A previously dispatched Root preservation process prepared the latest complete raw archive: 668,413,553 raw bytes, 528 files and 124 directories. It was then deliberately stopped because the measured transfer rate could not fit its original 3,600-second bound. The partial 10,813,440 bytes and all precharged obligations remain retained. The original VM is TERMINATED, its original disk READY, and pending operations zero; full off-GCP wire and restoration remain incomplete. No scientific Model or new lease was dispatched.
+本次真正交付的是完整最新資料保存。A022 已取回288,121,187 bytes傳輸資料、990個CAS物件，還原528個原始檔案與124個目錄，原始內容668,413,553 bytes。完整wire／物件／TAR／檔案SHA與目錄mode都通過；另一名讀者獨立覆核PASS，原來源、歷次失敗及成本保留。實際使用的是既有R111控制器；不能說新單一CLI已通過真GCP全流程。
 
-The archive census includes attempt-002 checkpoint filenames at days 990 and 1080. Day 900 remains the last independently native-restored checkpoint; later progress cannot be promoted to accepted scientific days before complete retrieval and restoration. The old resume bridge explicitly assumes CP900 and attempts 000/001, while attempt002 and its second recovery allowance have already been used. Reusing its old A013 preparation or authority would be invalid. The retained transport's per-read gates expand each maximum 64 KiB read into roughly 100 whole old-namespace censuses, ten complete old-floor validations and 35 Root checks. Real read-only timings show 10.335 ms per census and 91.911 ms per floor; these components alone cost approximately 1.95 seconds per 64 KiB. The actual stream interval was 29,826.89 bytes/s, with about 9,299 seconds remaining, exceeding its unchanged 3,600-second bound. This is a measured guard amplification bottleneck; local custody speed cannot be used as GCP throughput. The single priority fix is safe reuse of the already validated, closed original-floor proof, preserving every-read source/native/namespace/head/admission/counter/budget/deadline checks and complete validation before and after transport. This change belongs in the same operation package. Once latest custody is complete, its same-case recovery must use the actual newest valid checkpoint and spent attempts, retaining every elapsed second and original deadline.
+最新第1,080日檢查點已由原凍結模型真正恢復通過：實際day1080、358個活躍成員、529個保留個體、1,080筆每日歷史；完整狀態語意、設定與165項來源／原始資料引用全SHA/native前後核對一致。相較最後驗收的第900日，新增可驗證恢復進度180日；這是既有資料的恢復驗收，本工作時段新增計算日仍0。恢復審查81.082秒另計，不能加進原科學執行elapsed。前兩次審查器分別把固定70檔錯寫77、把原Config tuple與JSON list直接比較而拒絕；兩者都是審查器錯誤，失敗完整保留，原模型／資料沒有修改。第三次依原Config序列化契約精確核對後PASS，不放寬數值、型別、來源或權限檢查。原科學ACK仍false、完整配對0，另一制度UNSTARTED。
 
-The large-model integration proceeds separately. The R104 reader's original four-firm daily/summary accounting and targeted causal controls do not establish new Model execution, calibration or out-of-sample validity. Three concrete seams are being corrected in one staging integration: portable entry/profile source binding, complete actual morning evidence for absent ballot members, and pair-wide resource admission before either firm allocation. No new research scope or formal 10k/50k result is claimed.
+既有雲端000、001、002三次工作程序的elapsed合計587.604秒（227.707／110.843／249.054）。這些是worker時間，沒有可靠隔離純模型CPU。原VM已觀測RUNNING合計13,983.641秒，即3小時53分3.641秒，包含準備、控制、保存與傳輸；不能當成模型計算速度。A022沒有精確monotonic階段分解；可觀測start intent至terminal約1660秒，CAS ticket至result約145秒，兩者範圍不同，不能相減後宣稱控制耗時。最新一輪未新增科學日。
 
-The 86-page PDF remains interim; statistical acceptance, complete large-model studies and final billing closure are unfinished.
+最新整套操作流程仍未通過。先前套件60116f55的flow4確實完成兩制度各48日與第3日中止後同案例恢復，卻在Collector讀lease時拒絕。這條atomic replace競態已用真實FD重現，僅同一套件operations_core增加有限合法rotation retry，原worker／凍結科學source／driver不變；17個必要真實差分／負面檢查與獨立窄審查通過。
+
+Root凍結最新六檔套件b6ab30d8後，只執行一次完整flow5重驗。兩制度各48日、同case CP3恢復都通過，但23.463秒時監督器拒絕parent exited while owned descendants remained；原始資料Collector／封存／傳輸／恢復尚未開始，整套E2E為FAILED。277份raw、209目錄、所有失敗與各版本精確來源保留，清理後四個owned程序群組皆無成員。首次positive group probe沒有保存成員／狀態，不能猜是zombie、resource_tracker或真正orphan。完整可重現阻斷收據SHA d1db602820a2625d08c73365b1114e6697ae5a160e48e9887fa9db40bcd2326b；原始執行收據861688aa。單一優先修復在supervise退出處理：於原ownership與絕對deadline內有限觀察、保存真實pid/start/pgid/ppid/status；只讓已知owned自然回收且群組真正空的情況通過，未知或持續存活仍清理並拒絕，不能把kill成功改成PASS。此修復在隔離副本進行，不改本次已凍結可重現來源、不盲開GCP。
+
+大型模型工作同步推進。同一R104整合來源c9e1ce9f已真跑兩制度90日檢查點與10日恢復差分；獨立實際原始資料讀者通過100日治理／credits／journal帳目核對，包含800筆morning觀測及224筆當日沒有工作的觀測。native執行14.403秒、peak RSS約65MiB。這是微型工程驗證；校準、樣本外驗證、完整正式科學來源凍結與正式尺度／精度設計仍未完成。day90完整個體狀態已驗，day100未輸出完整個體JSON，不能宣稱那一項已驗收。大型工作沒有以N300全部完成為前提。
+
+大型資源量測尚未啟動：最新恢復審查後工作卷實際可用約89.2GB、83.1GiB；既定完整保存／恢復方案所需水位為120／240GiB，未滿足。容量條件與模型科學整合是兩個分開的阻礙，不靠縮減資料、正式人口或觀察期解決。量測方案的人口N是每家公司，一萬人兩家公司共兩萬個初始個體；五萬人兩家公司共十萬個初始個體，不等於正式十萬人研究已啟動。
+
+費用仍在US$100累計上限內管控，保留額98.84，parent29與cleanup20等有包含關係，不能再相加，也不是實付或退款。已核算的compute＋PD部分保守用量估算為US$1.232939；GCS、egress、操作、稅與credit完整帳單未核對，因此不能報這就是研究累計實付總額。原完整生命週期保守准入界US$27.847126≤parent29，所有過去、失敗與未知成本保留，沒有重設attempt或費用。最終GCP外保全、研究完成及所有付費服務清理仍未驗收。
+
+未完成的原因已很明確：雲端控制、恢復與保存的整條流程反覆出現接線或驗證邊界問題；較早局部通過沒有保證最新部署整體穩定，工程管理尚未收斂。最新完整原始資料保全已過關，原生1080恢復已通過，lease競態窄修復已驗；接續修同一監督器退出阻斷並做完整套件驗收，再依實際最新檢查點和已消耗attempt做有限同案例續行；不能重派900、重設重試計數或重啟已完成案例。第一項科學交付仍為world52021兩制度完整配對、原始資料驗證與恢復。現在沒有交出該成果，全研究未完成。
