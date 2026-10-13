@@ -1,3 +1,17 @@
+# 最新實際進度：GCP已進入，完整正式雲端配對仍0
+
+截至2026-10-13日本18:36的真停止收據，原VM TERMINATED、PD550GB READY。原凍結world52021曾運算且CP1080原生恢復PASS；本時段第24次開機／第20次準備後，部署request在SSH派送前因完整metadata預留額必然超限而失敗，新Model與科學日0。結束CAS另拒目錄連結／特殊檔案，最新控制資料完整offGCP保全PENDING，原磁碟保留。
+
+本機同操作包flow6完整48日兩臂／CP恢復／真Collector／全raw封存傳輸恢復PASS，不代表GCP全流程PASS。平行新版模型兩制度100日原始帳目與完整恢復資料獨立核對PASS，但外監控FAILED及導入前仲裁覆蓋限制保留；formal／calibration／OOS沒有增加。
+
+N30025/70（確認21/66）、完整cloud0、一萬／五萬正式0，PDF86頁INTERIM。部分compute＋PD用量估算US$1.337665不是完整實付帳單。接續只修同包整件request／custody准入，先重現與完整預驗收，再做原CP1080有限同案例續行；不以文件、測試或開機數代替正式成果。
+
+[完整當前報告](operations-convergence.md) · [精確結構化紀錄](operations-convergence-current.json) · [可執行離線阻斷反例](reproduce-deployment-metadata-bound.py)
+
+---
+
+以下全文保留為較早歷史截點；不是現在的程序、來源或驗收狀態。
+
 # 最新實際進度：原版CP1080恢復通過，完整正式雲端配對仍0
 
 最新A022完整288,121,187B wire、990objects、528files／124dirs／raw668,413,553B已在GCP外全SHA、還原與獨立byte audit通過。原凍結模型CP1080原生恢復亦已真通過：358 active／529 retained、1080日歷史，receipt2261bc51。新增可驗證恢復進度180日，本時段新計算日0、正式新增0、原科學ACK false，另一制度仍未初始化。
@@ -23,7 +37,7 @@ The sections below are dated historical observations; their counters and running
 
 ## R102 public source and actual portable engineering
 
-The exact 35-module candidate and runnable bounded local entry are [available](../../../research-candidates/r102-governed-operating-requests/README.md). Both governance arms completed an actual 90+10-day restoration differential and a separate full 1947-day run with final native Model recovery. [Exact execution/source record](r102-public-source-and-portable-engineering.json). These are repeated engineering checks, with no new formal sample, calibration or OOS claim. The original cloud pair remains incomplete at checkpoint900;10k/50k formal pairs remain0.
+The exact 35-module candidate and runnable bounded local entry are [available](https://github.com/rui-h-a/dams-simulation/tree/479de91de2d2b2231642e8dc18d36d912d7bf77c/research-candidates/r102-governed-operating-requests). Both governance arms completed an actual 90+10-day restoration differential and a separate full 1947-day run with final native Model recovery. [Exact execution/source record](r102-public-source-and-portable-engineering.json). These are repeated engineering checks, with no new formal sample, calibration or OOS claim. The original cloud pair remains incomplete at checkpoint900;10k/50k formal pairs remain0.
 
 # Closed cloud evidence and control recovery
 
