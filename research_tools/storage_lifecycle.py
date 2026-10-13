@@ -14,6 +14,7 @@ materializes an explicit fresh destination. Neither operation runs a Model.
 from __future__ import annotations
 
 from contextlib import contextmanager
+from collections import OrderedDict
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import concurrent.futures
@@ -39,6 +40,7 @@ SCHEMA = 1
 PROTOCOL = "dams-storage-lifecycle-v1"
 CATEGORIES = {"original", "recovery", "regenerable"}
 MAX_METADATA = 16 * 1024**2
+BACKEND_OBJECT_CACHE_BYTES = 2 * codec.MAX_ENCODED_CHUNK
 
 
 def _utc():
@@ -168,6 +170,17 @@ class FilesystemBackend:
     def read_object(self, encoded_sha256, expected_bytes):
         return self._bytes(self.objects_root / codec.sha256(encoded_sha256), expected_bytes)
 
+    def cache_identity(self):
+        """Native version/custody guard; a locator string alone is not this guard."""
+        return [_identity(_path(self.manifest_file).stat()), _identity(_path(self.objects_root).stat())]
+
+    def object_cache_identity(self, encoded_sha256, expected_bytes):
+        path = _path(self.objects_root / codec.sha256(encoded_sha256))
+        info = path.stat()
+        if not stat.S_ISREG(info.st_mode) or info.st_size != expected_bytes:
+            raise GuardError("backup object native/size differs")
+        return _identity(info)
+
 
 class Lifecycle:
     """One owned vault; source cases, proof roots and scratch roots are explicit."""
@@ -246,6 +259,14 @@ class Lifecycle:
         with self._lock(self.vault / "store.lock"), self.writer_lease(case_id):
             self._local.deadline = time.monotonic() + self.policy.max_operation_seconds
             self._local.backend_checks = {}
+            # Generic adapters do not prove custody across operations. Never
+            # carry their bytes or readback receipts into the next lease.
+            self._local.backend_objects = OrderedDict()
+            self._local.backend_object_bytes = 0
+            self._local.backend_bindings = {}
+            self._local.object_store_used = None
+            self._local.object_store_identity = None
+            self._local.store_locked = True
             self._local.io_bytes = 0; self._local.io_started = time.monotonic()
             self._local.archive_view = None
             self._local.retention_authorization = None
@@ -254,6 +275,12 @@ class Lifecycle:
             finally:
                 self._local.deadline = float("inf")
                 self._local.backend_checks = {}
+                self._local.backend_objects = OrderedDict()
+                self._local.backend_object_bytes = 0
+                self._local.backend_bindings = {}
+                self._local.object_store_used = None
+                self._local.object_store_identity = None
+                self._local.store_locked = False
                 self._local.archive_view = None
                 self._local.retention_authorization = None
 
@@ -429,31 +456,124 @@ class Lifecycle:
         with tempfile.TemporaryDirectory(prefix="dams-lifecycle-", dir=chosen) as folder:
             yield Path(folder), (self.policy.internal_safe_floor_bytes if chosen == self.internal else self.policy.minimum_free_bytes)
 
+    def _object_store_baseline(self):
+        """One conservative census under the existing exclusive store lease.
+
+        The counter is deliberately not persisted: restart, interrupted publish,
+        or failed cleanup rebuilds it from real files. Interrupted .put files
+        still consume capacity; no guessed rollback or automatic deletion.
+        """
+        root = self.vault / "objects"
+        before = _identity(root.stat()); used = 0
+        for path in root.iterdir():
+            self._tick(); info = path.lstat()
+            if not stat.S_ISREG(info.st_mode):
+                raise GuardError("owned content store contains an alias/special file")
+            used += info.st_size
+        if before != _identity(root.stat()):
+            raise GuardError("owned content store changed during capacity census")
+        if used > self.policy.max_archive_bytes:
+            raise GuardError("owned content store exceeds its admitted watermark")
+        self._local.object_store_used = used
+        self._local.object_store_identity = before
+
     def _put_object(self, source, chunk):
         self._tick(); name = codec.sha256(chunk["encoded_sha256"]); target = self.vault / "objects" / name
+        if not getattr(self._local, "store_locked", False):
+            raise GuardError("content publication requires the exclusive store operation")
         expected = {"sha256": name, "bytes": chunk["encoded_bytes"]}
         if target.exists():
             self._hash(target, expected)
             return False
         self._capacity(self.vault, chunk["encoded_bytes"] + 8192)
-        # Quota uses only this tool's flat owned CAS, not a user-file crawl.
-        used = sum(p.lstat().st_size for p in (self.vault / "objects").iterdir())
+        if self._local.object_store_used is None:
+            self._object_store_baseline()
+        elif _identity(target.parent.stat()) != self._local.object_store_identity:
+            # An unowned namespace change is not an atomic increment by us.
+            self._local.object_store_used = None
+            self._local.object_store_identity = None
+            raise GuardError("owned content store namespace changed outside publication")
+        used = self._local.object_store_used
         if used + chunk["encoded_bytes"] > self.policy.max_archive_bytes:
             raise GuardError("owned content store exceeds its admitted watermark")
-        with _directory(target.parent) as parent:
-            temp = ".put-" + os.urandom(12).hex()
-            fd = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o400, dir_fd=parent)
-            try:
-                with os.fdopen(fd, "wb") as output, _file(source) as input_fd:
-                    while block := os.read(input_fd, codec.MAX_ENCODED_CHUNK): output.write(block)
-                    output.flush(); os.fsync(output.fileno())
-                self._hash(target.parent / temp, expected)
-                os.link(temp, name, src_dir_fd=parent, dst_dir_fd=parent, follow_symlinks=False)
-                os.fsync(parent)
-            finally:
-                try: os.unlink(temp, dir_fd=parent)
-                except FileNotFoundError: pass
+        # Reserve before creating bytes, while the same store lock is held.
+        self._local.object_store_used = used + chunk["encoded_bytes"]
+        try:
+            with _directory(target.parent) as parent:
+                temp = ".put-" + os.urandom(12).hex()
+                fd = os.open(temp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o400, dir_fd=parent)
+                first = None
+                try:
+                    with os.fdopen(fd, "wb") as output, _file(source) as input_fd:
+                        while block := os.read(input_fd, codec.MAX_ENCODED_CHUNK): output.write(block)
+                        output.flush(); os.fsync(output.fileno())
+                    self._hash(target.parent / temp, expected)
+                    os.link(temp, name, src_dir_fd=parent, dst_dir_fd=parent, follow_symlinks=False)
+                    os.fsync(parent)
+                except BaseException as error:
+                    first = error
+                    raise
+                finally:
+                    try:
+                        os.unlink(temp, dir_fd=parent); os.fsync(parent)
+                    except FileNotFoundError:
+                        pass
+                    except BaseException as error:
+                        if first is None: raise
+                        first.add_note("content publication cleanup also failed: " + type(error).__name__)
+                self._local.object_store_identity = _identity(os.fstat(parent))
+        except BaseException:
+            # The immutable leaf might already have committed. Never subtract
+            # an assumed reservation; the next attempt measures actual bytes.
+            self._local.object_store_used = None
+            self._local.object_store_identity = None
+            raise
         return True
+
+    def _backend_identity(self, backend):
+        guard = getattr(backend, "cache_identity", None)
+        token = guard() if guard is not None else None
+        version = _json(token) if token is not None else None
+        self._tick()
+        return (id(backend), type(backend), backend.failure_domain,
+                backend.immutable_locator, version, codec.CODEC, codec.RAW_CODEC)
+
+    def _backend_object(self, backend, binding, chunk):
+        """Reuse only with a current version/custody token; always check each file."""
+        identity, expires, pin_sha, archive_sha = binding
+        if time.time() >= expires or self._backend_identity(backend) != identity:
+            raise GuardError("backup version/custody changed during readback")
+        object_guard = getattr(backend, "object_cache_identity", None)
+        current = _json(object_guard(chunk["encoded_sha256"], chunk["encoded_bytes"])) if object_guard is not None else None
+        key = (binding, chunk["encoded_sha256"], chunk["encoded_bytes"])
+        cache = self._local.backend_objects
+        # An admitted locator and content SHA do not prove current custody.
+        # Adapters without a token retain the original per-reference reads.
+        reusable = identity[4] is not None
+        hit = cache.get(key) if reusable else None
+        if hit is not None:
+            block, observed = hit
+            if observed != current:
+                raise GuardError("cached backup object native identity changed")
+            after = _json(object_guard(chunk["encoded_sha256"], chunk["encoded_bytes"])) if object_guard is not None else None
+            if after != current or self._backend_identity(backend) != identity or time.time() >= expires:
+                raise GuardError("backup version/custody changed while reusing object")
+            cache.move_to_end(key)
+            return block, False
+        self._tick(); block = backend.read_object(chunk["encoded_sha256"], chunk["encoded_bytes"]); self._tick()
+        if not isinstance(block, bytes): raise GuardError("backup reader must return bounded binary bytes")
+        self._io(len(block))
+        # Only content that passes the real codec enters the reusable cache.
+        codec.decode_chunk(block, chunk)
+        after = _json(object_guard(chunk["encoded_sha256"], chunk["encoded_bytes"])) if object_guard is not None else None
+        if after != current or self._backend_identity(backend) != identity or time.time() >= expires:
+            raise GuardError("backup version/custody changed while reading object")
+        while reusable and cache and self._local.backend_object_bytes + len(block) > BACKEND_OBJECT_CACHE_BYTES:
+            _, (evicted, _) = cache.popitem(last=False)
+            self._local.backend_object_bytes -= len(evicted)
+        if reusable and len(block) <= BACKEND_OBJECT_CACHE_BYTES:
+            cache[key] = (block, current); self._local.backend_object_bytes += len(block)
+        return block, True
 
     def _decode_file(self, descriptor):
         codec.validate_manifest(descriptor)
@@ -492,8 +612,12 @@ class Lifecycle:
         except (KeyError, TypeError, ValueError):
             raise GuardError("invalid independent backup expiry") from None
         cache = self._local.backend_checks
-        key = (pin["sha256"], archive_sha)
-        if key in cache: return cache[key]
+        identity = self._backend_identity(backend)
+        binding = (identity, expires.timestamp(), pin["sha256"], archive_sha)
+        key = binding
+        if key in cache:
+            self._local.backend_bindings[id(backend)] = binding
+            return cache[key]
         data = backend.read_manifest()
         if (not isinstance(data, bytes) or len(data) > MAX_METADATA
                 or len(data) != witness.get("manifest_bytes") or hashlib.sha256(data).hexdigest() != archive_sha):
@@ -501,26 +625,30 @@ class Lifecycle:
         try: remote = json.loads(data)
         except (ValueError, UnicodeDecodeError): raise GuardError("invalid actual backup manifest") from None
         if remote != archive: raise GuardError("backup complete file roster differs")
-        total = encoded = chunks = 0
+        total = encoded = chunks = references = encoded_references = 0
         for row in archive["files"]:
             descriptor = codec.validate_manifest(row["descriptor"]); h = hashlib.sha256(); size = 0
             for chunk in descriptor["chunks"]:
-                self._tick(); block = backend.read_object(chunk["encoded_sha256"], chunk["encoded_bytes"]); self._tick()
-                if not isinstance(block, bytes): raise GuardError("backup reader must return bounded binary bytes")
-                self._io(len(block))
+                block, fetched = self._backend_object(backend, binding, chunk)
                 raw = codec.decode_chunk(block, chunk)
-                h.update(raw); size += len(raw); encoded += len(block); chunks += 1
+                h.update(raw); size += len(raw); references += 1; encoded_references += len(block)
+                if fetched: encoded += len(block); chunks += 1
             if size != descriptor["raw_bytes"] or h.hexdigest() != descriptor["raw_sha256"]:
                 raise GuardError("actual full backup restoration SHA/bytes differs")
             total += size
         # Recheck the admission receipt after full backend reads; no flag is used.
         self._pin(pin)
+        if self._backend_identity(backend) != identity or time.time() >= expires.timestamp():
+            raise GuardError("backup version/custody changed before readback acceptance")
         receipt = {"backend_id": witness["backend_id"], "failure_domain": backend.failure_domain,
                    "immutable_locator": backend.immutable_locator, "manifest_sha256": archive_sha,
                    "status": "ACTUAL_FULL_BACKEND_RESTORE_READBACK_PASS", "files": len(archive["files"]),
                    "raw_bytes": total, "encoded_bytes_read": encoded, "chunks_read": chunks,
+                   "encoded_bytes_referenced": encoded_references, "chunk_references": references,
+                   "object_cache_scope": "exclusive-operation-only",
                    "strict_eof": True, "observed_utc": _utc()}
         cache[key] = receipt
+        self._local.backend_bindings[id(backend)] = binding
         return receipt
 
     def _archive(self, dest, definition, *, decode=True):
@@ -658,8 +786,8 @@ class Lifecycle:
                 target = destination / row["file"]["relative"]
                 def fetch(chunk, temporary):
                     if backend is not None:
-                        block = backend.read_object(chunk["encoded_sha256"], chunk["encoded_bytes"])
-                        codec.decode_chunk(block, chunk); self._io(len(block))
+                        block, _ = self._backend_object(backend, self._local.backend_bindings[id(backend)], chunk)
+                        codec.decode_chunk(block, chunk)
                         with temporary.open("xb") as out: out.write(block)
                     else:
                         source = self.vault / "objects" / chunk["encoded_sha256"]

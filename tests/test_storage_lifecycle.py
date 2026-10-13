@@ -10,13 +10,14 @@ import shutil
 import sys
 import tempfile
 import unittest
+import zlib
 from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research_tools"))
 import storage_lifecycle as sl
 
 
-class ImmutableFixtureBackend:
+class NoTokenFixtureBackend:
     """Memory stands in for a root-selected immutable remote binary locator."""
     def __init__(self, exported, vault, key="offdevice-1"):
         self.failure_domain = key; self.immutable_locator = "fixture-immutable:" + key
@@ -27,6 +28,32 @@ class ImmutableFixtureBackend:
         self.reads.append("manifest"); return self.manifest
     def read_object(self, sha, expected_bytes):
         self.reads.append(sha); return self.objects[sha]
+
+
+class ImmutableFixtureBackend(NoTokenFixtureBackend):
+    """The token observes actual fixture contents and current custody state."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.custody = "held"
+
+    def cache_identity(self):
+        if self.custody == "missing":
+            raise sl.GuardError("fixture custody is no longer available")
+        return {"manifest_sha256": hashlib.sha256(self.manifest).hexdigest(),
+                "objects": [[sha, len(value), hashlib.sha256(value).hexdigest()]
+                            for sha, value in sorted(self.objects.items())],
+                "custody": self.custody}
+
+
+class VersionedFixtureBackend(ImmutableFixtureBackend):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.version = 1; self.custody = "held"
+
+    def cache_identity(self):
+        if self.custody == "missing":
+            raise sl.GuardError("fixture custody is no longer available")
+        return {"version": self.version, "custody": self.custody}
 
 
 class StorageLifecycleTests(unittest.TestCase):
@@ -99,7 +126,7 @@ class StorageLifecycleTests(unittest.TestCase):
         pins, backends, result = self.admit(2)
         for backend in backends:
             self.assertEqual(backend.reads.count("manifest"), 1)
-            self.assertEqual(len(backend.reads), 3)  # two file readbacks, even shared CAS object
+            self.assertEqual(len(backend.reads), 2)  # one manifest and one shared encoded object
         cleanup = self.lc.cleanup_case("a")
         self.assertEqual(cleanup["deleted_files"], 1)
         self.assertFalse((self.folder / "derived.bin").exists())
@@ -405,8 +432,201 @@ class StorageLifecycleTests(unittest.TestCase):
         path = self.proofs / "rate.json"; self.write_json(path, witness)
         with mock.patch.object(self.lc, "_io", side_effect=throttled): self.lc.admit_backups("a", [self.pin(path)])
         reads = [i for i, event in enumerate(events) if event[0] == "backend"]
-        self.assertEqual(len(reads), 2)
+        self.assertEqual(len(reads), 1)
         for i in reads: self.assertEqual(events[i + 1], ("io", events[i][1]))
+
+    def test_three_file_refs_fetch_once_and_all_files_materialize(self):
+        (self.folder / "third.bin").write_bytes(self.data)
+        self.files.append(self.row("third.bin", "original"))
+        self.archive(); _, backends, result = self.admit()
+        sha = next(iter(backends[0].objects))
+        self.assertEqual(backends[0].reads.count(sha), 1)
+        self.assertEqual(result["backends"][0]["files"], 3)
+        self.assertEqual(result["backends"][0]["chunks_read"], 1)
+        self.assertEqual(result["backends"][0]["chunk_references"], 3)
+        before = backends[0].reads.count(sha)
+        target = self.root / "three-file-remote-restore"
+        self.lc.restore_case("a", target, backend_id="remote-0")
+        # Full backup verification and file reconstruction share this operation's bytes.
+        self.assertEqual(backends[0].reads.count(sha) - before, 1)
+        for name in ("raw.bin", "derived.bin", "third.bin"):
+            self.assertEqual((target / name).read_bytes(), self.data)
+
+    def test_same_operation_archive_receipt_cache_retained(self):
+        self.archive(); pins, backends, _ = self.admit()
+        with self.lc._operation("a"):
+            dest, definition, _ = self.lc._definition("a")
+            archive, digest = self.lc._archive(dest, definition)
+            first = self.lc._backend(definition, archive, digest, pins[0])
+            reads = list(backends[0].reads)
+            self.assertEqual(self.lc._backend(definition, archive, digest, pins[0]), first)
+            self.assertEqual(backends[0].reads, reads)
+
+    def test_no_token_refetches_and_refuses_subsequently_missing_object(self):
+        self.archive(); pins, _, _ = self.admit(); export = self.lc.export_index("a")
+        backend = NoTokenFixtureBackend(export, self.vault, "remote-0")
+        self.lc.backends["remote-0"] = backend
+        with self.lc._operation("a"):
+            dest, definition, _ = self.lc._definition("a")
+            archive, digest = self.lc._archive(dest, definition)
+            self.lc._backend(definition, archive, digest, pins[0])
+            sha = next(iter(backend.objects)); self.assertEqual(backend.reads.count(sha), 2)
+            self.assertFalse(self.lc._local.backend_objects)
+        actual_read = backend.read_object
+        def disappeared_after_first_read(sha, size):
+            value = actual_read(sha, size); backend.objects.pop(sha); return value
+        backend.read_object = disappeared_after_first_read
+        with self.lc._operation("a"):
+            with self.assertRaises(KeyError): self.lc._backend(definition, archive, digest, pins[0])
+            self.assertEqual(backend.reads.count(sha), 4)
+            self.assertFalse(self.lc._local.backend_objects)
+
+    def test_new_operation_refetches_and_rejects_remote_modification(self):
+        self.archive(); _, backends, _ = self.admit(); backend = backends[0]
+        sha = next(iter(backend.objects))
+        self.lc.verify_backend("a", "remote-0")
+        self.assertEqual(backend.reads.count(sha), 2)
+        backend.objects[sha] = b"damaged remote object"
+        with self.assertRaises(sl.GuardError): self.lc.verify_backend("a", "remote-0")
+        self.assertEqual(backend.reads.count(sha), 3)
+        self.assertEqual((self.folder / "raw.bin").read_bytes(), self.data)
+
+    def test_new_operation_missing_remote_object_is_not_hidden_by_cache(self):
+        self.archive(); _, backends, _ = self.admit()
+        backends[0].objects.clear()
+        with self.assertRaises(KeyError): self.lc.verify_backend("a", "remote-0")
+        self.assertTrue((self.folder / "derived.bin").exists())
+
+    def test_replacing_backend_instance_does_not_reuse_archive_receipt(self):
+        self.archive(); pins, backends, _ = self.admit(); export = self.lc.export_index("a")
+        with self.lc._operation("a"):
+            dest, definition, _ = self.lc._definition("a")
+            archive, digest = self.lc._archive(dest, definition)
+            self.lc._backend(definition, archive, digest, pins[0])
+            replacement = ImmutableFixtureBackend(export, self.vault, "remote-0")
+            replacement.objects[next(iter(replacement.objects))] = b"bad"
+            self.lc.backends["remote-0"] = replacement
+            with self.assertRaises(sl.GuardError): self.lc._backend(definition, archive, digest, pins[0])
+
+    def test_backend_version_change_refetches_and_custody_loss_refuses(self):
+        self.archive(); pins, _, _ = self.admit(); export = self.lc.export_index("a")
+        backend = VersionedFixtureBackend(export, self.vault, "remote-0")
+        self.lc.backends["remote-0"] = backend
+        with self.lc._operation("a"):
+            dest, definition, _ = self.lc._definition("a")
+            archive, digest = self.lc._archive(dest, definition)
+            self.lc._backend(definition, archive, digest, pins[0])
+            backend.version = 2
+            self.lc._backend(definition, archive, digest, pins[0])
+            sha = next(iter(backend.objects)); self.assertEqual(backend.reads.count(sha), 2)
+            backend.custody = "missing"
+            with self.assertRaises(sl.GuardError): self.lc._backend(definition, archive, digest, pins[0])
+
+    def test_backend_version_change_during_real_read_refuses_acceptance(self):
+        self.archive(); pins, _, _ = self.admit(); export = self.lc.export_index("a")
+        backend = VersionedFixtureBackend(export, self.vault, "remote-0")
+        original = backend.read_object
+        def changed(sha, size):
+            value = original(sha, size); backend.version += 1; return value
+        backend.read_object = changed; self.lc.backends["remote-0"] = backend
+        with self.lc._operation("a"):
+            dest, definition, _ = self.lc._definition("a")
+            archive, digest = self.lc._archive(dest, definition)
+            with self.assertRaises(sl.GuardError): self.lc._backend(definition, archive, digest, pins[0])
+            backend.read_object = original; backend.version = 1
+            self.lc._backend(definition, archive, digest, pins[0])
+            binding = self.lc._local.backend_bindings[id(backend)]
+            identity = backend.cache_identity
+            def changed_token():
+                value = identity(); backend.version += 1; return value
+            backend.cache_identity = changed_token
+            chunk = archive["files"][0]["descriptor"]["chunks"][0]
+            with self.assertRaisesRegex(sl.GuardError, "while reusing object"):
+                self.lc._backend_object(backend, binding, chunk)
+
+    def test_object_cache_bound_eviction_preserves_full_readback(self):
+        for number in range(3):
+            path = self.folder / ("unique-%s.bin" % number)
+            path.write_bytes(os.urandom(65536)); self.files.append(self.row(path.name, "original"))
+        self.archive(); export = self.lc.export_index("a")
+        limit = max(export["objects"].values()); observed = []
+        original = self.lc._backend_object
+        def bounded(*args):
+            result = original(*args); observed.append(self.lc._local.backend_object_bytes); return result
+        with mock.patch.object(sl, "BACKEND_OBJECT_CACHE_BYTES", limit), mock.patch.object(self.lc, "_backend_object", side_effect=bounded):
+            _, _, result = self.admit()
+        self.assertTrue(observed and max(observed) <= limit)
+        self.assertEqual(result["backends"][0]["raw_bytes"], 2 * len(self.data) + 3 * 65536)
+
+    def object_input(self, number):
+        path = self.root / "encoded-input"
+        encoded = zlib.compress(("actual-object-%s" % number).encode())
+        path.write_bytes(encoded)
+        return path, {"encoded_sha256": hashlib.sha256(encoded).hexdigest(), "encoded_bytes": len(encoded)}
+
+    def test_ten_existing_plus_five_new_objects_have_one_ten_item_census(self):
+        with self.lc._operation("a"):
+            for number in range(10): self.lc._put_object(*self.object_input(number))
+        iterated = []; original = Path.iterdir
+        def counted(path):
+            for child in original(path):
+                if path == self.vault / "objects": iterated.append(child.name)
+                yield child
+        with mock.patch.object(Path, "iterdir", counted), self.lc._operation("a"):
+            for number in range(10, 15): self.lc._put_object(*self.object_input(number))
+        self.assertEqual(len(iterated), 10)
+        self.assertEqual(len(list((self.vault / "objects").iterdir())), 15)
+
+    def test_existing_object_reuse_does_not_scan_and_same_name_corrupt_refuses(self):
+        source, chunk = self.object_input(1)
+        with self.lc._operation("a"): self.assertTrue(self.lc._put_object(source, chunk))
+        with mock.patch.object(self.lc, "_object_store_baseline", side_effect=AssertionError("unexpected scan")), self.lc._operation("a"):
+            self.assertFalse(self.lc._put_object(source, chunk))
+        target = self.vault / "objects" / chunk["encoded_sha256"]
+        target.chmod(0o600); target.write_bytes(b"x" * chunk["encoded_bytes"])
+        with self.lc._operation("a"):
+            with self.assertRaises(sl.GuardError): self.lc._put_object(source, chunk)
+
+    def test_incremental_object_reservation_keeps_capacity_check(self):
+        source, chunk = self.object_input(1)
+        self.lc.policy = sl.Policy("fixture-source-device", minimum_free_bytes=0, low_watermark_free_bytes=0,
+                                  max_archive_bytes=chunk["encoded_bytes"], max_io_bytes_per_second=0)
+        with self.lc._operation("a"):
+            self.lc._put_object(source, chunk)
+            source, other = self.object_input(2)
+            with self.assertRaises(sl.GuardError): self.lc._put_object(source, other)
+        self.assertEqual(len(list((self.vault / "objects").iterdir())), 1)
+
+    def test_crash_after_actual_link_rebuilds_real_capacity_on_restart(self):
+        source, chunk = self.object_input(1); original = sl.os.link
+        def committed_then_crashed(*args, **kwargs):
+            original(*args, **kwargs); raise RuntimeError("fixture crash after actual link")
+        with self.lc._operation("a"), mock.patch.object(sl.os, "link", side_effect=committed_then_crashed):
+            with self.assertRaisesRegex(RuntimeError, "after actual link"): self.lc._put_object(source, chunk)
+        target = self.vault / "objects" / chunk["encoded_sha256"]
+        self.assertEqual(target.read_bytes(), source.read_bytes())
+        restarted = sl.Lifecycle(self.cases, self.vault, self.policy, gate_roots=[self.proofs])
+        with restarted._operation("a"):
+            restarted._put_object(*self.object_input(2))
+            actual = sum(p.stat().st_size for p in (self.vault / "objects").iterdir())
+            self.assertEqual(restarted._local.object_store_used, actual)
+
+    def test_interrupted_put_residue_counts_toward_rebuilt_quota(self):
+        residue = self.vault / "objects" / ".put-crashed-before-link"
+        residue.write_bytes(b"retained interrupted bytes")
+        source, chunk = self.object_input(1)
+        self.lc.policy = sl.Policy("fixture-source-device", minimum_free_bytes=0, low_watermark_free_bytes=0,
+                                  max_archive_bytes=len(residue.read_bytes()), max_io_bytes_per_second=0)
+        with self.lc._operation("a"):
+            with self.assertRaises(sl.GuardError): self.lc._put_object(source, chunk)
+        self.assertEqual(residue.read_bytes(), b"retained interrupted bytes")
+
+    def test_unowned_namespace_change_invalidates_incremental_counter(self):
+        with self.lc._operation("a"):
+            self.lc._put_object(*self.object_input(1))
+            (self.vault / "objects" / "foreign-new-object").write_bytes(b"do not omit these bytes")
+            with self.assertRaises(sl.GuardError): self.lc._put_object(*self.object_input(2))
+        self.assertEqual((self.vault / "objects" / "foreign-new-object").read_bytes(), b"do not omit these bytes")
 
     def test_filesystem_backup_same_vault_device_is_not_independent_when_cases_differ(self):
         self.archive(); export = self.lc.export_index("a")
