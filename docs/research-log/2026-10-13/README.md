@@ -1,3 +1,7 @@
+## R102 public source and actual portable engineering
+
+The exact 35-module candidate and runnable bounded local entry are [available](../../../research-candidates/r102-governed-operating-requests/README.md). Both governance arms completed an actual 90+10-day restoration differential and a separate full 1947-day run with final native Model recovery. [Exact execution/source record](r102-public-source-and-portable-engineering.json). These are repeated engineering checks, with no new formal sample, calibration or OOS claim. The original cloud pair remains incomplete at checkpoint900;10k/50k formal pairs remain0.
+
 # Closed cloud evidence and control recovery
 
 The original frozen N300 world 52021 ran on GCP with source `7c6ee864987686a2b0315168e9dc2ae5481cf5f4` and produced sealed checkpoint metadata through day 900. Its target remains 1,917 days and both governance arms. No cloud pair is accepted. The original terminal lost the specific first exception; neither the heartbeat expiry timeline nor the reproduced atomic-read/time counterexamples establish its unique historical cause.

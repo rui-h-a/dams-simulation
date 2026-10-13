@@ -1,0 +1,35 @@
+{
+  "calibration_OOS": false,
+  "committed_WAL_page_backend_used_in_these_joint_runs": false,
+  "daily_scope": "actual90-day prefix Model checkpoint restoration plus10-day differential for both arms",
+  "executions": [
+    {
+      "both_arms_verified": true,
+      "calibration_OOS": false,
+      "elapsed_seconds": 12.020195667049848,
+      "files": 30,
+      "formal_samples_added": 0,
+      "full_output_bytes": 11741280,
+      "mode": "daily",
+      "original_receipt_sha256": "0a5a86c2c4d4fc5c6ced2bc040785ac08b8ef391f4823023d7c8021f911536ca",
+      "peak_rss_bytes": 68173824
+    },
+    {
+      "both_arms_verified": true,
+      "calibration_OOS": false,
+      "elapsed_seconds": 296.280496374995,
+      "files": 126,
+      "formal_samples_added": 0,
+      "full_output_bytes": 567722320,
+      "mode": "full",
+      "original_receipt_sha256": "f730b4e57b172edd0c84d860a3ca22fd45c4e3fc9701ff616ac395a43a8d95e5",
+      "peak_rss_bytes": 460455936
+    }
+  ],
+  "formal_worlds_added": 0,
+  "full_economic_independent_validation": false,
+  "full_scope": "actual1947-day full histories and final Model-native restoration for both arms; restoration copies not new worlds",
+  "independent_pure_controls": 44,
+  "schema": "DAMS-R102-safe-engineering-evidence-1",
+  "source_sha256": "aaaea8b83c21d18d3a8633188254ecb05d92d8e72bb680203418062f15d30cbc"
+}

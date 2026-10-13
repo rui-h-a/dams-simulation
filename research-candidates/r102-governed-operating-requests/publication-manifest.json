@@ -1,0 +1,551 @@
+{
+  "calibration_OOS": false,
+  "core_files": 35,
+  "destination_prefix": "research-candidates/r102-governed-operating-requests",
+  "engineering_entry": "run_engineering.py",
+  "engineering_entry_scope": "local bounded daily90+10/full1947; exact engineering profile; no paid actions or formal samples",
+  "exact_normative_helper_sha256": "b6d76f3f96a23f8c87a47889c104961f820d9efca93d45258ec1b05c8c711e26",
+  "files": {
+    "LICENSE": {
+      "bytes": 1083,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "1599da6554099678fe44cba8543415f463bf6dd3",
+      "matching_public_paths": [
+        "LICENSE"
+      ],
+      "sha256": "7474437ca1851b94ab2c7a8867246ac6a7afacf4ed796090ee4646d6aee3f2a4"
+    },
+    "ODD.md": {
+      "bytes": 3599,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "4da232b4dcab87b0619938ea8291c5bfffacedc4",
+      "matching_public_paths": [],
+      "sha256": "fdbe6a388098c466a5c1b144942d4ad66dec51df7c9353c38746a7531c89c359"
+    },
+    "README.md": {
+      "bytes": 4332,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "de1a6620f934b854d27543611a04e69d93d75d11",
+      "matching_public_paths": [],
+      "sha256": "73f905e5f1ea2549c7af5aa92ef27be49443a59daafa7e0dc86cf11963849075"
+    },
+    "REPRODUCIBILITY.md": {
+      "bytes": 5292,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "60b52c5fd2ba18150ece66fcbe2a35b9de53208f",
+      "matching_public_paths": [],
+      "sha256": "7d5d25d0921bfce841e16889a785408bccb5bcfbb0075f1c5b8e739c35a0261a"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 936,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "3e0f3f0b1b1ef6006854a880b4b155018ebc53ab",
+      "matching_public_paths": [
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "sha256": "9478016a0ca89a6d17b21c92db3fd5e7cba7e6a7289f85bbdb00aa1a63b3bc58"
+    },
+    "entry_tests/test_run_engineering.py": {
+      "bytes": 9327,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "cf36bc9709f3399385e4dd2d878861aab5211ab8",
+      "matching_public_paths": [],
+      "sha256": "16a9e57d6aedd06bd0371e100de90eb7150c8a51087d6889327f205782668fff"
+    },
+    "evidence/engineering.public.json": {
+      "bytes": 1349,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "4edce53c43b784d3a97201cab9d839b5ea4ba049",
+      "matching_public_paths": [],
+      "sha256": "440d563442a0f78f34d6c4d045fcd1f07a63f0061d40e2a3f33920fe62c57f6c"
+    },
+    "profiles/engineering-pair.json": {
+      "bytes": 35387,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "21774587961a9c6cdeca0424f395b5dc7b20659c",
+      "matching_public_paths": [],
+      "sha256": "21365d199e943a9869d5cab360ee37b3e4926f99e37972aa17616ceb2fcd0608"
+    },
+    "run_engineering.py": {
+      "bytes": 17860,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "4a2ba1eba358beeb2bc91f90e87aef871a9b9ba0",
+      "matching_public_paths": [],
+      "sha256": "7bf313f9c178177bfb4f03921d53af52d2ea303ecf969ca19d076a256857666a"
+    },
+    "source/dams_sim/__init__.py": {
+      "bytes": 104,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "e03fda480c9937b66f1fb1bd0869478365c5f66f",
+      "matching_public_paths": [
+        "dams_sim/__init__.py",
+        "evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/core_snapshot/dams_sim/__init__.py",
+        "evidence/benchmarks/20261007T143303-cpu-benchmark-6ad2db33c118/core_snapshot/dams_sim/__init__.py"
+      ],
+      "sha256": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44"
+    },
+    "source/dams_sim/__main__.py": {
+      "bytes": 79,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "bfdcd0c1158dff4fcc25157b317419f0a89dd33f",
+      "matching_public_paths": [
+        "dams_sim/__main__.py",
+        "evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/core_snapshot/dams_sim/__main__.py",
+        "evidence/benchmarks/20261007T143303-cpu-benchmark-6ad2db33c118/core_snapshot/dams_sim/__main__.py"
+      ],
+      "sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7"
+    },
+    "source/dams_sim/_committed_pages.py": {
+      "bytes": 44163,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "39ae25c3cc007604c5df8431d21e4d4c30c0a9f3",
+      "matching_public_paths": [],
+      "sha256": "6e6f3cc05678e89910dbc9f1c518ae2642be65962b501b58cf4cc64c2353e9e6"
+    },
+    "source/dams_sim/authority.py": {
+      "bytes": 4951,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "1b7655cb18126288991f1cd4b6f9dff02dbd47d7",
+      "matching_public_paths": [
+        "dams_sim/authority.py",
+        "evidence/benchmarks/20261007T141530-cpu-benchmark-2ae7d6ba8f34/core_snapshot/dams_sim/authority.py",
+        "evidence/benchmarks/20261007T143303-cpu-benchmark-6ad2db33c118/core_snapshot/dams_sim/authority.py"
+      ],
+      "sha256": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b"
+    },
+    "source/dams_sim/cli.py": {
+      "bytes": 25182,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "b5b108dc80d132a22e9c8369e9339b46457c9c58",
+      "matching_public_paths": [],
+      "sha256": "6af9f2f1f47cf7b13845c637f8dfbda9df8ad82decc097a9d9a142162fef3dd7"
+    },
+    "source/dams_sim/config.py": {
+      "bytes": 11699,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "032f7d875651606a37052e69d88f0df28a448ecf",
+      "matching_public_paths": [],
+      "sha256": "37774e446f3d36bf475108e34504408c0fb22b0ae29e5ba9660532d543ffa8ef"
+    },
+    "source/dams_sim/design.py": {
+      "bytes": 4887,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "ae2b2792bf4fc37b1edea25aad51d77e1d1b2d32",
+      "matching_public_paths": [
+        "dams_sim/design.py"
+      ],
+      "sha256": "93eb321819c39ea4e4e3844ef8dd507f9edf90a01e30813d439767778c7944eb"
+    },
+    "source/dams_sim/enterprise_acquisition.py": {
+      "bytes": 25585,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "9232f0d409387dc38c213093d382cc7436028bf9",
+      "matching_public_paths": [],
+      "sha256": "bd58d0d0dbde2cefb82018764cd510d57ec2346da059011368e3c65e5a018454"
+    },
+    "source/dams_sim/enterprise_growth.py": {
+      "bytes": 17990,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "642a0b1ee293d33f9721c1f6ef8672acf0079f19",
+      "matching_public_paths": [],
+      "sha256": "1c833ad245eee387a6fa46a00ddbfe1ad68b9718f06417525420f22f04f89cfb"
+    },
+    "source/dams_sim/enterprise_operations.py": {
+      "bytes": 32020,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "f0b9c9cf90bc6f2378a578bfe1c6a04d984d6073",
+      "matching_public_paths": [],
+      "sha256": "de184c99496c631b5b8999b53dc792665daebb0171847568659db11474bc9891"
+    },
+    "source/dams_sim/governed_operating_requests.py": {
+      "bytes": 41622,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "a5954d23b5b632f86cc54285a8bed353bcdb452b",
+      "matching_public_paths": [],
+      "sha256": "47e45178783df53050cc7b372257db04481c350a8b09403525bbf9b06f134681"
+    },
+    "source/dams_sim/governed_request_normative_r98.py": {
+      "bytes": 16888,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "866697b40298300875a6f5cc6ffd48c0b8c3eb48",
+      "matching_public_paths": [],
+      "sha256": "b6d76f3f96a23f8c87a47889c104961f820d9efca93d45258ec1b05c8c711e26"
+    },
+    "source/dams_sim/joint_firm.py": {
+      "bytes": 44485,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "9620582d31acd21efcfc11821a88ed7083a4def1",
+      "matching_public_paths": [],
+      "sha256": "55224cd04c2ed31948df1406b8ddbc63fb0348d0f81c862142436d69b3c957a8"
+    },
+    "source/dams_sim/joint_population.py": {
+      "bytes": 6308,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "9eceec99399529354a9092531951ebe97b198927",
+      "matching_public_paths": [],
+      "sha256": "bf89850780c9424258e38bf59b469f6fe3f6f4f3f12cdcc9dfc1538f5d822aa9"
+    },
+    "source/dams_sim/journal_chunks.py": {
+      "bytes": 13287,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "1344c6af2d7de09e957993b861edf39bb45122ae",
+      "matching_public_paths": [],
+      "sha256": "50a38b20a49c4c0231256df11199da3375242b82cf7471b3860780e4baf6618f"
+    },
+    "source/dams_sim/longitudinal.py": {
+      "bytes": 15644,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "ded1ae8d1aba265c6ab10d51689ab6a8fa752f85",
+      "matching_public_paths": [],
+      "sha256": "2da0220adbe306e6298ddfb0bde9130bf385042624d4f166eb1b37cf09f0a664"
+    },
+    "source/dams_sim/longitudinal_design.py": {
+      "bytes": 18859,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "b01a91f377d1bc051975e97fbde21b78bac149f1",
+      "matching_public_paths": [],
+      "sha256": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2"
+    },
+    "source/dams_sim/longitudinal_model.py": {
+      "bytes": 120205,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "5f3fa41f423ab0b6468f31898b5f31fb3bac624e",
+      "matching_public_paths": [],
+      "sha256": "5ab612ce43f3abf2a98f41baf590811056ee60d07f52bbae9bbd028a9115d8ec"
+    },
+    "source/dams_sim/longitudinal_outputs.py": {
+      "bytes": 11636,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "a94c3ad4c954a6793e03436fcac471db88b7c5f7",
+      "matching_public_paths": [],
+      "sha256": "612fb5e269b35c83b8a0a413b92a66ada9f0176ebc82bd6ae4074de83e33ca98"
+    },
+    "source/dams_sim/longitudinal_pipeline.py": {
+      "bytes": 28105,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "51acac6adfd697cf9ab3d291d430c34a94716e72",
+      "matching_public_paths": [],
+      "sha256": "9a12123ed513077e79d03253d183fa187d37ace5bdab51def63cb2449c101873"
+    },
+    "source/dams_sim/longitudinal_statistics.py": {
+      "bytes": 6556,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "7896d632dcba31389a9ba3c3877527c3e67e2969",
+      "matching_public_paths": [
+        "dams_sim/longitudinal_statistics.py"
+      ],
+      "sha256": "0eb080ea1890f5cfe7087ddf6afd073a5e89356da87e427582c43961e42f442f"
+    },
+    "source/dams_sim/longitudinal_storage.py": {
+      "bytes": 29649,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "f9ab007014a7cd299c8820a1ec77868bb3815ff6",
+      "matching_public_paths": [],
+      "sha256": "74540ba541c451ce9dc5d1dafa2a2b741af24c8e5f8d91b3fda21e9358d0de4c"
+    },
+    "source/dams_sim/model.py": {
+      "bytes": 31578,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "f2a339fc10ba6ebb0a5300ed4a120f5828ec0bed",
+      "matching_public_paths": [],
+      "sha256": "c44b90b97979079b962aed066288daa5272eef7f9ee72703829d016b9ed1dad6"
+    },
+    "source/dams_sim/native_checkpoint_owner.py": {
+      "bytes": 9141,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "1df7513c204816dfa00a02bc8ac839e4c1809f4a",
+      "matching_public_paths": [],
+      "sha256": "425b7bd8bea6aa582389743c6c13a8fb9cc41301a42bed813b10a1e6f826b79d"
+    },
+    "source/dams_sim/native_page_backend.py": {
+      "bytes": 20537,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "b6b3137791064520a4b979d01f4077a99310c711",
+      "matching_public_paths": [],
+      "sha256": "a7f5581e8156a876219c97e8cee6fba56b9b1a075ee0654f5c3406147a127faa"
+    },
+    "source/dams_sim/organization_tasks.py": {
+      "bytes": 33467,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "5b4fede0ae4c383d504e60df0a021c59a84878f3",
+      "matching_public_paths": [],
+      "sha256": "5f3741c492921ebb80f13db1ea94d4e92d8ed2a6c60dd4589d2622a765142ad8"
+    },
+    "source/dams_sim/phase_storage.py": {
+      "bytes": 7781,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "eff32a78139f833a36cbaf5e0f387824bf40d35e",
+      "matching_public_paths": [],
+      "sha256": "6d1268e8d0f81658d295f56fd8829b828ea4cd2bb807d27f159c319a7aa9cde8"
+    },
+    "source/dams_sim/pipeline.py": {
+      "bytes": 21958,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "682e23a88fc66b5554b17c202e1afa5c3fa6ff79",
+      "matching_public_paths": [
+        "dams_sim/pipeline.py"
+      ],
+      "sha256": "fe4b3323e6cf352e815a552120412741afca7050903ac5041d2117c2efa64057"
+    },
+    "source/dams_sim/randomness.py": {
+      "bytes": 2428,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "a44cc3ac6d0ceba52fea1ffd5fcea77f747efb1b",
+      "matching_public_paths": [],
+      "sha256": "94c69aeb3dbfcab213ab92b5c271ee38ea4c946ade214d31867c5ab693644e7e"
+    },
+    "source/dams_sim/report.py": {
+      "bytes": 4268,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "f7715162b567fe24ab33facd01cbcadd860d1e40",
+      "matching_public_paths": [
+        "dams_sim/report.py"
+      ],
+      "sha256": "004596067efd0e90876fef1f6a77a536f71d6c16cff95b8474df3f309840fe14"
+    },
+    "source/dams_sim/runtime.py": {
+      "bytes": 6743,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "b2b52223dbc2b31b8fa1021e46a7c3cdf0465ac9",
+      "matching_public_paths": [],
+      "sha256": "d5ff49535da4cfa6cffcc2e1525f2245a22f38f2aa1a5ca5eb2a056be8a83577"
+    },
+    "source/dams_sim/scheduler.py": {
+      "bytes": 27403,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "25e529eb19e2ad07037fab81ae5ae523d788c7f3",
+      "matching_public_paths": [],
+      "sha256": "114cddf6beda055868f0f24d93bfc5c4e2965ff3ecd4a4c1faccb9d6ee163ed2"
+    },
+    "source/dams_sim/spec.py": {
+      "bytes": 4927,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "b0ed4196218c4befeae06679eb6453d091bd8c3b",
+      "matching_public_paths": [
+        "dams_sim/spec.py"
+      ],
+      "sha256": "c54615aa41d7a9132adc4b9af9b7e1314ec35551f19ae090b3794ed057e2e02d"
+    },
+    "source/dams_sim/storage.py": {
+      "bytes": 6767,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "d98c6c8a802ce998c5934184bfb9efcc57da0334",
+      "matching_public_paths": [],
+      "sha256": "ce3dba71799e61230d7ec67c05262e8c6cb7cda9509011900e6d5350f23d3226"
+    },
+    "source/dams_sim/transfer_spool.py": {
+      "bytes": 32196,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "0e67021687ce6c4a5debb654a1d8c3144b51a869",
+      "matching_public_paths": [],
+      "sha256": "2c14d5524c94c4c79371bb80dd8558ac030c6ba6c912e919b3908923857d5ce0"
+    },
+    "source/docs/third_party/BaKoMa-Fonts-LICENSE.txt": {
+      "bytes": 1707,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "83e3c3e625b9c74d8648f4b04ab4bffd36d0c062",
+      "matching_public_paths": [
+        "docs/third_party/BaKoMa-Fonts-LICENSE.txt"
+      ],
+      "sha256": "a0920e2d3d75cc66d054f318d93d5db8a2373802e322b7e21ffb78269916f48b"
+    },
+    "source/pyproject.toml": {
+      "bytes": 487,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "cca1971c386a766a918e773463c9ee3a32c1cd08",
+      "matching_public_paths": [
+        "pyproject.toml"
+      ],
+      "sha256": "c8b2d35910153137f9bfdfea127c9b43675b6f46e9c088f28dc05ccaf7f1d515"
+    },
+    "source/research_tools/analysis_v2.py": {
+      "bytes": 42965,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "b245fe72bad9b6954d0a8ab9e2f701b59499e5f9",
+      "matching_public_paths": [
+        "research_tools/analysis_v2.py"
+      ],
+      "sha256": "990ba5ad686d25f3bcb90afdbfd196b115b56f4ec7e6d0f5d5a89646164454c6"
+    },
+    "source/research_tools/analyze.py": {
+      "bytes": 40241,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "41643859ebf8e43ea8ee1e57ae892c866fe86de9",
+      "matching_public_paths": [
+        "research_tools/analyze.py"
+      ],
+      "sha256": "2204aaf6a4d69028b956d1cce0abab382ac9b7f1cb7feb4b924e7d7515ea03e1"
+    },
+    "source/research_tools/extended.py": {
+      "bytes": 3087,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "4e62c1a53e1e61334e91207d43c9e34ad4e356ca",
+      "matching_public_paths": [
+        "research_tools/extended.py"
+      ],
+      "sha256": "64691fa4cc617ad468d5971aa7c7a9db141453bc47647615434703eed3e20517"
+    },
+    "source/research_tools/figure_style.py": {
+      "bytes": 8031,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "0ac587325827007e1eb3a038ee1adac2593fc8b0",
+      "matching_public_paths": [
+        "research_tools/figure_style.py"
+      ],
+      "sha256": "eeebbec1cf4b2c770568035023a2182303e1eb2630d912adbf209f57779b55cf"
+    },
+    "source/research_tools/inventory.py": {
+      "bytes": 7868,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "49b0decbd8a28329da36985c12734f889a60cea3",
+      "matching_public_paths": [
+        "research_tools/inventory.py"
+      ],
+      "sha256": "5bc2fdf8fe68de29b242e73add6d5146ba98c2574de70fa739c25400c576f6e4"
+    },
+    "source/research_tools/longitudinal_analysis.py": {
+      "bytes": 25642,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "4c8c73620bb2ba6be2243b81f325653b632633f7",
+      "matching_public_paths": [
+        "research_tools/longitudinal_analysis.py"
+      ],
+      "sha256": "effba7b973c4721f86016007fce1e87854be0de615d089b59d181843c89cd2c9"
+    },
+    "source/research_tools/longitudinal_derived.py": {
+      "bytes": 14671,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "6cff18ada53b451d3a38db61a5035846d4a887c4",
+      "matching_public_paths": [
+        "research_tools/longitudinal_derived.py"
+      ],
+      "sha256": "8e718b19c8eb06253d7fcc7090a1bbbc2e2b5b5e25860f51bdc60984cfc8e050"
+    },
+    "source/research_tools/pipeline.py": {
+      "bytes": 318,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "ed204b3b52882c54468fd883687daba1f7cd49d1",
+      "matching_public_paths": [
+        "research_tools/pipeline.py"
+      ],
+      "sha256": "7ab66dff604d6f6f367ac9e5bc74426be712cb47b2cb7072f0164593e3f9c525"
+    },
+    "source/research_tools/recovery.py": {
+      "bytes": 5803,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "cbf2c91863b18e708564b38610ace0769aad7f3e",
+      "matching_public_paths": [
+        "research_tools/recovery.py"
+      ],
+      "sha256": "ea62eb0e47c428cfe7f7de5a5b78a571c597b74a5a336808249f6770d36818d6"
+    },
+    "source/research_tools/recovery_checks.py": {
+      "bytes": 7591,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "42f9964f8ba438442131cf15161401eca89de743",
+      "matching_public_paths": [
+        "research_tools/recovery_checks.py"
+      ],
+      "sha256": "e291da076390980711633c92b72f0bee614617252644daef756545856c393048"
+    },
+    "source/research_tools/reproduce_thesis.py": {
+      "bytes": 9724,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "b3fb48af320eaadbd0386cc722c17b4a428a952e",
+      "matching_public_paths": [
+        "research_tools/reproduce_thesis.py"
+      ],
+      "sha256": "16e73d7bb3e931b292e3d2f3782a46fe2ca6e8556730c10948b1d08afde70fcc"
+    },
+    "source/research_tools/study.py": {
+      "bytes": 17671,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "1ae6990dd58b2e504f28fafacffcb67236726b93",
+      "matching_public_paths": [
+        "research_tools/study.py"
+      ],
+      "sha256": "bafa8f5e2d0bf318696e8f4b8dda36ee48a5bf586009fa490b5c6938d1b84838"
+    },
+    "source/research_tools/validate_longitudinal.py": {
+      "bytes": 90160,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "97e6d568b51addb95e298d994fa0406adcc2a20e",
+      "matching_public_paths": [],
+      "sha256": "b1c8f79a1653de606828e63a038b2e0cfc6bfbbb261c1de434897cdc6eea9391"
+    },
+    "source/research_tools/validate_organization_tasks.py": {
+      "bytes": 33241,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "37d53fde3691939abb43e55d3489a04d991786c0",
+      "matching_public_paths": [],
+      "sha256": "a89d3525039b2557acc9cd62cb4a24d39ea09610ce1691c70e09bb34d0c4deb3"
+    },
+    "source/tests/__init__.py": {
+      "bytes": 0,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "matching_public_paths": [
+        "evidence/benchmarks/20261007T141020-tool-smoke-1c7300ddfcf2/small-complete/stderr.log",
+        "evidence/benchmarks/20261007T141020-tool-smoke-1c7300ddfcf2/small-complete/stdout.log",
+        "evidence/benchmarks/20261007T141020-tool-smoke-1c7300ddfcf2/wall-stop/stderr.log"
+      ],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/tests/fixtures/r102/original-firm-configs.json": {
+      "bytes": 31206,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "7011305b971b586f560995a92e0f38bffe8bed5e",
+      "matching_public_paths": [],
+      "sha256": "e8676ca5e636018bad4b55202aaceab37fa59bd0600c78a9566601427ed13ce5"
+    },
+    "source/tests/test_governed_backend_replay_r102.py": {
+      "bytes": 11445,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "63e6cd68259740aee0e84bf83d64278f1d74a7d4",
+      "matching_public_paths": [],
+      "sha256": "69d6347777a5276af9fd606cf446d2a13cffba7873a2325fe178ed8305eba3ee"
+    },
+    "source/tests/test_governed_operating_requests_r100.py": {
+      "bytes": 12331,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "c4ac9a7c2294ebb3ce57d63ca62bca5f2c34afb2",
+      "matching_public_paths": [],
+      "sha256": "3b4545dd28e87393d25fa2b8681a57d2d4b250c4a43bc8831ed27c3929e98894"
+    },
+    "source/tests/test_governed_request_binding_r101.py": {
+      "bytes": 9956,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "32ff9d0370dc72eae5b8b449fff046d3e63c3ab7",
+      "matching_public_paths": [],
+      "sha256": "82689b6e7f82562045e3118d47e4ef4b5a29ffc3920a81a01861207d4e0f0ed7"
+    },
+    "source/uv.lock": {
+      "bytes": 195517,
+      "exact_blob_in_public_base": true,
+      "git_blob_oid": "fbbf3a3433f530f787fd5e049e009a0a1ab3a119",
+      "matching_public_paths": [
+        "uv.lock"
+      ],
+      "sha256": "ba061682fb1b67f1c91beeccf9f36352dd68a912020662d9b74b376f4239e00c"
+    },
+    "verify_source.py": {
+      "bytes": 1489,
+      "exact_blob_in_public_base": false,
+      "git_blob_oid": "636979edaeb0e92002ba5d7ec48bb257dd237232",
+      "matching_public_paths": [],
+      "sha256": "323714caf3af40fde4ba1882c964fa50f376fa4559e846a16449c1d3a4818a63"
+    }
+  },
+  "formal_worlds_added": 0,
+  "license": "MIT; original font-license notice retained for optional inherited reports",
+  "model_calls_in_publication_preparation": 0,
+  "profile": "profiles/engineering-pair.json",
+  "public_base_commit": "ac0ece27e0e7237b74bc29019d7664092c8be765",
+  "public_base_repository": "rui-h-a/dams-simulation",
+  "raw_data_included": false,
+  "research_tool_dependency_files": 14,
+  "root_or_default_core_overwritten": false,
+  "schema": "DAMS-R102-complete-public-source-publication-packet-1",
+  "scope": "isolated new scientific engineering candidate; default/historical source remains separate; full economic independence and empirical validity not certified",
+  "source_sha256": "aaaea8b83c21d18d3a8633188254ecb05d92d8e72bb680203418062f15d30cbc"
+}

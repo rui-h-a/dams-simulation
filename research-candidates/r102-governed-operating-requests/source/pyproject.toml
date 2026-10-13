@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dams-simulation"
+version = "0.1.0"
+description = "Inspectable CPU reference experiments for contribution-contingent organizational governance"
+requires-python = ">=3.11"
+dependencies = []
+license = "MIT"
+
+[project.scripts]
+dams-sim = "dams_sim.cli:main"
+
+[project.optional-dependencies]
+analysis = [
+    "matplotlib==3.11.2",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["dams_sim"]
