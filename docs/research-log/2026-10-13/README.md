@@ -1,3 +1,21 @@
+## Latest actual result — 2026-10-13T12:06:29.033722+00:00
+
+GCP has run the original N300 world 52021. Its last independently restored checkpoint is day 1080 of 1917; the other arm remains unstarted. Complete accepted cloud pairs, formal N10000 pairs, and formal N50000 pairs remain 0. The N300 accepted count remains 25/70 (21/66 confirmatory), and the PDF remains an 86-page interim draft.
+
+Actual004 restarted the same VM and ran 200.936 s before stopping; the final provider snapshot is 2026-10-13T11:44:16.473511Z: VM TERMINATED, 550 GB disk READY. No Model was initialized, no scientific service dispatched, and no new scientific day completed. The cumulative 25 start commands and 21 readiness intents are operational history. Current complete off-GCP custody remains pending; the preserved earlier A022 scope does not establish custody of later control bytes.
+
+The independently reproducible last blocker is now precise: the complete 20-byte READY reply, empty stderr and 5-byte null error were recovered, but four real metadata RPCs shared the original 30-second whole-response lifetime. Only 0.086 s remained before final verification; its local metered gate refused before spawning SSH. The same four-RPC shutdown sequence completed in 39.990 s under its explicit 45-second lifetime. Compound RPC durations were about 9–10 s each; the receipts do not isolate SSH time from local checks. Run `python3 reproduce-small-response-deadline.py` to reproduce the dated arithmetic without GCP or credentials.
+
+The single repair keeps complete small stdout/stderr/error within the original 16 KiB first descriptor when the full encoded envelope fits, followed by the same genuine final generation/native verification. Large replies keep the original 1 MiB segments; no response is truncated and original deadlines/caps/counters remain. A genuine local R99/native control with explicitly injected 9 s per RPC completed two RPCs in 19.253 s under 30 s. This is engineering evidence; the repaired path has not completed real GCP deployment or a scientific pair.
+
+Parallel model integration completed the retained post-adoption 100-day engineering pair: reuse completed hierarchy, restore DAMS from day 41 to 100, verify both allocation seams and 90+10 restore. Independent readback verified old 59 plus new 49 complete files and four firms' full SQLite journals. All four chose B on day 42 and applied funded allocation on day 43; this establishes branch execution, not a choice difference, DAMS superiority, fairness, calibration/OOS or a formal large-scale sample. The full scientific calendar for this source remains unfinished.
+
+The same six-source local operation package completed both 48-day arms, same-case interruption/resume, collection and complete 1,742-file, 751-directory capture/wire/restore in 241.860 s. Pure Model CPU time has not been isolated. As of the dated provider cutoff, known compute-plus-disk usage has a partial upper estimate of US$1.411054 at retained rates. This is not the total invoice; storage remains retained and GCS/egress/operations/tax/credits are not fully reconciled. All failed charges, data, original sources and deadlines remain preserved.
+
+The next scientific delivery remains the complete original world 52021 pair with full raw validation, restoration and off-GCP preservation. Model integration proceeds in parallel; completion of all N300 cases is not a prerequisite for large-model work.
+
+Earlier sections below are dated historical snapshots.
+
 # 最新實際進度：GCP已進入，完整正式雲端配對仍0
 
 截至2026-10-13日本18:36的真停止收據，原VM TERMINATED、PD550GB READY。原凍結world52021曾運算且CP1080原生恢復PASS；本時段第24次開機／第20次準備後，部署request在SSH派送前因完整metadata預留額必然超限而失敗，新Model與科學日0。結束CAS另拒目錄連結／特殊檔案，最新控制資料完整offGCP保全PENDING，原磁碟保留。
