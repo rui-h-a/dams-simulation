@@ -1,3 +1,14 @@
+## Current operation convergence — 2026-10-13 14:13 JST
+
+Cloud complete accepted pairs remain **0**; N300 remains **25/70**, 10k/50k formal pairs remain **0**, and the 86-page PDF remains interim. The same checked operation CLI passed an actual isolated short checkpoint/interruption/resume/both-arm/Collector/full-custody flow. This is engineering evidence; the GCP/systemd full path remains unvalidated.
+
+A subsequent retained data-only capture prepared all latest bytes, but its per-read historical verification made the 288 MB transfer unable to fit its original deadline. The transfer was deliberately stopped, its partial bytes and full attempted-transfer obligations preserved, and the original VM/disk verified TERMINATED/READY. The priority is safe reuse of immutable verified history in the same package, followed by recovery from the actual newest complete checkpoint and spent attempt history.
+
+- [Exact current observation and acceptance boundaries](operations-convergence-current.json)
+- [Full-flow result, reproducible current blocker and parallel model integration](operations-convergence.md)
+
+The sections below are dated historical observations; their counters and running-state descriptions do not assert current state.
+
 ## R102 public source and actual portable engineering
 
 The exact 35-module candidate and runnable bounded local entry are [available](../../../research-candidates/r102-governed-operating-requests/README.md). Both governance arms completed an actual 90+10-day restoration differential and a separate full 1947-day run with final native Model recovery. [Exact execution/source record](r102-public-source-and-portable-engineering.json). These are repeated engineering checks, with no new formal sample, calibration or OOS claim. The original cloud pair remains incomplete at checkpoint900;10k/50k formal pairs remain0.

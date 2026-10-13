@@ -1,0 +1,130 @@
+{
+  "schema": "dams-operation-convergence-current-v1",
+  "observed_utc": "2026-10-13T05:13:10.602636+00:00",
+  "timezone": "Asia/Tokyo",
+  "observed_Asia_Tokyo": "2026-10-13T14:13:10.602636+09:00",
+  "dated_snapshot_not_future_running_assertion": true,
+  "accepted_new_formal_cloud_pairs": 0,
+  "accepted_cloud_pairs_total": 0,
+  "N300": {
+    "accepted_pairs": 25,
+    "assigned_pairs": 70,
+    "excluded_pilots": 4,
+    "confirmation_complete": 21,
+    "confirmation_assigned": 66
+  },
+  "N10000_formal_pairs": 0,
+  "N50000_formal_pairs": 0,
+  "N100000_status": "conditional_not_admitted",
+  "last_independently_native_restored_cloud_day": 900,
+  "later_checkpoint_filename_days": [
+    990,
+    1080
+  ],
+  "later_attempt002_full_offGCP_custody_and_native_restore_passed": false,
+  "original_cloud_source_commit": "7c6ee864987686a2b0315168e9dc2ae5481cf5f4",
+  "original_cloud_model_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+  "operations_source_commit": "29c111ae1d4ab62b266d7c0eaad2643391997565",
+  "cumulative_original_VM_start_commands": 22,
+  "cumulative_readiness_intents": 18,
+  "active_owned_activity": "data-only transfer controlled abort; VM TERMINATED, original PD READY, pending operations0",
+  "A019_cause": {
+    "property": "pipeline.Requires",
+    "same_dependency_members": true,
+    "same_four_configuration_file_SHA_and_native": true,
+    "transport_receipt_sha256": "63f4677de5e29072e1f2ae560ccaad5ac90258004ec4a20684a667112bcad41e"
+  },
+  "A020": {
+    "complete_information_prepared": true,
+    "whole_offGCP_wire_and_restore_complete": false,
+    "raw_bytes": 668413553,
+    "TAR_bytes": 669255680,
+    "files": 528,
+    "directories": 124,
+    "planned_whole_wire_bytes": 288121187,
+    "TAR_sha256": "af437a10a80a1a89ced48cdf854cea80598eee012675a8613aea69ef2deab1f0",
+    "planned_wire_sha256": "efc2e22acc1a20baa484af53a39cec76b5ac63b5d8d25e1e6abdd3ace5486ebc",
+    "retained_partial_wire_bytes": 10813440,
+    "original_controlled_stop_verified": true,
+    "measured_stream_interval_bytes_per_second": 29826.88924126747,
+    "measured_remaining_seconds_at_rate": 9299.437187577569,
+    "fixed_max_transfer_seconds": 3600
+  },
+  "fixed_package": {
+    "manifest_sha256": "8a80e65388758cdc1456df9fb7bba550c1d72894dd6654b79f8d87daa2d558af",
+    "local_engineering_fullflow_passed": true,
+    "actual_GCP_systemd_complete_flow_validated": false,
+    "fullflow_receipt_sha256": "34f9dc16e67df2dcbba91ae954552d9a7cefa1ceb6031ff1f4a7ae8089e68761",
+    "actual_model_and_collector": true,
+    "fake_controller_collector": false,
+    "no_git_ancestor": true,
+    "sanitized_child_environment": true,
+    "explicit_engineering_population": 8,
+    "days_each_arm": 48,
+    "interrupted_day": 3,
+    "same_case_resume_attempt": "attempt-001",
+    "other_arm_complete": true,
+    "checkpoint_groups_collected": 32,
+    "final_full_raw_groups": 2,
+    "each_group_restored_copies": 2,
+    "copies_share_device_failure_domain": true,
+    "complete_raw_custody_files": 1392,
+    "complete_raw_custody_directories": 533,
+    "complete_raw_custody_bytes": 32714223,
+    "TAR_bytes": 35153920,
+    "wire_bytes": 9849339,
+    "model_plus_collection_wall_seconds": 89.317993958015,
+    "collection_seconds": 61.16219808300957,
+    "archive_seconds": 61.902454791998025,
+    "local_wire_seconds": 3.4751709579722956,
+    "restore_seconds": 59.805972083006054,
+    "isolated_pure_model_compute_seconds": null,
+    "formal_worlds_added": 0,
+    "provider_calls": 0,
+    "prior_engineering_failures_and_exact_old_sources_preserved": true
+  },
+  "remaining_single_operation_path": [
+    "Complete latest attempt002 raw custody; the retained transport repeatedly revalidates original history in its per-read gate.",
+    "Parameterize retained-case resume for its actual latest complete checkpoint and spent attempts; do not reuse CP900/A013 old authority."
+  ],
+  "model_integration_parallel": {
+    "original_fourfirm_full_daily_summary_reader_passed": true,
+    "new_model_native_run_passed": false,
+    "remaining": [
+      "exact portable entry/profile source binding",
+      "lossless actual morning ballot observations including absent members",
+      "aggregate resources admitted before both firm allocations"
+    ],
+    "calibration_completed": false,
+    "out_of_sample_validation_completed": false
+  },
+  "PDF": {
+    "pages": 86,
+    "status": "INTERIM",
+    "new_formal_results_integrated": false
+  },
+  "original_cost_deadlines_attempts_and_failures_retained": true,
+  "billing_final_closure_completed": false,
+  "whole_goal_complete": false,
+  "transport_guard_bottleneck": {
+    "stream_payload_bound_bytes": 65536,
+    "minimum_gate_calls_per_stdout_read": 5,
+    "old_namespace_censuses_per_read": 100,
+    "full_floor_checks_per_read": 10,
+    "measured_census_median_seconds": 0.010335,
+    "measured_full_floor_seconds": 0.091911,
+    "estimated_measured_components_seconds_per_read": 1.95,
+    "live_source_modified": false,
+    "old_failure_and_full_precharged_debt_retained": true,
+    "priority_fix": "reuse full source-bound closed-floor proof with every-read native/namespace/head/admission checks and full validation before and after wire"
+  },
+  "final_readonly_provider_command_sequence": 298,
+  "provider_status": {
+    "VM": "TERMINATED",
+    "PD": "READY",
+    "PD_sizeGb": 550,
+    "pending_operations": 0,
+    "original_identity_and_expiry_verified": true,
+    "new_provider_mutations": 0
+  }
+}
