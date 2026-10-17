@@ -54,6 +54,26 @@ primary outcomes for the main comparison (dams-witness vs control-hierarchy), wi
 computational capacity that the budget and calendar allow, the achieved precision
 is reported as a limitation; the threshold is not changed after results are seen.
 
+## Scale-specific world counts and the 100,000-person admission rule
+
+Recorded on 2026-10-17 before any pilot or confirmation outcome was inspected.
+
+- 50,000 members: a two-world, two-arm pilot measures full-horizon time, memory,
+  disk and recovery. Its two worlds cannot estimate variance reliably, so the
+  50,000-person world count uses the 10,000-person pilot standard deviation of
+  the paired differences in the same formula, with a minimum of 10. Organization-
+  level outcomes average over more members at larger scale, which makes this
+  conservative under the model's assumptions; the assumption is reported.
+- 100,000 members: admitted only if, after the committed cost of the 10,000-person
+  confirmation and the 50,000-person comparison, the remaining research budget
+  (excluding the reserve for archiving and cleanup) covers at least three complete
+  100,000-person worlds at the measured C4D rate with a 25 % margin, and the
+  calendar allows completion before the simulation freeze. The admission decision
+  and its arithmetic are recorded before any 100,000-person world is inspected.
+  If admitted, the study uses the arms control-hierarchy and dams-witness and is
+  reported as a scale check with its achieved precision, not as a confirmatory
+  study.
+
 ## Multiplicity
 
 Holm adjustment across the three primary outcomes within each arm comparison.
