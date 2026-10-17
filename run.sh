@@ -31,6 +31,7 @@ task_post=5
 task_worlds=0,1,2
 task_arms=control-hierarchy,control-process,dams-witness,linear-witness
 task_jobs=
+task_variant=baseline
 while (($#)); do
   case "$1" in
     --spec) task_spec=${2:?missing spec}; shift 2;;
@@ -45,6 +46,7 @@ while (($#)); do
     --worlds) task_worlds=${2:?missing worlds}; shift 2;;
     --arms) task_arms=${2:?missing arms}; shift 2;;
     --jobs) task_jobs=${2:?missing jobs}; shift 2;;
+    --variant) task_variant=${2:?missing variant}; shift 2;;
     *) echo "Unknown argument: $1" >&2; exit 2;;
   esac
 done
@@ -115,7 +117,7 @@ fi
 if [[ "$task_spec" == enterprise-r11 ]]; then
   # Paired-world enterprise study: prehistory -> common-state fork -> arms -> independent validators -> outcomes.
   r11_args=(batch --scale "$task_scale" --context "$task_context" --growth "$task_growth" --pre-years "$task_pre"
-            --post-years "$task_post" --worlds "$task_worlds" --arms "$task_arms" --out "$task_output")
+            --post-years "$task_post" --worlds "$task_worlds" --arms "$task_arms" --variant "$task_variant" --out "$task_output")
   if [[ -n "$task_jobs" ]]; then r11_args+=(--jobs "$task_jobs"); fi
   "$task_uv" run --no-sync python research_tools/r11_study.py "${r11_args[@]}"
   "$task_uv" run --no-sync python research_tools/r11_outcomes.py "$task_output" > "$task_output/paired-outcomes.json"

@@ -101,7 +101,7 @@ def day_of_year_offset(years):
     return (date(start.year+years, start.month, start.day)-start).days
 
 
-def base_config(*, scale, context, growth, world, seed, pre_years, post_years, person_context=True):
+def base_config(*, scale, context, growth, world, seed, pre_years, post_years, person_context=True, variant='baseline'):
     if context not in CONTEXTS:
         raise ValueError('unknown context')
     if growth not in GROWTH_MODES:
@@ -158,6 +158,7 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
     d.pop('joint_population', None)
     if person_context:
         d['person_context'] = person_context_for(cx, context)
+    d = apply_variant(d, branch, variant) if person_context else d
     return d, branch
 
 
@@ -224,6 +225,49 @@ def _person_context_base(cx):
             'caregiver_share': .3, 'caregiver_care_hours': .15, 'other_care_hours': .03, 'care_hours_sd': .03,
             'language_groups': cx['languages'], 'cross_language_help_discount': .15,
             'cross_group_evaluation_bias': 0., 'baseline_annual_quit_probability': cx['quit']}
+
+
+# Structural/assumption variants for institutional-counterfactual robustness.
+# Each changes one family of psychological, cultural or economic assumptions.
+VARIANTS = {
+    'baseline': {},
+    'independent-traits': {'person_context.trait_correlations': {}},
+    'no-origin-preferences': {'person_context.origins.shifts': 'zero'},
+    'evaluation-bias': {'person_context.gender_evaluation_bias': -0.05, 'person_context.cross_group_evaluation_bias': -0.05},
+    'strong-factions': {'person_context.faction_cohesion': 0.5},
+    'no-factions': {'person_context.faction_cohesion': 0.0},
+    'high-turnover': {'person_context.baseline_annual_quit_probability': 'x1.5'},
+    'low-turnover': {'person_context.baseline_annual_quit_probability': 'x0.5'},
+    'reversed-share-response': {'autonomy_response': -0.25},
+    'demand-shock': {'longitudinal.demand_schedule': 'shock'},
+}
+
+
+def apply_variant(d, branch, name):
+    if name not in VARIANTS:
+        raise ValueError('unknown variant')
+    d = copy.deepcopy(d)
+    pc = d.get('person_context')
+    for key, value in VARIANTS[name].items():
+        if key == 'person_context.trait_correlations':
+            pc['trait_correlations'] = {}
+        elif key == 'person_context.origins.shifts':
+            for row in pc['origins']:
+                row[3] = {}; row[4] = 0.
+        elif key == 'person_context.baseline_annual_quit_probability':
+            pc['baseline_annual_quit_probability'] = min(.95, pc['baseline_annual_quit_probability']*float(value[1:]))
+        elif key.startswith('person_context.'):
+            pc[key.split('.', 1)[1]] = value
+        elif key == 'longitudinal.demand_schedule':
+            # A 30 % demand fall one year after the boundary, recovering after 180 days.
+            sched = d['longitudinal']['demand_schedule']
+            level = lambda day: next((v for when, v in reversed(sched) if when <= day), 1.)
+            t0 = branch+365
+            sched = sorted([r for r in sched if not (t0 <= r[0] < t0+180)] + [[t0, round(level(t0)*.7, 6)], [t0+180, level(t0+180)]])
+            d['longitudinal']['demand_schedule'] = sched
+        else:
+            d[key] = value
+    return d
 
 
 def arm_config(base, branch, arm):

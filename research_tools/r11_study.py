@@ -80,7 +80,7 @@ def prehistory(args):
     if done.exists():
         return json.loads(done.read_text())
     d, branch = base_config(scale=args['scale'], context=args['context'], growth=args['growth'], world=args['world'],
-                            seed=args['seed'], pre_years=args['pre_years'], post_years=args['post_years'])
+                            seed=args['seed'], pre_years=args['pre_years'], post_years=args['post_years'], variant=args.get('variant','baseline'))
     config = Config.from_dict(d)
     t, cpu = time.monotonic(), time.process_time()
     m = _resume(out/'progress', config, out) or Model(config, storage_dir=out/'work', journal_chunk_bytes=CHUNK)
@@ -214,7 +214,7 @@ def batch(ns):
     arms = ns.arms.split(',')
     audit = {int(w) for w in ns.audit_worlds.split(',')} if ns.audit_worlds else set()
     plan = {'scale': ns.scale, 'context': ns.context, 'growth': ns.growth, 'pre_years': ns.pre_years,
-            'post_years': ns.post_years, 'seed': ns.seed, 'worlds': worlds, 'arms': arms, 'audit_worlds': sorted(audit),
+            'post_years': ns.post_years, 'seed': ns.seed, 'variant': ns.variant, 'worlds': worlds, 'arms': arms, 'audit_worlds': sorted(audit),
             'source_sha256': source_hash(), 'jobs': ns.jobs, 'python': sys.version, 'executable': sys.executable}
     plan_path = root/'plan.json'
     if plan_path.exists() and json.loads(plan_path.read_text()) != json.loads(canonical(plan)):
@@ -224,7 +224,7 @@ def batch(ns):
     def note(**kw):
         log.write(json.dumps({'t': time.time(), **kw})+'\n'); log.flush()
     pres = {w: {'scale': ns.scale, 'context': ns.context, 'growth': ns.growth, 'world': w, 'seed': ns.seed,
-                'pre_years': ns.pre_years, 'post_years': ns.post_years,
+                'pre_years': ns.pre_years, 'post_years': ns.post_years, 'variant': ns.variant,
                 'out': str(root/world_key(ns.scale, ns.context, ns.growth, w, ns.pre_years, ns.post_years)/'prehistory')}
             for w in worlds}
     with cf.ProcessPoolExecutor(max_workers=ns.jobs) as ex:
@@ -252,6 +252,7 @@ def main():
     p.add_argument('--pre-years', type=int, default=2)
     p.add_argument('--post-years', type=int, default=5)
     p.add_argument('--seed', type=int, default=20261017)
+    p.add_argument('--variant', default='baseline')
     p.add_argument('--worlds', required=True)
     p.add_argument('--arms', default='control-hierarchy,control-process,dams-witness,linear-witness')
     p.add_argument('--audit-worlds', default='')
