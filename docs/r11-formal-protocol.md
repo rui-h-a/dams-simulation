@@ -92,3 +92,37 @@ Seed 20261017. Pilot worlds 0–2 (excluded from inference) ran on R11.1 (`0413e
 R11.2 adds paths with small default coefficients, so the pilot variance is used as an
 approximation for the world-count rule and the approximation is reported. Confirmation worlds
 start at 1000 and run consecutively; no world is skipped or replaced.
+
+## Amendment 1 (2026-10-18): model version R11.3 and the small-enterprise studies
+
+Recorded before any confirmation world of any R11.3 study was run.
+
+R11.2 is withdrawn for inference. Its coordination requirement assigned one
+manager per governance domain, so reports per manager grew with headcount;
+above about 80 reports per manager the requirement exceeded the 0.4 workday
+service cap, coordination debt grew without bound and output collapsed in
+every arm (a 300-member startup fell to 2-24 members; a 10,000-member
+multinational prehistory fell to about 5,300). R11.3 (commit 65d6b4e) adds
+span-based supervision, sources the remaining trait correlations, gives risk
+tolerance a path into voluntary exit and replaces fixed 1e-11 accounting
+tolerances by a-priori rounding bounds. Pilot outputs of R11.2 are kept but
+do not enter the world-count rule.
+
+Small-enterprise studies. Context startup, organic growth, adoption at
+founding (pre_years 0, post_years 5, 1,827 days with tail), initial sizes 30,
+120 and 300 members, arms control-hierarchy (reference), control-process,
+dams-witness and linear-witness. The R11.3 pilot (worlds 0-2, commit 224413c,
+whose simulated values equal 65d6b4e; only validation checks differ) gives,
+under the rule above with the largest of the three primary outcomes,
+R = 6,688 (30 members), 665 (120) and 57 (300). In each case the largest
+requirement comes from decision regret per available member-hour, whose
+paired standard deviation is large relative to 2 % of its reference mean.
+
+Capacity cap, fixed now from compute cost rather than from results: at most
+300 confirmation worlds per size. Where R exceeds the cap (30 and 120
+members), 300 worlds are run and the achieved half-width of each primary
+interval is reported against delta; the threshold is not changed. The
+300-member study runs R = 57 worlds. Confirmation worlds are 1000, 1001, ...
+consecutively with seed 20261017; no world is skipped or replaced. Holm
+adjustment and paired Student-t intervals as above. Worlds that fail
+validation are reported by count and cause and are not replaced.
