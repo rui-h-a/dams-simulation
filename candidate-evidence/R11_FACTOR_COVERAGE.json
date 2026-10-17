@@ -4,7 +4,7 @@
  "source_files_sha256": {
   "dams_sim/person_context.py": "a9edff5d254071e8fc088cc7f446c1ab23941696ee93e398ba1ebd72528b97a9",
   "dams_sim/longitudinal_model.py": "118dd86b15cb7846705c7c755851ad6b8edde47e82cee50859a7170abd672e9a",
-  "research_tools/r11_design.py": "13cd20ccd7be17a1963ad689dcd68671399d40a649750f2a5ca34ffd6f911cc6"
+  "research_tools/r11_design.py": "e5561b224f0a851995eda9d63f8abe262af837651aff6f4511e5ae79c33b9cdb"
  },
  "default_mode": "person_context is opt-in; omitting it leaves earlier code paths unchanged",
  "parameter_fit_completed": false,
@@ -145,7 +145,7 @@
    "units": "z score (SD units); correlation dimensionless in [-0.99, 0.99]; matrix must be positive definite with margin 1e-8",
    "information_available": "Trait vector stored in PersonContextState.people and recorded in the entry witness (person_context.traits) for audit; behavioural consumers are only the call sites of the other factors in this registry.",
    "joint_distribution": "Gaussian copula with standard-normal marginals and declared pairwise correlations; unlisted pairs are zero. Origin shifts (see origin factor) are added after the copula draw, so within an origin the marginals are N(shift, 1).",
-   "parameter_source": "Big Five block (10 pairs): van der Linden, te Nijenhuis & Bakker (2010), J Res Pers 44(3):315-327, doi:10.1016/j.jrp.2010.03.003, Table 2 corrected rho (p. 318); employee subsample Table 3 (p. 319) for variant big-five-employees. Pairs outside the Big Five (education|openness 0.25, education|judgment 0.30, patience|risk_tolerance -0.10, health_risk|neuroticism 0.15) are design assumptions; all other pairs are zero by design assumption.",
+   "parameter_source": "Big Five block (10 pairs): van der Linden, te Nijenhuis & Bakker (2010), J Res Pers 44(3):315-327, doi:10.1016/j.jrp.2010.03.003, Table 2 corrected rho (p. 318); employee subsample Table 3 (p. 319) for variant big-five-employees. Pairs outside the Big Five (education|openness 0.25, education|judgment 0.30, patience|risk_tolerance -0.10, health_risk|neuroticism 0.15) are design assumptions; all other pairs are zero by design assumption. Other pairs: patience|risk_tolerance +0.21 (Falk, Becker, Dohmen, Huffman & Sunde 2016, IZA DP 9504, Table 10, individual-level partial correlation); education|judgment +0.46 (Strenze 2007, Intelligence 35(5):401-426, doi:10.1016/j.intell.2006.09.004, Table 1 mean r; rho .56); judgment|openness +0.17 (Anglim et al. 2022, Psychological Bulletin 148(5-6):301-336, doi:10.1037/bul0000373, observed r; abstract rho .20); education|openness +0.15 and health_risk|neuroticism +0.15 are assumptions (the first inside the .14-.31 range reported by Almlund et al. 2011). 'judgment' is read as general cognitive ability; observed rather than corrected values are used because that reading is imperfect.",
    "default_value": "trait_correlations = {} (independent traits)",
    "design_value": "TRAIT_CORRELATIONS = BIG_FIVE_CORRELATIONS (10 values, Table 2 rho) + OTHER_TRAIT_CORRELATIONS (4 design assumptions); variant independent-traits sets {}; variant big-five-employees uses the Table 3 block",
    "observables": [

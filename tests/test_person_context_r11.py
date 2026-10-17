@@ -168,6 +168,10 @@ class TraitMatrixSourceTest(unittest.TestCase):
             self.assertEqual(D.TRAIT_CORRELATIONS[key], rho, key)
         self.assertEqual(len(D.BIG_FIVE_CORRELATIONS), 10)
         self.assertEqual(len(D.BIG_FIVE_CORRELATIONS_EMPLOYEES), 10)
+        # Falk et al. (2016) IZA DP 9504 Table 10: patience and risk taking +0.210.
+        self.assertEqual(D.OTHER_TRAIT_CORRELATIONS['patience|risk_tolerance'], .21)
+        # Strenze (2007) Table 1: intelligence with education, mean r .46.
+        self.assertEqual(D.OTHER_TRAIT_CORRELATIONS['education|judgment'], .46)
 
     def test_design_matrices_are_positive_definite_and_variant_applies(self):
         from research_tools import r11_design as D

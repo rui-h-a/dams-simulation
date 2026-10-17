@@ -39,11 +39,25 @@ BIG_FIVE_CORRELATIONS_EMPLOYEES = {
     'conscientiousness|neuroticism': -0.66, 'agreeableness|extraversion': 0.45,
     'extraversion|neuroticism': -0.40, 'agreeableness|neuroticism': -0.51,
 }
-# Pairs outside the Big Five have no matrix source in the registry; they remain
-# design assumptions. Every unlisted pair is zero.
+# Pairs outside the Big Five. 'judgment' is decision quality, read here as
+# general cognitive ability; observed rather than corrected meta-analytic values
+# are used because that reading is itself imperfect (conservative choice).
+#   patience|risk_tolerance  +0.21  Falk, Becker, Dohmen, Huffman and Sunde
+#       (2016), IZA DP 9504, Table 10 (individual-level partial correlation,
+#       Global Preferences Survey; both traits coded high = patient / willing).
+#   education|judgment       +0.46  Strenze (2007), Intelligence 35(5), Table 1
+#       (mean r, k = 59, N = 84,828; corrected rho .56).
+#   judgment|openness        +0.17  Anglim et al. (2022), Psychological Bulletin
+#       148(5-6), observed r between openness and intelligence.
+#   education|openness       +0.15  assumption inside the reported .14-.31 range
+#       (Almlund et al. 2011), lowered because part of the link runs through
+#       judgment.
+#   health_risk|neuroticism  +0.15  assumption; direction only (no pooled r).
+# Every unlisted pair is zero.
 OTHER_TRAIT_CORRELATIONS = {
-    'education|openness': 0.25, 'education|judgment': 0.30,
-    'patience|risk_tolerance': -0.10, 'health_risk|neuroticism': 0.15,
+    'patience|risk_tolerance': 0.21, 'education|judgment': 0.46,
+    'judgment|openness': 0.17, 'education|openness': 0.15,
+    'health_risk|neuroticism': 0.15,
 }
 TRAIT_CORRELATIONS = {**BIG_FIVE_CORRELATIONS, **OTHER_TRAIT_CORRELATIONS}
 
