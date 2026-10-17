@@ -69,6 +69,11 @@ class PersonContextConfig:
     quit_fairness_coefficient: float = 1.5
     quit_patience_coefficient: float = 0.2
     quit_conscientiousness_coefficient: float = 0.1
+    # Log-odds of voluntary exit per SD of risk tolerance. Zero keeps R11.2
+    # behaviour; the R11 design sets 0.22, derived from Argaw, Maier and
+    # Skriabikova (2017, ZEW DP 17-023): risk-averse entrants made 0.276 fewer
+    # voluntary job changes in seven years (sample mean 0.83).
+    quit_risk_tolerance_coefficient: float = 0.0
     stress_half_life_workdays: float = 20.0
     stress_demand_weight: float = 1.0
     stress_resource_weight: float = 0.6
@@ -213,7 +218,8 @@ class PersonContextConfig:
                      'stress_neuroticism_coefficient', 'effort_conscientiousness_coefficient',
                      'effort_stress_coefficient', 'cooperation_agreeableness_coefficient',
                      'participation_extraversion_coefficient', 'participation_safety_coefficient',
-                     'voice_safety_coefficient', 'judgment_noise_coefficient', 'learning_openness_coefficient'):
+                     'voice_safety_coefficient', 'judgment_noise_coefficient', 'learning_openness_coefficient',
+                     'quit_risk_tolerance_coefficient'):
             _finite(getattr(self, name), -5, 5, name)
         return self
 
@@ -411,7 +417,8 @@ class PersonContextState:
         logit_shift = (c.quit_stress_coefficient*p['stress']+c.quit_fairness_coefficient*(c.initial_fairness-p['fairness'])
                        -c.quit_patience_coefficient*t['patience']-c.quit_conscientiousness_coefficient*t['conscientiousness']
                        -c.identity_quit_coefficient*(p.get('identity', c.initial_identity)-c.initial_identity)
-                       +c.financial_strain_quit_coefficient*t.get('financial_strain', 0.))
+                       +c.financial_strain_quit_coefficient*t.get('financial_strain', 0.)
+                       +c.quit_risk_tolerance_coefficient*t['risk_tolerance'])
         base = c.baseline_annual_quit_probability*mult*(c.migrant_exit_multiplier if p.get('migrant') else 1.)
         if base <= 0:
             return 0.

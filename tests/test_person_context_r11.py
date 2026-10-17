@@ -211,5 +211,25 @@ class SpanHierarchyTest(unittest.TestCase):
         self.assertNotIn('coordination_manager_basis', Config.from_dict(d).to_dict()['enterprise_operations'])
 
 
+
+class RiskToleranceExitTest(unittest.TestCase):
+    """Risk tolerance raises the voluntary-exit log-odds only through its coefficient."""
+
+    def test_risk_tolerance_shifts_quit_log_odds(self):
+        def prob(coef, risk):
+            c = PC(baseline_annual_quit_probability=.12, quit_risk_tolerance_coefficient=coef)
+            st = PersonContextState.__new__(PersonContextState)
+            st.c = c
+            traits = {t: 0. for t in TRAITS}; traits['risk_tolerance'] = risk
+            st.people = [{'employment': 'permanent', 'traits': traits, 'stress': 0., 'fairness': c.initial_fairness}]
+            return st.annual_quit_probability(0)
+        self.assertEqual(prob(0., 1.), prob(0., -1.))
+        lo, hi = prob(.22, 0.), prob(.22, 1.)
+        self.assertAlmostEqual(math.log(hi/(1-hi))-math.log(lo/(1-lo)), .22, places=12)
+        from research_tools import r11_design as D
+        d, _ = D.base_config(scale=120, context='startup', growth='organic', world=0, seed=1, pre_years=0, post_years=1)
+        self.assertEqual(d['person_context']['quit_risk_tolerance_coefficient'], .22)
+
+
 if __name__ == '__main__':
     unittest.main()

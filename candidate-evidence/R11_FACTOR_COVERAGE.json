@@ -2,9 +2,9 @@
  "schema": "r11-factor-coverage-1",
  "candidate_model_version": "longitudinal-enterprise-person-context-11-2",
  "source_files_sha256": {
-  "dams_sim/person_context.py": "a9edff5d254071e8fc088cc7f446c1ab23941696ee93e398ba1ebd72528b97a9",
+  "dams_sim/person_context.py": "e2c0630accb0d5b458191d6e8561cc56de5d578f893d59abf8c6b9d43c9e47b0",
   "dams_sim/longitudinal_model.py": "118dd86b15cb7846705c7c755851ad6b8edde47e82cee50859a7170abd672e9a",
-  "research_tools/r11_design.py": "e5561b224f0a851995eda9d63f8abe262af837651aff6f4511e5ae79c33b9cdb"
+  "research_tools/r11_design.py": "3bf04472436f6cdd6cf6b3b9d1761392e94dc8427bad4307ccf9f5208a01d71b"
  },
  "default_mode": "person_context is opt-in; omitting it leaves earlier code paths unchanged",
  "parameter_fit_completed": false,
@@ -1031,6 +1031,30 @@
    "limitations": "No outside-option or labour-market term; no re-hiring link beyond the inherited vacancy process."
   },
   {
+   "factor": "risk tolerance in the voluntary-exit hazard",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "unit test tests/test_person_context_r11.py:RiskToleranceExitTest",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.annual_quit_probability"
+   ],
+   "time_update": "Trait fixed at entry; enters the annual voluntary-exit log-odds additively every evaluation of the quit hazard.",
+   "units": "log-odds of annual voluntary exit per SD of latent risk tolerance",
+   "information_available": "Person's own latent trait; not observed by the organization or by DAMS.",
+   "joint_distribution": "risk_tolerance drawn in the 13-trait copula (patience|risk_tolerance +0.21) plus bounded origin shift",
+   "parameter_source": "Derived design value 0.22 from Argaw, Maier & Skriabikova (2017), ZEW Discussion Paper 17-023, Table 1 col. 5 and Table B.2: risk-averse entrants (39%) made 0.276 fewer voluntary job changes in their first seven years (mean 0.83); converting the implied 0.71 ratio across the bottom-39% / top-61% split of a standard normal gives about 0.22 log units per SD. Early-career German SOEP sample (N=280); counts, not hazards; derivation is an approximation.",
+   "default_value": 0.0,
+   "design_value": 0.22,
+   "observables": [
+    "exits_per_member_year_by_reason (r11_validation)",
+    "voluntary exit events in the journal"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:RiskToleranceExitTest.test_risk_tolerance_shifts_quit_log_odds"
+   ]
+  },
+  {
    "factor": "group outcome gaps and summaries (diagnostic output)",
    "implementation_status": "diagnostic_output_only",
    "program_correctness_status": "finite_author_controls_and_runtime_evidence",
@@ -1067,10 +1091,6 @@
   {
    "factor": "age as a person-context trait or age-dependent physical capacity",
    "reason": "age exists only as the engine's birth_date and retirement logic outside person_context.py; no age-dependent trait, health or capacity path"
-  },
-  {
-   "factor": "risk_tolerance behavioural path",
-   "reason": "the trait is drawn, correlated and origin-shifted but no function reads it"
   },
   {
    "factor": "education years as a behavioural input",

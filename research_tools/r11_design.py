@@ -256,7 +256,8 @@ def _person_context_base(cx):
             'employment_mix': [['permanent', .85, 1.0], ['fixed-term', .10, 1.8], ['contractor', .05, 2.5]],
             'caregiver_share': .3, 'caregiver_care_hours': .15, 'other_care_hours': .03, 'care_hours_sd': .03,
             'language_groups': cx['languages'], 'cross_language_help_discount': .15,
-            'cross_group_evaluation_bias': 0., 'baseline_annual_quit_probability': cx['quit']}
+            'cross_group_evaluation_bias': 0., 'baseline_annual_quit_probability': cx['quit'],
+            'quit_risk_tolerance_coefficient': .22}
 
 
 # Structural/assumption variants for institutional-counterfactual robustness.
