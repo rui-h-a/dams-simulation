@@ -405,7 +405,10 @@ class OrganizationTasksState:
             for value in mapping.values():_number(value,0,1e300,'organization inventory')
         for key in keys:
             initial=self.c.initial_dependency_units_per_department if self.structure is None else self.structure['initial_units'][key]
-            if not math.isclose(self.stocks[key],initial+self.generated[key]-self.consumed[key],rel_tol=1e-11,abs_tol=1e-8):raise ValueError('organization dependency inventory does not conserve')
+            # One update per day of stock, generated and consumed: the rounding of the
+            # three running sums is bounded by about 3*(day+2)*2**-53 of the gross flow.
+            gross=initial+self.generated[key]+self.consumed[key]
+            if abs(self.stocks[key]-(initial+self.generated[key]-self.consumed[key]))>3*(day+2)*2.**-53*gross+1e-8:raise ValueError('organization dependency inventory does not conserve')
         if day==0 and (any(v!=0 for v in self.generated.values()) or any(v!=0 for v in self.consumed.values()) or any(v!=self.c.initial_dependency_units_per_department for v in self.stocks.values())):raise ValueError('organization initial inventory differs from configuration')
         if self.last_plan is None:
             if day!=0 or self.review_remaining:raise ValueError('organization plan missing')

@@ -1062,8 +1062,16 @@ class LongitudinalEngine:
             if r['active_workdays']>r['active_calendar_days'] or r['present_workdays']>r['active_workdays'] or r['available_work_hours']<0 or r['post_adoption_available_work_hours']>r['available_work_hours']:raise ValueError('invalid exposure accounting')
         if sum(r['active_workdays'] for r in self.people)!=self.metrics.get('active_member_workdays',0):raise ValueError('member exposure does not equal the aggregate')
         if sum(r['active_calendar_days'] for r in self.people)!=self.metrics.get('active_member_calendar_days',0) or sum(r['present_workdays'] for r in self.people)!=self.metrics.get('present_member_workdays',0):raise ValueError('calendar/present exposure does not equal aggregate')
-        for key,amount in [('available_member_work_hours',math.fsum(r['available_work_hours'] for r in self.people)),('present_member_work_hours',math.fsum(r['present_workdays']*(1-self.agents[r['id']].care_hours) for r in self.people))]:
-            if not math.isclose(self.metrics.get(key,0.),amount,rel_tol=1e-11,abs_tol=1e-8):raise ValueError('member-hour exposure does not equal aggregate')
+        # The aggregates are running sums of one non-negative term per member-workday.
+        # A running sum of n such terms differs from the exact sum by at most
+        # (n-1)*2**-53 times the sum (Higham 2002, Accuracy and Stability of
+        # Numerical Algorithms, eq. 4.4); the recomputation adds one rounding per
+        # member. That a-priori bound replaces the former fixed rel_tol=1e-11,
+        # which a 50,000-member, two-year run exceeded through rounding alone.
+        # A single omitted member-workday (about 0.6-1.0 hours) still fails it.
+        for key,amount,terms in [('available_member_work_hours',math.fsum(r['available_work_hours'] for r in self.people),self.metrics.get('active_member_workdays',0)),
+                                 ('present_member_work_hours',math.fsum(r['present_workdays']*(1-self.agents[r['id']].care_hours) for r in self.people),self.metrics.get('present_member_workdays',0))]:
+            if not running_sum_matches(self.metrics.get(key,0.),amount,terms+len(self.people)):raise ValueError('member-hour exposure does not equal aggregate')
         for row in self.ledger.rows('pending'):
             if row[1] not in {'review','appeal','commit'} or not 0<=row[2]<self.guild_count or not 0<=row[6]<len(self.agents) or not 0<=row[7]<self.day or row[3]<row[7] or not math.isfinite(row[4]) or not math.isfinite(row[8]) or row[8]<0 or any(v not in (0,1) for v in row[9:]):raise ValueError('pending evidence semantic validation failed')
         for person,guild,amount in self.ledger.rows('credits'):
@@ -1164,6 +1172,12 @@ def load_snapshot_envelope(path,*,expected_config=None,expected_source_sha256=No
         raise ValueError('longitudinal checkpoint config differs')
     if len(raw)>config.max_output_mb*1e6:raise ValueError('longitudinal checkpoint envelope exceeds declared output limit')
     return value,{'path':str(path),'sha256':digest(raw),'bytes':len(raw),'identity':list(anchor)}
+
+
+def running_sum_matches(running, exact, additions):
+    """True when a running sum of non-negative terms equals the exact sum up to
+    the a-priori rounding bound (additions+2)*2**-53*|exact| + 1e-8."""
+    return abs(running-exact)<=(additions+2)*2.**-53*abs(exact)+1e-8
 
 
 def verify_snapshot(path,*,expected_config=None,expected_source_sha256=None,page_options=None,known_latest_floor=None,export_dir=None,native_floor_observer=None):

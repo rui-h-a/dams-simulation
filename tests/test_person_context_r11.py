@@ -231,5 +231,21 @@ class RiskToleranceExitTest(unittest.TestCase):
         self.assertEqual(d['person_context']['quit_risk_tolerance_coefficient'], .22)
 
 
+
+class ExposureRoundingBoundTest(unittest.TestCase):
+    """Running exposure sums may drift by rounding, but not by a member-workday."""
+
+    def test_bound_accepts_measured_drift_and_rejects_a_missing_workday(self):
+        from dams_sim.longitudinal_model import running_sum_matches
+        # Values measured at day 30 of a 50,000-member R11.2 run.
+        self.assertTrue(running_sum_matches(1000438.7478028492, 1000438.747803811, 1_050_000))
+        self.assertFalse(running_sum_matches(1000438.7478028492-0.6, 1000438.747803811, 1_050_000))
+        # Two simulated years at that scale: about 2.3e7 hours over 2.6e7 terms.
+        total = 2.3e7
+        self.assertTrue(running_sum_matches(total*(1+3e-11), total, 26_000_000))
+        self.assertFalse(running_sum_matches(total-0.6, total, 26_000_000))
+        self.assertFalse(running_sum_matches(total-1.0, total, 1_000_000))
+
+
 if __name__ == '__main__':
     unittest.main()
