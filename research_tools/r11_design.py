@@ -17,17 +17,35 @@ from pathlib import Path
 TEMPLATE = Path(__file__).resolve().parent.parent/'candidate-evidence/calendar-networks-r7.json'
 CALENDAR_START = '2020-01-01'
 
-# Big Five and related latent correlations. Magnitudes are typical of published
-# inventories but the exact matrix is UNVERIFIED (registry: van der Linden et al.
-# 2010 matrix not obtained); they are therefore design assumptions with a
-# structural sensitivity variant that sets every correlation to zero.
-TRAIT_CORRELATIONS = {
-    'conscientiousness|neuroticism': -0.30, 'agreeableness|neuroticism': -0.25,
-    'extraversion|neuroticism': -0.25, 'extraversion|openness': 0.25,
-    'agreeableness|conscientiousness': 0.25, 'education|openness': 0.25,
-    'education|judgment': 0.30, 'patience|risk_tolerance': -0.10,
-    'health_risk|neuroticism': 0.15,
+# Big Five latent intercorrelations: the ten meta-analytic true-score estimates
+# (rho, corrected for unreliability and range restriction; K = 212 samples,
+# N = 144,117) in van der Linden, te Nijenhuis and Bakker (2010), Journal of
+# Research in Personality 44(3), Table 2, p. 318, doi:10.1016/j.jrp.2010.03.003.
+# Traits in the model are error-free latent variables, so rho rather than the
+# observed r is the matching quantity.
+BIG_FIVE_CORRELATIONS = {
+    'conscientiousness|openness': 0.20, 'extraversion|openness': 0.43,
+    'agreeableness|openness': 0.21, 'neuroticism|openness': -0.17,
+    'conscientiousness|extraversion': 0.29, 'agreeableness|conscientiousness': 0.43,
+    'conscientiousness|neuroticism': -0.43, 'agreeableness|extraversion': 0.26,
+    'extraversion|neuroticism': -0.36, 'agreeableness|neuroticism': -0.36,
 }
+# Same source, Table 3, p. 319, employee subsample (N = 10,654); used only in the
+# 'big-five-employees' structural variant.
+BIG_FIVE_CORRELATIONS_EMPLOYEES = {
+    'conscientiousness|openness': 0.31, 'extraversion|openness': 0.50,
+    'agreeableness|openness': 0.34, 'neuroticism|openness': -0.40,
+    'conscientiousness|extraversion': 0.26, 'agreeableness|conscientiousness': 0.56,
+    'conscientiousness|neuroticism': -0.66, 'agreeableness|extraversion': 0.45,
+    'extraversion|neuroticism': -0.40, 'agreeableness|neuroticism': -0.51,
+}
+# Pairs outside the Big Five have no matrix source in the registry; they remain
+# design assumptions. Every unlisted pair is zero.
+OTHER_TRAIT_CORRELATIONS = {
+    'education|openness': 0.25, 'education|judgment': 0.30,
+    'patience|risk_tolerance': -0.10, 'health_risk|neuroticism': 0.15,
+}
+TRAIT_CORRELATIONS = {**BIG_FIVE_CORRELATIONS, **OTHER_TRAIT_CORRELATIONS}
 
 # Monthly capacity multipliers for physical work. Northern-hemisphere hot-summer,
 # southern-hemisphere hot-summer and temperate profiles; magnitudes are stress
@@ -232,6 +250,7 @@ def _person_context_base(cx):
 VARIANTS = {
     'baseline': {},
     'independent-traits': {'person_context.trait_correlations': {}},
+    'big-five-employees': {'person_context.trait_correlations': 'employees'},
     'no-origin-preferences': {'person_context.origins.shifts': 'zero'},
     'evaluation-bias': {'person_context.gender_evaluation_bias': -0.05, 'person_context.cross_group_evaluation_bias': -0.05},
     'strong-factions': {'person_context.faction_cohesion': 0.5},
@@ -250,7 +269,8 @@ def apply_variant(d, branch, name):
     pc = d.get('person_context')
     for key, value in VARIANTS[name].items():
         if key == 'person_context.trait_correlations':
-            pc['trait_correlations'] = {}
+            pc['trait_correlations'] = ({**BIG_FIVE_CORRELATIONS_EMPLOYEES, **OTHER_TRAIT_CORRELATIONS}
+                                        if value == 'employees' else {})
         elif key == 'person_context.origins.shifts':
             for row in pc['origins']:
                 row[3] = {}; row[4] = 0.

@@ -153,5 +153,34 @@ class PersonContextTests(unittest.TestCase):
         self.raw(m, 'quit-raw')
 
 
+
+class TraitMatrixSourceTest(unittest.TestCase):
+    """The design matrix uses the published meta-analytic values (van der Linden et al. 2010)."""
+
+    def test_big_five_block_matches_table_2_rho(self):
+        from research_tools import r11_design as D
+        table2 = {('O', 'C'): .20, ('O', 'E'): .43, ('O', 'A'): .21, ('O', 'N'): -.17, ('C', 'E'): .29,
+                  ('C', 'A'): .43, ('C', 'N'): -.43, ('E', 'A'): .26, ('E', 'N'): -.36, ('A', 'N'): -.36}
+        name = {'O': 'openness', 'C': 'conscientiousness', 'E': 'extraversion', 'A': 'agreeableness', 'N': 'neuroticism'}
+        for (x, y), rho in table2.items():
+            key = '|'.join(sorted((name[x], name[y])))
+            self.assertEqual(D.BIG_FIVE_CORRELATIONS[key], rho, key)
+            self.assertEqual(D.TRAIT_CORRELATIONS[key], rho, key)
+        self.assertEqual(len(D.BIG_FIVE_CORRELATIONS), 10)
+        self.assertEqual(len(D.BIG_FIVE_CORRELATIONS_EMPLOYEES), 10)
+
+    def test_design_matrices_are_positive_definite_and_variant_applies(self):
+        from research_tools import r11_design as D
+        from dams_sim.person_context import cholesky
+        for tc in (D.TRAIT_CORRELATIONS, {**D.BIG_FIVE_CORRELATIONS_EMPLOYEES, **D.OTHER_TRAIT_CORRELATIONS}):
+            cholesky(PC(trait_correlations=tc).matrix())
+        d, _ = D.base_config(scale=120, context='multinational', growth='organic', world=0, seed=1,
+                             pre_years=0, post_years=1, variant='big-five-employees')
+        self.assertEqual(d['person_context']['trait_correlations']['conscientiousness|neuroticism'], -.66)
+        d, _ = D.base_config(scale=120, context='multinational', growth='organic', world=0, seed=1,
+                             pre_years=0, post_years=1, variant='independent-traits')
+        self.assertEqual(d['person_context']['trait_correlations'], {})
+
+
 if __name__ == '__main__':
     unittest.main()
