@@ -24,7 +24,13 @@ CORR = {'conscientiousness|neuroticism': -0.4, 'agreeableness|conscientiousness'
 def person(**kw):
     base = dict(trait_correlations=CORR, employment_mix=[['permanent', .8, 1.], ['fixed-term', .2, 2.]],
                 caregiver_share=.3, language_groups=[['l0', .7], ['l1', .3]], cross_language_help_discount=.2,
-                baseline_annual_quit_probability=.12)
+                baseline_annual_quit_probability=.12,
+                origins=[['o-a', .6, 'l0', {'patience': .2}, .05], ['o-b', .4, 'l1', {'risk_tolerance': -.2}, -.05]],
+                site_origins=['o-a', 'o-b'], local_origin_share=.8, migrant_exit_multiplier=1.5,
+                female_share=.45, caregiver_share_female=.4, caregiver_share_male=.15, gender_evaluation_bias=-.05,
+                ethnic_groups=[['e0', .7], ['e1', .3]], minority_voice_shift=-.1, cross_ethnic_help_discount=.05,
+                physical_work_share=.4, site_climate=[[1.]*6+[.85, .85]+[1.]*4, [1.]*12],
+                site_institution_shocks=[[.5, .7, 10], [0., 1., 1]], annual_sick_days=8.)
     base.update(kw)
     return PC(**base).validate()
 
@@ -59,16 +65,24 @@ class PersonContextTests(unittest.TestCase):
         state, rng = PersonContextState(p), WorldRandom(7, 0)
         draws = [state.draw(rng, f'probe:{k}') for k in range(6000)]
         col = {t: [d['traits'][t] for d in draws] for t in TRAITS}
+        local = [d for d in draws if d['origin'] == 'o-a']
+        lcol = {t: [d['traits'][t] for d in local] for t in TRAITS}
         for key, rho in CORR.items():
             a, b = key.split('|')
             with self.subTest(pair=key):
-                self.assertAlmostEqual(statistics.correlation(col[a], col[b]), rho, delta=.05)
+                self.assertAlmostEqual(statistics.correlation(lcol[a], lcol[b]), rho, delta=.06)
+        self.assertAlmostEqual(statistics.fmean(lcol['patience']), .2, delta=.05)
         self.assertAlmostEqual(statistics.correlation(col['patience'], col['risk_tolerance']), 0., delta=.05)
         for t in TRAITS:
-            self.assertAlmostEqual(statistics.fmean(col[t]), 0., delta=.05)
-            self.assertAlmostEqual(statistics.pstdev(col[t]), 1., delta=.05)
-        self.assertAlmostEqual(statistics.fmean(d['caregiver'] for d in draws), .3, delta=.02)
-        self.assertAlmostEqual(statistics.fmean(d['language'] == 'l1' for d in draws), .3, delta=.02)
+            if t not in ('patience', 'risk_tolerance'):
+                self.assertAlmostEqual(statistics.fmean(col[t]), 0., delta=.05)
+            self.assertAlmostEqual(statistics.pstdev(lcol[t]), 1., delta=.06)
+        self.assertAlmostEqual(statistics.fmean(d['gender'] == 'female' for d in draws), .45, delta=.02)
+        fem = [d for d in draws if d['gender'] == 'female']; mal = [d for d in draws if d['gender'] == 'male']
+        self.assertAlmostEqual(statistics.fmean(d['caregiver'] for d in fem), .4, delta=.03)
+        self.assertAlmostEqual(statistics.fmean(d['caregiver'] for d in mal), .15, delta=.03)
+        self.assertTrue(all(d['language'] == ('l0' if d['origin'] == 'o-a' else 'l1') for d in draws))
+        self.assertAlmostEqual(statistics.fmean(d['ethnicity'] == 'e1' for d in draws), .3, delta=.02)
         care = statistics.fmean(d['care_hours'] for d in draws if d['caregiver'])
         other = statistics.fmean(d['care_hours'] for d in draws if not d['caregiver'])
         self.assertGreater(care, other+.1)
@@ -79,12 +93,14 @@ class PersonContextTests(unittest.TestCase):
         rec = s.draw(WorldRandom(1, 0), 'a')
         rec['traits'] = {t: 0. for t in TRAITS}
         s.append(rec)
-        twin = dict(rec, traits=dict(rec['traits']), language='l1', caregiver=not rec['caregiver'])
+        rec['migrant'] = False; rec['identity'] = s.c.initial_identity
+        twin = dict(rec, traits=dict(rec['traits']), language='l1', caregiver=not rec['caregiver'], gender='female' if rec['gender'] == 'male' else 'male', ethnicity='e1' if rec['ethnicity'] == 'e0' else 'e0')
         s.append(twin)
         for f in ('effort_shift', 'cooperation_factor', 'decision_noise_factor', 'learning_factor', 'annual_quit_probability'):
             self.assertEqual(getattr(s, f)(0), getattr(s, f)(1), f)
-        self.assertEqual(s.help_language_factor(0, 1), .8)
+        self.assertAlmostEqual(s.help_language_factor(0, 1), .8*.95)
         self.assertEqual(s.evaluation_shift(0, 1), 0.)
+        self.assertEqual(s.evaluation_shift(1 if twin['gender'] == 'female' else 0, 0 if twin['gender'] == 'female' else 1), -.05)
         s.people[0]['stress'] = .8
         self.assertGreater(s.annual_quit_probability(0), s.annual_quit_probability(1))
         s.people[1]['fairness'] = .2

@@ -18,9 +18,9 @@ from __future__ import annotations
 import dataclasses
 import math
 
-VERSION = 'longitudinal-enterprise-person-context-11'
+VERSION = 'longitudinal-enterprise-person-context-11-1'
 TRAITS = ('conscientiousness', 'agreeableness', 'neuroticism', 'openness',
-          'extraversion', 'risk_tolerance', 'patience', 'judgment', 'education')
+          'extraversion', 'risk_tolerance', 'patience', 'judgment', 'education', 'health_risk')
 
 
 def _finite(value, low, high, name):
@@ -81,6 +81,29 @@ class PersonContextConfig:
     voice_safety_coefficient: float = 0.0
     judgment_noise_coefficient: float = 0.15
     learning_openness_coefficient: float = 0.1
+    # R11.1 origin, gender, ethnicity, place and condition paths.
+    # origins rows: [label, share, language, {trait: z shift}, initial-trust shift]
+    origins: list = dataclasses.field(default_factory=list)
+    site_origins: list = dataclasses.field(default_factory=list)
+    local_origin_share: float = 1.0
+    migrant_exit_multiplier: float = 1.0
+    female_share: float = 0.0
+    caregiver_share_female: float = -1.0
+    caregiver_share_male: float = -1.0
+    gender_evaluation_bias: float = 0.0
+    ethnic_groups: list = dataclasses.field(default_factory=lambda: [['e0', 1.0]])
+    minority_voice_shift: float = 0.0
+    cross_ethnic_help_discount: float = 0.0
+    physical_work_share: float = 0.0
+    site_climate: list = dataclasses.field(default_factory=list)
+    site_institution_shocks: list = dataclasses.field(default_factory=list)
+    annual_sick_days: float = 0.0
+    sick_health_coefficient: float = 0.5
+    initial_identity: float = 0.6
+    identity_update_rate: float = 0.02
+    identity_quit_coefficient: float = 1.0
+    identity_participation_coefficient: float = 0.1
+    load_noise_coefficient: float = 0.3
 
     def validate(self):
         if type(self.schema_version) is not int or self.schema_version != 1:
@@ -116,6 +139,48 @@ class PersonContextConfig:
                      'voice_base_probability'):
             _finite(getattr(self, name), 0, 1, name)
         _finite(self.care_hours_sd, 0, 0.5, 'care_hours_sd')
+        if not isinstance(self.origins, list) or any(not isinstance(r, list) or len(r) != 5 or not isinstance(r[0], str)
+                                                     or not isinstance(r[2], str) or not isinstance(r[3], dict) for r in self.origins):
+            raise ValueError('origins rows are malformed')
+        if self.origins:
+            if len({r[0] for r in self.origins}) != len(self.origins) or abs(math.fsum(r[1] for r in self.origins)-1) > 1e-9:
+                raise ValueError('origin labels must be unique and shares sum to one')
+            for r in self.origins:
+                _finite(r[1], 0, 1, 'origin share'); _finite(r[4], -1, 1, 'origin trust shift')
+                for t, v in r[3].items():
+                    if t not in TRAITS:
+                        raise ValueError('origin shift names an unknown trait')
+                    _finite(v, -3, 3, 'origin trait shift')
+            labels = {r[0] for r in self.origins}
+            if not self.site_origins or any(o not in labels for o in self.site_origins):
+                raise ValueError('site_origins must name declared origins')
+        for name, rows in (('ethnic_groups', self.ethnic_groups),):
+            if not isinstance(rows, list) or not rows or any(not isinstance(r, list) or len(r) != 2 or not isinstance(r[0], str) for r in rows):
+                raise ValueError(f'{name} rows are malformed')
+            if len({r[0] for r in rows}) != len(rows) or abs(math.fsum(r[1] for r in rows)-1) > 1e-9:
+                raise ValueError(f'{name} labels must be unique and shares sum to one')
+        for name in ('local_origin_share', 'female_share', 'physical_work_share', 'initial_identity', 'identity_update_rate'):
+            _finite(getattr(self, name), 0, 1, name)
+        for name in ('caregiver_share_female', 'caregiver_share_male'):
+            v = getattr(self, name)
+            if v != -1.0:
+                _finite(v, 0, 1, name)
+        _finite(self.migrant_exit_multiplier, 0, 20, 'migrant_exit_multiplier')
+        for name in ('gender_evaluation_bias', 'minority_voice_shift'):
+            _finite(getattr(self, name), -1, 1, name)
+        _finite(self.cross_ethnic_help_discount, 0, 1, 'cross_ethnic_help_discount')
+        _finite(self.annual_sick_days, 0, 60, 'annual_sick_days')
+        for name in ('sick_health_coefficient', 'identity_quit_coefficient', 'identity_participation_coefficient', 'load_noise_coefficient'):
+            _finite(getattr(self, name), -5, 5, name)
+        for row in self.site_climate:
+            if not isinstance(row, list) or len(row) != 12:
+                raise ValueError('site_climate rows need twelve monthly multipliers')
+            for v in row:
+                _finite(v, 0, 1, 'monthly climate capacity multiplier')
+        for row in self.site_institution_shocks:
+            if not isinstance(row, list) or len(row) != 3 or type(row[2]) is not int or not 1 <= row[2] <= 365:
+                raise ValueError('site_institution_shocks rows are [annual probability, capacity multiplier, duration days]')
+            _finite(row[0], 0, 1, 'institution shock probability'); _finite(row[1], 0, 1, 'institution shock capacity')
         _finite(self.cross_group_evaluation_bias, -1, 1, 'cross_group_evaluation_bias')
         _finite(self.stress_half_life_workdays, 1, 3650, 'stress_half_life_workdays')
         for name in ('quit_stress_coefficient', 'quit_fairness_coefficient', 'quit_patience_coefficient',
@@ -167,8 +232,9 @@ class PersonContextState:
         self.c = config.person_context
         self.lower = cholesky(self.c.matrix())
         self.people = []
+        self._shock_cache = {}
 
-    def draw(self, rng, token):
+    def draw(self, rng, token, site=0):
         c = self.c
         z = [rng.normal('pc_trait', token, k) for k in range(len(TRAITS))]
         x = [math.fsum(self.lower[i][k]*z[k] for k in range(i+1)) for i in range(len(TRAITS))]
@@ -178,17 +244,37 @@ class PersonContextState:
         mean = c.caregiver_care_hours if caregiver else c.other_care_hours
         care = clip(mean+c.care_hours_sd*rng.normal('pc_care', token), 0., 0.6)
         language = _pick(c.language_groups, rng.uniform('pc_language', token))[0]
+        origin, migrant, trust_shift = None, False, 0.
+        if c.origins:
+            home = c.site_origins[site % len(c.site_origins)]
+            if rng.uniform('pc_origin_local', token) < c.local_origin_share:
+                origin = home
+            else:
+                origin = _pick(c.origins, rng.uniform('pc_origin', token))[0]
+            row = next(r for r in c.origins if r[0] == origin)
+            language, migrant, trust_shift = row[2], origin != home, row[4]
+            for t, v in row[3].items():
+                traits[t] += v
+        female = rng.uniform('pc_gender', token) < c.female_share
+        if c.caregiver_share_female != -1.0 and c.caregiver_share_male != -1.0:
+            share = c.caregiver_share_female if female else c.caregiver_share_male
+            caregiver = rng.uniform('pc_caregiver_gendered', token) < share
+            care = clip((c.caregiver_care_hours if caregiver else c.other_care_hours)+c.care_hours_sd*rng.normal('pc_care', token), 0., 0.6)
+        ethnicity = _pick(c.ethnic_groups, rng.uniform('pc_ethnicity', token))[0]
+        physical = rng.uniform('pc_physical', token) < c.physical_work_share
         education = max(0., c.education_mean_years+c.education_sd_years*traits['education'])
         return {'traits': traits, 'education_years': education, 'employment': employment,
                 'caregiver': caregiver, 'care_hours': care, 'language': language,
-                'stress': 0., 'fairness': c.initial_fairness}
+                'origin': origin, 'migrant': migrant, 'trust_shift': trust_shift,
+                'gender': 'female' if female else 'male', 'ethnicity': ethnicity, 'physical_work': physical,
+                'stress': 0., 'fairness': c.initial_fairness, 'identity': c.initial_identity}
 
     def append(self, record):
         self.people.append(record)
 
-    def acquired(self, rng, token):
+    def acquired(self, rng, token, site=0):
         """Acquired staff keep their recorded care time; other traits are drawn as unobserved."""
-        return self.draw(rng, token)
+        return self.draw(rng, token, site)
 
     # ---- behavioural paths -------------------------------------------------
     def effort_shift(self, i):
@@ -199,27 +285,67 @@ class PersonContextState:
         return max(0., 1+self.c.cooperation_agreeableness_coefficient*self.people[i]['traits']['agreeableness'])
 
     def participation_shift(self, i, safety):
-        p = self.people[i]
-        return self.c.participation_extraversion_coefficient*p['traits']['extraversion']+self.c.participation_safety_coefficient*(safety-0.5)
+        p, c = self.people[i], self.c
+        return (c.participation_extraversion_coefficient*p['traits']['extraversion']+c.participation_safety_coefficient*(safety-0.5)
+                +c.identity_participation_coefficient*(p['identity']-c.initial_identity))
 
-    def decision_noise_factor(self, i):
-        return math.exp(-self.c.judgment_noise_coefficient*self.people[i]['traits']['judgment'])
+    def decision_noise_factor(self, i, load=0.):
+        """Judgment lowers, and concurrent time demands (cognitive load) raise, decision noise."""
+        return math.exp(-self.c.judgment_noise_coefficient*self.people[i]['traits']['judgment'])*(1+self.c.load_noise_coefficient*clip(load))
 
     def learning_factor(self, i):
         return max(0., 1+self.c.learning_openness_coefficient*self.people[i]['traits']['openness'])
 
     def help_language_factor(self, i, j):
-        if j is None or self.people[i]['language'] == self.people[j]['language']:
+        if j is None:
             return 1.
-        return 1-self.c.cross_language_help_discount
+        a, b = self.people[i], self.people[j]
+        f = 1. if a['language'] == b['language'] else 1-self.c.cross_language_help_discount
+        if a.get('ethnicity') != b.get('ethnicity'):
+            f *= 1-self.c.cross_ethnic_help_discount
+        return f
 
     def evaluation_shift(self, claimant, reviewer):
-        if reviewer is None or self.people[claimant]['language'] == self.people[reviewer]['language']:
+        if reviewer is None:
             return 0.
-        return self.c.cross_group_evaluation_bias
+        a, b = self.people[claimant], self.people[reviewer]
+        shift = 0. if a['language'] == b['language'] else self.c.cross_group_evaluation_bias
+        if a.get('gender') == 'female' and b.get('gender') == 'male':
+            shift += self.c.gender_evaluation_bias
+        return shift
+
+    def majority_ethnicity(self):
+        return max(self.c.ethnic_groups, key=lambda r: r[1])[0]
 
     def voice_probability(self, i, safety):
-        return clip(self.c.voice_base_probability+self.c.voice_safety_coefficient*(safety-0.5))
+        minority = self.people[i].get('ethnicity', self.majority_ethnicity()) != self.majority_ethnicity()
+        return clip(self.c.voice_base_probability+self.c.voice_safety_coefficient*(safety-0.5)+(self.c.minority_voice_shift if minority else 0.))
+
+    def sick(self, i, rng, day, token, workdays):
+        """Health-related absence; depends only on the entry witness so it can be independently recomputed."""
+        if self.c.annual_sick_days <= 0:
+            return False
+        p = min(1., self.c.annual_sick_days/max(1, workdays)*math.exp(self.c.sick_health_coefficient*self.people[i]['traits']['health_risk']))
+        return rng.uniform('pc_sick', day, token) < p
+
+    def site_capacity(self, i, site, day, month, rng):
+        """Climate (physical work only) and institutional-shock capacity multiplier for a site."""
+        f = 1.
+        c = self.c
+        if self.people[i].get('physical_work') and c.site_climate:
+            f *= c.site_climate[site % len(c.site_climate)][month-1]
+        if c.site_institution_shocks:
+            prob, mult, duration = c.site_institution_shocks[site % len(c.site_institution_shocks)]
+            daily = 1-(1-prob)**(1/365)
+            cache = self._shock_cache
+            if cache.get('day') != day:
+                cache.clear(); cache['day'] = day
+            key = site % len(c.site_institution_shocks)
+            if key not in cache:
+                cache[key] = any(rng.uniform('pc_institution_shock', key, d) < daily for d in range(max(0, day-duration+1), day+1))
+            if cache[key]:
+                f *= mult
+        return f
 
     def team_safety(self, ids, agents):
         """Psychological-safety proxy: team mean of trust and perceived fairness (observable to members)."""
@@ -232,8 +358,9 @@ class PersonContextState:
         mult = next(r[2] for r in c.employment_mix if r[0] == p['employment'])
         t = p['traits']
         logit_shift = (c.quit_stress_coefficient*p['stress']+c.quit_fairness_coefficient*(c.initial_fairness-p['fairness'])
-                       -c.quit_patience_coefficient*t['patience']-c.quit_conscientiousness_coefficient*t['conscientiousness'])
-        base = c.baseline_annual_quit_probability*mult
+                       -c.quit_patience_coefficient*t['patience']-c.quit_conscientiousness_coefficient*t['conscientiousness']
+                       -c.identity_quit_coefficient*(p.get('identity', c.initial_identity)-c.initial_identity))
+        base = c.baseline_annual_quit_probability*mult*(c.migrant_exit_multiplier if p.get('migrant') else 1.)
         if base <= 0:
             return 0.
         if base >= 1:
@@ -261,6 +388,8 @@ class PersonContextState:
             p['fairness'] += r*(1-p['fairness'])
         elif honest:
             p['fairness'] -= r*p['fairness']
+        # Organizational identification follows perceived procedural fairness.
+        p['identity'] += self.c.identity_update_rate*(p['fairness']-p['identity'])
 
     def observe_appeal(self, i, upheld):
         p, r = self.people[i], self.c.fairness_update_rate
@@ -270,12 +399,13 @@ class PersonContextState:
         p = self.people[i]
         return {'version': VERSION, 'traits': p['traits'], 'education_years': p['education_years'],
                 'employment': p['employment'], 'caregiver': p['caregiver'], 'care_hours': p['care_hours'],
-                'language': p['language']}
+                'language': p['language'], 'origin': p['origin'], 'migrant': p['migrant'], 'trust_shift': p['trust_shift'],
+                'gender': p['gender'], 'ethnicity': p['ethnicity'], 'physical_work': p['physical_work']}
 
     def group_summary(self, ids, agents):
         """Formal-share and stress/fairness means by caregiver role, language group and contract."""
         out = {}
-        for key in ('caregiver', 'language', 'employment'):
+        for key in ('caregiver', 'language', 'employment', 'gender', 'origin', 'migrant', 'ethnicity', 'physical_work'):
             groups = {}
             for i in ids:
                 groups.setdefault(str(self.people[i][key]), []).append(i)
@@ -295,3 +425,17 @@ class PersonContextState:
         obj = cls(config)
         obj.people = value['people']
         return obj
+
+    def gaps(self, ids, agents):
+        """Mean formal-share differences between groups (numeric; positive favours the first-named group)."""
+        def gap(key, a, b):
+            ga = [agents[i].share for i in ids if self.people[i].get(key) == a]
+            gb = [agents[i].share for i in ids if self.people[i].get(key) == b]
+            return math.fsum(ga)/len(ga)-math.fsum(gb)/len(gb) if ga and gb else None
+        maj = self.majority_ethnicity()
+        minority = [agents[i].share for i in ids if self.people[i].get('ethnicity') != maj]
+        majority = [agents[i].share for i in ids if self.people[i].get('ethnicity') == maj]
+        return {'share_gap_female_minus_male': gap('gender', 'female', 'male'),
+                'share_gap_migrant_minus_local': gap('migrant', True, False),
+                'share_gap_caregiver_minus_other': gap('caregiver', True, False),
+                'share_gap_minority_minus_majority': (math.fsum(minority)/len(minority)-math.fsum(majority)/len(majority)) if minority and majority else None}

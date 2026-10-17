@@ -26,7 +26,15 @@ TRAIT_CORRELATIONS = {
     'extraversion|neuroticism': -0.25, 'extraversion|openness': 0.25,
     'agreeableness|conscientiousness': 0.25, 'education|openness': 0.25,
     'education|judgment': 0.30, 'patience|risk_tolerance': -0.10,
+    'health_risk|neuroticism': 0.15,
 }
+
+# Monthly capacity multipliers for physical work. Northern-hemisphere hot-summer,
+# southern-hemisphere hot-summer and temperate profiles; magnitudes are stress
+# assumptions for heat exposure, not calibrated productivity losses.
+CLIMATE = {'temperate': [1.]*12, 'hot-north': [1.]*5+[.92, .88, .88, .94]+[1.]*3,
+           'hot-south': [.88, .88, .94]+[1.]*8+[.92], 'tropical': [.93]*12}
+
 
 
 def _country(key, utc, legal, logistics_days, logistics_cost, communication):
@@ -145,7 +153,7 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
         d.pop('enterprise_acquisition')
     d.pop('joint_population', None)
     if person_context:
-        d['person_context'] = person_context_for(cx)
+        d['person_context'] = person_context_for(cx, context)
     return d, branch
 
 
@@ -166,7 +174,44 @@ def _target(n, k, available, days, cx):
             'history': [['historical-sales', 'resource-unit', 120.*size]]}
 
 
-def person_context_for(cx):
+COUNTRY_PROFILES = {
+    # Country-level preference shifts in within-sample SD units (GPS structure:
+    # 7-13.5% of preference variance lies between countries; Falk et al. 2018).
+    # Values are illustrative magnitudes within that bound, not country estimates.
+    'home': dict(language='l0', shifts={}, trust=0., climate='temperate', shock=[.02, .85, 20]),
+    'region-b': dict(language='l1', shifts={'patience': .15, 'risk_tolerance': -.10}, trust=.03, climate='hot-north', shock=[.05, .8, 15]),
+    'region-c': dict(language='l2', shifts={'patience': -.10, 'risk_tolerance': .10}, trust=-.03, climate='tropical', shock=[.08, .75, 20]),
+    'na': dict(language='l0', shifts={'risk_tolerance': .10}, trust=0., climate='hot-north', shock=[.02, .9, 10]),
+    'eu': dict(language='l1', shifts={'patience': .15}, trust=.03, climate='temperate', shock=[.02, .9, 10]),
+    'apac-a': dict(language='l2', shifts={'patience': .20, 'risk_tolerance': -.15}, trust=.02, climate='hot-north', shock=[.03, .85, 15]),
+    'apac-b': dict(language='l3', shifts={'patience': .05, 'risk_tolerance': -.05}, trust=-.02, climate='tropical', shock=[.06, .8, 20]),
+    'latam': dict(language='l4', shifts={'patience': -.15, 'risk_tolerance': .05}, trust=-.05, climate='hot-south', shock=[.10, .75, 25]),
+    'mea': dict(language='l4', shifts={'patience': -.05}, trust=-.03, climate='hot-north', shock=[.10, .7, 25]),
+}
+PHYSICAL_SHARE = {'startup': .05, 'unicorn': .15, 'listed': .30, 'traditional': .60, 'century': .45, 'multinational': .40}
+
+
+def person_context_for(cx, context=None):
+    keys = [c['key'] for c in cx['countries']]
+    n = len(keys)
+    origins = [[k, 1/n if i < n-1 else 1-(n-1)*round(1/n, 12), COUNTRY_PROFILES[k]['language'], dict(COUNTRY_PROFILES[k]['shifts']), COUNTRY_PROFILES[k]['trust']]
+               for i, k in enumerate(keys)]
+    for i in range(n-1):
+        origins[i][1] = round(1/n, 12)
+    origins[-1][1] = 1-math.fsum(r[1] for r in origins[:-1])
+    extra = {'origins': origins, 'site_origins': keys, 'local_origin_share': .9 if n > 1 else 1.,
+             'migrant_exit_multiplier': 1.3,
+             'female_share': .45, 'caregiver_share_female': .38, 'caregiver_share_male': .18,
+             'gender_evaluation_bias': 0., 'ethnic_groups': [['e0', .7], ['e1', .2], ['e2', .1]],
+             'minority_voice_shift': 0., 'cross_ethnic_help_discount': .0,
+             'physical_work_share': PHYSICAL_SHARE.get(context, .3),
+             'site_climate': [CLIMATE[COUNTRY_PROFILES[k]['climate']] for k in keys],
+             'site_institution_shocks': [list(COUNTRY_PROFILES[k]['shock']) for k in keys],
+             'annual_sick_days': 8.}
+    return {**_person_context_base(cx), **extra}
+
+
+def _person_context_base(cx):
     return {'schema_version': 1, 'trait_correlations': dict(TRAIT_CORRELATIONS),
             'employment_mix': [['permanent', .85, 1.0], ['fixed-term', .10, 1.8], ['contractor', .05, 2.5]],
             'caregiver_share': .3, 'caregiver_care_hours': .15, 'other_care_hours': .03, 'care_hours_sd': .03,

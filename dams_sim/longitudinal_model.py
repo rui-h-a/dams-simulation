@@ -167,7 +167,7 @@ class LongitudinalEngine:
                     fatigue=profile['fatigue'],trust=profile['trust'],learning=profile['learning']*retention)
                 self.agents.append(a)
                 if self.pc is not None:
-                    record=self.pc.acquired(self.rng,token);record['care_hours']=a.care_hours;self.pc.append(record)
+                    record=self.pc.acquired(self.rng,token,site);record['care_hours']=a.care_hours;self.pc.append(record)
                 self.people.append({'id':i,'token':token,'slot':slot,'birth_date':profile['birth_date'],'entered_day':self.day,
                     'exited_day':None,'exit_reason':None,'first_positive_authority_day':None,'active_calendar_days':0,
                     'active_workdays':0,'present_workdays':0,'available_work_hours':0.,'post_adoption_available_work_hours':0.,
@@ -197,7 +197,8 @@ class LongitudinalEngine:
             a=Agent(i,guild,0,guild%self.site_count if site is None else site,**traits)
         a.learning=self.memory[guild]*self.l.memory_transfer_fraction
         if self.pc is not None:
-            record=self.pc.draw(self.rng,token);a.care_hours=record['care_hours'];self.pc.append(record)
+            from .model import clip as _clip
+            record=self.pc.draw(self.rng,token,site=a.site);a.care_hours=record['care_hours'];a.trust=_clip(a.trust+record['trust_shift']);self.pc.append(record)
         self.agents.append(a)
         self.people.append({'id':i,'token':token,'slot':slot,'birth_date':birth,'entered_day':self.day,
                             'exited_day':None,'exit_reason':None,'first_positive_authority_day':None,
@@ -521,7 +522,9 @@ class LongitudinalEngine:
                 if self.adoption[a.guild] is not None:
                     r['post_adoption_available_work_hours']+=available;self.metrics['post_adoption_available_member_work_hours']+=available
                 leave=min(1.,l.annual_leave_workdays/max(1,self.clock.workdays_in_year(day)))
-                if self.rng.uniform('leave',day,r['token'])>=leave:
+                sick=self.pc is not None and self.pc.sick(i,self.rng,day,r['token'],self.clock.workdays_in_year(day))
+                if sick:self.metrics['sick_absence_workdays']+=1
+                if self.rng.uniform('leave',day,r['token'])>=leave and not sick:
                     present.add(i);r['present_workdays']+=1
                     self.metrics['present_member_work_hours']+=available
             self.metrics['present_member_workdays']+=len(present)
@@ -602,7 +605,7 @@ class LongitudinalEngine:
                 effective=[];votes=[];flags=[]
                 for i in ids:
                     share,trust,fatigue,learning=snapshot[i];token=self.people[i]['token']
-                    signal=theta+p.decision_noise_sd/(1+learning)*(self.pc.decision_noise_factor(i) if self.pc is not None else 1.)*self.rng.normal('decision_signal',day,token)+p.shared_signal_sd*self.rng.normal('shared_signal',day,g)
+                    signal=theta+p.decision_noise_sd/(1+learning)*(self.pc.decision_noise_factor(i,variable_reservations.get(i,0.)/max(1e-9,1-self.agents[i].care_hours)) if self.pc is not None else 1.)*self.rng.normal('decision_signal',day,token)+p.shared_signal_sd*self.rng.normal('shared_signal',day,g)
                     flag=i in present and governance_time[i]>0 and self.rng.uniform('participate',day,token)<clip(.25+.65*trust-.35*fatigue+(self.pc.participation_shift(i,team_safety[self.agents[i].team]) if self.pc is not None else 0.))
                     flags.append(flag);effective.append(share if flag else 0.);votes.append(float(signal>=0))
                     self.ledger.add_journal(day,'vote',f'vote:{day}:{token}:g:{g}',{'person':i,'guild':g,'observed_signal':signal,'participates':flag,'formal_share':share,'effective_weight':share if flag else 0.,'vote':float(signal>=0)})
@@ -634,6 +637,7 @@ class LongitudinalEngine:
             else:effort=a.effort_memory+.1*(trust-.5)+autonomy-.2*fatigue
             if self.pc is not None:effort+=self.pc.effort_shift(i)
             efforts[i]=clip(effort,0,limit)
+            if self.pc is not None:efforts[i]*=self.pc.site_capacity(i,a.site,day,self.clock.at(day).month,self.rng)
             if self.operations is not None:efforts[i]*=self.operations.calendar_fraction(self.clock,a.site,day)*coordination_readiness.get(a.site,1.)
             if self.organization is not None:efforts[i]=min(efforts[i],organization_cap[i]*funding)
             if not creating:efforts[i]=0.
@@ -784,6 +788,8 @@ class LongitudinalEngine:
             row['work_creation_enabled']=creating
             if self.pc is not None:
                 row['mean_stress']=avg([self.pc.people[i]['stress'] for i in self.active]);row['mean_fairness']=avg([self.pc.people[i]['fairness'] for i in self.active])
+                row['mean_identity']=avg([self.pc.people[i]['identity'] for i in self.active])
+                row.update(self.pc.gaps(self.active,self.agents))
             row['adoption_days']=canonical(self.adoption).decode()
             for key in ('active_member_calendar_days','active_member_workdays','present_member_workdays','present_member_work_hours','available_member_work_hours','post_adoption_available_member_work_hours','produced_work_units','decision_regret_units','decisions_completed','decisions_unresolved','review_hours','appeal_hours','governance_hours','training_hours','migration_resource_units','dual_run_resource_units','maintenance_resource_units','payroll_resource_units','recruitment_resource_units','operating_resource_units','operating_unfunded_resource_units','revenue_resource_units'):
                 row[key+'_daily']=self.metrics.get(key,0.)-before.get(key,0.)

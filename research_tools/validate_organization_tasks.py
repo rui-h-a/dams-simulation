@@ -57,7 +57,7 @@ def _links(ids,c,assignments=None):
 def verify_organization_accounts(config,state,database):
     _source()
     c=config.organization_tasks
-    pc=getattr(config,'person_context',None);pc_language={};pc_openness={}
+    pc=getattr(config,'person_context',None);pc_language={};pc_openness={};pc_ethnicity={}
     if c is None:
         if 'organization_tasks_state' in state:raise ValueError('disabled organization carries durable state')
         return {'valid':True,'enabled':False,'formal_worlds_added':0}
@@ -183,6 +183,7 @@ def verify_organization_accounts(config,state,database):
                 if pc is not None:
                     if 'person_context' not in v:raise ValueError('person-context entry witness missing')
                     pc_language[person]=v['person_context']['language'];pc_openness[person]=v['person_context']['traits']['openness']
+                    pc_ethnicity[person]=v['person_context'].get('ethnicity')
                 if kind=='entry':
                     learn[person]=memory.get(str(v['guild']),0.)*l.memory_transfer_fraction;fatigue[person]=.1
                 else:
@@ -266,7 +267,7 @@ def verify_organization_accounts(config,state,database):
                 if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+links['reporting_depth'][str(i)]*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
                 peers=[j for j in links['collaboration_peers'][str(i)] if j in present]
                 # R11: cross-language collaboration contacts carry the declared discount (independent re-statement).
-                lang=(lambda j:1. if pc is None or pc_language[i]==pc_language[j] else 1-pc.cross_language_help_discount)
+                lang=(lambda j:1. if pc is None else (1. if pc_language[i]==pc_language[j] else 1-pc.cross_language_help_discount)*(1. if pc_ethnicity[i]==pc_ethnicity[j] else 1-pc.cross_ethnic_help_discount))
                 help_input=math.fsum(cooperation[str(j)]*lang(j) for j in peers)/len(peers) if peers else 0.
                 _close(p['help_input'],help_input,'collaboration input')
                 agent=state['agents'][i];morning=p['morning_observed_state'];token=state['people'][i]['token']

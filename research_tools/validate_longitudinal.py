@@ -92,10 +92,10 @@ def _csv_bytes(rows):
     return out.getvalue().encode()
 
 
-_PC_TRAITS=('conscientiousness','agreeableness','neuroticism','openness','extraversion','risk_tolerance','patience','judgment','education')
+_PC_TRAITS=('conscientiousness','agreeableness','neuroticism','openness','extraversion','risk_tolerance','patience','judgment','education','health_risk')
 
 
-def _verify_person_context_entry(config, rng, token, witness, agent):
+def _verify_person_context_entry(config, rng, token, witness, agent, site=0):
     """Independent re-draw of an R11 entry witness: own Cholesky, same keyed streams."""
     c=config.person_context
     if c is None:
@@ -112,6 +112,18 @@ def _verify_person_context_entry(config, rng, token, witness, agent):
             low[i][j]=math.sqrt(t) if i==j else t/low[j][j]
     z=[rng.normal('pc_trait',token,k) for k in range(n)]
     traits={name:math.fsum(low[i][k]*z[k] for k in range(i+1)) for i,name in enumerate(_PC_TRAITS)}
+    language=None;origin=None;migrant=False;trust_shift=0.
+    if c.origins:
+        home=c.site_origins[site%len(c.site_origins)]
+        if rng.uniform('pc_origin_local',token)<c.local_origin_share:origin=home
+        else:
+            acc=0.;u=rng.uniform('pc_origin',token);origin=c.origins[-1][0]
+            for r in c.origins:
+                acc+=r[1]
+                if u<acc:origin=r[0];break
+        row=next(r for r in c.origins if r[0]==origin);language=row[2];migrant=origin!=home;trust_shift=row[4]
+        for t,v in row[3].items():traits[t]+=v
+    if witness.get('origin')!=origin or witness.get('migrant')!=migrant or witness.get('trust_shift')!=trust_shift:raise ValueError('person-context origin differs from independent draw')
     if any(not math.isclose(witness['traits'][k],v,rel_tol=1e-12,abs_tol=1e-12) for k,v in traits.items()):raise ValueError('person-context traits differ from independent draw')
     def pick(rows,u):
         acc=0.
@@ -120,8 +132,16 @@ def _verify_person_context_entry(config, rng, token, witness, agent):
             if u<acc:return r[0]
         return rows[-1][0]
     if witness['employment']!=pick(c.employment_mix,rng.uniform('pc_employment',token)):raise ValueError('person-context contract differs')
-    if witness['language']!=pick(c.language_groups,rng.uniform('pc_language',token)):raise ValueError('person-context language differs')
-    if witness['caregiver']!=(rng.uniform('pc_caregiver',token)<c.caregiver_share):raise ValueError('person-context caregiver role differs')
+    if witness['language']!=(language if language is not None else pick(c.language_groups,rng.uniform('pc_language',token))):raise ValueError('person-context language differs')
+    female=rng.uniform('pc_gender',token)<c.female_share
+    if witness.get('gender')!=('female' if female else 'male'):raise ValueError('person-context gender differs')
+    if c.caregiver_share_female!=-1.0 and c.caregiver_share_male!=-1.0:
+        expected_care_role=rng.uniform('pc_caregiver_gendered',token)<(c.caregiver_share_female if female else c.caregiver_share_male)
+    else:
+        expected_care_role=rng.uniform('pc_caregiver',token)<c.caregiver_share
+    if witness['caregiver']!=expected_care_role:raise ValueError('person-context caregiver role differs')
+    if witness.get('ethnicity')!=pick(c.ethnic_groups,rng.uniform('pc_ethnicity',token)):raise ValueError('person-context ethnicity differs')
+    if witness.get('physical_work')!=(rng.uniform('pc_physical',token)<c.physical_work_share):raise ValueError('person-context work type differs')
     if witness['care_hours']!=agent['care_hours']:raise ValueError('person-context care time differs from agent state')
     return witness
 
@@ -335,7 +355,7 @@ class _RawDailyAccounting:
                 for field in ('skill','care_hours','autonomy','reciprocity'):
                     if a[field]!=profile[field]:raise ValueError('raw acquired immutable trait differs')
                 if person['birth_date']!=profile['birth_date']:raise ValueError('raw acquired birth identity differs')
-                if p.person_context is not None:self.pc_wit[i]=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),a)
+                if p.person_context is not None:self.pc_wit[i]=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),a,site=value.get('site',a.get('site',0)))
                 self.seen_people.add(i);self.members[i]=value['guild'];self.metrics['acquired_people']+=1
             elif kind=='entry':
                 i=value['person'];person=self.people.get(i)
@@ -345,7 +365,7 @@ class _RawDailyAccounting:
                 if type(value['initial']) is not bool or value['initial']!=initial or initial and (day!=0 or event!=f'initial:{i}') or value['slot']!=person['slot']:
                     raise ValueError('raw entry initial identity/slot differs')
                 _verify_joint_entry(p,self.market_rng,event,initial,value.get('joint_population'),self.agents[i])
-                w=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),self.agents[i])
+                w=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),self.agents[i],site=value.get('organization_site',self.agents[i].get('site',0)))
                 if w is not None:
                     if not math.isclose(w['care_hours'],max(0.,min(.6,(p.person_context.caregiver_care_hours if w['caregiver'] else p.person_context.other_care_hours)+p.person_context.care_hours_sd*self.market_rng.normal('pc_care',event))),rel_tol=1e-12,abs_tol=1e-12):raise ValueError('person-context care draw differs')
                     self.pc_wit[i]=w
@@ -423,7 +443,12 @@ class _RawDailyAccounting:
             # Reconstruct keyed attendance without rerunning agents; this also
             # closes the creation-stop tail where work records are absent.
             leave=min(1.,l.annual_leave_workdays/max(1,clock.workdays_in_year(day)))
-            present=[i for i in active if self.market_rng.uniform('leave',day,self.people[i]['token'])>=leave]
+            def _sick(i):
+                c=p.person_context
+                if c is None or c.annual_sick_days<=0:return False
+                q=min(1.,c.annual_sick_days/max(1,clock.workdays_in_year(day))*math.exp(c.sick_health_coefficient*self.pc_wit[i]['traits']['health_risk']))
+                return self.market_rng.uniform('pc_sick',day,self.people[i]['token'])<q
+            present=[i for i in active if self.market_rng.uniform('leave',day,self.people[i]['token'])>=leave and not _sick(i)]
         if not working or not active:present=[]
         if present is not None and len(present)!=n:raise ValueError('raw present exposure differs from zero-leave calendar')
         if present is None and work:present=sorted(v['person'] for v in work)
@@ -645,7 +670,10 @@ class _RawDailyAccounting:
                 raise ValueError('raw review boolean differs')
             self.number(value['observed'],'review observation')
             shift=0.
-            if p.person_context is not None and value.get('verification_reviewer') is not None and self.pc_wit[_person]['language']!=self.pc_wit[value['verification_reviewer']]['language']:shift=p.person_context.cross_group_evaluation_bias
+            if p.person_context is not None and value.get('verification_reviewer') is not None:
+                cw,rw=self.pc_wit[_person],self.pc_wit[value['verification_reviewer']]
+                if cw['language']!=rw['language']:shift+=p.person_context.cross_group_evaluation_bias
+                if cw.get('gender')=='female' and rw.get('gender')=='male':shift+=p.person_context.gender_evaluation_bias
             if value['accepted']!=(value['observed']+shift>=.25 and not value['audit_detected']):
                 raise ValueError('raw review outcome differs from observed/audit evidence')
             self.metrics['review_hours']+=.1
