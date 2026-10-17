@@ -93,7 +93,7 @@ def prehistory(args):
             for f in sorted(p.rglob('*'), reverse=True):
                 f.unlink() if f.is_file() else f.rmdir()
             p.rmdir()
-    receipt = {'kind': 'r11-prehistory', 'source_sha256': source_hash(), 'config': d, 'branch_day': branch,
+    receipt = {'kind': 'r11-prehistory', 'python': sys.version, 'source_sha256': source_hash(), 'config': d, 'branch_day': branch,
                'checkpoint': cp.name, 'checkpoint_sha256': file_digest(cp),
                'semantic_sha256': m.semantic_digest() if False else None,
                'wall_seconds': time.monotonic()-t, 'cpu_seconds': time.process_time()-cpu, 'peak_rss_mb': _rss_mb(),
@@ -182,7 +182,7 @@ def arm(args):
             for f in sorted(p.rglob('*'), reverse=True):
                 f.unlink() if f.is_file() else f.rmdir()
             p.rmdir()
-    receipt = {'kind': 'r11-arm', 'arm': args['arm'], 'arm_spec': ARMS[args['arm']], 'source_sha256': source_hash(),
+    receipt = {'kind': 'r11-arm', 'python': sys.version, 'arm': args['arm'], 'arm_spec': ARMS[args['arm']], 'source_sha256': source_hash(),
                'parent_prehistory_sha256': file_digest(pre/'prehistory.json'), 'branch_day': branch,
                'config': child_d, 'days': child.days, 'state_semantic_sha256': semantic,
                'ledger_semantic_sha256': ledger_semantic, 'validators': receipts, 'retention': retained,
@@ -207,13 +207,15 @@ def _run(job):
 
 
 def batch(ns):
+    import multiprocessing
+    multiprocessing.set_executable(sys.executable)
     root = Path(ns.out); root.mkdir(parents=True, exist_ok=True)
     worlds = [int(w) for w in ns.worlds.split(',')]
     arms = ns.arms.split(',')
     audit = {int(w) for w in ns.audit_worlds.split(',')} if ns.audit_worlds else set()
     plan = {'scale': ns.scale, 'context': ns.context, 'growth': ns.growth, 'pre_years': ns.pre_years,
             'post_years': ns.post_years, 'seed': ns.seed, 'worlds': worlds, 'arms': arms, 'audit_worlds': sorted(audit),
-            'source_sha256': source_hash(), 'jobs': ns.jobs}
+            'source_sha256': source_hash(), 'jobs': ns.jobs, 'python': sys.version, 'executable': sys.executable}
     plan_path = root/'plan.json'
     if plan_path.exists() and json.loads(plan_path.read_text()) != json.loads(canonical(plan)):
         raise SystemExit('existing plan differs; use a new output directory')
