@@ -22,6 +22,7 @@ from .enterprise_growth import EnterpriseGrowthState, MODEL_VERSION as GROWTH_MO
 from .enterprise_operations import EnterpriseOperatingState, VERSION as CAUSAL_MODEL_VERSION
 from .enterprise_acquisition import EnterpriseAcquisitionState, VERSION as ACQUISITION_MODEL_VERSION
 from .joint_population import (VERSION as JOINT_MODEL_VERSION, draw_entry_traits, generation_witness, verify_joint_person_state)
+from .person_context import PersonContextState, VERSION as PERSON_CONTEXT_VERSION
 from .organization_tasks import OrganizationTasksState, VERSION as ORGANIZATION_MODEL_VERSION, model_version as organization_model_version
 from .longitudinal import GregorianClock, anniversary, birth_for_age, interval_probability, retention
 from .longitudinal_storage import (ExactLedger, snapshot_semantics, CHECKPOINT_FORMAT_VERSION,
@@ -54,6 +55,8 @@ class LongitudinalEngine:
         self.acquisitions = EnterpriseAcquisitionState(config) if config.enterprise_acquisition is not None else None
         self.version = organization_model_version(config) if config.organization_tasks is not None else JOINT_MODEL_VERSION if config.joint_population is not None else ACQUISITION_MODEL_VERSION if self.acquisitions is not None else CAUSAL_MODEL_VERSION if self.operations is not None else GROWTH_MODEL_VERSION if self.enterprise is not None else type(self).version
         self.organization = OrganizationTasksState(config) if config.organization_tasks is not None else None
+        self.pc = PersonContextState(config) if config.person_context is not None else None
+        if self.pc is not None:self.version=PERSON_CONTEXT_VERSION
         self.clock=GregorianClock(self.l)
         self.rng=WorldRandom(config.seed,config.world,world_context=self.l.world_context)
         self.ledger=ExactLedger(storage_dir,page_options=page_options,journal_chunk_bytes=journal_chunk_bytes)
@@ -163,6 +166,8 @@ class LongitudinalEngine:
                 a=Agent(i,guild,0,site,profile['skill'],profile['tenure'],profile['care_hours'],profile['autonomy'],profile['reciprocity'],
                     fatigue=profile['fatigue'],trust=profile['trust'],learning=profile['learning']*retention)
                 self.agents.append(a)
+                if self.pc is not None:
+                    record=self.pc.acquired(self.rng,token);record['care_hours']=a.care_hours;self.pc.append(record)
                 self.people.append({'id':i,'token':token,'slot':slot,'birth_date':profile['birth_date'],'entered_day':self.day,
                     'exited_day':None,'exit_reason':None,'first_positive_authority_day':None,'active_calendar_days':0,
                     'active_workdays':0,'present_workdays':0,'available_work_hours':0.,'post_adoption_available_work_hours':0.,
@@ -171,7 +176,7 @@ class LongitudinalEngine:
                 state['employee_status'][profile['key']]='parent';state['employee_ids'][profile['key']]=i
                 self.metrics['acquired_people']+=1
                 self.ledger.add_journal(self.day,'acquisition_entry',token,{'person':i,'slot':slot,'guild':guild,'site':site,
-                    'target':transfer['target'],'source_person':profile['key'],'historical_credit_added':0.,'profile':profile,'learning_retention':retention})
+                    'target':transfer['target'],'source_person':profile['key'],'historical_credit_added':0.,'profile':profile,'learning_retention':retention,**({'person_context':self.pc.witness(i)} if self.pc is not None else {})})
             self._topology()
         self.operations.acquired_orders_per_workday=self.acquisitions.demand_addition()
         for index,(kind,value) in enumerate(events):self.ledger.add_journal(self.day,kind,f'acquisition:{self.day}:{index}',value)
@@ -191,6 +196,8 @@ class LongitudinalEngine:
             traits=draw_entry_traits(p.joint_population,self.rng,token,initial=initial)
             a=Agent(i,guild,0,guild%self.site_count if site is None else site,**traits)
         a.learning=self.memory[guild]*self.l.memory_transfer_fraction
+        if self.pc is not None:
+            record=self.pc.draw(self.rng,token);a.care_hours=record['care_hours'];self.pc.append(record)
         self.agents.append(a)
         self.people.append({'id':i,'token':token,'slot':slot,'birth_date':birth,'entered_day':self.day,
                             'exited_day':None,'exit_reason':None,'first_positive_authority_day':None,
@@ -203,6 +210,7 @@ class LongitudinalEngine:
         if p.organization_tasks is not None:entry['organization_site']=a.site
         if p.joint_population is not None:
             entry['joint_population']=generation_witness(p.joint_population,traits,initial=initial)
+        if self.pc is not None:entry['person_context']=self.pc.witness(i)
         self.ledger.add_journal(self.day,'entry',token,entry)
         if not initial:
             self.cash-=self.l.recruitment_resource_units_per_person
@@ -268,6 +276,7 @@ class LongitudinalEngine:
             elif i in scheduled:self._exit(i,scheduled[i])
             elif age_at(record['birth_date'],self.clock.at(day))>=l.retirement_age_years:self._exit(i,'retirement')
             elif self.rng.uniform('exit',day,record['token'])<interval_probability(l.annual_exit_probability,1,self.clock.days_in_year(day)):self._exit(i,'exit')
+            elif self.pc is not None and day>record['entered_day'] and self.rng.uniform('pc_quit',day,record['token'])<interval_probability(self.pc.annual_quit_probability(i),1,self.clock.days_in_year(day)):self._exit(i,'voluntary_exit')
         self._topology()
         if self.closed_day is not None or self.suspended_day is not None:return
         if self.enterprise is not None:
@@ -409,19 +418,22 @@ class LongitudinalEngine:
         from .model import clip
         p=self.config
         self.metrics['review_hours']+=.1;self.metrics['verification_resource_units']+=unit-1
-        accepted=claim.observed>=.25 and not claim.audit_detected
+        shift=self.pc.evaluation_shift(claim.agent,reviewer) if self.pc is not None else 0.
+        accepted=claim.observed+shift>=.25 and not claim.audit_detected
+        if self.pc is not None:self.pc.observe_review(claim.agent,accepted,not claim.fraudulent)
         self.ledger.add_journal(day,'review',claim.event,{'accepted':accepted,'observed':claim.observed,'audit_detected':claim.audit_detected,'backend':backend,**({'verification_reviewer':reviewer,'verification_hours':self.organization.c.verification_hours_per_claim} if self.organization is not None else {})})
         if accepted:self.ledger.push('commit',source,dataclasses.replace(claim,ready=day+settlement))
         else:
             self.metrics['reviews_rejected']+=1;self.metrics['fraudulent_records_detected']+=int(claim.fraudulent);self.metrics['honest_records_rejected']+=int(not claim.fraudulent)
             a=self.agents[claim.agent];a.trust=clip(a.trust-.025)
-            if claim.observed>=.25 and a.trust>.2:self.ledger.push('appeal',source,dataclasses.replace(claim,ready=day+p.appeal_delay_days))
+            if claim.observed>=.25 and a.trust>.2 and (self.pc is None or self.rng.uniform('pc_voice',day,self.people[claim.agent]['token'])<self.pc.voice_probability(claim.agent,self.pc.team_safety(self.teams.get(a.team,[]),self.agents))):self.ledger.push('appeal',source,dataclasses.replace(claim,ready=day+p.appeal_delay_days))
     def _appeal_one(self,source,claim,day,settlement):
         self.metrics['appeal_hours']+=.15
         token=self.people[claim.agent]['token']
         detected=self.rng.uniform('appeal_audit',claim.created,token)<(.9 if claim.fraudulent else .01)
         if not detected:self.ledger.push('commit',source,dataclasses.replace(claim,ready=day+settlement,correction=True))
         else:self.metrics['appeals_denied']+=1
+        if self.pc is not None:self.pc.observe_appeal(claim.agent,not detected)
         self.ledger.add_journal(day,'appeal',claim.event,{'detected':detected})
 
 
@@ -540,6 +552,10 @@ class LongitudinalEngine:
         # scales available capacity and divisible reservations, not the cost of
         # an indivisible governance operation into a free vote.
         cooperation={i:clip(self.agents[i].reciprocity*snapshot[i][1]*(1-snapshot[i][2])) for i in present}
+        team_safety=None
+        if self.pc is not None:
+            cooperation={i:clip(v*self.pc.cooperation_factor(i)) for i,v in cooperation.items()}
+            team_safety={team:self.pc.team_safety(ids,self.agents) for team,ids in self.teams.items()}
         acquisition_coordination={i:(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.) for i in present}
         if self.joint_control is not None:
             for i in acquisition_coordination:acquisition_coordination[i]+=self.joint_control['coordination_hours']
@@ -586,8 +602,8 @@ class LongitudinalEngine:
                 effective=[];votes=[];flags=[]
                 for i in ids:
                     share,trust,fatigue,learning=snapshot[i];token=self.people[i]['token']
-                    signal=theta+p.decision_noise_sd/(1+learning)*self.rng.normal('decision_signal',day,token)+p.shared_signal_sd*self.rng.normal('shared_signal',day,g)
-                    flag=i in present and governance_time[i]>0 and self.rng.uniform('participate',day,token)<clip(.25+.65*trust-.35*fatigue)
+                    signal=theta+p.decision_noise_sd/(1+learning)*(self.pc.decision_noise_factor(i) if self.pc is not None else 1.)*self.rng.normal('decision_signal',day,token)+p.shared_signal_sd*self.rng.normal('shared_signal',day,g)
+                    flag=i in present and governance_time[i]>0 and self.rng.uniform('participate',day,token)<clip(.25+.65*trust-.35*fatigue+(self.pc.participation_shift(i,team_safety[self.agents[i].team]) if self.pc is not None else 0.))
                     flags.append(flag);effective.append(share if flag else 0.);votes.append(float(signal>=0))
                     self.ledger.add_journal(day,'vote',f'vote:{day}:{token}:g:{g}',{'person':i,'guild':g,'observed_signal':signal,'participates':flag,'formal_share':share,'effective_weight':share if flag else 0.,'vote':float(signal>=0)})
                 mass=math.fsum(effective)
@@ -616,6 +632,7 @@ class LongitudinalEngine:
             if p.behavior_rule=='linear_response':effort=.5+.35*trust+autonomy-.4*fatigue-a.care_hours
             elif p.behavior_rule=='satisficing':effort=(.45 if a.confirmed/max(1,self.people[i]['active_workdays'])>=.5 else .8)+autonomy-.3*fatigue
             else:effort=a.effort_memory+.1*(trust-.5)+autonomy-.2*fatigue
+            if self.pc is not None:effort+=self.pc.effort_shift(i)
             efforts[i]=clip(effort,0,limit)
             if self.operations is not None:efforts[i]*=self.operations.calendar_fraction(self.clock,a.site,day)*coordination_readiness.get(a.site,1.)
             if self.organization is not None:efforts[i]=min(efforts[i],organization_cap[i]*funding)
@@ -629,7 +646,7 @@ class LongitudinalEngine:
         team_help={team:statistics.fmean(cooperation.get(i,0.) for i in ids) for team,ids in self.teams.items()}
         if self.organization is not None:
             links=self.organization.last_plan['topology']['collaboration_peers']
-            organization_help={i:(math.fsum(cooperation[j] for j in links[str(i)] if j in present)/sum(j in present for j in links[str(i)]) if any(j in present for j in links[str(i)]) else 0.) for i in present}
+            organization_help={i:(math.fsum(cooperation[j]*(self.pc.help_language_factor(i,j) if self.pc is not None else 1.) for j in links[str(i)] if j in present)/sum(j in present for j in links[str(i)]) if any(j in present for j in links[str(i)]) else 0.) for i in present}
         organization_potential={};organization_unconstrained={};organization_planned_effort=dict(efforts)
         if self.organization is not None:
             for i in sorted(present):
@@ -646,7 +663,7 @@ class LongitudinalEngine:
             for index,i in enumerate(self.active):
                 if i not in present or not creating or funding==0:continue
                 a=self.agents[i];token=self.people[i]['token'];cross=self.active[(index+1)%len(self.active)]
-                help_input=(team_help[a.team]+cooperation.get(cross,0.))/2
+                help_input=(team_help[a.team]+cooperation.get(cross,0.)*(self.pc.help_language_factor(i,cross) if self.pc is not None else 1.))/2
                 shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
                 adopt=self.adoption[a.guild];transition=1. if adopt is None else 1-.2*self.routine[a.guild]*(1-clip((day-adopt)/l.transition_days))
                 potential=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input)
@@ -666,12 +683,15 @@ class LongitudinalEngine:
         daily_output=0.;yearwork=max(1,self.clock.workdays_in_year(day))
         for index,i in enumerate(self.active):
             a=self.agents[i];token=self.people[i]['token']
-            if i not in present:a.fatigue=clip(a.fatigue-.1);continue
+            if i not in present:
+                a.fatigue=clip(a.fatigue-.1)
+                if self.pc is not None:self.pc.rest(i)
+                continue
             if not creating or funding==0:
                 a.fatigue=clip(a.fatigue-.1);continue
             if self.metrics['work_events']>=p.max_events:raise RuntimeError('longitudinal actual work-event guard exceeded; no silently shortened horizon')
             cross=self.active[(index+1)%len(self.active)]
-            help_input=(team_help[a.team]+cooperation.get(cross,0.))/2
+            help_input=(team_help[a.team]+cooperation.get(cross,0.)*(self.pc.help_language_factor(i,cross) if self.pc is not None else 1.))/2
             shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
             adopt=self.adoption[a.guild];transition=1.
             if adopt is not None:
@@ -704,8 +724,9 @@ class LongitudinalEngine:
             workload=efforts[i]+coordination[i]*funding+(attack_time if i in attackers else 0.)+training[i]*funding
             if self.organization is not None:workload+=(fixed[i]+organization_quality[i]+organization_learning[i])*funding
             a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03)
-            a.learning=clip(a.learning+l.skill_learning_per_work_year*(efforts[i]+(organization_learning[i]*funding if self.organization is not None else 0.))/yearwork,0,2)
+            a.learning=clip(a.learning+(self.pc.learning_factor(i) if self.pc is not None else 1.)*l.skill_learning_per_work_year*(efforts[i]+(organization_learning[i]*funding if self.organization is not None else 0.))/yearwork,0,2)
             a.effort_memory=efforts[i]
+            if self.pc is not None:self.pc.update_stress(i,workload,help_input,a.autonomy,team_safety[a.team])
         for g,ids in self.members.items():
             if self.adoption[g] is not None:self.routine[g]*=retention(l.routine_adjustment_half_life_days)
             mean_effort=math.fsum(efforts.get(i,0.) for i in ids)/max(1,len(ids))
@@ -761,11 +782,13 @@ class LongitudinalEngine:
                 row.update({'acquired_people_cumulative':self.metrics.get('acquired_people',0.),'acquired_companies_integrated':sum(s['status']=='integrated' for s in self.acquisitions.targets.values()),'acquisition_failed_companies':sum(s['status']=='failed' for s in self.acquisitions.targets.values())})
             if self.organization is not None:row.update({'task_department_count':self.organization.c.department_count,'dependency_inventory_units':math.fsum(self.organization.stocks.values()),'organization_network_hours_cumulative':self.metrics.get('organization_network_hours',0.),'organization_quality_hours_cumulative':self.metrics.get('organization_quality_hours',0.),'organization_learning_hours_cumulative':self.metrics.get('organization_learning_hours',0.)})
             row['work_creation_enabled']=creating
+            if self.pc is not None:
+                row['mean_stress']=avg([self.pc.people[i]['stress'] for i in self.active]);row['mean_fairness']=avg([self.pc.people[i]['fairness'] for i in self.active])
             row['adoption_days']=canonical(self.adoption).decode()
             for key in ('active_member_calendar_days','active_member_workdays','present_member_workdays','present_member_work_hours','available_member_work_hours','post_adoption_available_member_work_hours','produced_work_units','decision_regret_units','decisions_completed','decisions_unresolved','review_hours','appeal_hours','governance_hours','training_hours','migration_resource_units','dual_run_resource_units','maintenance_resource_units','payroll_resource_units','recruitment_resource_units','operating_resource_units','operating_unfunded_resource_units','revenue_resource_units'):
                 row[key+'_daily']=self.metrics.get(key,0.)-before.get(key,0.)
                 row[key+'_cumulative']=self.metrics.get(key,0.)
-        self.ledger.add_journal(day,'day_end',f'day:{day}',{**({'enterprise_growth_state':self.enterprise.to_dict()} if self.enterprise is not None else {}),**({'enterprise_operating_state':self.operations.to_dict()} if self.operations is not None else {}),**({'enterprise_acquisition_state':self.acquisitions.to_dict()} if self.acquisitions is not None else {}),**({'organization_tasks_state':self.organization.to_dict()} if self.organization is not None else {}),'date':self.clock.at(day).isoformat(),'active':len(active),'present':len(present),'output':daily_output,'cash':self.cash,'closed_day':self.closed_day,'suspended_day':self.suspended_day,'adoption_days':self.adoption,
+        self.ledger.add_journal(day,'day_end',f'day:{day}',{**({'enterprise_growth_state':self.enterprise.to_dict()} if self.enterprise is not None else {}),**({'enterprise_operating_state':self.operations.to_dict()} if self.operations is not None else {}),**({'enterprise_acquisition_state':self.acquisitions.to_dict()} if self.acquisitions is not None else {}),**({'organization_tasks_state':self.organization.to_dict()} if self.organization is not None else {}),**({'person_context_groups':self.pc.group_summary(self.active,self.agents)} if self.pc is not None else {}),'date':self.clock.at(day).isoformat(),'active':len(active),'present':len(present),'output':daily_output,'cash':self.cash,'closed_day':self.closed_day,'suspended_day':self.suspended_day,'adoption_days':self.adoption,
             **({'joint_control':self.joint_control} if self.joint_control is not None else {}),
             'metrics_daily':{k:self.metrics[k]-before.get(k,0.) for k in self.metrics},'metrics_cumulative':dict(self.metrics),
             'memory':self.memory,'routine':self.routine,'review_backlog_records':backlog,'appeal_backlog_records':self.ledger.pending_count('appeal')})
@@ -808,6 +831,7 @@ class LongitudinalEngine:
         if self.operations is not None:value['enterprise_operating_state']=self.operations.to_dict()
         if self.acquisitions is not None:value['enterprise_acquisition_state']=self.acquisitions.to_dict()
         if self.organization is not None:value['organization_tasks_state']=self.organization.to_dict()
+        if self.pc is not None:value['person_context_state']=self.pc.to_dict()
         if self.joint_control is not None:value['joint_control']=copy.deepcopy(self.joint_control)
         if self._state_hash_codec!=LEGACY_STATE_HASH_CODEC:value['state_hash_codec']=self._state_hash_codec
         return value
@@ -904,6 +928,7 @@ class LongitudinalEngine:
         obj.acquisitions=EnterpriseAcquisitionState.restore(obj.config,value.get('enterprise_acquisition_state'),value['day']) if obj.config.enterprise_acquisition is not None else None
         if obj.acquisitions is None and 'enterprise_acquisition_state' in value:raise ValueError('unexpected acquisition state')
         obj.version = organization_model_version(obj.config) if obj.config.organization_tasks is not None else JOINT_MODEL_VERSION if obj.config.joint_population is not None else ACQUISITION_MODEL_VERSION if obj.acquisitions is not None else CAUSAL_MODEL_VERSION if obj.config.enterprise_operations is not None else GROWTH_MODEL_VERSION if obj.config.enterprise_growth is not None else cls.version
+        if obj.config.person_context is not None:obj.version=PERSON_CONTEXT_VERSION
         obj.joint_control=None;obj._joint_pending_control=None
         if 'joint_control' in value:
             from .joint_firm import validate_control,VERSION
@@ -919,6 +944,9 @@ class LongitudinalEngine:
         typed=integer_state_maps(value)
         obj.organization=OrganizationTasksState.restore(obj.config,value.get('organization_tasks_state'),value['day']) if obj.config.organization_tasks is not None else None
         if obj.organization is None and 'organization_tasks_state' in value:raise ValueError('unexpected organization state')
+        obj.pc=PersonContextState.restore(obj.config,value.get('person_context_state')) if obj.config.person_context is not None else None
+        if obj.pc is None and 'person_context_state' in value:raise ValueError('unexpected person context state')
+        if obj.pc is not None:obj.version=PERSON_CONTEXT_VERSION
         obj.clock=GregorianClock(obj.l)
         obj.rng=WorldRandom(obj.config.seed,obj.config.world,world_context=obj.l.world_context)
         obj.failed_day=False
@@ -1228,6 +1256,7 @@ def validate_persisted_state(state,database,*,expected_source_sha256=None):
     acquisitions=EnterpriseAcquisitionState.restore(config,state.get('enterprise_acquisition_state'),state['day']) if config.enterprise_acquisition is not None else None
     if acquisitions is None and 'enterprise_acquisition_state' in state:raise ValueError('unexpected acquisition persisted state')
     expected_model = organization_model_version(config) if config.organization_tasks is not None else JOINT_MODEL_VERSION if config.joint_population is not None else ACQUISITION_MODEL_VERSION if acquisitions is not None else CAUSAL_MODEL_VERSION if operations is not None else GROWTH_MODEL_VERSION if enterprise is not None else 'longitudinal-1'
+    if config.person_context is not None:expected_model=PERSON_CONTEXT_VERSION
     joint_control=None
     if 'joint_control' in state:
         from .joint_firm import validate_control,VERSION

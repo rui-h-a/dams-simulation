@@ -150,6 +150,42 @@ TABLE_ORDER={'pending':'seq','seen':'event COLLATE BINARY','journal':'seq','cred
 TABLE_TYPES={'pending':('INTEGER','TEXT','INTEGER','INTEGER','REAL','TEXT','INTEGER','INTEGER','REAL','INTEGER','INTEGER','INTEGER'),
              'seen':('TEXT',),'journal':('INTEGER','INTEGER','TEXT','TEXT','TEXT'),'credits':('INTEGER','INTEGER','REAL'),'delays':('TEXT','INTEGER','INTEGER')}
 
+def _clone_snapshot_file(source,destination):
+    """APFS copy-on-write restore of a committed rollback-journal snapshot file."""
+    import sys
+    if sys.platform!='darwin' or Path(str(source)+'-journal').exists() or Path(str(source)+'-wal').exists():return False
+    import ctypes
+    libc=ctypes.CDLL(None,use_errno=True)
+    os.unlink(destination)
+    if libc.clonefile(os.fsencode(str(Path(source).resolve())),os.fsencode(str(destination)),0)!=0:
+        fd=os.open(destination,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600);os.close(fd)
+        return False
+    os.chmod(destination,0o600)
+    return True
+
+
+def _clone_committed_database(db,source,destination):
+    """Copy-on-write image of a committed rollback-journal database (APFS clonefile).
+
+    The caller has already verified that no transaction is open. With
+    journal_mode=DELETE and synchronous=FULL the main file is then a complete,
+    consistent database, so the clone has the same logical content as an SQLite
+    backup while sharing unchanged pages. Other platforms return False and use
+    the SQLite backup API.
+    """
+    import sys
+    if sys.platform!='darwin' or db.in_transaction:return False
+    mode=db.execute('PRAGMA journal_mode').fetchone()[0]
+    if str(mode).lower()!='delete' or Path(str(source)+'-journal').exists():return False
+    import ctypes
+    libc=ctypes.CDLL(None,use_errno=True)
+    os.unlink(destination)
+    if libc.clonefile(os.fsencode(str(source)),os.fsencode(str(destination)),0)!=0:
+        fd=os.open(destination,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600);os.close(fd)
+        return False
+    return True
+
+
 class ExactLedger:
     def __init__(self,directory=None,*,snapshot=None,page_options=None,journal_chunk_bytes=None):
         from .journal_chunks import checked_target
@@ -171,8 +207,10 @@ class ExactLedger:
             ensure_directory(self.directory)
         self.path=self.directory/'.longitudinal-working.sqlite'
         if self.path.exists() or self.path.is_symlink():raise ValueError('working longitudinal database already exists; restore into a fresh directory')
+        cloned=False
         if page_options is None:
             fd=os.open(self.path,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600);os.close(fd)
+            if snapshot is not None:cloned=_clone_snapshot_file(Path(snapshot),self.path)
             self.db=sqlite3.connect(self.path)
         else:
             from .native_page_backend import open_new_database
@@ -189,9 +227,10 @@ class ExactLedger:
                 self.db.close()
                 raise
         if snapshot is not None:
-            source=sqlite3.connect(f'file:{Path(snapshot).resolve()}?mode=ro',uri=True)
-            try:source.backup(self.db)
-            finally:source.close()
+            if not cloned:
+                source=sqlite3.connect(f'file:{Path(snapshot).resolve()}?mode=ro',uri=True)
+                try:source.backup(self.db)
+                finally:source.close()
             try:self.validate_schema()
             except BaseException:self.db.close();raise
             if journal_chunk_bytes is not None and journal_chunk_bytes!=self.journal_chunk_bytes:
@@ -442,9 +481,10 @@ class ExactLedger:
         try:fd=os.open(path,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600)
         except FileExistsError:raise ValueError('immutable longitudinal snapshot already exists') from None
         os.close(fd)
-        target=sqlite3.connect(path)
-        try:self.db.backup(target);target.commit()
-        finally:target.close()
+        if not _clone_committed_database(self.db,Path(self.path),path):
+            target=sqlite3.connect(path)
+            try:self.db.backup(target);target.commit()
+            finally:target.close()
         with path.open('rb') as stream:os.fsync(stream.fileno())
         return {'schema_version':self.schema_version,'file':path.name,'sha256':file_digest(path),'semantic_sha256':self.semantic_digest(),'bytes':path.stat().st_size,'row_counts':self.logical_row_counts()}
     def materialize(self,max_rows=100000):

@@ -57,6 +57,7 @@ def _links(ids,c,assignments=None):
 def verify_organization_accounts(config,state,database):
     _source()
     c=config.organization_tasks
+    pc=getattr(config,'person_context',None);pc_language={};pc_openness={}
     if c is None:
         if 'organization_tasks_state' in state:raise ValueError('disabled organization carries durable state')
         return {'valid':True,'enabled':False,'formal_worlds_added':0}
@@ -179,6 +180,9 @@ def verify_organization_accounts(config,state,database):
                 if structure is not None:structure['assignments'][str(person)]=person%c.department_count
                 if type(person) is not int or person in learn:raise ValueError('organization entry reuses identity')
                 active.add(person);guilds[person]=v['guild'];sites[person]=v['organization_site'] if kind=='entry' else v['site']
+                if pc is not None:
+                    if 'person_context' not in v:raise ValueError('person-context entry witness missing')
+                    pc_language[person]=v['person_context']['language'];pc_openness[person]=v['person_context']['traits']['openness']
                 if kind=='entry':
                     learn[person]=memory.get(str(v['guild']),0.)*l.memory_transfer_fraction;fatigue[person]=.1
                 else:
@@ -206,7 +210,7 @@ def verify_organization_accounts(config,state,database):
             elif kind=='adoption':
                 g=str(v['guild']);_close(v['routine_retained'],routine[g],'adoption routine retained');adoptions[g]=day
             elif kind=='guild_move':sites[v['person']]=v['organization_site'];guilds[v['person']]=v['new']
-            elif kind in ('exit','retirement','layoff'):
+            elif kind in ('exit','retirement','layoff','voluntary_exit'):
                 if not exit_sizes:exit_sizes={g:sum(guilds[i]==g for i in active) for g in set(guilds[i] for i in active)}
                 person=v['person'];g=guilds[person]
                 loss=(1-l.memory_transfer_fraction)*min(memory[str(g)],learn[person]/max(1,exit_sizes[g]))
@@ -261,14 +265,16 @@ def verify_organization_accounts(config,state,database):
                 _close(o['reporting_readiness_fraction'],readiness,'reporting readiness')
                 if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+links['reporting_depth'][str(i)]*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
                 peers=[j for j in links['collaboration_peers'][str(i)] if j in present]
-                help_input=math.fsum(cooperation[str(j)] for j in peers)/len(peers) if peers else 0.
+                # R11: cross-language collaboration contacts carry the declared discount (independent re-statement).
+                lang=(lambda j:1. if pc is None or pc_language[i]==pc_language[j] else 1-pc.cross_language_help_discount)
+                help_input=math.fsum(cooperation[str(j)]*lang(j) for j in peers)/len(peers) if peers else 0.
                 _close(p['help_input'],help_input,'collaboration input')
                 agent=state['agents'][i];morning=p['morning_observed_state'];token=state['people'][i]['token']
                 _close(morning['learning'],learn[i],'morning learning from complete history')
                 _close(morning['fatigue'],fatigue[i],'morning fatigue from complete history')
                 workload=p['effort']+p.get('enterprise_coordination',0.)+p['attack_hours']+p['training']+(a['network_hours']+a['quality_hours']+a['learning_hours'])*funding
                 fatigue[i]=max(0.,min(1.,fatigue[i]+.15*workload-.1*(1-workload)-.03))
-                learn[i]=max(0.,min(2.,learn[i]+l.skill_learning_per_work_year*(p['effort']+o['learning_hours'])/max(1,clock.workdays_in_year(day))))
+                learn[i]=max(0.,min(2.,learn[i]+(1. if pc is None else max(0.,1+pc.learning_openness_coefficient*pc_openness[i]))*l.skill_learning_per_work_year*(p['effort']+o['learning_hours'])/max(1,clock.workdays_in_year(day))))
                 shock=.7 if config.fault_start_day<=day<config.fault_stop_day and sites[i]==0 else 1.
                 difficulty=.5+rng.uniform('task_difficulty',day,token);noise=math.exp(.1*rng.normal('task_output',day,token))
                 g=str(guilds[i]);adopt=adoptions[g]

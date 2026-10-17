@@ -92,6 +92,40 @@ def _csv_bytes(rows):
     return out.getvalue().encode()
 
 
+_PC_TRAITS=('conscientiousness','agreeableness','neuroticism','openness','extraversion','risk_tolerance','patience','judgment','education')
+
+
+def _verify_person_context_entry(config, rng, token, witness, agent):
+    """Independent re-draw of an R11 entry witness: own Cholesky, same keyed streams."""
+    c=config.person_context
+    if c is None:
+        if witness is not None:raise ValueError('disabled person context carries an entry witness')
+        return None
+    if not isinstance(witness,dict):raise ValueError('person-context entry witness missing')
+    n=len(_PC_TRAITS);m=[[1. if i==j else 0. for j in range(n)] for i in range(n)]
+    for key,rho in c.trait_correlations.items():
+        a,b=(_PC_TRAITS.index(x) for x in key.split('|'));m[a][b]=m[b][a]=float(rho)
+    low=[[0.]*n for _ in range(n)]
+    for i in range(n):
+        for j in range(i+1):
+            t=m[i][j]-math.fsum(low[i][k]*low[j][k] for k in range(j))
+            low[i][j]=math.sqrt(t) if i==j else t/low[j][j]
+    z=[rng.normal('pc_trait',token,k) for k in range(n)]
+    traits={name:math.fsum(low[i][k]*z[k] for k in range(i+1)) for i,name in enumerate(_PC_TRAITS)}
+    if any(not math.isclose(witness['traits'][k],v,rel_tol=1e-12,abs_tol=1e-12) for k,v in traits.items()):raise ValueError('person-context traits differ from independent draw')
+    def pick(rows,u):
+        acc=0.
+        for r in rows:
+            acc+=r[1]
+            if u<acc:return r[0]
+        return rows[-1][0]
+    if witness['employment']!=pick(c.employment_mix,rng.uniform('pc_employment',token)):raise ValueError('person-context contract differs')
+    if witness['language']!=pick(c.language_groups,rng.uniform('pc_language',token)):raise ValueError('person-context language differs')
+    if witness['caregiver']!=(rng.uniform('pc_caregiver',token)<c.caregiver_share):raise ValueError('person-context caregiver role differs')
+    if witness['care_hours']!=agent['care_hours']:raise ValueError('person-context care time differs from agent state')
+    return witness
+
+
 def _verify_joint_entry(config, rng, event, initial, witness, agent):
     """Independent scalar reconstruction of entry sampling, no Model transition.
 
@@ -174,7 +208,7 @@ class _RawDailyAccounting:
         self.closed=None;self.suspended=None;self.cash=config.n*config.longitudinal.initial_cash_per_member
         self.metrics=defaultdict(float)
         self.previous_reported={};self.unfunded_workdays=0
-        self.seen_people=set();self.person_exposure={i:defaultdict(float) for i in self.people}
+        self.seen_people=set();self.pc_wit={};self.person_exposure={i:defaultdict(float) for i in self.people}
         self.unknown_present=set()
 
     def at(self,day):
@@ -248,7 +282,8 @@ class _RawDailyAccounting:
                     if person is None:raise ValueError('raw acquired employee source identity missing')
                     i=person['id'];g=first_guild+index%transfer['guilds'];site=first_site+index%transfer['sites'];slot=first_slot+index
                     retention=1. if transfer['mode']=='preserve-autonomy' else self.acquisitions.c.centralization_learning_retention
-                    expected_entries.append(('acquisition_entry',token,{'person':i,'slot':slot,'guild':g,'site':site,'target':transfer['target'],'source_person':profile['key'],'historical_credit_added':0.,'profile':profile,'learning_retention':retention}))
+                    expected_entries.append(('acquisition_entry',token,{'person':i,'slot':slot,'guild':g,'site':site,'target':transfer['target'],'source_person':profile['key'],'historical_credit_added':0.,'profile':profile,'learning_retention':retention,**({'person_context':next((v.get('person_context') for k,e,v in events if k=='acquisition_entry' and e==token),None)} if p.person_context is not None else {})}))
+                    # The R11 witness is copied here and independently re-drawn at the acquisition_entry handler.
                     s['employee_status'][profile['key']]='parent';s['employee_ids'][profile['key']]=i;self.members[i]=g
             if [(k,e,v) for k,e,v in events if k=='acquisition_entry']!=expected_entries:raise ValueError('raw acquisition employee transfer differs')
             self.operations.acquired_orders_per_workday=self.acquisitions.demand_addition()
@@ -285,7 +320,7 @@ class _RawDailyAccounting:
             if change!=current-self.previous_reported.get(key,0.):
                 raise ValueError('raw metric cumulative difference differs: '+key)
         if self.operations is not None:
-            occupied={self.people[i]['slot'] for i in self.members if not any(k in {'exit','retirement','layoff'} and v['person']==i for k,e,v in events)}
+            occupied={self.people[i]['slot'] for i in self.members if not any(k in {'exit','retirement','layoff','voluntary_exit'} and v['person']==i for k,e,v in events)}
             if day==0:occupied=set(range(p.n))
             ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
             for k,e,v in events:
@@ -300,6 +335,7 @@ class _RawDailyAccounting:
                 for field in ('skill','care_hours','autonomy','reciprocity'):
                     if a[field]!=profile[field]:raise ValueError('raw acquired immutable trait differs')
                 if person['birth_date']!=profile['birth_date']:raise ValueError('raw acquired birth identity differs')
+                if p.person_context is not None:self.pc_wit[i]=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),a)
                 self.seen_people.add(i);self.members[i]=value['guild'];self.metrics['acquired_people']+=1
             elif kind=='entry':
                 i=value['person'];person=self.people.get(i)
@@ -309,13 +345,17 @@ class _RawDailyAccounting:
                 if type(value['initial']) is not bool or value['initial']!=initial or initial and (day!=0 or event!=f'initial:{i}') or value['slot']!=person['slot']:
                     raise ValueError('raw entry initial identity/slot differs')
                 _verify_joint_entry(p,self.market_rng,event,initial,value.get('joint_population'),self.agents[i])
+                w=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),self.agents[i])
+                if w is not None:
+                    if not math.isclose(w['care_hours'],max(0.,min(.6,(p.person_context.caregiver_care_hours if w['caregiver'] else p.person_context.other_care_hours)+p.person_context.care_hours_sd*self.market_rng.normal('pc_care',event))),rel_tol=1e-12,abs_tol=1e-12):raise ValueError('person-context care draw differs')
+                    self.pc_wit[i]=w
                 self.seen_people.add(i)
                 self.members[i]=self.alias[value['guild']]
                 if not value['initial']:
                     self.cash-=l.recruitment_resource_units_per_person
                     self.metrics['recruitment_resource_units']+=l.recruitment_resource_units_per_person
                     self.metrics['entrants']+=1
-            elif kind in {'exit','retirement','layoff'}:
+            elif kind in {'exit','retirement','layoff','voluntary_exit'}:
                 i=value['person']
                 if i not in self.members or self.people[i]['exited_day']!=day or self.people[i]['exit_reason']!=kind:
                     raise ValueError('raw exit/person lifecycle differs')
@@ -451,6 +491,7 @@ class _RawDailyAccounting:
                 trust=self.number(value['morning_trust'],'coordination morning trust',high=1.)
                 fatigue=self.number(value['morning_fatigue'],'coordination morning fatigue',high=1.)
                 cooperation=max(0.,min(1.,agent['reciprocity']*trust*(1-fatigue)))
+                if p.person_context is not None:cooperation=max(0.,min(1.,cooperation*max(0.,1+p.person_context.cooperation_agreeableness_coefficient*self.pc_wit[i]['traits']['agreeableness'])))
                 other=.1*p.review_capacity_per_member_day+.15*p.appeal_capacity_per_member_day+.05*cooperation+training[i]+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)+(self.joint_control['coordination_hours'] if self.joint_control is not None else 0.)
                 capacity=self.operations.coordination_capacity(agent['care_hours'],other)
                 if value['site']!=agent['site'] or value['service_capacity']!=capacity:raise ValueError('raw coordination actual available time differs')
@@ -507,6 +548,7 @@ class _RawDailyAccounting:
                 for key,high in (('share',1.),('trust',1.),('fatigue',1.),('learning',2.)):
                     self.number(morning[key],'morning '+key,high=high)
                 original_cooperation=max(0.,min(1.,agent['reciprocity']*morning['trust']*(1-morning['fatigue'])))
+                if p.person_context is not None:original_cooperation=max(0.,min(1.,original_cooperation*max(0.,1+p.person_context.cooperation_agreeableness_coefficient*self.pc_wit[i]['traits']['agreeableness'])))
                 expected_cooperation=0. if attack_active and p.attack=='freeride' and i in attackers else original_cooperation
                 if value['cooperation']!=expected_cooperation:raise ValueError('raw cooperation differs from morning evidence')
                 coordination=(coordination_service.get(i,0.) if self.operations is not None else 0.)+(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.)+(self.joint_control['coordination_hours'] if self.joint_control is not None else 0.)
@@ -602,7 +644,9 @@ class _RawDailyAccounting:
             if type(value['accepted']) is not bool or type(value['audit_detected']) is not bool:
                 raise ValueError('raw review boolean differs')
             self.number(value['observed'],'review observation')
-            if value['accepted']!=(value['observed']>=.25 and not value['audit_detected']):
+            shift=0.
+            if p.person_context is not None and value.get('verification_reviewer') is not None and self.pc_wit[_person]['language']!=self.pc_wit[value['verification_reviewer']]['language']:shift=p.person_context.cross_group_evaluation_bias
+            if value['accepted']!=(value['observed']+shift>=.25 and not value['audit_detected']):
                 raise ValueError('raw review outcome differs from observed/audit evidence')
             self.metrics['review_hours']+=.1
             self.metrics['verification_resource_units']+=p.backend_review_multipliers[('central','witness','consensus').index(value['backend'])]-1

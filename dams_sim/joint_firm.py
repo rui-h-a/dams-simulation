@@ -438,7 +438,7 @@ class JointRun:
                 if kind=='joint_owned_control':
                     if when in controls:raise ValueError('joint duplicate actual day control')
                     controls[when]=value
-                if kind in ('entry','exit','retirement','layoff'):
+                if kind in ('entry','exit','retirement','layoff','voluntary_exit'):
                     lifecycle.setdefault(when,[]).append((kind,value))
             if set(rows)!=set(range(self.day)):raise ValueError('joint actual complete company day roster differs')
             journals[company]=(rows,controls)
