@@ -4,9 +4,11 @@ Each agent receives correlated latent traits drawn through a Gaussian copula,
 an employment contract, a primary-caregiver role and a working-language group.
 Traits act only through declared behavioural paths: effort, cooperation,
 participation, appeal voice, decision noise, learning, stress and voluntary
-exit. Demographic labels are never read. Language group membership acts only
-through communication cost and an optional evaluation-bias parameter, whose
-default is zero and which is intended for sensitivity analysis.
+exit. Demographic labels (gender, origin, migrant status, ethnicity) are read
+only by declared paths: caregiving probability, language and help cost,
+voice, migrant exit and evaluation-bias parameters. They never set skill,
+honesty or eligibility, and every evaluation-bias parameter defaults to zero
+and is intended for sensitivity analysis.
 
 Coefficient defaults are design assumptions. Their status and literature
 support are recorded in ``candidate-evidence/R11_FACTOR_COVERAGE.json``.

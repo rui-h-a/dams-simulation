@@ -160,7 +160,7 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
     O = d['enterprise_operations']
     O.update(base_orders_per_workday=float(n), countries=cx['countries'],
              capital_credit_limit_resource_units=cx['credit_limit_per_member']*n,
-             management_span=8)
+             management_span=8, coordination_manager_basis='span')
     T = d['organization_tasks']
     T.update(department_count=4, department_objectives=[[.8, .15, .05], [.6, .3, .1], [.5, .3, .2], [.7, .2, .1]],
              reporting_hours_per_layer=cx['reporting_hours'], verification_contacts=cx['verification_contacts'],

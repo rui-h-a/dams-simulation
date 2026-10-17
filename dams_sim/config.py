@@ -148,6 +148,7 @@ class Config:
         if self.enterprise_growth is None:
             value.pop('enterprise_growth')
         if self.enterprise_operations is None:value.pop('enterprise_operations')
+        elif value['enterprise_operations'].get('coordination_manager_basis')=='domains':value['enterprise_operations'].pop('coordination_manager_basis')
         if self.enterprise_acquisition is None:value.pop('enterprise_acquisition')
         if self.joint_population is None:value.pop('joint_population')
         if self.organization_tasks is None:value.pop('organization_tasks')

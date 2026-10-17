@@ -1,0 +1,1131 @@
+{
+ "schema": "r11-factor-coverage-1",
+ "candidate_model_version": "longitudinal-enterprise-person-context-11-2",
+ "source_files_sha256": {
+  "dams_sim/person_context.py": "a9edff5d254071e8fc088cc7f446c1ab23941696ee93e398ba1ebd72528b97a9",
+  "dams_sim/longitudinal_model.py": "118dd86b15cb7846705c7c755851ad6b8edde47e82cee50859a7170abd672e9a",
+  "research_tools/r11_design.py": "13cd20ccd7be17a1963ad689dcd68671399d40a649750f2a5ca34ffd6f911cc6"
+ },
+ "default_mode": "person_context is opt-in; omitting it leaves earlier code paths unchanged",
+ "parameter_fit_completed": false,
+ "parameter_recovery_completed": false,
+ "empirical_calibration_completed": false,
+ "external_validation_completed": false,
+ "value_conventions": {
+  "default_value": "dataclass default in PersonContextConfig (dams_sim/person_context.py); an unlisted or empty default means the mechanism is off or neutral",
+  "design_value": "value written by research_tools/r11_design.py (person_context_for, _person_context_base, CONTEXTS, COUNTRY_PROFILES, VARIANTS); every design_value not tied to a cited numeric source below is a declared design or stress assumption",
+  "trait_scale": "all 13 latent traits are standard-normal z scores (mean 0, SD 1 before any origin shift); they are not Likert scores or percentiles"
+ },
+ "demographic_label_policy": {
+  "summary": "Labels (gender, origin/migrant status, ethnicity, language group, appearance trait) never set ability, honesty or fraud propensity. They act only through declared paths: communication/help discount (language, ethnicity), evaluation shift parameters (gender, language group, appearance; all default 0.0), caregiver share and care hours (gender-specific shares, dependents), voluntary-exit multiplier (migrant), voice-probability shift (ethnic minority), informal faction sorting (origin, ethnicity), and bounded origin shifts of selected preference traits plus an initial-trust shift.",
+  "code_vs_docstring": "The module docstring says 'Demographic labels are never read'. The code does read gender, ethnicity, origin and migrant labels at the paths listed above, so the docstring is broader than the implementation; the behavioural statement above is what the code does.",
+  "test_evidence": "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect (a twin differing only in language, caregiver flag, gender and ethnicity has identical effort_shift, cooperation_factor, decision_noise_factor, learning_factor and annual_quit_probability; the declared help and evaluation channels differ as specified).",
+  "not_covered_by_that_test": "migrant exit multiplier, origin trait shifts, minority voice shift and faction sorting are not exercised by the twin test."
+ },
+ "literature": [
+  {
+   "key": "vanderLinden2010",
+   "citation": "van der Linden, te Nijenhuis & Bakker (2010), Journal of Research in Personality 44(3):315-327",
+   "doi": "10.1016/j.jrp.2010.03.003",
+   "location": "Table 2, p. 318 (corrected rho, K = 212 samples, N = 144,117); Table 3, p. 319 (employee subsample, N = 10,654)",
+   "registry_status": "VERIFIED",
+   "numerical_parameter_source": true,
+   "used_for": "the ten Big Five pairwise latent correlations only (BIG_FIVE_CORRELATIONS; BIG_FIVE_CORRELATIONS_EMPLOYEES in variant big-five-employees)",
+   "limits": "meta-analytic corrected values over mixed inventories and samples; the general factor of personality interpretation is contested and not used"
+  },
+  {
+   "key": "Falk2018",
+   "citation": "Falk, Becker, Dohmen, Enke, Huffman & Sunde (2018), Quarterly Journal of Economics 133(4):1645-1692",
+   "doi": "10.1093/qje/qjy013",
+   "location": "Table III (share of individual-level variance between countries, 7.0 to 13.5 percent across six preferences)",
+   "registry_status": "VERIFIED (variance shares); preference-to-workplace-behaviour mapping UNVERIFIED",
+   "numerical_parameter_source": false,
+   "used_for": "upper bound on the plausible size of country-level preference shifts; the shifts in COUNTRY_PROFILES are illustrative magnitudes below that bound, not country estimates",
+   "limits": "national samples of about 1,000; country-level (ecological) correlations must not be used as individual-level correlations; the individual-level correlation matrix was not obtained"
+  },
+  {
+   "key": "Colquitt2001",
+   "citation": "Colquitt, Conlon, Wesson, Porter & Ng (2001), Journal of Applied Psychology 86(3):425-445",
+   "doi": "10.1037/0021-9010.86.3.425",
+   "location": "Table 5, p. 436 (procedural justice with withdrawal rc = -.46, with organizational commitment rc = .57, with trust rc = .61)",
+   "registry_status": "VERIFIED",
+   "numerical_parameter_source": false,
+   "used_for": "direction of the fairness-to-quit and fairness-to-identity paths only; no coefficient is derived from it",
+   "limits": "self-reported attitudes, mostly cross-sectional; withdrawal pools turnover, absence and intentions"
+  },
+  {
+   "key": "Zimmerman2008",
+   "citation": "Zimmerman (2008), Personnel Psychology 61(2):309-348",
+   "doi": "10.1111/j.1744-6570.2008.00115.x",
+   "location": "Abstract (direction only)",
+   "registry_status": "VERIFIED (direction only)",
+   "numerical_parameter_source": false,
+   "used_for": "sign of the conscientiousness and patience-style terms in the quit logit; magnitudes are not available"
+  },
+  {
+   "key": "Castilla2010",
+   "citation": "Castilla & Benard (2010), Administrative Science Quarterly 55(4):543-576",
+   "doi": "10.2189/asqu.2010.55.4.543",
+   "location": "Study 1, pp. 554-555, Figure 1 (hypothetical bonus decisions, N = 229)",
+   "registry_status": "VERIFIED",
+   "numerical_parameter_source": false,
+   "used_for": "existence of an evaluator-side bias channel that is independent of performance; the stress value -0.05 in variant evaluation-bias is not taken from it",
+   "limits": "vignette experiment with US managers; effect sits on the evaluator, not on employee ability"
+  },
+  {
+   "key": "Wilkin2013",
+   "citation": "Wilkin (2013), Journal of Organizational Behavior 34(1):47-64",
+   "doi": "10.1002/job.1790",
+   "location": "Abstract (d = -0.21 overall, d = -0.06 after outlier removal, job satisfaction)",
+   "registry_status": "VERIFIED",
+   "numerical_parameter_source": false,
+   "used_for": "context for employment-contract heterogeneity; it gives no turnover multiplier, so the exit multipliers 1.8 and 2.5 are design assumptions"
+  },
+  {
+   "key": "Edmondson1999",
+   "citation": "Edmondson (1999), Administrative Science Quarterly 44(2):350-383",
+   "doi": "10.2307/2666999",
+   "location": "Table 2 and Table 4 (51 teams, one firm, team level)",
+   "registry_status": "VERIFIED",
+   "numerical_parameter_source": false,
+   "used_for": "conceptual support for a team-level safety proxy; team_safety is a model proxy (mean of trust and perceived fairness) and no coefficient is taken from the source"
+  },
+  {
+   "key": "HerblebMockus2003",
+   "citation": "Herbsleb & Mockus (2003), IEEE Transactions on Software Engineering 29(6):481-494",
+   "doi": "10.1109/TSE.2003.1205177",
+   "location": "Abstract (distributed items take about 2.5 times as long as co-located items)",
+   "registry_status": "VERIFIED (ratio); per-language-gap coefficient UNVERIFIED / not obtained",
+   "numerical_parameter_source": false,
+   "used_for": "context only; the cross-language help discount 0.15 is a design assumption to be varied in sensitivity analysis"
+  },
+  {
+   "key": "BakkerDemerouti2007",
+   "citation": "Bakker & Demerouti (2007), Journal of Managerial Psychology 22(3):309-328",
+   "doi": "10.1108/02683940710733115",
+   "location": "Abstract (qualitative: demands drive exhaustion, resources buffer)",
+   "registry_status": "VERIFIED (qualitative)",
+   "numerical_parameter_source": false,
+   "used_for": "structure of the demand-minus-resource stress target; weights are design assumptions"
+  },
+  {
+   "key": "SonnentagFritz2015",
+   "citation": "Sonnentag & Fritz (2015), Journal of Organizational Behavior 36(S1):S72-S103",
+   "doi": "10.1002/job.1924",
+   "location": "Abstract (qualitative)",
+   "registry_status": "VERIFIED (qualitative)",
+   "numerical_parameter_source": false,
+   "used_for": "stress decays on non-working days (rest); half-life 20 workdays is a design assumption"
+  },
+  {
+   "key": "BLSJOLTS2025",
+   "citation": "U.S. Bureau of Labor Statistics (2026), JOLTS Table 22, annual average quits rates",
+   "doi": null,
+   "location": "Table 22, 2025 column: total nonfarm average monthly quits rate 2.0 percent",
+   "registry_status": "VERIFIED (monthly rate); annualised share (about 24 percent) is derived arithmetic and UNVERIFIED",
+   "numerical_parameter_source": false,
+   "used_for": "order-of-magnitude context only; CONTEXTS[...]['quit'] values (0.07 to 0.22) are design assumptions and are not fitted to it"
+  }
+ ],
+ "factors": [
+  {
+   "factor": "latent traits: Big Five and other individual-difference traits via Gaussian copula",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextConfig.matrix",
+    "dams_sim/person_context.py:PersonContextConfig.validate",
+    "dams_sim/person_context.py:cholesky",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._enter"
+   ],
+   "time_update": "At each entry (initial roster, hires, acquired staff) 13 independent standard normals (conscientiousness, agreeableness, neuroticism, openness, extraversion, risk_tolerance, patience, judgment, education, health_risk, physical_capacity, appearance, financial_strain) are multiplied by the Cholesky factor of the declared correlation matrix; traits are fixed for life after entry.",
+   "units": "z score (SD units); correlation dimensionless in [-0.99, 0.99]; matrix must be positive definite with margin 1e-8",
+   "information_available": "Trait vector stored in PersonContextState.people and recorded in the entry witness (person_context.traits) for audit; behavioural consumers are only the call sites of the other factors in this registry.",
+   "joint_distribution": "Gaussian copula with standard-normal marginals and declared pairwise correlations; unlisted pairs are zero. Origin shifts (see origin factor) are added after the copula draw, so within an origin the marginals are N(shift, 1).",
+   "parameter_source": "Big Five block (10 pairs): van der Linden, te Nijenhuis & Bakker (2010), J Res Pers 44(3):315-327, doi:10.1016/j.jrp.2010.03.003, Table 2 corrected rho (p. 318); employee subsample Table 3 (p. 319) for variant big-five-employees. Pairs outside the Big Five (education|openness 0.25, education|judgment 0.30, patience|risk_tolerance -0.10, health_risk|neuroticism 0.15) are design assumptions; all other pairs are zero by design assumption.",
+   "default_value": "trait_correlations = {} (independent traits)",
+   "design_value": "TRAIT_CORRELATIONS = BIG_FIVE_CORRELATIONS (10 values, Table 2 rho) + OTHER_TRAIT_CORRELATIONS (4 design assumptions); variant independent-traits sets {}; variant big-five-employees uses the Table 3 block",
+   "observables": [
+    "entry.person_context.traits",
+    "timeseries.csv: mean_stress, mean_fairness, mean_identity"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals",
+    "tests/test_person_context_r11.py:PersonContextTests.test_schema_rejects_invalid_and_conflicting_inputs",
+    "tests/test_person_context_r11.py:TraitMatrixSourceTest.test_big_five_block_matches_table_2_rho",
+    "tests/test_person_context_r11.py:TraitMatrixSourceTest.test_design_matrices_are_positive_definite_and_variant_applies"
+   ],
+   "conceptual_references": [
+    "vanderLinden2010",
+    "Falk2018"
+   ],
+   "limitations": "Individual-level correlations for patience, risk_tolerance, judgment, health_risk, education, physical_capacity, appearance and financial_strain have no verified matrix source (Falk 2018 country-level correlations are ecological and not used). risk_tolerance is drawn, shifted by origin and correlated, but no function in person_context.py or longitudinal_model.py reads it, so it currently has no behavioural path. The mapping from traits to workplace behaviour is a model assumption; no verified preference-to-workplace coefficient was obtained."
+  },
+  {
+   "factor": "effort shift from conscientiousness and stress",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.effort_shift",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Daily, added to the behaviour-rule effort before clipping: effort += effort_conscientiousness_coefficient * z_conscientiousness - effort_stress_coefficient * stress.",
+   "units": "effort fraction of workday (dimensionless); z score; stress in [0, 1]",
+   "information_available": "Own trait and own current stress only.",
+   "joint_distribution": "Inherits the trait copula; stress is the dynamic state of the stress factor.",
+   "parameter_source": "design assumption (coefficients 0.05 and 0.1); no published magnitude is used",
+   "default_value": "effort_conscientiousness_coefficient = 0.05; effort_stress_coefficient = 0.1",
+   "design_value": "defaults (not overridden in r11_design.py)",
+   "observables": [
+    "work.effort per agent",
+    "agents.fatigue",
+    "produced_work_units"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect",
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [],
+   "limitations": "No empirical effort-performance coefficient; additive shift on a model-internal effort scale."
+  },
+  {
+   "factor": "cooperation factor from agreeableness",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.cooperation_factor",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Daily, after the inherited cooperation value is computed from reciprocity, trust and fatigue snapshots: cooperation_i = clip(cooperation_i * max(0, 1 + cooperation_agreeableness_coefficient * z_agreeableness)).",
+   "units": "multiplier, dimensionless; z score",
+   "information_available": "Own agreeableness only; the resulting cooperation enters team and cross-team help.",
+   "joint_distribution": "Inherits the trait copula.",
+   "parameter_source": "design assumption (coefficient 0.1)",
+   "default_value": "cooperation_agreeableness_coefficient = 0.1",
+   "design_value": "default",
+   "observables": [
+    "work.help_input",
+    "team help inputs"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [],
+   "limitations": "No verified agreeableness-to-helping coefficient."
+  },
+  {
+   "factor": "participation shift from extraversion, team safety and identity",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.participation_shift",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "At each governance vote, the inherited participation probability clip(0.25 + 0.65 trust - 0.35 fatigue) is shifted by participation_extraversion_coefficient * z_extraversion + participation_safety_coefficient * (team_safety - 0.5) + identity_participation_coefficient * (identity - initial_identity), then clipped.",
+   "units": "probability shift; z score; safety and identity in [0, 1]",
+   "information_available": "Own extraversion, own identity, and the team safety proxy of the member's team.",
+   "joint_distribution": "Inherits the trait copula; safety and identity are dynamic.",
+   "parameter_source": "design assumption (0.04, 0.2, 0.1)",
+   "default_value": "participation_extraversion_coefficient = 0.04; participation_safety_coefficient = 0.2; identity_participation_coefficient = 0.1",
+   "design_value": "defaults",
+   "observables": [
+    "vote journal participates flag",
+    "effective_weight"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [
+    "Edmondson1999"
+   ],
+   "limitations": "Safety effect size is not taken from the single-firm team-level source."
+  },
+  {
+   "factor": "cognitive load and judgment in decision noise",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.decision_noise_factor",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "At each vote, the inherited signal noise sd/(1+learning) is multiplied by exp(-judgment_noise_coefficient * z_judgment) * (1 + load_noise_coefficient * clip(load)), where load = variable time reservations / (1 - care_hours) for that person and day.",
+   "units": "noise multiplier, dimensionless; load is a fraction of available workday in [0, 1]",
+   "information_available": "Own judgment trait and own same-day time demands.",
+   "joint_distribution": "Inherits the trait copula (judgment correlated with education by design assumption).",
+   "parameter_source": "design assumption (0.15 and 0.3)",
+   "default_value": "judgment_noise_coefficient = 0.15; load_noise_coefficient = 0.3",
+   "design_value": "defaults",
+   "observables": [
+    "vote journal observed_signal"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [],
+   "limitations": "No verified load-to-error coefficient; judgment is a latent trait without a measurement source."
+  },
+  {
+   "factor": "learning rate from openness and education",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.learning_factor",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Daily on working days, the inherited learning increment is multiplied by max(0, 1 + learning_openness_coefficient * z_openness + learning_education_coefficient * z_education).",
+   "units": "multiplier, dimensionless; z score",
+   "information_available": "Own openness and education z scores.",
+   "joint_distribution": "Inherits the trait copula (education|openness 0.25 by design assumption).",
+   "parameter_source": "design assumption (0.1 and 0.1)",
+   "default_value": "learning_openness_coefficient = 0.1; learning_education_coefficient = 0.1",
+   "design_value": "defaults",
+   "observables": [
+    "agents.learning"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [],
+   "limitations": "Education enters through the z score; the education-ability relation is not separately modelled."
+  },
+  {
+   "factor": "education years",
+   "implementation_status": "recorded_attribute_without_behavioural_path",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.witness"
+   ],
+   "time_update": "Drawn once at entry: max(0, education_mean_years + education_sd_years * z_education); stored in the entry witness.",
+   "units": "years of education",
+   "information_available": "Recorded in the entry witness; no function in the audited call sites reads education_years for behaviour (grep of dams_sim and research_tools finds only draw and witness).",
+   "joint_distribution": "Same z_education as the learning factor, so correlated with openness and judgment through the copula.",
+   "parameter_source": "design assumption (mean 14.0, SD 2.5 years)",
+   "default_value": "education_mean_years = 14.0; education_sd_years = 2.5",
+   "design_value": "defaults",
+   "observables": [
+    "entry.person_context.education_years"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [],
+   "limitations": "Years of education are an audit attribute only; the behavioural effect is through z_education in learning_factor."
+  },
+  {
+   "factor": "employment contract mix and exit multiplier",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.annual_quit_probability"
+   ],
+   "time_update": "Contract kind drawn once at entry from employment_mix shares; its multiplier scales baseline_annual_quit_probability in every daily quit-hazard evaluation.",
+   "units": "population share; hazard multiplier, dimensionless in [0, 20]",
+   "information_available": "Contract kind stored in the entry witness.",
+   "joint_distribution": "Independent of traits and demographics (separate keyed uniform pc_employment).",
+   "parameter_source": "design assumption (shares 0.85/0.10/0.05, multipliers 1.0/1.8/2.5). Wilkin (2013) gives a small satisfaction difference only and no turnover multiplier.",
+   "default_value": "employment_mix = [[permanent, 1.0, 1.0]]",
+   "design_value": "[[permanent, 0.85, 1.0], [fixed-term, 0.10, 1.8], [contractor, 0.05, 2.5]]",
+   "observables": [
+    "entry.person_context.employment",
+    "people.exit_reason = voluntary_exit",
+    "person_context_groups.employment"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_quit_hazard_generates_voluntary_exits_and_stress_responds_to_load",
+    "tests/test_person_context_r11.py:PersonContextTests.test_schema_rejects_invalid_and_conflicting_inputs"
+   ],
+   "conceptual_references": [
+    "Wilkin2013"
+   ],
+   "limitations": "Contract type changes only the exit hazard (no pay, security or task differences)."
+  },
+  {
+   "factor": "caregiver role and care hours",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._enter",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._acquisition_begin_day",
+    "dams_sim/longitudinal_model.py:validate_persisted_state"
+   ],
+   "time_update": "At entry: caregiver flag ~ Bernoulli(caregiver_share), or Bernoulli(caregiver_share_female / caregiver_share_male) when both gendered shares are set; care_hours = clip(role mean + care_hours_sd * N(0,1), 0, 0.6) is written to the agent's care time and reduces available work time. Acquired staff receive the drawn caregiver flag but keep their recorded care_hours (overwritten by the caller).",
+   "units": "share of workday (care_hours in [0, 0.6]); legacy bound without person_context is 0.3",
+   "information_available": "Care hours enter the time budget; the caregiver flag is audit-only except through group summaries.",
+   "joint_distribution": "Independent of traits; coupled to gender only when both gendered shares are set (not -1.0).",
+   "parameter_source": "design assumption (caregiver_share 0.3; care hours 0.15 vs 0.03; SD 0.03). No time-use statistic is used to set these values.",
+   "default_value": "caregiver_share = 0.0; caregiver_care_hours = 0.15; other_care_hours = 0.03; care_hours_sd = 0.03; caregiver_share_female = caregiver_share_male = -1.0 (off)",
+   "design_value": "caregiver_share 0.3 (_person_context_base); caregiver_share_female 0.38, caregiver_share_male 0.18 (person_context_for)",
+   "observables": [
+    "agents.care_hours",
+    "entry.person_context.caregiver",
+    "person_context_groups.caregiver",
+    "share_gap_caregiver_minus_other"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals",
+    "tests/test_person_context_r11.py:PersonContextTests.test_heavy_care_load_checkpoint_restores"
+   ],
+   "conceptual_references": [],
+   "limitations": "Care role is fixed at entry; no life-course transitions. The caregiver flag carries no direct evaluation penalty (a motherhood-penalty path is not implemented)."
+  },
+  {
+   "factor": "dependents and household care load",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:_poisson"
+   ],
+   "time_update": "At entry: dependents ~ Poisson(dependents_mean) via inverse CDF truncated at 50; care_hours = clip(care_hours + care_hours_per_dependent * dependents, 0, 0.6). Fixed afterwards.",
+   "units": "count of dependents; share of workday per dependent",
+   "information_available": "Dependents count in entry witness; effect through care_hours only.",
+   "joint_distribution": "Independent of traits, gender and caregiver flag (separate keyed uniform pc_dependents).",
+   "parameter_source": "design assumption (mean 0.8, 0.02 workday per dependent)",
+   "default_value": "dependents_mean = 0.0; care_hours_per_dependent = 0.02",
+   "design_value": "dependents_mean 0.8; care_hours_per_dependent 0.02",
+   "observables": [
+    "entry.person_context.dependents",
+    "agents.care_hours"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals",
+    "tests/test_person_context_r11.py:PersonContextTests.test_heavy_care_load_checkpoint_restores"
+   ],
+   "conceptual_references": [],
+   "limitations": "Dependents do not age, leave or change; no cost or income side."
+  },
+  {
+   "factor": "working-language groups and cross-language help discount",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.help_language_factor",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Language drawn at entry from language_groups (overridden by the origin's language when origins are declared). Daily, help from a partner in another language group is multiplied by 1 - cross_language_help_discount (team help and cross-team help).",
+   "units": "multiplier, dimensionless; share",
+   "information_available": "Both parties' language groups.",
+   "joint_distribution": "Independent of traits; fully determined by origin when origins are declared.",
+   "parameter_source": "design assumption (discount 0.15; context shares from CONTEXTS). No verified per-language-gap coefficient exists; Herbsleb & Mockus (2003) gives only a multi-site delay ratio.",
+   "default_value": "language_groups = [[l0, 1.0]]; cross_language_help_discount = 0.0",
+   "design_value": "language_groups from CONTEXTS[context]['languages']; cross_language_help_discount 0.15",
+   "observables": [
+    "work.help_input",
+    "person_context_groups.language"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect",
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals"
+   ],
+   "conceptual_references": [
+    "HerblebMockus2003"
+   ],
+   "limitations": "A single scalar discount for any language mismatch; no proficiency levels, interpreters or learning of a second language."
+  },
+  {
+   "factor": "origins, country profiles and bounded origin shifts",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextConfig.validate",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._enter",
+    "research_tools/r11_design.py:person_context_for",
+    "research_tools/r11_design.py:apply_variant"
+   ],
+   "time_update": "At entry: home origin = site_origins[site mod len]; with probability local_origin_share the person has the home origin, otherwise an origin drawn by share. The origin row sets language, a z-shift added to named traits (each in [-3, 3]) and an initial-trust shift added to the agent's trust (clipped to [0, 1]). Migrant = origin differs from home.",
+   "units": "z shift (SD units) per trait; trust shift dimensionless in [-1, 1]",
+   "information_available": "Origin and migrant flag in entry witness.",
+   "joint_distribution": "Origin drawn independently of the other labels; trait shifts are added to the copula draw. The code permits shifts on any trait, including judgment, education and conscientiousness; the design uses only patience and risk_tolerance.",
+   "parameter_source": "design assumption. Falk et al. (2018), QJE 133(4):1645-1692, doi:10.1093/qje/qjy013, Table III only bounds the between-country variance share (7.0 to 13.5 percent); the shifts in COUNTRY_PROFILES (patience -0.15 to +0.20, risk_tolerance -0.15 to +0.10 SD) and trust shifts (-0.05 to +0.03) are illustrative and not country estimates.",
+   "default_value": "origins = [] (off); site_origins = []; local_origin_share = 1.0",
+   "design_value": "one origin per context country, equal shares; local_origin_share 0.9 (1.0 for single-country contexts); shifts and trust from COUNTRY_PROFILES; variant no-origin-preferences zeroes all shifts and trust shifts",
+   "observables": [
+    "entry.person_context.origin",
+    "entry.person_context.migrant",
+    "entry.person_context.trust_shift",
+    "person_context_groups.origin",
+    "person_context_groups.migrant"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals",
+    "tests/test_person_context_r11.py:TraitMatrixSourceTest.test_design_matrices_are_positive_definite_and_variant_applies"
+   ],
+   "conceptual_references": [
+    "Falk2018"
+   ],
+   "limitations": "Shifts are group means applied to individuals, not estimated country effects. Because risk_tolerance has no behavioural path, only the patience shift (quit hazard) and the trust shift change behaviour in the design."
+  },
+  {
+   "factor": "migrant voluntary-exit multiplier",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.annual_quit_probability"
+   ],
+   "time_update": "In every daily quit evaluation, baseline_annual_quit_probability * contract multiplier is further multiplied by migrant_exit_multiplier when the person is a migrant (origin differs from site home origin).",
+   "units": "hazard multiplier, dimensionless in [0, 20]",
+   "information_available": "Migrant flag (set at entry).",
+   "joint_distribution": "Determined by the origin draw.",
+   "parameter_source": "design assumption (1.3); no verified migrant turnover multiplier",
+   "default_value": "migrant_exit_multiplier = 1.0",
+   "design_value": "1.3",
+   "observables": [
+    "people.exit_reason = voluntary_exit",
+    "share_gap_migrant_minus_local"
+   ],
+   "tests": [],
+   "conceptual_references": [],
+   "limitations": "No direct test of the multiplier; the twin test sets migrant to false. This is a label-to-behaviour path declared as a hazard multiplier, not a capability effect."
+  },
+  {
+   "factor": "gender label and gender-specific caregiver share",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.group_summary",
+    "dams_sim/person_context.py:PersonContextState.gaps"
+   ],
+   "time_update": "Assigned once at entry: female with probability female_share. The label sets nothing by itself; it selects the caregiver share (when both gendered shares are set) and the evaluation-shift condition (see gender evaluation bias).",
+   "units": "population share",
+   "information_available": "Gender label in entry witness; used by evaluation_shift and by group summaries.",
+   "joint_distribution": "Independent of traits and ethnicity (separate keyed uniform pc_gender).",
+   "parameter_source": "design assumption (female_share 0.45; caregiver shares 0.38 and 0.18). Gender coefficients on preferences exist in Falk et al. (2018) but are deliberately not mapped to behaviour.",
+   "default_value": "female_share = 0.0",
+   "design_value": "female_share 0.45; caregiver_share_female 0.38; caregiver_share_male 0.18",
+   "observables": [
+    "entry.person_context.gender",
+    "person_context_groups.gender",
+    "share_gap_female_minus_male"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals",
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [],
+   "limitations": "Binary label; no gender-specific traits, pay or promotion paths."
+  },
+  {
+   "factor": "gender evaluation bias (female claimant, male reviewer)",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.evaluation_shift",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._review_one"
+   ],
+   "time_update": "At each review with a named reviewer, the observed claim evidence is shifted by gender_evaluation_bias when the claimant is female and the reviewer male; acceptance is observed + shift >= 0.25 and not audit_detected. Only the reviewer's decision shifts; true quality is unchanged.",
+   "units": "additive shift on observed evidence score (dimensionless) in [-1, 1]",
+   "information_available": "Claimant and reviewer gender labels.",
+   "joint_distribution": "Applies to the realised claimant-reviewer pair.",
+   "parameter_source": "stress assumption. Default is 0.0; variant evaluation-bias uses -0.05. Castilla & Benard (2010), ASQ 55(4):543-576, doi:10.2189/asqu.2010.55.4.543, Study 1, shows an evaluator-side channel but supplies no value for this scale.",
+   "default_value": "gender_evaluation_bias = 0.0",
+   "design_value": "0.0 in baseline; -0.05 in variant evaluation-bias",
+   "observables": [
+    "review journal accepted",
+    "reviews_rejected",
+    "honest_records_rejected",
+    "mean_fairness",
+    "share_gap_female_minus_male"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [
+    "Castilla2010"
+   ],
+   "limitations": "One-directional (female claimant, male reviewer only); no same-gender or reviewer-trait modulation."
+  },
+  {
+   "factor": "cross-group (language group) evaluation bias",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.evaluation_shift",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._review_one"
+   ],
+   "time_update": "At each review, the observed evidence is shifted by cross_group_evaluation_bias when claimant and reviewer are in different language groups.",
+   "units": "additive shift on observed evidence score (dimensionless) in [-1, 1]",
+   "information_available": "Language groups of both parties.",
+   "joint_distribution": "Applies to the realised claimant-reviewer pair.",
+   "parameter_source": "stress assumption (default 0.0; variant evaluation-bias uses -0.05); no verified magnitude",
+   "default_value": "cross_group_evaluation_bias = 0.0",
+   "design_value": "0.0 in baseline; -0.05 in variant evaluation-bias",
+   "observables": [
+    "review journal accepted",
+    "reviews_rejected",
+    "mean_fairness"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [],
+   "limitations": "Keyed on language group, not on origin or ethnicity."
+  },
+  {
+   "factor": "appearance trait and appearance evaluation bias",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.evaluation_shift",
+    "dams_sim/person_context.py:PersonContextState.draw"
+   ],
+   "time_update": "Appearance is a fixed z-score trait from the copula. At each review the shift appearance_evaluation_bias * z_appearance of the claimant is added to the observed evidence; it has no other path.",
+   "units": "z score; additive shift per SD on the observed evidence score",
+   "information_available": "Claimant's appearance trait seen by the reviewer.",
+   "joint_distribution": "Independent standard normal (no correlation declared).",
+   "parameter_source": "stress assumption; default 0.0 and not set by r11_design.py (so 0.0 in all variants)",
+   "default_value": "appearance_evaluation_bias = 0.0",
+   "design_value": "0.0 (not overridden)",
+   "observables": [
+    "review journal accepted"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_schema_rejects_invalid_and_conflicting_inputs"
+   ],
+   "conceptual_references": [],
+   "limitations": "Not exercised with a non-zero value in any test or design variant; appearance is not a protected-class label and carries no productivity effect."
+  },
+  {
+   "factor": "ethnicity: help discount and minority voice shift",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.help_language_factor",
+    "dams_sim/person_context.py:PersonContextState.voice_probability",
+    "dams_sim/person_context.py:PersonContextState.majority_ethnicity"
+   ],
+   "time_update": "Ethnic group drawn at entry from ethnic_groups shares. Daily help between different ethnic groups is multiplied by 1 - cross_ethnic_help_discount; the appeal (voice) probability of a member outside the largest-share group is shifted by minority_voice_shift.",
+   "units": "share; multiplier; probability shift in [-1, 1]",
+   "information_available": "Ethnic labels of both parties (help) and own label (voice).",
+   "joint_distribution": "Independent of traits and gender (separate keyed uniform pc_ethnicity).",
+   "parameter_source": "design assumption: groups 0.7/0.2/0.1; both effect parameters 0.0 in the design baseline. The test uses 0.05 and -0.1 to verify the path only.",
+   "default_value": "ethnic_groups = [[e0, 1.0]]; cross_ethnic_help_discount = 0.0; minority_voice_shift = 0.0",
+   "design_value": "ethnic_groups [[e0, 0.7], [e1, 0.2], [e2, 0.1]]; cross_ethnic_help_discount 0.0; minority_voice_shift 0.0",
+   "observables": [
+    "entry.person_context.ethnicity",
+    "person_context_groups.ethnicity",
+    "share_gap_minority_minus_majority"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect",
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals"
+   ],
+   "conceptual_references": [],
+   "limitations": "Group labels are abstract (e0, e1, e2) and carry no real-world identity; the voice-shift path is not directly tested. Ethnicity also enters faction sorting (see factions)."
+  },
+  {
+   "factor": "voice and appeal probability",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.voice_probability",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._review_one",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._appeal_one"
+   ],
+   "time_update": "After a rejected review with observed evidence >= 0.25 and trust > 0.2, an appeal is filed with probability clip(voice_base_probability + voice_safety_coefficient * (team_safety - 0.5) + minority_voice_shift if minority). Appeal outcome then updates fairness.",
+   "units": "probability",
+   "information_available": "Own team's safety proxy and own ethnic label.",
+   "joint_distribution": "Conditional on a rejection event; uses a keyed uniform pc_voice.",
+   "parameter_source": "design assumption (base 1.0 so voice is off unless varied; safety coefficient 0.0)",
+   "default_value": "voice_base_probability = 1.0; voice_safety_coefficient = 0.0",
+   "design_value": "defaults (voice always taken for eligible rejections in the baseline)",
+   "observables": [
+    "appeal journal rows",
+    "mean_fairness"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [
+    "Edmondson1999"
+   ],
+   "limitations": "With the default parameters the voice path is neutral; its sensitivity is not tested."
+  },
+  {
+   "factor": "physical work, physical capacity and fatigue",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.fatigue_extra",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "physical_work flag drawn at entry with probability physical_work_share. On working days the daily fatigue update adds -physical_fatigue_coefficient * z_physical_capacity for physical workers (higher capacity lowers fatigue).",
+   "units": "daily fatigue increment, dimensionless; z score",
+   "information_available": "Own physical_work flag and capacity trait.",
+   "joint_distribution": "physical_work independent of traits; physical_capacity independent standard normal.",
+   "parameter_source": "design assumption (coefficient 0.02; context shares 0.05 to 0.60 in PHYSICAL_SHARE)",
+   "default_value": "physical_work_share = 0.0; physical_fatigue_coefficient = 0.02",
+   "design_value": "PHYSICAL_SHARE by context (startup 0.05 ... traditional 0.60); coefficient 0.02",
+   "observables": [
+    "agents.fatigue",
+    "person_context_groups.physical_work"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals"
+   ],
+   "conceptual_references": [],
+   "limitations": "Static capacity; no ageing or injury process; the fatigue effect has no direct test."
+  },
+  {
+   "factor": "climate capacity for physical work",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.site_capacity",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step",
+    "research_tools/r11_design.py:CLIMATE"
+   ],
+   "time_update": "Daily, effort of physical workers is multiplied by the site's monthly capacity multiplier site_climate[site mod rows][month - 1].",
+   "units": "multiplier in [0, 1] per month",
+   "information_available": "Site and calendar month.",
+   "joint_distribution": "Deterministic given site, month and physical_work flag.",
+   "parameter_source": "stress assumption (heat-exposure profiles 0.88 to 0.94 in hot months; tropical 0.93). Not calibrated productivity losses.",
+   "default_value": "site_climate = [] (off)",
+   "design_value": "CLIMATE profiles temperate/hot-north/hot-south/tropical assigned per country in COUNTRY_PROFILES",
+   "observables": [
+    "agents effort",
+    "produced_work_units by site"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [],
+   "limitations": "Climate enters through the test fixture only; no weather randomness, no indoor work effect."
+  },
+  {
+   "factor": "institutional shocks to site capacity",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.site_capacity",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Per site, a shock starts on any day with daily probability 1-(1-p)^(1/365) (keyed uniform pc_institution_shock) and applies the capacity multiplier to all staff of that site for the declared duration in days; the per-day result is cached per site.",
+   "units": "annual probability; capacity multiplier in [0, 1]; duration in days (1 to 365)",
+   "information_available": "Site and day only (shock is exogenous).",
+   "joint_distribution": "Independent across sites by keyed stream; deterministic given seed.",
+   "parameter_source": "stress assumption (COUNTRY_PROFILES shock rows such as [0.02, 0.85, 20] for home and [0.10, 0.75, 25] for latam); not estimated from data",
+   "default_value": "site_institution_shocks = [] (off)",
+   "design_value": "one row per country from COUNTRY_PROFILES",
+   "observables": [
+    "agents effort by site",
+    "produced_work_units"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [],
+   "limitations": "Shock realisations are not logged as separate events; no recovery dynamics beyond the fixed duration."
+  },
+  {
+   "factor": "sickness absence",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.sick",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Each workday: absent with probability min(1, annual_sick_days / workdays_in_year * exp(sick_health_coefficient * z_health_risk)) using a keyed uniform pc_sick per person-day; sick days are counted in the sick_absence_workdays metric and the person is not present.",
+   "units": "days per year; probability per workday",
+   "information_available": "Entry-witness health_risk trait and calendar only, so independent audit can recompute the absence.",
+   "joint_distribution": "Independent daily Bernoulli given health_risk (correlated with neuroticism 0.15 by design assumption).",
+   "parameter_source": "design assumption (8 days per year; coefficient 0.5)",
+   "default_value": "annual_sick_days = 0.0 (off); sick_health_coefficient = 0.5",
+   "design_value": "annual_sick_days 8.0; sick_health_coefficient 0.5",
+   "observables": [
+    "sick_absence_workdays",
+    "present workdays"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [],
+   "limitations": "Daily draws are independent (no spells, chronic illness or contagion)."
+  },
+  {
+   "factor": "organizational identity",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.observe_review",
+    "dams_sim/person_context.py:PersonContextState.participation_shift",
+    "dams_sim/person_context.py:PersonContextState.annual_quit_probability"
+   ],
+   "time_update": "Starts at initial_identity; after each own review outcome, identity += identity_update_rate * (fairness - identity). Identity above its initial value raises participation and lowers the quit logit.",
+   "units": "state in [0, 1]",
+   "information_available": "Own fairness history.",
+   "joint_distribution": "Starts equal for everyone (not trait-dependent); dynamics depend on realised review outcomes.",
+   "parameter_source": "design assumption (initial 0.6, rate 0.02, quit coefficient 1.0, participation coefficient 0.1). Colquitt et al. (2001), J Appl Psychol 86(3):425-445, doi:10.1037/0021-9010.86.3.425, Table 5 (p. 436) gives the direction of justice-commitment association only.",
+   "default_value": "initial_identity = 0.6; identity_update_rate = 0.02; identity_quit_coefficient = 1.0; identity_participation_coefficient = 0.1",
+   "design_value": "defaults",
+   "observables": [
+    "mean_identity"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [
+    "Colquitt2001"
+   ],
+   "limitations": "Identity is a one-dimensional lagged copy of fairness; no group-identity or tenure term."
+  },
+  {
+   "factor": "perceived fairness update from review and appeal outcomes",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.observe_review",
+    "dams_sim/person_context.py:PersonContextState.observe_appeal",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._review_one",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._appeal_one"
+   ],
+   "time_update": "Event-driven: an accepted review moves fairness toward 1 by fairness_update_rate; a rejected honest record moves it toward 0 by the same rate; rejected fraudulent records leave it unchanged; an upheld appeal moves it up, a denied appeal down.",
+   "units": "state in [0, 1]; rate per event",
+   "information_available": "Own review and appeal outcomes only (observable to the member).",
+   "joint_distribution": "Starts at initial_fairness for everyone; evolves with realised outcomes, so evaluation-shift parameters feed back into fairness.",
+   "parameter_source": "design assumption (initial 0.6, rate 0.05)",
+   "default_value": "initial_fairness = 0.6; fairness_update_rate = 0.05",
+   "design_value": "defaults",
+   "observables": [
+    "mean_fairness",
+    "person_context_groups.*.mean_fairness"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect",
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [
+    "Colquitt2001"
+   ],
+   "limitations": "Fairness is learned only from own outcomes, not from observing peers."
+  },
+  {
+   "factor": "psychological-safety proxy (team trust and fairness) and initial trust shift",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.team_safety",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._enter"
+   ],
+   "time_update": "Daily per team: mean over members of (trust + fairness)/2, 0.5 for an empty team. Used by participation, stress resources and voice. At entry the origin's trust shift is added to the agent's trust.",
+   "units": "state in [0, 1]",
+   "information_available": "Team members' trust and fairness (observable to members).",
+   "joint_distribution": "Deterministic function of team composition and states.",
+   "parameter_source": "design assumption; Edmondson (1999), ASQ 44(2):350-383, doi:10.2307/2666999, Table 2 (51 teams, one firm) supports the construct but supplies no coefficient",
+   "default_value": "no separate parameter (proxy formula); participation_safety_coefficient = 0.2; voice_safety_coefficient = 0.0",
+   "design_value": "defaults",
+   "observables": [
+    "team safety inputs to participation and stress"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable"
+   ],
+   "conceptual_references": [
+    "Edmondson1999"
+   ],
+   "limitations": "Proxy, not a survey-measured construct."
+  },
+  {
+   "factor": "stress dynamics (demand, resources, neuroticism, rest)",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.update_stress",
+    "dams_sim/person_context.py:PersonContextState.rest",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Each present workday: target = clip(sensitivity * (demand - resource + 0.2) + financial_strain_stress_coefficient * z_financial_strain), demand = stress_demand_weight * max(0, workload - 0.6), resource = stress_resource_weight * (help + autonomy + team_safety)/3, sensitivity = max(0, 1 + stress_neuroticism_coefficient * z_neuroticism); stress = keep * stress + (1 - keep) * target with keep = 0.5^(1/stress_half_life_workdays). Absent days decay stress by keep.",
+   "units": "state in [0, 1]; half-life in workdays",
+   "information_available": "Own workload, received help, autonomy and team safety.",
+   "joint_distribution": "Starts at 0 for everyone; neuroticism correlated with conscientiousness, extraversion, agreeableness and openness (Table 2 rho).",
+   "parameter_source": "design assumption (weights 1.0 and 0.6, offset 0.2, half-life 20 workdays, neuroticism coefficient 0.25). Structure follows the demands-resources logic of Bakker & Demerouti (2007) and recovery logic of Sonnentag & Fritz (2015), both qualitative.",
+   "default_value": "stress_half_life_workdays = 20.0; stress_demand_weight = 1.0; stress_resource_weight = 0.6; stress_neuroticism_coefficient = 0.25",
+   "design_value": "defaults",
+   "observables": [
+    "mean_stress",
+    "pc people stress state"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_quit_hazard_generates_voluntary_exits_and_stress_responds_to_load",
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [
+    "BakkerDemerouti2007",
+    "SonnentagFritz2015"
+   ],
+   "limitations": "Single scalar strain state; no burnout stage, no separate exhaustion and disengagement; no calibration to any strain instrument."
+  },
+  {
+   "factor": "financial strain trait",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.annual_quit_probability",
+    "dams_sim/person_context.py:PersonContextState.update_stress"
+   ],
+   "time_update": "Static z-score trait. Adds financial_strain_quit_coefficient * z to the quit logit and financial_strain_stress_coefficient * z to the stress target.",
+   "units": "z score; logit units; stress target units",
+   "information_available": "Own trait only.",
+   "joint_distribution": "Independent standard normal (no correlation declared).",
+   "parameter_source": "design assumption (0.2 and 0.05); no verified income or debt linkage",
+   "default_value": "financial_strain_quit_coefficient = 0.2; financial_strain_stress_coefficient = 0.05",
+   "design_value": "defaults",
+   "observables": [
+    "entry.person_context.traits.financial_strain",
+    "voluntary exits"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_quit_hazard_generates_voluntary_exits_and_stress_responds_to_load"
+   ],
+   "conceptual_references": [],
+   "limitations": "Not linked to wages, cash or household size; does not evolve."
+  },
+  {
+   "factor": "remote work and commute",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.draw",
+    "dams_sim/person_context.py:PersonContextState.fatigue_extra"
+   ],
+   "time_update": "At entry: remote = not physical_work and Bernoulli(remote_share); commute_hours = 0 if remote else commute_hours_mean * exp(0.5 N(0,1) - 0.125) (log-normal, mean commute_hours_mean). Daily fatigue adds commute_fatigue_per_hour * commute_hours on working days.",
+   "units": "share; hours per day; fatigue increment per hour",
+   "information_available": "Remote flag and commute hours in entry witness.",
+   "joint_distribution": "Remote excludes physical work by construction; independent of traits otherwise.",
+   "parameter_source": "design assumption (REMOTE_SHARE 0.05 to 0.5 by context; mean commute 0.9 h; 0.02 fatigue per hour). BLS American Time Use Survey 2025 (35 percent did some or all work at home on days worked, Table 6) is context only and is not used to set these shares.",
+   "default_value": "remote_share = 0.0; commute_hours_mean = 0.0; commute_fatigue_per_hour = 0.02",
+   "design_value": "remote_share from REMOTE_SHARE[context]; commute_hours_mean 0.9; commute_fatigue_per_hour 0.02",
+   "observables": [
+    "entry.person_context.remote",
+    "entry.person_context.commute_hours",
+    "person_context_groups.remote",
+    "agents.fatigue"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_copula_reproduces_declared_correlations_and_marginals"
+   ],
+   "conceptual_references": [],
+   "limitations": "Commute does not consume paid time; remote work carries no coordination cost or isolation effect."
+  },
+  {
+   "factor": "informal factions (guild blocks sorted by origin and ethnicity)",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.factions",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "At each vote, the guild roster is sorted by (origin, ethnicity, id) and cut into consecutive blocks of faction_size; the leader is the block member with the highest extraversion plus tenure. Each member's decision signal becomes (1 - cohesion) * own signal + cohesion * leader signal.",
+   "units": "block size in people; cohesion weight in [0, 1]",
+   "information_available": "Origin, ethnicity, extraversion and tenure of roster members.",
+   "joint_distribution": "Deterministic given the active roster; blocks form mechanically from label sorting, so same-label members tend to share a leader.",
+   "parameter_source": "design assumption (size 8, cohesion 0.2; variants 0.5 and 0.0)",
+   "default_value": "faction_size = 0; faction_cohesion = 0.0 (off)",
+   "design_value": "faction_size 8; faction_cohesion 0.2; variant strong-factions 0.5; variant no-factions 0.0",
+   "observables": [
+    "vote journal observed_signal"
+   ],
+   "tests": [],
+   "conceptual_references": [],
+   "limitations": "No direct unit test of factions in tests/test_person_context_r11.py (the fixture sets faction_size 4 and cohesion 0.3 only through the end-to-end run). Block formation uses labels as a sorting key, which is a label-dependent path by construction."
+  },
+  {
+   "factor": "voluntary quit hazard",
+   "implementation_status": "opt_in_candidate_behavior_implemented",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.annual_quit_probability",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._lifecycle"
+   ],
+   "time_update": "Daily after the first day in the firm: annual probability = odds(base) * exp(logit_shift) mapped back, where base = baseline_annual_quit_probability * contract multiplier * migrant multiplier and logit_shift = quit_stress * stress + quit_fairness * (initial_fairness - fairness) - quit_patience * z_patience - quit_conscientiousness * z_conscientiousness - identity_quit * (identity - initial_identity) + financial_strain_quit * z_financial_strain; converted to a daily draw by interval_probability and recorded as exit reason voluntary_exit.",
+   "units": "annual probability in [0, 1]; logit units",
+   "information_available": "Own stress, fairness, identity and traits.",
+   "joint_distribution": "Conditional on traits and dynamic states; keyed uniform pc_quit per person-day.",
+   "parameter_source": "design assumption. Baselines 0.07 to 0.22 by context are not fitted; BLS JOLTS 2025 (total nonfarm average monthly quits rate 2.0 percent, Table 22) is order-of-magnitude context only. Coefficient signs for conscientiousness and fairness are consistent with direction-only evidence (Zimmerman 2008; Colquitt et al. 2001 Table 5, withdrawal rc = -.46 for procedural justice); magnitudes 1.0, 1.5, 0.2, 0.1 are design assumptions.",
+   "default_value": "baseline_annual_quit_probability = 0.0 (off); quit_stress_coefficient = 1.0; quit_fairness_coefficient = 1.5; quit_patience_coefficient = 0.2; quit_conscientiousness_coefficient = 0.1",
+   "design_value": "baseline from CONTEXTS[context]['quit'] (startup 0.20, unicorn 0.22, listed 0.12, traditional 0.10, century 0.07, multinational 0.18); variants high-turnover x1.5 and low-turnover x0.5",
+   "observables": [
+    "people.exit_reason = voluntary_exit",
+    "active headcount"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_quit_hazard_generates_voluntary_exits_and_stress_responds_to_load",
+    "tests/test_person_context_r11.py:PersonContextTests.test_paths_are_declared_and_labels_have_no_direct_effect"
+   ],
+   "conceptual_references": [
+    "Zimmerman2008",
+    "Colquitt2001",
+    "BLSJOLTS2025"
+   ],
+   "limitations": "No outside-option or labour-market term; no re-hiring link beyond the inherited vacancy process."
+  },
+  {
+   "factor": "group outcome gaps and summaries (diagnostic output)",
+   "implementation_status": "diagnostic_output_only",
+   "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+   "calibration_status": "not_calibrated",
+   "external_validity_status": "not_validated",
+   "paths": [
+    "dams_sim/person_context.py:PersonContextState.group_summary",
+    "dams_sim/person_context.py:PersonContextState.gaps",
+    "dams_sim/longitudinal_model.py:LongitudinalEngine._step"
+   ],
+   "time_update": "Daily day_end journal row person_context_groups (members, mean formal share, mean stress, mean fairness by caregiver, language, employment, gender, origin, migrant, ethnicity, physical_work, remote) and history columns share_gap_* (female minus male, migrant minus local, caregiver minus other, minority minus majority).",
+   "units": "formal share difference (dimensionless); means in [0, 1]",
+   "information_available": "Research-only aggregate readout; not fed back into behaviour.",
+   "joint_distribution": "Descriptive statistics of the realised roster.",
+   "parameter_source": "not a parameter; descriptive output",
+   "default_value": "emitted only when person_context is enabled",
+   "design_value": "emitted for every design run",
+   "observables": [
+    "person_context_groups",
+    "share_gap_female_minus_male",
+    "share_gap_migrant_minus_local",
+    "share_gap_caregiver_minus_other",
+    "share_gap_minority_minus_majority"
+   ],
+   "tests": [
+    "tests/test_person_context_r11.py:PersonContextTests.test_enabled_run_is_deterministic_checkpointable_and_auditable",
+    "tests/test_person_context_r11.py:PersonContextTests.test_disabled_run_has_no_person_context_traces"
+   ],
+   "conceptual_references": [],
+   "limitations": "Gaps are unadjusted differences in formal share and do not identify discrimination without the counterfactual arms."
+  }
+ ],
+ "not_implemented": [
+  {
+   "factor": "age as a person-context trait or age-dependent physical capacity",
+   "reason": "age exists only as the engine's birth_date and retirement logic outside person_context.py; no age-dependent trait, health or capacity path"
+  },
+  {
+   "factor": "risk_tolerance behavioural path",
+   "reason": "the trait is drawn, correlated and origin-shifted but no function reads it"
+  },
+  {
+   "factor": "education years as a behavioural input",
+   "reason": "education_years is recorded in the witness; behaviour uses only the z_education trait"
+  },
+  {
+   "factor": "motherhood or parental-status evaluation penalty",
+   "reason": "evaluation_shift has no caregiver or dependents term; only gender, language group and appearance terms exist"
+  },
+  {
+   "factor": "empirically estimated country preference shifts",
+   "reason": "COUNTRY_PROFILES shifts are illustrative magnitudes bounded by the between-country variance share, not estimates"
+  },
+  {
+   "factor": "individual-level preference correlation matrix outside the Big Five",
+   "reason": "no verified individual-level matrix; non-Big-Five pairs are design assumptions"
+  },
+  {
+   "factor": "time-zone and language-proficiency delay at person level",
+   "reason": "only a scalar help discount for language mismatch; time-zone and logistics delays live in the enterprise operations layer, not in person_context"
+  },
+  {
+   "factor": "dynamic household change (births, dependents leaving, care-role transitions)",
+   "reason": "care role and dependents are fixed at entry"
+  },
+  {
+   "factor": "persistent health conditions, disability or illness spells",
+   "reason": "sickness is an independent daily Bernoulli draw"
+  },
+  {
+   "factor": "burnout stages and job-demands-resources mediators beyond one stress scalar",
+   "reason": "single stress state; magnitudes for burnout paths were not obtained"
+  },
+  {
+   "factor": "personal finance dynamics (income, debt, wage response)",
+   "reason": "financial_strain is a static trait with two coefficients"
+  },
+  {
+   "factor": "social-network homophily and peer influence beyond help discounts and factions",
+   "reason": "no friendship or influence network inside person_context"
+  },
+  {
+   "factor": "pay, promotion or hiring bias by gender, origin or ethnicity",
+   "reason": "bias acts only on review acceptance via evaluation_shift"
+  },
+  {
+   "factor": "individual-level parameter fit, recovery and out-of-sample validation",
+   "reason": "parameter_fit_completed and parameter_recovery_completed are false; all coefficients are assumptions"
+  }
+ ],
+ "not_implemented_note": "This list is derived from the code and from the source-registry gaps; the full original requirement list was not supplied to this task, so it should be re-checked against that list.",
+ "docstring_vs_code_discrepancies": [
+  "Module docstring: language group acts 'only through communication cost and an optional evaluation-bias parameter'. Language also fixes origin-derived group membership and, via origins, comes with trait shifts and a trust shift; ethnicity has its own help discount and voice shift.",
+  "Trait risk_tolerance and attribute education_years have no behavioural consumer.",
+  "PersonContextState.acquired docstring says acquired staff keep recorded care time; the method itself only calls draw, and the override of care_hours is performed by the caller in longitudinal_model.py (_acquisition_begin_day)."
+ ],
+ "no_favorable_result_tuning": true
+}

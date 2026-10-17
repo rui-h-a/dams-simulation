@@ -58,6 +58,12 @@ class EnterpriseOperatingConfig:
     management_span: int = 8
     coordination_workday_units_per_layer: float = .02
     management_overload_workday_units_per_report: float = .005
+    # 'domains' (earlier versions): one manager per governance domain, so reports
+    # per manager grow with headcount. 'span': supervisors are added so that no
+    # manager exceeds management_span reports, and hierarchy depth is the depth
+    # of a span-ary tree over the active members (Williamson 1967 control loss per
+    # layer; Meier and Bohte 2000 on span of control). Coefficients stay assumptions.
+    coordination_manager_basis: str = 'domains'
     recruitment_lead_days: int = 14
     training_lead_days: int = 20
     entrant_training_workday_units: float = .15
@@ -89,12 +95,14 @@ class EnterpriseOperatingConfig:
                 raise ValueError('destination market shares must match contexts and sum to one')
         if type(self.destination_market_shares) is not tuple:raise ValueError('market shares must be a typed tuple')
         if type(self.coordination_service_budget_workday_fraction) not in (int,float) or not math.isfinite(self.coordination_service_budget_workday_fraction) or not 0<=self.coordination_service_budget_workday_fraction<=1:raise ValueError('coordination service budget outside workday')
+        if self.coordination_manager_basis not in ('domains','span'):raise ValueError('unknown coordination manager basis')
+        if self.coordination_manager_basis=='span' and self.management_span<2:raise ValueError('span-based hierarchy needs a span of at least two')
         for name in ('order_expiry_days','management_span','recruitment_lead_days','training_lead_days'):
             v=getattr(self,name)
             if type(v) is not int or not 1<=v<=100_000:raise ValueError('invalid operation delay/span: '+name)
         for f in dataclasses.fields(self):
             v=getattr(self,f.name)
-            if f.name in ('schema_version','countries','destination_market_shares','order_expiry_days','management_span','recruitment_lead_days','training_lead_days'):continue
+            if f.name in ('schema_version','countries','destination_market_shares','order_expiry_days','management_span','recruitment_lead_days','training_lead_days','coordination_manager_basis'):continue
             if type(v) not in (int,float) or not math.isfinite(v) or not 0<=v<=1e9:raise ValueError('invalid operating coefficient: '+f.name)
         if not 0<self.minimum_price_resource_units<=self.initial_price_resource_units<=self.maximum_price_resource_units or self.competitor_price_resource_units<=0:
             raise ValueError('prices need a positive resource unit and bounded interval')
@@ -217,8 +225,13 @@ class EnterpriseOperatingState:
     def coordination_required(self, active, guilds, departments, sites, site):
         c=self.context(site)
         managers=max(1,guilds)
+        if self.c.coordination_manager_basis=='span':
+            span=self.c.management_span;layers=1;covered=span
+            while covered<active:covered*=span;layers+=1
+            managers=max(managers,-(-active//span))
+        else:
+            layers=1+math.ceil(math.log(max(1,departments),self.c.management_span)) if self.c.management_span>1 else departments
         reports=active/managers
-        layers=1+math.ceil(math.log(max(1,departments),self.c.management_span)) if self.c.management_span>1 else departments
         return (self.c.coordination_workday_units_per_layer*layers+
                 self.c.management_overload_workday_units_per_report*max(0,reports-self.c.management_span)+
                 c.communication_workday_units*(sites>1))

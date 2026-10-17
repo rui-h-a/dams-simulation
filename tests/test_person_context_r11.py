@@ -182,5 +182,30 @@ class TraitMatrixSourceTest(unittest.TestCase):
         self.assertEqual(d['person_context']['trait_correlations'], {})
 
 
+class SpanHierarchyTest(unittest.TestCase):
+    """Span-based supervision keeps reports per manager at or below the span."""
+
+    def test_span_basis_depth_and_no_overload(self):
+        from dams_sim.enterprise_operations import EnterpriseOperatingConfig, EnterpriseOperatingState
+        c = EnterpriseOperatingConfig(coordination_manager_basis='span')
+        state = EnterpriseOperatingState.__new__(EnterpriseOperatingState)
+        state.c = c
+        for active, layers in [(1, 1), (8, 1), (9, 2), (64, 2), (65, 3), (300, 3), (10000, 5), (50000, 6)]:
+            got = state.coordination_required(active, 2, 1, 1, 0)
+            self.assertAlmostEqual(got, c.coordination_workday_units_per_layer*layers, places=12, msg=active)
+        old = EnterpriseOperatingConfig()
+        state.c = old
+        self.assertGreater(state.coordination_required(300, 2, 1, 1, 0), old.coordination_service_budget_workday_fraction)
+
+    def test_default_basis_is_not_serialized(self):
+        from research_tools import r11_design as D
+        d, _ = D.base_config(scale=120, context='startup', growth='organic', world=0, seed=1, pre_years=0, post_years=1)
+        self.assertEqual(d['enterprise_operations']['coordination_manager_basis'], 'span')
+        cfg = Config.from_dict(d)
+        self.assertEqual(cfg.to_dict()['enterprise_operations']['coordination_manager_basis'], 'span')
+        d['enterprise_operations'].pop('coordination_manager_basis')
+        self.assertNotIn('coordination_manager_basis', Config.from_dict(d).to_dict()['enterprise_operations'])
+
+
 if __name__ == '__main__':
     unittest.main()
