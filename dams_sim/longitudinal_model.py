@@ -1290,7 +1290,7 @@ def validate_persisted_state(state,database,*,expected_source_sha256=None):
     for name in ('memory','routine','adoption','migration_paid'):
         if {int(k) for k in state[name]}!=set(range(guild_count)):raise ValueError('persisted guild state inventory differs')
     for a in agents:
-        if type(a.guild) is not int or not 0<=a.guild<guild_count or a.skill<=0 or not 0<=a.care_hours<=.3 or not 0<=a.share<=1:raise ValueError('persisted agent bounds invalid')
+        if type(a.guild) is not int or not 0<=a.guild<guild_count or a.skill<=0 or not 0<=a.care_hours<=(.6 if config.person_context is not None else .3) or not 0<=a.share<=1:raise ValueError('persisted agent bounds invalid')
         if people[a.id]['exited_day'] is not None and a.share!=0:raise ValueError('inactive person retained authority')
     for key in ('closed_day','suspended_day'):
         value=state[key]

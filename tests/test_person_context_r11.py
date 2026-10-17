@@ -127,6 +127,15 @@ class PersonContextTests(unittest.TestCase):
         self.assertIn('person_context_groups', self.events(full, 'day_end')[-1][2])
         self.raw(full, 'full-raw'); self.raw(resumed, 'resumed-raw')
 
+    def test_heavy_care_load_checkpoint_restores(self):
+        # Large households push care time above the legacy 0.3 bound; R11 allows up to 0.6.
+        p = self.config(days=12, pc=person(dependents_mean=8., care_hours_per_dependent=.05))
+        m = self.model(p, 'care'); m.run(6)
+        self.assertGreater(max(a.care_hours for a in m._long.agents), .3)
+        cp = self.root/'care-cp.json'; m.write_checkpoint(cp)
+        r = Model.restore_checkpoint(cp, expected_config=p, storage_dir=self.root/'care-restored'); self.models.append(r); r.run()
+        m.run(); self.assertEqual(m.semantic_digest(), r.semantic_digest())
+
     def test_disabled_run_has_no_person_context_traces(self):
         p = self.config(days=10)
         m = self.model(p, 'off'); m.run()
