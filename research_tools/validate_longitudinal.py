@@ -92,7 +92,7 @@ def _csv_bytes(rows):
     return out.getvalue().encode()
 
 
-_PC_TRAITS=('conscientiousness','agreeableness','neuroticism','openness','extraversion','risk_tolerance','patience','judgment','education','health_risk')
+_PC_TRAITS=('conscientiousness','agreeableness','neuroticism','openness','extraversion','risk_tolerance','patience','judgment','education','health_risk','physical_capacity','appearance','financial_strain')
 
 
 def _verify_person_context_entry(config, rng, token, witness, agent, site=0):
@@ -141,7 +141,15 @@ def _verify_person_context_entry(config, rng, token, witness, agent, site=0):
         expected_care_role=rng.uniform('pc_caregiver',token)<c.caregiver_share
     if witness['caregiver']!=expected_care_role:raise ValueError('person-context caregiver role differs')
     if witness.get('ethnicity')!=pick(c.ethnic_groups,rng.uniform('pc_ethnicity',token)):raise ValueError('person-context ethnicity differs')
-    if witness.get('physical_work')!=(rng.uniform('pc_physical',token)<c.physical_work_share):raise ValueError('person-context work type differs')
+    physical=rng.uniform('pc_physical',token)<c.physical_work_share
+    if witness.get('physical_work')!=physical:raise ValueError('person-context work type differs')
+    k=0
+    if c.dependents_mean>0:
+        u=rng.uniform('pc_dependents',token);q=math.exp(-c.dependents_mean);acc=q
+        while u>acc and k<50:k+=1;q*=c.dependents_mean/k;acc+=q
+    remote=(not physical) and rng.uniform('pc_remote',token)<c.remote_share
+    commute=0. if remote else c.commute_hours_mean*math.exp(.5*rng.normal('pc_commute',token)-.125)
+    if witness.get('dependents')!=k or witness.get('remote')!=remote or not math.isclose(witness.get('commute_hours',-1.),commute,rel_tol=1e-12,abs_tol=1e-12):raise ValueError('person-context household/commute differs')
     if witness['care_hours']!=agent['care_hours']:raise ValueError('person-context care time differs from agent state')
     return witness
 
@@ -367,7 +375,9 @@ class _RawDailyAccounting:
                 _verify_joint_entry(p,self.market_rng,event,initial,value.get('joint_population'),self.agents[i])
                 w=_verify_person_context_entry(p,self.market_rng,event,value.get('person_context'),self.agents[i],site=value.get('organization_site',self.agents[i].get('site',0)))
                 if w is not None:
-                    if not math.isclose(w['care_hours'],max(0.,min(.6,(p.person_context.caregiver_care_hours if w['caregiver'] else p.person_context.other_care_hours)+p.person_context.care_hours_sd*self.market_rng.normal('pc_care',event))),rel_tol=1e-12,abs_tol=1e-12):raise ValueError('person-context care draw differs')
+                    care=max(0.,min(.6,(p.person_context.caregiver_care_hours if w['caregiver'] else p.person_context.other_care_hours)+p.person_context.care_hours_sd*self.market_rng.normal('pc_care',event)))
+                    if p.person_context.dependents_mean>0:care=max(0.,min(.6,care+p.person_context.care_hours_per_dependent*w['dependents']))
+                    if not math.isclose(w['care_hours'],care,rel_tol=1e-12,abs_tol=1e-12):raise ValueError('person-context care draw differs')
                     self.pc_wit[i]=w
                 self.seen_people.add(i)
                 self.members[i]=self.alias[value['guild']]
@@ -674,6 +684,7 @@ class _RawDailyAccounting:
                 cw,rw=self.pc_wit[_person],self.pc_wit[value['verification_reviewer']]
                 if cw['language']!=rw['language']:shift+=p.person_context.cross_group_evaluation_bias
                 if cw.get('gender')=='female' and rw.get('gender')=='male':shift+=p.person_context.gender_evaluation_bias
+                shift+=p.person_context.appearance_evaluation_bias*cw['traits'].get('appearance',0.)
             if value['accepted']!=(value['observed']+shift>=.25 and not value['audit_detected']):
                 raise ValueError('raw review outcome differs from observed/audit evidence')
             self.metrics['review_hours']+=.1

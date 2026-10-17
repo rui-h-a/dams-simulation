@@ -6,8 +6,11 @@ cd "$task_root"
 case "$(uname -s)" in Darwin|Linux) ;; *) echo 'Use a POSIX Linux/macOS terminal or WSL2; native Windows is not verified.' >&2; exit 2;; esac
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   cat <<'HELP'
-Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y] [--scale PEOPLE]
+Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|enterprise-r11] [--scale PEOPLE]
                 [--output DIRECTORY] [--runtime-limits JSON]
+       enterprise-r11 options: [--context startup|unicorn|listed|traditional|century|multinational]
+                [--growth none|organic|acquisition|organic+acquisition] [--pre-years Y] [--post-years Y]
+                [--worlds 0,1,2] [--arms a,b,...] [--jobs N]
 Defaults: bounded local validation, 120 people, runs/validation-n120.
 Full research runs use the same versioned pipeline and automatic resource scheduler.
 Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
@@ -21,6 +24,13 @@ task_scale=120
 task_output=
 task_limits=
 task_prepare=false
+task_context=multinational
+task_growth=organic
+task_pre=2
+task_post=5
+task_worlds=0,1,2
+task_arms=control-hierarchy,control-process,dams-witness,linear-witness
+task_jobs=
 while (($#)); do
   case "$1" in
     --spec) task_spec=${2:?missing spec}; shift 2;;
@@ -28,10 +38,17 @@ while (($#)); do
     --output) task_output=${2:?missing output}; shift 2;;
     --runtime-limits) task_limits=${2:?missing limits}; shift 2;;
     --prepare-only) task_prepare=true; shift;;
+    --context) task_context=${2:?missing context}; shift 2;;
+    --growth) task_growth=${2:?missing growth}; shift 2;;
+    --pre-years) task_pre=${2:?missing years}; shift 2;;
+    --post-years) task_post=${2:?missing years}; shift 2;;
+    --worlds) task_worlds=${2:?missing worlds}; shift 2;;
+    --arms) task_arms=${2:?missing arms}; shift 2;;
+    --jobs) task_jobs=${2:?missing jobs}; shift 2;;
     *) echo "Unknown argument: $1" >&2; exit 2;;
   esac
 done
-case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
+case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|enterprise-r11) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
 case "$task_scale" in ''|*[!0-9]*) echo 'Scale must be an integer population.' >&2; exit 2;; esac
 if ((task_scale<2)); then echo 'Scale must be at least two people.' >&2; exit 2; fi
 if [[ -z "$task_output" ]]; then task_output="runs/${task_spec}-n${task_scale}"; fi
@@ -94,6 +111,16 @@ if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then
   exec "$task_uv" run --no-sync python research_tools/cloud_control.py execute \
     --private-config "$DAMS_CLOUD_PRIVATE_CONFIG" --state-dir "${DAMS_CLOUD_STATE_DIR:?private persistent state directory required}" \
     --spec "$task_spec" --scale "$task_scale"
+fi
+if [[ "$task_spec" == enterprise-r11 ]]; then
+  # Paired-world enterprise study: prehistory -> common-state fork -> arms -> independent validators -> outcomes.
+  r11_args=(batch --scale "$task_scale" --context "$task_context" --growth "$task_growth" --pre-years "$task_pre"
+            --post-years "$task_post" --worlds "$task_worlds" --arms "$task_arms" --out "$task_output")
+  if [[ -n "$task_jobs" ]]; then r11_args+=(--jobs "$task_jobs"); fi
+  "$task_uv" run --no-sync python research_tools/r11_study.py "${r11_args[@]}"
+  "$task_uv" run --no-sync python research_tools/r11_outcomes.py "$task_output" > "$task_output/paired-outcomes.json"
+  echo "Paired outcomes: $task_output/paired-outcomes.json"
+  exit 0
 fi
 task_args=(--spec "$task_spec" --scale "$task_scale" --output "$task_output")
 if [[ -n "$task_limits" ]]; then task_args+=(--runtime-limits "$task_limits"); fi

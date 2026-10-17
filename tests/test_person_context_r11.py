@@ -30,7 +30,9 @@ def person(**kw):
                 female_share=.45, caregiver_share_female=.4, caregiver_share_male=.15, gender_evaluation_bias=-.05,
                 ethnic_groups=[['e0', .7], ['e1', .3]], minority_voice_shift=-.1, cross_ethnic_help_discount=.05,
                 physical_work_share=.4, site_climate=[[1.]*6+[.85, .85]+[1.]*4, [1.]*12],
-                site_institution_shocks=[[.5, .7, 10], [0., 1., 1]], annual_sick_days=8.)
+                site_institution_shocks=[[.5, .7, 10], [0., 1., 1]], annual_sick_days=8.,
+                dependents_mean=1.2, remote_share=.3, commute_hours_mean=.6, appearance_evaluation_bias=-.02,
+                faction_size=4, faction_cohesion=.3)
     base.update(kw)
     return PC(**base).validate()
 
@@ -83,6 +85,9 @@ class PersonContextTests(unittest.TestCase):
         self.assertAlmostEqual(statistics.fmean(d['caregiver'] for d in mal), .15, delta=.03)
         self.assertTrue(all(d['language'] == ('l0' if d['origin'] == 'o-a' else 'l1') for d in draws))
         self.assertAlmostEqual(statistics.fmean(d['ethnicity'] == 'e1' for d in draws), .3, delta=.02)
+        self.assertAlmostEqual(statistics.fmean(d['dependents'] for d in draws), 1.2, delta=.05)
+        self.assertTrue(all(d['commute_hours'] == 0. for d in draws if d['remote']))
+        self.assertFalse(any(d['remote'] and d['physical_work'] for d in draws))
         care = statistics.fmean(d['care_hours'] for d in draws if d['caregiver'])
         other = statistics.fmean(d['care_hours'] for d in draws if not d['caregiver'])
         self.assertGreater(care, other+.1)

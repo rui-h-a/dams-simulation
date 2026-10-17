@@ -89,6 +89,10 @@ ARMS = {
     'dams-consensus': dict(adoption='fixed', regime='sublinear', backend='consensus'),
     'linear-witness': dict(adoption='fixed', regime='linear', backend='witness'),
     'equal-witness': dict(adoption='fixed', regime='equal', backend='witness'),
+    # Guilds adopt in four waves 0, 6, 12 and 18 months after the boundary.
+    'dams-staged-witness': dict(adoption='staged', regime='sublinear', backend='witness'),
+    # Adoption only when the observable review backlog per active member reaches 2 records.
+    'dams-triggered-witness': dict(adoption='triggered', regime='sublinear', backend='witness'),
 }
 
 
@@ -188,6 +192,7 @@ COUNTRY_PROFILES = {
     'latam': dict(language='l4', shifts={'patience': -.15, 'risk_tolerance': .05}, trust=-.05, climate='hot-south', shock=[.10, .75, 25]),
     'mea': dict(language='l4', shifts={'patience': -.05}, trust=-.03, climate='hot-north', shock=[.10, .7, 25]),
 }
+REMOTE_SHARE = {'startup': .5, 'unicorn': .35, 'listed': .25, 'traditional': .05, 'century': .1, 'multinational': .3}
 PHYSICAL_SHARE = {'startup': .05, 'unicorn': .15, 'listed': .30, 'traditional': .60, 'century': .45, 'multinational': .40}
 
 
@@ -207,7 +212,9 @@ def person_context_for(cx, context=None):
              'physical_work_share': PHYSICAL_SHARE.get(context, .3),
              'site_climate': [CLIMATE[COUNTRY_PROFILES[k]['climate']] for k in keys],
              'site_institution_shocks': [list(COUNTRY_PROFILES[k]['shock']) for k in keys],
-             'annual_sick_days': 8.}
+             'annual_sick_days': 8.,
+             'dependents_mean': .8, 'care_hours_per_dependent': .02, 'remote_share': REMOTE_SHARE.get(context, .2),
+             'commute_hours_mean': .9, 'commute_fatigue_per_hour': .02, 'faction_size': 8, 'faction_cohesion': .2}
     return {**_person_context_base(cx), **extra}
 
 
@@ -228,7 +235,15 @@ def arm_config(base, branch, arm):
     if spec['adoption'] == 'never':
         L['adoption_mode'] = 'never'
         L['adoption_day'] = 0
-    else:
+    elif spec['adoption'] == 'fixed':
         L['adoption_mode'] = 'fixed'
         L['adoption_day'] = branch
+    elif spec['adoption'] == 'staged':
+        L['adoption_mode'] = 'staged'
+        L['guild_adoption_days'] = [[g, branch+182*(g % 4)] for g in range(d['guilds'])]
+    else:
+        L['adoption_mode'] = 'observable'
+        L['observable_trigger'] = 'review_backlog_per_active_member'
+        L['trigger_threshold'] = 2.0
+        L['trigger_not_before_day'] = branch
     return d

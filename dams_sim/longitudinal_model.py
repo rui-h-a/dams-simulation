@@ -321,7 +321,7 @@ class LongitudinalEngine:
             if self.acquisitions is not None and self.acquisitions.policy(g) is not None:continue
             if self.adoption[g] is not None or l.adoption_mode=='never':continue
             if l.adoption_mode=='fixed':requested=day>=l.adoption_day
-            elif l.adoption_mode=='staged':requested=day>=dict(l.guild_adoption_days)[g]
+            elif l.adoption_mode=='staged':requested=day>=dict(l.guild_adoption_days).get(g,max(d for _,d in l.guild_adoption_days))
             else:
                 value={'review_backlog_per_active_member':self.ledger.pending_count('review')/max(1,len(self.active)),
                        'active_members':len(self.active),'last_work_per_present_member':self.last_work_per_present_member}[l.observable_trigger]
@@ -603,9 +603,15 @@ class LongitudinalEngine:
             for g,ids in sorted(self.members.items()):
                 theta=self.rng.normal('proposal_value',day,g)
                 effective=[];votes=[];flags=[]
+                raw_signal={}
                 for i in ids:
                     share,trust,fatigue,learning=snapshot[i];token=self.people[i]['token']
-                    signal=theta+p.decision_noise_sd/(1+learning)*(self.pc.decision_noise_factor(i,variable_reservations.get(i,0.)/max(1e-9,1-self.agents[i].care_hours)) if self.pc is not None else 1.)*self.rng.normal('decision_signal',day,token)+p.shared_signal_sd*self.rng.normal('shared_signal',day,g)
+                    raw_signal[i]=theta+p.decision_noise_sd/(1+learning)*(self.pc.decision_noise_factor(i,variable_reservations.get(i,0.)/max(1e-9,1-self.agents[i].care_hours)) if self.pc is not None else 1.)*self.rng.normal('decision_signal',day,token)+p.shared_signal_sd*self.rng.normal('shared_signal',day,g)
+                leaders=self.pc.factions(ids,self.agents,g) if self.pc is not None else {}
+                omega=self.pc.c.faction_cohesion if leaders else 0.
+                for i in ids:
+                    share,trust,fatigue,learning=snapshot[i];token=self.people[i]['token']
+                    signal=(1-omega)*raw_signal[i]+omega*raw_signal[leaders[i]] if leaders else raw_signal[i]
                     flag=i in present and governance_time[i]>0 and self.rng.uniform('participate',day,token)<clip(.25+.65*trust-.35*fatigue+(self.pc.participation_shift(i,team_safety[self.agents[i].team]) if self.pc is not None else 0.))
                     flags.append(flag);effective.append(share if flag else 0.);votes.append(float(signal>=0))
                     self.ledger.add_journal(day,'vote',f'vote:{day}:{token}:g:{g}',{'person':i,'guild':g,'observed_signal':signal,'participates':flag,'formal_share':share,'effective_weight':share if flag else 0.,'vote':float(signal>=0)})
@@ -727,7 +733,7 @@ class LongitudinalEngine:
             self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attackers else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
             workload=efforts[i]+coordination[i]*funding+(attack_time if i in attackers else 0.)+training[i]*funding
             if self.organization is not None:workload+=(fixed[i]+organization_quality[i]+organization_learning[i])*funding
-            a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03)
+            a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03+(self.pc.fatigue_extra(i) if self.pc is not None else 0.))
             a.learning=clip(a.learning+(self.pc.learning_factor(i) if self.pc is not None else 1.)*l.skill_learning_per_work_year*(efforts[i]+(organization_learning[i]*funding if self.organization is not None else 0.))/yearwork,0,2)
             a.effort_memory=efforts[i]
             if self.pc is not None:self.pc.update_stress(i,workload,help_input,a.autonomy,team_safety[a.team])

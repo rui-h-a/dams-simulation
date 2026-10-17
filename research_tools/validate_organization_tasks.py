@@ -57,7 +57,7 @@ def _links(ids,c,assignments=None):
 def verify_organization_accounts(config,state,database):
     _source()
     c=config.organization_tasks
-    pc=getattr(config,'person_context',None);pc_language={};pc_openness={};pc_ethnicity={}
+    pc=getattr(config,'person_context',None);pc_language={};pc_openness={};pc_ethnicity={};pc_fatigue_extra={};pc_education={}
     if c is None:
         if 'organization_tasks_state' in state:raise ValueError('disabled organization carries durable state')
         return {'valid':True,'enabled':False,'formal_worlds_added':0}
@@ -183,7 +183,9 @@ def verify_organization_accounts(config,state,database):
                 if pc is not None:
                     if 'person_context' not in v:raise ValueError('person-context entry witness missing')
                     pc_language[person]=v['person_context']['language'];pc_openness[person]=v['person_context']['traits']['openness']
+                    pc_education[person]=v['person_context']['traits']['education']
                     pc_ethnicity[person]=v['person_context'].get('ethnicity')
+                    w=v['person_context'];pc_fatigue_extra[person]=(pc.commute_fatigue_per_hour*w.get('commute_hours',0.)-(pc.physical_fatigue_coefficient*w['traits'].get('physical_capacity',0.) if w.get('physical_work') else 0.))
                 if kind=='entry':
                     learn[person]=memory.get(str(v['guild']),0.)*l.memory_transfer_fraction;fatigue[person]=.1
                 else:
@@ -274,8 +276,8 @@ def verify_organization_accounts(config,state,database):
                 _close(morning['learning'],learn[i],'morning learning from complete history')
                 _close(morning['fatigue'],fatigue[i],'morning fatigue from complete history')
                 workload=p['effort']+p.get('enterprise_coordination',0.)+p['attack_hours']+p['training']+(a['network_hours']+a['quality_hours']+a['learning_hours'])*funding
-                fatigue[i]=max(0.,min(1.,fatigue[i]+.15*workload-.1*(1-workload)-.03))
-                learn[i]=max(0.,min(2.,learn[i]+(1. if pc is None else max(0.,1+pc.learning_openness_coefficient*pc_openness[i]))*l.skill_learning_per_work_year*(p['effort']+o['learning_hours'])/max(1,clock.workdays_in_year(day))))
+                fatigue[i]=max(0.,min(1.,fatigue[i]+.15*workload-.1*(1-workload)-.03+(pc_fatigue_extra[i] if pc is not None else 0.)))
+                learn[i]=max(0.,min(2.,learn[i]+(1. if pc is None else max(0.,1+pc.learning_openness_coefficient*pc_openness[i]+pc.learning_education_coefficient*pc_education[i]))*l.skill_learning_per_work_year*(p['effort']+o['learning_hours'])/max(1,clock.workdays_in_year(day))))
                 shock=.7 if config.fault_start_day<=day<config.fault_stop_day and sites[i]==0 else 1.
                 difficulty=.5+rng.uniform('task_difficulty',day,token);noise=math.exp(.1*rng.normal('task_output',day,token))
                 g=str(guilds[i]);adopt=adoptions[g]

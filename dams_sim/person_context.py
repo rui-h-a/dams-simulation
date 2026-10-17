@@ -18,9 +18,10 @@ from __future__ import annotations
 import dataclasses
 import math
 
-VERSION = 'longitudinal-enterprise-person-context-11-1'
+VERSION = 'longitudinal-enterprise-person-context-11-2'
 TRAITS = ('conscientiousness', 'agreeableness', 'neuroticism', 'openness',
-          'extraversion', 'risk_tolerance', 'patience', 'judgment', 'education', 'health_risk')
+          'extraversion', 'risk_tolerance', 'patience', 'judgment', 'education', 'health_risk',
+          'physical_capacity', 'appearance', 'financial_strain')
 
 
 def _finite(value, low, high, name):
@@ -104,6 +105,19 @@ class PersonContextConfig:
     identity_quit_coefficient: float = 1.0
     identity_participation_coefficient: float = 0.1
     load_noise_coefficient: float = 0.3
+    # R11.2 education, body, household, commute, finance and informal factions.
+    learning_education_coefficient: float = 0.1
+    physical_fatigue_coefficient: float = 0.02
+    appearance_evaluation_bias: float = 0.0
+    dependents_mean: float = 0.0
+    care_hours_per_dependent: float = 0.02
+    remote_share: float = 0.0
+    commute_fatigue_per_hour: float = 0.02
+    commute_hours_mean: float = 0.0
+    financial_strain_quit_coefficient: float = 0.2
+    financial_strain_stress_coefficient: float = 0.05
+    faction_size: int = 0
+    faction_cohesion: float = 0.0
 
     def validate(self):
         if type(self.schema_version) is not int or self.schema_version != 1:
@@ -170,6 +184,15 @@ class PersonContextConfig:
             _finite(getattr(self, name), -1, 1, name)
         _finite(self.cross_ethnic_help_discount, 0, 1, 'cross_ethnic_help_discount')
         _finite(self.annual_sick_days, 0, 60, 'annual_sick_days')
+        for name in ('learning_education_coefficient', 'physical_fatigue_coefficient', 'commute_fatigue_per_hour',
+                     'financial_strain_quit_coefficient', 'financial_strain_stress_coefficient'):
+            _finite(getattr(self, name), -5, 5, name)
+        _finite(self.appearance_evaluation_bias, -1, 1, 'appearance_evaluation_bias')
+        _finite(self.dependents_mean, 0, 10, 'dependents_mean'); _finite(self.care_hours_per_dependent, 0, .2, 'care_hours_per_dependent')
+        _finite(self.remote_share, 0, 1, 'remote_share'); _finite(self.commute_hours_mean, 0, 4, 'commute_hours_mean')
+        _finite(self.faction_cohesion, 0, 1, 'faction_cohesion')
+        if type(self.faction_size) is not int or not 0 <= self.faction_size <= 10_000:
+            raise ValueError('faction_size must be an integer in [0, 10000]')
         for name in ('sick_health_coefficient', 'identity_quit_coefficient', 'identity_participation_coefficient', 'load_noise_coefficient'):
             _finite(getattr(self, name), -5, 5, name)
         for row in self.site_climate:
@@ -221,6 +244,16 @@ def _pick(rows, u):
     return rows[-1]
 
 
+def _poisson(mean, u):
+    if mean <= 0:
+        return 0
+    k, p = 0, math.exp(-mean)
+    acc = p
+    while u > acc and k < 50:
+        k += 1; p *= mean/k; acc += p
+    return k
+
+
 def clip(x, low=0., high=1.):
     return max(low, min(high, x))
 
@@ -262,11 +295,17 @@ class PersonContextState:
             care = clip((c.caregiver_care_hours if caregiver else c.other_care_hours)+c.care_hours_sd*rng.normal('pc_care', token), 0., 0.6)
         ethnicity = _pick(c.ethnic_groups, rng.uniform('pc_ethnicity', token))[0]
         physical = rng.uniform('pc_physical', token) < c.physical_work_share
+        dependents = _poisson(c.dependents_mean, rng.uniform('pc_dependents', token))
+        if c.dependents_mean > 0:
+            care = clip(care+c.care_hours_per_dependent*dependents, 0., 0.6)
+        remote = (not physical) and rng.uniform('pc_remote', token) < c.remote_share
+        commute = 0. if remote else c.commute_hours_mean*math.exp(.5*rng.normal('pc_commute', token)-.125)
         education = max(0., c.education_mean_years+c.education_sd_years*traits['education'])
         return {'traits': traits, 'education_years': education, 'employment': employment,
                 'caregiver': caregiver, 'care_hours': care, 'language': language,
                 'origin': origin, 'migrant': migrant, 'trust_shift': trust_shift,
                 'gender': 'female' if female else 'male', 'ethnicity': ethnicity, 'physical_work': physical,
+                'dependents': dependents, 'remote': remote, 'commute_hours': commute,
                 'stress': 0., 'fairness': c.initial_fairness, 'identity': c.initial_identity}
 
     def append(self, record):
@@ -294,7 +333,16 @@ class PersonContextState:
         return math.exp(-self.c.judgment_noise_coefficient*self.people[i]['traits']['judgment'])*(1+self.c.load_noise_coefficient*clip(load))
 
     def learning_factor(self, i):
-        return max(0., 1+self.c.learning_openness_coefficient*self.people[i]['traits']['openness'])
+        t = self.people[i]['traits']
+        return max(0., 1+self.c.learning_openness_coefficient*t['openness']+self.c.learning_education_coefficient*t['education'])
+
+    def fatigue_extra(self, i):
+        """Static daily fatigue load from physical work capacity and commuting (work days only)."""
+        p = self.people[i]
+        extra = self.c.commute_fatigue_per_hour*p.get('commute_hours', 0.)
+        if p.get('physical_work'):
+            extra -= self.c.physical_fatigue_coefficient*p['traits']['physical_capacity']
+        return extra
 
     def help_language_factor(self, i, j):
         if j is None:
@@ -312,6 +360,7 @@ class PersonContextState:
         shift = 0. if a['language'] == b['language'] else self.c.cross_group_evaluation_bias
         if a.get('gender') == 'female' and b.get('gender') == 'male':
             shift += self.c.gender_evaluation_bias
+        shift += self.c.appearance_evaluation_bias*a['traits'].get('appearance', 0.)
         return shift
 
     def majority_ethnicity(self):
@@ -359,7 +408,8 @@ class PersonContextState:
         t = p['traits']
         logit_shift = (c.quit_stress_coefficient*p['stress']+c.quit_fairness_coefficient*(c.initial_fairness-p['fairness'])
                        -c.quit_patience_coefficient*t['patience']-c.quit_conscientiousness_coefficient*t['conscientiousness']
-                       -c.identity_quit_coefficient*(p.get('identity', c.initial_identity)-c.initial_identity))
+                       -c.identity_quit_coefficient*(p.get('identity', c.initial_identity)-c.initial_identity)
+                       +c.financial_strain_quit_coefficient*t.get('financial_strain', 0.))
         base = c.baseline_annual_quit_probability*mult*(c.migrant_exit_multiplier if p.get('migrant') else 1.)
         if base <= 0:
             return 0.
@@ -373,7 +423,7 @@ class PersonContextState:
         demand = c.stress_demand_weight*max(0., workload-0.6)
         resource = c.stress_resource_weight*(help_input+autonomy+safety)/3
         sensitivity = max(0., 1+c.stress_neuroticism_coefficient*p['traits']['neuroticism'])
-        target = clip(sensitivity*(demand-resource+0.2))
+        target = clip(sensitivity*(demand-resource+0.2)+c.financial_strain_stress_coefficient*p['traits'].get('financial_strain', 0.))
         keep = 0.5**(1/c.stress_half_life_workdays)
         p['stress'] = keep*p['stress']+(1-keep)*target
 
@@ -400,12 +450,13 @@ class PersonContextState:
         return {'version': VERSION, 'traits': p['traits'], 'education_years': p['education_years'],
                 'employment': p['employment'], 'caregiver': p['caregiver'], 'care_hours': p['care_hours'],
                 'language': p['language'], 'origin': p['origin'], 'migrant': p['migrant'], 'trust_shift': p['trust_shift'],
-                'gender': p['gender'], 'ethnicity': p['ethnicity'], 'physical_work': p['physical_work']}
+                'gender': p['gender'], 'ethnicity': p['ethnicity'], 'physical_work': p['physical_work'],
+                'dependents': p['dependents'], 'remote': p['remote'], 'commute_hours': p['commute_hours']}
 
     def group_summary(self, ids, agents):
         """Formal-share and stress/fairness means by caregiver role, language group and contract."""
         out = {}
-        for key in ('caregiver', 'language', 'employment', 'gender', 'origin', 'migrant', 'ethnicity', 'physical_work'):
+        for key in ('caregiver', 'language', 'employment', 'gender', 'origin', 'migrant', 'ethnicity', 'physical_work', 'remote'):
             groups = {}
             for i in ids:
                 groups.setdefault(str(self.people[i][key]), []).append(i)
@@ -425,6 +476,20 @@ class PersonContextState:
         obj = cls(config)
         obj.people = value['people']
         return obj
+
+    def factions(self, ids, agents, guild):
+        """Informal factions: consecutive blocks of the guild roster sorted by (origin, ethnicity);
+        the leader is the member with the highest extraversion plus tenure."""
+        if self.c.faction_size <= 0 or self.c.faction_cohesion <= 0:
+            return {}
+        order = sorted(ids, key=lambda i: (str(self.people[i].get('origin')), str(self.people[i].get('ethnicity')), i))
+        leader = {}
+        for k in range(0, len(order), self.c.faction_size):
+            block = order[k:k+self.c.faction_size]
+            head = max(block, key=lambda i: (self.people[i]['traits']['extraversion']+agents[i].tenure, -i))
+            for i in block:
+                leader[i] = head
+        return leader
 
     def gaps(self, ids, agents):
         """Mean formal-share differences between groups (numeric; positive favours the first-named group)."""

@@ -111,8 +111,8 @@ class EnterpriseGrowthConfig:
             raise ValueError('growth/contraction rules require separate hysteresis thresholds')
         if l.workforce_targets or l.guild_mergers or l.guild_moves:
             raise ValueError('growth v1 cannot mix endogenous allocation with prescribed workforce/domain changes')
-        if l.adoption_mode == 'staged':
-            raise ValueError('staged adoption has no declared policy for future guilds in growth v1')
+        # R11.2: guilds created by growth adopt on the final declared stage day
+        # (immediately if that day has passed); see LongitudinalEngine._adopt.
         return self
 
 
