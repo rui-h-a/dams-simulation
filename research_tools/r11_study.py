@@ -209,7 +209,8 @@ def _run(job):
 def batch(ns):
     import multiprocessing
     multiprocessing.set_executable(sys.executable)
-    root = Path(ns.out); root.mkdir(parents=True, exist_ok=True)
+    # Resolve once: storage rejects symbolic links in any directory component.
+    root = Path(ns.out); root.mkdir(parents=True, exist_ok=True); root = root.resolve()
     worlds = [int(w) for w in ns.worlds.split(',')]
     arms = ns.arms.split(',')
     audit = {int(w) for w in ns.audit_worlds.split(',')} if ns.audit_worlds else set()

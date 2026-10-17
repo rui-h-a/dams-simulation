@@ -86,6 +86,9 @@ else
   fi
 fi
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+# Storage opens each directory component with O_NOFOLLOW, so temporary paths must
+# not pass through a symbolic link (macOS: /var -> /private/var, /tmp -> /private/tmp).
+TMPDIR="$(cd "${TMPDIR:-/tmp}" && pwd -P)"; export TMPDIR
 task_uv_version=$("$task_uv" --version)
 [[ "$task_uv_version" == 'uv 0.9.26'* ]] || { echo 'uv tool version differs from the verified bootstrap version.' >&2; exit 2; }
 echo "Using $task_uv_version at $task_uv; managed Python 3.14.2"
