@@ -73,6 +73,21 @@ def _resume(cpdir, config, root):
     return Model.restore_checkpoint(cps[-1], expected_config=config, storage_dir=root/f'work-r{k}')
 
 
+def _retire_partial(out, names):
+    """An interrupted attempt that never reached a resumable checkpoint leaves
+    scratch directories; they are deterministic and are removed before the
+    attempt is repeated. A previous failure receipt is kept under a new name."""
+    import shutil
+    for n in names:
+        p = out/n
+        if p.exists():
+            shutil.rmtree(p)
+    f = out/'failure.json'
+    if f.exists():
+        k = len(list(out.glob('failure-attempt-*.json')))
+        f.rename(out/f'failure-attempt-{k}.json')
+
+
 def prehistory(args):
     out = Path(args['out'])
     out.mkdir(parents=True, exist_ok=True)
@@ -83,7 +98,10 @@ def prehistory(args):
                             seed=args['seed'], pre_years=args['pre_years'], post_years=args['post_years'], variant=args.get('variant','baseline'))
     config = Config.from_dict(d)
     t, cpu = time.monotonic(), time.process_time()
-    m = _resume(out/'progress', config, out) or Model(config, storage_dir=out/'work', journal_chunk_bytes=CHUNK)
+    m = _resume(out/'progress', config, out)
+    if m is None:
+        _retire_partial(out, ('work',))
+        m = Model(config, storage_dir=out/'work', journal_chunk_bytes=CHUNK)
     _segments(m, branch, out/'progress', config, out)
     cp = out/f'checkpoint-day-{branch:06d}.json'
     m.write_checkpoint(cp)
@@ -153,6 +171,7 @@ def arm(args):
     t, cpu = time.monotonic(), time.process_time()
     m = _resume(out/'progress', child, out)
     if m is None:
+        _retire_partial(out, ('restored', 'work'))
         base = Model.restore_checkpoint(pre/meta['checkpoint'], expected_config=parent, storage_dir=out/'restored')
         m = base.fork(child, storage_dir=out/'work')
         base._long.ledger.close()
@@ -242,6 +261,9 @@ def batch(ns):
                            'out': str(Path(payload['out']).parent/a)}
                     pending[ex.submit(_run, ('arm', job))] = w
     note(kind='batch-complete')
+    failed = sorted(str(f.relative_to(root)) for f in root.rglob('failure.json'))
+    if failed:
+        raise SystemExit(f'{len(failed)} jobs failed; receipts kept: ' + ', '.join(failed[:5]))
 
 
 def main():

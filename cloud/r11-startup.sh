@@ -43,7 +43,11 @@ HOME=/root ./run.sh --spec enterprise-r11 $ARGS --output "$OUT"; status=$?
 echo "DAMSR11 batch exit $status $(date -u +%FT%TZ)"
 kill $UPLOADER 2>/dev/null; upload_ready
 [ -f "$OUT/paired-outcomes.json" ] && put "$OUT/paired-outcomes.json" "$PREFIX/paired-outcomes.json"
-echo "{\"exit\":$status,\"commit\":\"$COMMIT\",\"utc\":\"$(date -u +%FT%TZ)\"}" > /srv/done.json && put /srv/done.json "$PREFIX/done.json"
-put /var/log/dams-r11.log "$PREFIX/vm.log"
+# done.json marks a complete batch only; an incomplete one is recorded under a
+# timestamped name so that a coordinator restarting the VM resumes the batch.
+receipt="{\"exit\":$status,\"commit\":\"$COMMIT\",\"utc\":\"$(date -u +%FT%TZ)\"}"
+if [ "$status" = 0 ]; then echo "$receipt" > /srv/done.json && put /srv/done.json "$PREFIX/done.json"
+else echo "$receipt" > /srv/incomplete.json && put /srv/incomplete.json "$PREFIX/incomplete.$(date -u +%Y%m%dT%H%M%SZ).json"; fi
+cp /var/log/dams-r11.log /srv/vm.log.snap && put /srv/vm.log.snap "$PREFIX/vm.log.$(date -u +%Y%m%dT%H%M%SZ)"
 echo "DAMSR11 done"
 shutdown -h now
