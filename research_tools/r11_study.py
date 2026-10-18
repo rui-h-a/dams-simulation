@@ -82,10 +82,26 @@ def _retire_partial(out, names):
         p = out/n
         if p.exists():
             shutil.rmtree(p)
+    _retire_failure(out)
+
+
+def _retire_failure(out):
     f = out/'failure.json'
     if f.exists():
         k = len(list(out.glob('failure-attempt-*.json')))
         f.rename(out/f'failure-attempt-{k}.json')
+
+
+def _retire_final(out):
+    """Final files of an attempt interrupted before its receipt are moved aside;
+    the resumed attempt recomputes them deterministically."""
+    old = [p for p in (out/'final_state.json', out/'final_state.sqlite') if p.exists()]
+    if old:
+        k = len(list(out.glob('interrupted-final-*')))
+        dest = out/f'interrupted-final-{k}'
+        dest.mkdir()
+        for p in old:
+            p.rename(dest/p.name)
 
 
 def prehistory(args):
@@ -162,6 +178,7 @@ def arm(args):
     out = Path(args['out'])
     done = out/'arm.json'
     if done.exists():
+        _retire_failure(out)  # a stale receipt from an attempt before the one that completed
         return json.loads(done.read_text())
     out.mkdir(parents=True, exist_ok=True)
     parent_d, branch = meta['config'], meta['branch_day']
@@ -169,6 +186,7 @@ def arm(args):
     child_d = arm_config(parent_d, branch, args['arm'])
     child = Config.from_dict(child_d)
     t, cpu = time.monotonic(), time.process_time()
+    _retire_failure(out)
     m = _resume(out/'progress', child, out)
     if m is None:
         _retire_partial(out, ('restored', 'work'))
@@ -178,6 +196,7 @@ def arm(args):
     _segments(m, child.days, out/'progress', child, out)
     sim_wall = time.monotonic()-t
     final = out/'final_state.json'
+    _retire_final(out)
     m.write_final_state(final)
     atomic_csv(out/'timeseries.csv', m.history)
     summary = json.loads(canonical(m.summary()))
