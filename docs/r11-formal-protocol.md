@@ -126,3 +126,18 @@ interval is reported against delta; the threshold is not changed. The
 consecutively with seed 20261017; no world is skipped or replaced. Holm
 adjustment and paired Student-t intervals as above. Worlds that fail
 validation are reported by count and cause and are not replaced.
+
+## Amendment 2 (2026-10-19): mid-life adoption in four organizational contexts
+
+Recorded before any confirmation world of these studies was run. Contexts
+traditional, century, listed and unicorn; 300 initial members; organic growth;
+adoption at the boundary after a two-year generated history (pre_years 2,
+post_years 5); arms control-hierarchy (reference) and dams-witness, both
+branched from the same complete pre-adoption state. Pilot worlds 0-2 (commit
+3547fac; dams_sim identical to 65d6b4e) give, by the rule above, R = 65
+(traditional), 11 (century), 376 (listed) and 119 (unicorn); decision regret
+sets R except for the century context. Capacity cap fixed from compute cost
+before any confirmation world: at most 120 worlds per context, so the listed
+context runs 120 worlds and reports its achieved precision. Worlds start at
+1000, consecutive, seed 20261017; operational interruptions are resumed under
+the same world identity; validation failures are reported, not replaced.
