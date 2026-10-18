@@ -13,7 +13,16 @@ COMMIT=$(md dams-commit); ARGS=$(md dams-args); BUCKET=$(md dams-bucket); PREFIX
 echo "DAMSR11 start $(date -u +%FT%TZ) $(uname -m) $(nproc) commit=$COMMIT"
 apt-get -qq update >/dev/null 2>&1; apt-get -qq -y install git curl >/dev/null 2>&1
 mkdir -p /srv && cd /srv
-if [ -d /srv/sim/.git ]; then cd sim && [ "$(git rev-parse HEAD)" = "$COMMIT" ] || { echo "DAMSR11 resume-commit-mismatch"; shutdown -h now; }; echo "DAMSR11 resume existing checkout"
+if [ -d /srv/sim/.git ]; then cd sim
+  OLD=$(git rev-parse HEAD)
+  if [ "$OLD" != "$COMMIT" ]; then
+    # A newer commit may take over a resumed batch only if the simulation
+    # package is byte-identical, so existing checkpoints stay valid.
+    git fetch -q origin && git diff --quiet "$OLD" "$COMMIT" -- dams_sim && git checkout -q "$COMMIT" \
+      && echo "DAMSR11 resume switched $OLD -> $COMMIT (dams_sim identical)" \
+      || { echo "DAMSR11 resume-commit-mismatch"; shutdown -h now; }
+  fi
+  echo "DAMSR11 resume existing checkout"
 else git clone -q https://github.com/rui-h-a/dams-simulation.git sim && cd sim && git checkout -q "$COMMIT" || { echo "DAMSR11 checkout-failed"; shutdown -h now; }; fi
 OUT=/srv/runs/batch
 token() { curl -sf -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token | python3 -c 'import json,sys;print(json.load(sys.stdin)["access_token"])'; }
