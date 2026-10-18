@@ -225,11 +225,12 @@ def verify_organization_accounts(config,state,database):
             if type(plan['day']) is not int or plan['day']!=day or plan['topology']!=links:raise ValueError('organization active roster/topology differs from lifecycle')
             present=plan['present_people']
             if any(type(i) is not int for i in present) or present!=sorted(set(present)) or not set(present)<=active:raise ValueError('organization presence roster differs')
+            present_set=set(present)  # membership only; iteration keeps the sorted list order
             if set(plan['allocations'])!={str(i) for i in present}:raise ValueError('organization allocation roster differs')
             funding=plan['funding_fraction'];_close(funding,min(1.,max(0.,funding)),'funding')
             remaining={};net=quality=learning=0.
             for i in present:
-                key=str(i);a=plan['allocations'][key];peers=[j for j in links['collaboration_peers'][key] if j in present]
+                key=str(i);a=plan['allocations'][key];peers=[j for j in links['collaboration_peers'][key] if j in present_set]
                 request=links['reporting_depth'][key]*c.reporting_hours_per_layer+len(peers)*c.collaboration_hours_per_contact+c.verification_hours_per_member_workday
                 _close(a['requested_network_hours'],request,'network request')
                 available=a['available_hours'];_close(available,max(0.,available),'available capacity')
@@ -267,7 +268,7 @@ def verify_organization_accounts(config,state,database):
                 readiness=1/(1+c.reporting_readiness_penalty_per_layer*links['reporting_depth'][str(i)])
                 _close(o['reporting_readiness_fraction'],readiness,'reporting readiness')
                 if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+links['reporting_depth'][str(i)]*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
-                peers=[j for j in links['collaboration_peers'][str(i)] if j in present]
+                peers=[j for j in links['collaboration_peers'][str(i)] if j in present_set]
                 # R11: cross-language collaboration contacts carry the declared discount (independent re-statement).
                 lang=(lambda j:1. if pc is None else (1. if pc_language[i]==pc_language[j] else 1-pc.cross_language_help_discount)*(1. if pc_ethnicity[i]==pc_ethnicity[j] else 1-pc.cross_ethnic_help_discount))
                 help_input=math.fsum(cooperation[str(j)]*lang(j) for j in peers)/len(peers) if peers else 0.
@@ -336,7 +337,7 @@ def verify_organization_accounts(config,state,database):
                 if claimant is None:raise ValueError('organization verification event lacks retained claimant')
                 candidates=links['verification_candidates'].get(str(claimant))
                 if candidates is None:candidates=[i for i in present if i!=claimant and department(i)!=department(claimant)]
-                reviewer=next((i for i in candidates if i in present and remaining.get(str(i),0)>0),None)
+                reviewer=next((i for i in candidates if i in present_set and remaining.get(str(i),0)>0),None)
                 if kind=='organization_verification_deferred':
                     if reviewer is not None or type(p['person']) is not int or p['person']!=claimant or type(p['ready']) is not int or p['ready']!=day+1:raise ValueError('organization deferral with available reviewer')
                     metrics['organization_verification_deferred_records']+=1
