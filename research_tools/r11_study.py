@@ -58,6 +58,14 @@ def _segments(m, target, cpdir, config, root, *, every=365):
         m.run(stop)
         if stop < target:
             cp = cpdir/f'checkpoint-day-{stop:06d}.json'
+            # Files for this day left by an attempt interrupted while writing them
+            # are incomplete; move them aside (kept) before the deterministic rewrite.
+            stale = list(cpdir.glob(f'checkpoint-day-{stop:06d}*'))
+            if stale:
+                aside = cpdir/f'interrupted-{stop:06d}-{len(list(cpdir.glob("interrupted-*")))}'
+                aside.mkdir()
+                for f in stale:
+                    f.rename(aside/f.name)
             m.write_checkpoint(cp)
             for old in cpdir.glob('checkpoint-day-*'):
                 if not old.name.startswith(f'checkpoint-day-{stop:06d}'):
