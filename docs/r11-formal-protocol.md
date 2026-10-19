@@ -141,3 +141,30 @@ before any confirmation world: at most 120 worlds per context, so the listed
 context runs 120 worlds and reports its achieved precision. Worlds start at
 1000, consecutive, seed 20261017; operational interruptions are resumed under
 the same world identity; validation failures are reported, not replaced.
+
+## Amendment 3 (2026-10-19): two-firm acquisition study
+
+Recorded before any confirmation world of this study was run. Design commit
+69f050b (research_tools/r11_targets.py, research_tools/r11_design.py;
+dams_sim identical to 65d6b4e), executed at 93e5b87 (identical design code
+and dams_sim). Acquirer: listed context, 300 initial members, growth
+organic+acquisition, two-year generated history and five years after the
+adoption boundary (pre_years 2, post_years 5). One target per world: a
+separately simulated founding-stage hierarchy firm of 60 initial members at
+fixed capacity, offered from the start of the second post-adoption year for
+180 days; price = net cash + 14 x last-year operating surplus; integration
+window 20 workdays, cost 2.5 % of the price, normal payroll, excess exit
+3.36e-3 per workday; the price may be borrowed in full. Arms
+control-hierarchy (reference) and dams-witness, branched from the same
+complete pre-adoption state. Two studies with separate worlds: integration
+mode preserve-autonomy (variant baseline) and centralize (variant
+ma-centralize).
+
+Pilot worlds 0-3 (both modes; every acquisition closed on day 1097 and was
+integrated on day 1123 in both arms of every world) give, by the rule above,
+R = 237 (preserve-autonomy) and 334 (centralize). Capacity cap fixed from
+compute cost before any confirmation world: at most 120 worlds per mode,
+worlds 1000-1119, seed 20261017; each mode reports its achieved precision.
+Primary outcomes, reference arm, inference and failure handling as above.
+Operational interruptions are resumed under the same world identity;
+validation failures are reported, not replaced.
