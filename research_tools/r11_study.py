@@ -60,7 +60,8 @@ def _segments(m, target, cpdir, config, root, *, every=365):
             cp = cpdir/f'checkpoint-day-{stop:06d}.json'
             # Files for this day left by an attempt interrupted while writing them
             # are incomplete; move them aside (kept) before the deterministic rewrite.
-            stale = list(cpdir.glob(f'checkpoint-day-{stop:06d}*'))
+            # (including the hidden .checkpoint-day-*.sqlite.tmp written before the rename)
+            stale = list(cpdir.glob(f'checkpoint-day-{stop:06d}*'))+list(cpdir.glob(f'.checkpoint-day-{stop:06d}*'))
             if stale:
                 aside = cpdir/f'interrupted-{stop:06d}-{len(list(cpdir.glob("interrupted-*")))}'
                 aside.mkdir()
@@ -103,7 +104,7 @@ def _retire_failure(out):
 def _retire_final(out):
     """Final files of an attempt interrupted before its receipt are moved aside;
     the resumed attempt recomputes them deterministically."""
-    old = [p for p in (out/'final_state.json', out/'final_state.sqlite') if p.exists()]
+    old = [p for p in (out/'final_state.json', out/'final_state.sqlite', out/'.final_state.sqlite.tmp') if p.exists()]
     if old:
         k = len(list(out.glob('interrupted-final-*')))
         dest = out/f'interrupted-final-{k}'
