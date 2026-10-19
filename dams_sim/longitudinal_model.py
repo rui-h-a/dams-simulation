@@ -522,7 +522,7 @@ class LongitudinalEngine:
                 if self.adoption[a.guild] is not None:
                     r['post_adoption_available_work_hours']+=available;self.metrics['post_adoption_available_member_work_hours']+=available
                 leave=min(1.,l.annual_leave_workdays/max(1,self.clock.workdays_in_year(day)))
-                sick=self.pc is not None and self.pc.sick(i,self.rng,day,r['token'],self.clock.workdays_in_year(day))
+                sick=self.pc is not None and self.pc.sick(i,self.rng,day,r['token'],self.clock.workdays_in_year(day),age_at(r['birth_date'],self.clock.at(day)))
                 if sick:self.metrics['sick_absence_workdays']+=1
                 if self.rng.uniform('leave',day,r['token'])>=leave and not sick:
                     present.add(i);r['present_workdays']+=1

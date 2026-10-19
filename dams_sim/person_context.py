@@ -107,6 +107,13 @@ class PersonContextConfig:
     site_institution_shocks: list = dataclasses.field(default_factory=list)
     annual_sick_days: float = 0.0
     sick_health_coefficient: float = 0.5
+    # 'daily': independent daily absence (earlier versions). 'spells': absence comes in
+    # spells of several calendar days; onset and duration both depend on age.
+    sick_spell_model: str = 'daily'
+    # [[min_days, max_days, share_of_spells], ...] calendar-day spell lengths.
+    sick_spell_bins: list = dataclasses.field(default_factory=list)
+    # [[age_from, onset_multiplier, duration_multiplier], ...] sorted by age_from.
+    sick_age_profile: list = dataclasses.field(default_factory=list)
     initial_identity: float = 0.6
     identity_update_rate: float = 0.02
     identity_quit_coefficient: float = 1.0
@@ -191,6 +198,22 @@ class PersonContextConfig:
             _finite(getattr(self, name), -1, 1, name)
         _finite(self.cross_ethnic_help_discount, 0, 1, 'cross_ethnic_help_discount')
         _finite(self.annual_sick_days, 0, 60, 'annual_sick_days')
+        if self.sick_spell_model not in ('daily', 'spells'):
+            raise ValueError('sick_spell_model must be daily or spells')
+        if self.sick_spell_model == 'spells':
+            if not self.sick_spell_bins or not self.sick_age_profile:
+                raise ValueError('spell model needs spell bins and an age profile')
+            for lo, hi, share in self.sick_spell_bins:
+                if type(lo) is not int or type(hi) is not int or not 1 <= lo <= hi <= 365:
+                    raise ValueError('invalid sick spell bin')
+                _finite(share, 0, 1, 'sick spell share')
+            if abs(math.fsum(r[2] for r in self.sick_spell_bins)-1) > 1e-9:
+                raise ValueError('sick spell shares must sum to one')
+            ages = [r[0] for r in self.sick_age_profile]
+            if ages != sorted(ages) or len(set(ages)) != len(ages):
+                raise ValueError('sick age profile must be sorted by age')
+            for _, onset, duration in self.sick_age_profile:
+                _finite(onset, 0, 20, 'sick onset multiplier'); _finite(duration, 0.05, 20, 'sick duration multiplier')
         for name in ('learning_education_coefficient', 'physical_fatigue_coefficient', 'commute_fatigue_per_hour',
                      'financial_strain_quit_coefficient', 'financial_strain_stress_coefficient'):
             _finite(getattr(self, name), -5, 5, name)
@@ -231,7 +254,13 @@ class PersonContextConfig:
         return m
 
     def to_dict(self):
-        return dataclasses.asdict(self)
+        out = dataclasses.asdict(self)
+        # The daily absence model is the earlier behaviour; omitting its fields keeps
+        # earlier configurations, and their digests, unchanged.
+        if out['sick_spell_model'] == 'daily':
+            for k in ('sick_spell_model', 'sick_spell_bins', 'sick_age_profile'):
+                out.pop(k)
+        return out
 
     @classmethod
     def from_dict(cls, value):
@@ -266,6 +295,45 @@ def clip(x, low=0., high=1.):
     return max(low, min(high, x))
 
 
+def _age_row(profile, age):
+    row = profile[0]
+    for r in profile:
+        if age is not None and age >= r[0]:
+            row = r
+    return row
+
+
+def mean_spell_days(c):
+    return math.fsum(share*(lo+hi)/2 for lo, hi, share in c.sick_spell_bins)
+
+
+def spell_absent(c, state, token, day, workdays, age, health, rng):
+    """Spell model shared by the engine and the independent validator.
+
+    On a working day an active member who is not already in a spell starts one with
+    probability p = annual_sick_days / (workdays x 5/7 x mean spell length) x age onset
+    multiplier x exp(coefficient x health risk); the spell lasts L calendar days, L drawn
+    from the declared length bins and scaled by the age duration multiplier. The member
+    is absent on every working day of the spell."""
+    if day < state.get(token, -1):
+        return True
+    _, onset, duration = _age_row(c.sick_age_profile, age)
+    p = min(1., c.annual_sick_days/max(1, workdays)/(mean_spell_days(c)*5/7)*onset*math.exp(c.sick_health_coefficient*health))
+    if rng.uniform('pc_sick', day, token) >= p:
+        return False
+    u, acc = rng.uniform('pc_spell_bin', day, token), 0.
+    lo, hi = c.sick_spell_bins[-1][:2]
+    for b_lo, b_hi, share in c.sick_spell_bins:
+        acc += share
+        if u < acc:
+            lo, hi = b_lo, b_hi
+            break
+    base = lo+(hi-lo)*rng.uniform('pc_spell_len', day, token)
+    length = max(1, round(base*duration))
+    state[token] = day+length
+    return True
+
+
 class PersonContextState:
     """Per-person latent traits and dynamic stress/fairness, aligned with agent ids."""
 
@@ -274,6 +342,7 @@ class PersonContextState:
         self.lower = cholesky(self.c.matrix())
         self.people = []
         self._shock_cache = {}
+        self.sick_until = {}  # token -> first calendar day after the current spell
 
     def draw(self, rng, token, site=0):
         c = self.c
@@ -378,10 +447,14 @@ class PersonContextState:
         minority = self.people[i].get('ethnicity', self.majority_ethnicity()) != self.majority_ethnicity()
         return clip(self.c.voice_base_probability+self.c.voice_safety_coefficient*(safety-0.5)+(self.c.minority_voice_shift if minority else 0.))
 
-    def sick(self, i, rng, day, token, workdays):
-        """Health-related absence; depends only on the entry witness so it can be independently recomputed."""
+    def sick(self, i, rng, day, token, workdays, age=None):
+        """Health-related absence; depends only on the entry witness, age and keyed draws,
+        so it can be independently recomputed (spell state included)."""
         if self.c.annual_sick_days <= 0:
             return False
+        if self.c.sick_spell_model == 'spells':
+            return spell_absent(self.c, self.sick_until, token, day, workdays, age,
+                                self.people[i]['traits']['health_risk'], rng)
         p = min(1., self.c.annual_sick_days/max(1, workdays)*math.exp(self.c.sick_health_coefficient*self.people[i]['traits']['health_risk']))
         return rng.uniform('pc_sick', day, token) < p
 
@@ -476,7 +549,10 @@ class PersonContextState:
         return out
 
     def to_dict(self):
-        return {'version': VERSION, 'people': self.people}
+        out = {'version': VERSION, 'people': self.people}
+        if self.c.sick_spell_model == 'spells':
+            out['sick_until'] = dict(sorted(self.sick_until.items()))
+        return out
 
     @classmethod
     def restore(cls, config, value):
@@ -484,6 +560,10 @@ class PersonContextState:
             raise ValueError('person context state differs')
         obj = cls(config)
         obj.people = value['people']
+        spells = value.get('sick_until', {})
+        if (obj.c.sick_spell_model == 'spells') != ('sick_until' in value) or not isinstance(spells, dict):
+            raise ValueError('person context sickness state differs')
+        obj.sick_until = {str(k): int(v) for k, v in spells.items()}
         return obj
 
     def factions(self, ids, agents, guild):

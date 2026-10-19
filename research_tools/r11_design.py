@@ -329,7 +329,24 @@ VARIANTS = {
     'reversed-share-response': {'autonomy_response': -0.25},
     'demand-shock': {'longitudinal.demand_schedule': 'shock'},
     'ma-centralize': {'enterprise_acquisition.integration_mode': 'centralize'},
+    # Absence in spells whose onset and length depend on age (R11.4 mechanism).
+    'sickness-spells': {'person_context.sick_spells': 'aok2017'},
 }
+
+# Spell lengths: share of sickness cases by calendar-day length band, German statutory
+# insurer AOK, 2017 (WIdO Fehlzeiten-Report 2018, Abb. 29.1.5); the open band above 42 days
+# is closed at 183 days so that it carries about 42 per cent of all days, as reported.
+SICK_SPELL_BINS = [[1, 3, .355], [4, 7, .312], [8, 14, .173], [15, 21, .058], [22, 28, .029], [29, 42, .029], [43, 183, .044]]
+# Age bands: cases per 100 insured and days per case (same source, Abb. 29.1.9/29.1.10),
+# each divided by its unweighted mean over the ten bands.
+_AOK_CASES = [276.8, 225.3, 166.1, 146.5, 146.6, 149.0, 150.2, 155.9, 166.1, 175.2]
+_AOK_DAYS = [5.0, 6.1, 7.7, 8.8, 10.0, 11.4, 13.4, 15.3, 17.3, 21.0]
+SICK_AGE_PROFILE = [[15+5*k, round(c/(sum(_AOK_CASES)/10), 4), round(d/(sum(_AOK_DAYS)/10), 4)]
+                    for k, (c, d) in enumerate(zip(_AOK_CASES, _AOK_DAYS))]
+# Level calibrated to the UK 2023 value of 4.9 days lost per worker (ONS; calibration year):
+# at 4.3 three 300-member traditional worlds over three years gave 3.97 days per member-year,
+# so the level is scaled to 4.3 x 4.9 / 3.97 = 5.3. The 2024 value (4.4) is held out.
+SICK_ANNUAL_LEVEL = 5.3
 
 
 def apply_variant(d, branch, name):
@@ -346,6 +363,9 @@ def apply_variant(d, branch, name):
                 row[3] = {}; row[4] = 0.
         elif key == 'person_context.baseline_annual_quit_probability':
             pc['baseline_annual_quit_probability'] = min(.95, pc['baseline_annual_quit_probability']*float(value[1:]))
+        elif key == 'person_context.sick_spells':
+            pc.update(sick_spell_model='spells', sick_spell_bins=SICK_SPELL_BINS, sick_age_profile=SICK_AGE_PROFILE,
+                      annual_sick_days=SICK_ANNUAL_LEVEL)
         elif key.startswith('enterprise_acquisition.'):
             d['enterprise_acquisition'][key.split('.', 1)[1]] = value
         elif key.startswith('person_context.'):

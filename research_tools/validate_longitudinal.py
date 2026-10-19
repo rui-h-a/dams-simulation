@@ -16,6 +16,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from dams_sim.config import Config
+from dams_sim.longitudinal_model import age_at as _age_at
 from dams_sim.enterprise_growth import EnterpriseGrowthState
 from dams_sim.enterprise_operations import EnterpriseOperatingState
 from dams_sim.enterprise_acquisition import EnterpriseAcquisitionState
@@ -453,11 +454,35 @@ class _RawDailyAccounting:
             # Reconstruct keyed attendance without rerunning agents; this also
             # closes the creation-stop tail where work records are absent.
             leave=min(1.,l.annual_leave_workdays/max(1,clock.workdays_in_year(day)))
-            def _sick(i):
-                c=p.person_context
-                if c is None or c.annual_sick_days<=0:return False
-                q=min(1.,c.annual_sick_days/max(1,clock.workdays_in_year(day))*math.exp(c.sick_health_coefficient*self.pc_wit[i]['traits']['health_risk']))
-                return self.market_rng.uniform('pc_sick',day,self.people[i]['token'])<q
+            c=p.person_context
+            if c is not None and c.annual_sick_days>0 and c.sick_spell_model=='spells':
+                # Spell state is carried day by day and updated for every active member,
+                # as in the engine, before leave is drawn.
+                # Independent re-implementation of the declared spell rule (no engine call).
+                spell=getattr(self,'_sick_until',None)
+                if spell is None:spell=self._sick_until={}
+                mean_len=math.fsum(sh*(lo+hi)/2 for lo,hi,sh in c.sick_spell_bins)
+                def _spell(i):
+                    tok=self.people[i]['token']
+                    if day<spell.get(tok,-1):return True
+                    age=_age_at(self.people[i]['birth_date'],clock.at(day))  # shared calendar arithmetic only
+                    row=[r for r in c.sick_age_profile if age>=r[0]] or [c.sick_age_profile[0]]
+                    _,onset,dur=row[-1]
+                    q=min(1.,c.annual_sick_days/max(1,clock.workdays_in_year(day))/(mean_len*5/7)*onset*math.exp(c.sick_health_coefficient*self.pc_wit[i]['traits']['health_risk']))
+                    if self.market_rng.uniform('pc_sick',day,tok)>=q:return False
+                    u=self.market_rng.uniform('pc_spell_bin',day,tok);acc=0.;lo,hi=c.sick_spell_bins[-1][:2]
+                    for bl,bh,sh in c.sick_spell_bins:
+                        acc+=sh
+                        if u<acc:lo,hi=bl,bh;break
+                    spell[tok]=day+max(1,round((lo+(hi-lo)*self.market_rng.uniform('pc_spell_len',day,tok))*dur))
+                    return True
+                absent={i:_spell(i) for i in active}
+                def _sick(i):return absent[i]
+            else:
+                def _sick(i):
+                    if c is None or c.annual_sick_days<=0:return False
+                    q=min(1.,c.annual_sick_days/max(1,clock.workdays_in_year(day))*math.exp(c.sick_health_coefficient*self.pc_wit[i]['traits']['health_risk']))
+                    return self.market_rng.uniform('pc_sick',day,self.people[i]['token'])<q
             present=[i for i in active if self.market_rng.uniform('leave',day,self.people[i]['token'])>=leave and not _sick(i)]
         if not working or not active:present=[]
         if present is not None and len(present)!=n:raise ValueError('raw present exposure differs from zero-leave calendar')
