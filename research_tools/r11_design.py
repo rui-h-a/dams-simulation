@@ -223,11 +223,14 @@ MA_PRICE_MULTIPLE = 14.  # price = net cash + 14 x last-year operating surplus (
 MA_INTEGRATION_COST_SHARE = .025  # integration spending, share of price (EY 2024: 1-4 % of deal value)
 MA_INTEGRATION = {
     'integration_mode': 'preserve-autonomy', 'minimum_past_margin': 0., 'require_unmet_orders': False,
-    # One working year of active integration (design scenario; no sourced median duration).
-    'integration_workdays': 250,
-    # Excess exit of acquired staff during integration: about 0.075 by the end of year 1
-    # (Verginer and Riccaboni, Fig. 3a, visual reading) -> 1-(1-0.075)^(1/250).
-    'integration_exit_probability_per_workday': 3.1e-4,
+    # In this module acquired staff are held out of production until integration is
+    # paid, so the window is the administrative transfer, one working month (design
+    # scenario; no sourced duration), not the multi-year disruption period.
+    'integration_workdays': 20,
+    # Excess exit of acquired staff by the end of the first year after the deal, about
+    # 0.065 (Verginer and Riccaboni, Fig. 3a at tau=1, visual reading), placed in the
+    # transfer window: 1-(1-0.065)^(1/20). Later excess exit is not represented.
+    'integration_exit_probability_per_workday': 3.36e-3,
 }
 
 
