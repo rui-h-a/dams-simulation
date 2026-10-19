@@ -124,7 +124,11 @@ if [[ "$task_spec" == enterprise-r11 ]]; then
   if [[ -n "$task_jobs" ]]; then r11_args+=(--jobs "$task_jobs"); fi
   "$task_uv" run --no-sync python research_tools/r11_study.py "${r11_args[@]}"
   "$task_uv" run --no-sync python research_tools/r11_outcomes.py "$task_output" > "$task_output/paired-outcomes.json"
+  # Paired differences from the first arm, with Student-t intervals and Holm adjustment.
+  task_first_world=$(printf '%s' "$task_worlds" | tr ',' '\n' | sort -n | head -1)
+  "$task_uv" run --no-sync python research_tools/r11_inference.py "$task_output" --first-world "$task_first_world" > "$task_output/inference.json"
   echo "Paired outcomes: $task_output/paired-outcomes.json"
+  echo "Inference: $task_output/inference.json"
   exit 0
 fi
 task_args=(--spec "$task_spec" --scale "$task_scale" --output "$task_output")
