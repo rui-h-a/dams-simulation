@@ -168,3 +168,27 @@ worlds 1000-1119, seed 20261017; each mode reports its achieved precision.
 Primary outcomes, reference arm, inference and failure handling as above.
 Operational interruptions are resumed under the same world identity;
 validation failures are reported, not replaced.
+
+## Amendment 4 (2026-10-19): assumption robustness of the founding-stage result
+
+Recorded before any world of this study was run. Purpose: the
+institutional-counterfactual and structural layer of validation. The
+founding-stage 300-member study (Amendment 1; startup, organic growth,
+pre_years 0, post_years 5, worlds 1000-1056, seed 20261017) is repeated
+under each of ten declared assumption variants of research_tools/
+r11_design.py VARIANTS, one family of assumptions at a time:
+independent-traits, big-five-employees, no-origin-preferences,
+evaluation-bias, strong-factions, no-factions, high-turnover,
+low-turnover, reversed-share-response, demand-shock. Arms control-hierarchy
+(reference) and dams-witness. Executed at 93e5b87 (dams_sim identical to
+65d6b4e). The same 57 world identities as the baseline study are used, so
+each variant result is paired by world with the baseline.
+
+Reported for every variant, without selection: the paired DAMS-minus-
+hierarchy differences for all outcomes with 95 % intervals, and the
+difference between that contrast and the baseline contrast on the same
+worlds. A conclusion of the baseline study is called robust to a variant
+only if the sign of the net-operating-result contrast is unchanged and its
+interval excludes zero; magnitudes are reported, not tested against a
+threshold. No variant is added, removed or re-run after results are seen;
+validation failures are reported, not replaced.
