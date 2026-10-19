@@ -192,3 +192,23 @@ only if the sign of the net-operating-result contrast is unchanged and its
 interval excludes zero; magnitudes are reported, not tested against a
 threshold. No variant is added, removed or re-run after results are seen;
 validation failures are reported, not replaced.
+
+## Amendment 5 (2026-10-19): R11.4 sickness spells as a structural robustness check
+
+Recorded before any world of this study was run. Model R11.4 (commit
+e027d28) adds an opt-in absence model in which sickness comes in spells
+whose onset and length depend on age (variant sickness-spells; sources and
+calibration in research_tools/r11_design.py). In the default daily mode
+R11.4 reproduces R11.3 configurations, ledgers and outcomes exactly, so the
+studies below are paired by world with the R11.3 baselines:
+
+- founding-stage startup, 300 members, pre_years 0, post_years 5, worlds
+  1000-1056 (baseline: Amendment 1);
+- traditional context, 300 members, pre_years 2, post_years 5, worlds
+  1000-1064 (baseline: Amendment 2).
+
+Arms control-hierarchy and dams-witness. Reported without selection: all
+paired DAMS-minus-hierarchy differences, the change from the baseline
+contrast on the same worlds, and simulated sick absence per member-year
+against the UK 2024 value of 4.4 days (held out from calibration). The
+same robustness criterion as Amendment 4 applies.
