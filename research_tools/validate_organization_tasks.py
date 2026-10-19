@@ -214,7 +214,7 @@ def verify_organization_accounts(config,state,database):
                 g=str(v['guild']);_close(v['routine_retained'],routine[g],'adoption routine retained');adoptions[g]=day
             elif kind=='guild_move':sites[v['person']]=v['organization_site'];guilds[v['person']]=v['new']
             elif kind in ('exit','retirement','layoff','voluntary_exit'):
-                if not exit_sizes:exit_sizes={g:sum(guilds[i]==g for i in active) for g in set(guilds[i] for i in active)}
+                if not exit_sizes:exit_sizes=dict(collections.Counter(guilds[i] for i in active))
                 person=v['person'];g=guilds[person]
                 loss=(1-l.memory_transfer_fraction)*min(memory[str(g)],learn[person]/max(1,exit_sizes[g]))
                 _close(v['memory_loss'],loss,'exit knowledge loss');memory[str(g)]-=loss;active.remove(person)
@@ -327,6 +327,15 @@ def verify_organization_accounts(config,state,database):
             metrics['organization_dependency_input_units']+=math.fsum(used.values())
             # Reconcile actual review assignments/deferrals in the original journal order.
             work_people_by_event={event:p['person'] for k,event,p in events if k=='work'}
+            # A departed claimant goes to the first present outsider with capacity left.
+            # Within a day capacity only falls, so people already passed over for a
+            # department stay ineligible and that department's scan resumes there.
+            outsider_scan={}
+            def outsider_reviewer(claimant):
+                d=department(claimant);j=outsider_scan.get(d,0)
+                while j<len(present) and (department(present[j])==d or remaining.get(str(present[j]),0)<=0):j+=1
+                outsider_scan[d]=j
+                return present[j] if j<len(present) else None
             for kind,event,p in events:
                 if kind not in ('review','organization_verification_deferred'):continue
                 claimant=work_people_by_event.get(event)
@@ -336,8 +345,8 @@ def verify_organization_accounts(config,state,database):
                     claimant=people_by_token.get(token)
                 if claimant is None:raise ValueError('organization verification event lacks retained claimant')
                 candidates=links['verification_candidates'].get(str(claimant))
-                if candidates is None:candidates=[i for i in present if i!=claimant and department(i)!=department(claimant)]
-                reviewer=next((i for i in candidates if i in present_set and remaining.get(str(i),0)>0),None)
+                if candidates is None:reviewer=outsider_reviewer(claimant)
+                else:reviewer=next((i for i in candidates if i in present_set and remaining.get(str(i),0)>0),None)
                 if kind=='organization_verification_deferred':
                     if reviewer is not None or type(p['person']) is not int or p['person']!=claimant or type(p['ready']) is not int or p['ready']!=day+1:raise ValueError('organization deferral with available reviewer')
                     metrics['organization_verification_deferred_records']+=1
@@ -347,9 +356,11 @@ def verify_organization_accounts(config,state,database):
                     remaining[str(reviewer)]-=1;metrics['organization_verification_hours']+=p['verification_hours']
             worked={p['person'] for p in work}
             for person in active-worked:fatigue[person]=max(0.,min(1.,fatigue[person]-.1))
-            for g in set(guilds[i] for i in active):
-                members={i for i in active if guilds[i]==g}
-                mean_effort=math.fsum(p['effort'] for p in work if p['person'] in members)/max(1,len(members))
+            guild_size=collections.Counter(guilds[i] for i in active);guild_effort=collections.defaultdict(list)
+            for p in work:
+                if p['person'] in active:guild_effort[guilds[p['person']]].append(p['effort'])
+            for g in guild_size:
+                mean_effort=math.fsum(guild_effort[g])/guild_size[g]
                 memory[str(g)]=min(2.,memory[str(g)]+l.memory_learning_per_work_year*mean_effort/max(1,clock.workdays_in_year(day)))
             for g,amount in v['memory'].items():_close(amount,memory[str(g)],'organizational memory history')
             for g,root in aliases.items():
