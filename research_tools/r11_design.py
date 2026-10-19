@@ -165,10 +165,21 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
     L['demand_schedule'] = [[day_of_year_offset(y), round((1+cx['demand_growth_per_year'])**y, 6)]
                             for y in range(1, math.ceil(years)) if day_of_year_offset(y) < days]
     G = d['enterprise_growth']
-    G.update(initial_organization_capacity=n, maximum_organization_capacity=capacity_ceiling,
+    sites = len(cx['countries'])
+    if growth == 'acquisition':
+        # The installed-inventory contract sizes guilds and sites from the
+        # maximum capacity; without organic headroom a small acquired firm
+        # cannot be installed as its own site, so acquisitions run with organic growth.
+        raise ValueError("acquisitions are studied as 'organic+acquisition'")
+    targets = _simulated_targets(n, context, branch, days, world, seed) if acquisition else []
+    acquired_seats = sum(len(t['employees']) for t in targets)
+    G.update(initial_organization_capacity=n, maximum_organization_capacity=capacity_ceiling+acquired_seats,
              initial_departments=math.ceil(guilds/2), guilds_per_department=2,
              members_per_guild=max(8, math.ceil(capacity_ceiling/guilds)),
-             members_per_site=max(16, capacity_ceiling),
+             # With acquisitions, sites are sized so the acquired firm can be
+             # installed as one more site, guild and department of the acquirer.
+             members_per_site=max(16, _initial_site_load(n, guilds, sites), math.ceil(capacity_ceiling/sites))
+             if acquisition else max(16, capacity_ceiling),
              expansion_step_members=max(5, n//50), contraction_step_members=max(5, n//50),
              expansion_profit_margin=cx['expansion_margin'])
     O = d['enterprise_operations']
@@ -180,12 +191,19 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
              reporting_hours_per_layer=cx['reporting_hours'], verification_contacts=cx['verification_contacts'],
              management_span=8)
     A = d['enterprise_acquisition']
-    if acquisition:
-        A['targets'] = [_target(n, k, branch+day_of_year_offset(k+1)-day_of_year_offset(0)-1, days, cx)
-                        for k in range(post_years) if branch+day_of_year_offset(k+1)-1 < days-90]
+    if targets:
+        for t in targets:
+            t.update(guilds=1, departments=1, sites=1)
+        A.update(MA_INTEGRATION, targets=targets,
+                 # The price may be borrowed in full at the operating credit rate, so
+                 # whether the deal closes turns on the acquirer's margin, not on its
+                 # cash balance on the offer day (design choice).
+                 maximum_acquisition_financing_resource_units=_price_with_costs(targets),
+                 maximum_consolidated_debt_resource_units=cx['credit_limit_per_member']*n+_price_with_costs(targets)
+                 +sum(t['financial_debt_resource_units'] for t in targets),
+                 integration_resource_units_per_employee_workday=_integration_cost(targets),
+                 integration_payroll_resource_units_per_employee_workday=L['payroll_resource_units_per_member_workday'])
     else:
-        A['targets'] = []
-    if not A['targets']:
         d.pop('enterprise_acquisition')
     d.pop('joint_population', None)
     if person_context:
@@ -194,21 +212,54 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
     return d, branch
 
 
-def _target(n, k, available, days, cx):
-    size = max(4, n//20)
-    employees = [{'key': f't{k}-p{j}', 'birth_date': '1988-01-01', 'skill': 1.0, 'tenure': 3.0, 'care_hours': .05,
-                  'autonomy': .5, 'reciprocity': .5, 'learning': .5, 'trust': .6, 'fatigue': .1} for j in range(size)]
-    return {'key': f'target-{k}', 'seller': f'seller-{k}', 'available_day': available, 'expires_day': min(days-1, available+180),
-            'employees': employees, 'installed_seats': size, 'guilds': max(1, size//250), 'departments': 1,
-            'sites': 1, 'cash_resource_units': 10.*size, 'financial_debt_resource_units': 20.*size,
-            'consideration_resource_units': 60.*size, 'historical_age_years': 10.,
-            'organizational_knowledge': .4, 'future_orders_per_workday': float(size),
-            'prior_regime': 'hierarchy', 'prior_backend': 'central',
-            'evidence': [{'event_id': f't{k}-prior', 'person_key': f't{k}-p0', 'amount': 900., 'unit': 'target-score-unit',
-                          'evidence_quality': .5, 'origin_day': 0}],
-            'pending_evidence': [{'event_id': f't{k}-open', 'person_key': f't{k}-p1', 'amount': 700., 'unit': 'other-unit',
-                                  'evidence_quality': .2, 'origin_day': 0}],
-            'history': [['historical-sales', 'resource-unit', 120.*size]]}
+# Two-firm acquisition (research note .revision/r11-research/ma-integration-parameters-20261019.md).
+# One target per world: a separately simulated founding-stage firm of one fifth of
+# the acquirer's initial size, available from the start of the second year after
+# the adoption boundary for 180 days. Its roster, money and records come from its
+# own simulated history (research_tools/r11_targets.py).
+MA_TARGET_SHARE = .2
+MA_TARGET_CONTEXT = 'startup'
+MA_PRICE_MULTIPLE = 14.  # price = net cash + 14 x last-year operating surplus (12-16, computed range)
+MA_INTEGRATION_COST_SHARE = .025  # integration spending, share of price (EY 2024: 1-4 % of deal value)
+MA_INTEGRATION = {
+    'integration_mode': 'preserve-autonomy', 'minimum_past_margin': 0., 'require_unmet_orders': False,
+    # One working year of active integration (design scenario; no sourced median duration).
+    'integration_workdays': 250,
+    # Excess exit of acquired staff during integration: about 0.075 by the end of year 1
+    # (Verginer and Riccaboni, Fig. 3a, visual reading) -> 1-(1-0.075)^(1/250).
+    'integration_exit_probability_per_workday': 3.1e-4,
+}
+
+
+def _simulated_targets(n, context, branch, days, world, seed):
+    from research_tools.r11_targets import simulate_target, target_from_state
+    available = branch+365
+    if available >= days-90:
+        return []
+    key = 'target-0'
+    state, td = simulate_target(key=key, scale=max(4, round(n*MA_TARGET_SHARE)), context=MA_TARGET_CONTEXT,
+                                world=world, seed=seed+1, available_day=available)
+    t = target_from_state(key=key, state=state, context=MA_TARGET_CONTEXT, available_day=available,
+                          expires_day=min(days-1, available+180), growth=td['enterprise_growth'])
+    t['consideration_resource_units'] = max(1., t.pop('net_cash')+MA_PRICE_MULTIPLE*max(0., t.pop('annual_surplus')))
+    return [t]
+
+
+def _initial_site_load(n, guilds, sites):
+    load = [0]*sites
+    for g in range(guilds):
+        load[g % sites] += (n+guilds-1-g)//guilds
+    return max(load)
+
+
+def _price_with_costs(targets):
+    t = targets[0]
+    return t['consideration_resource_units']*(1+MA_INTEGRATION_COST_SHARE)+1.
+
+
+def _integration_cost(targets):
+    t = targets[0]
+    return MA_INTEGRATION_COST_SHARE*t['consideration_resource_units']/(len(t['employees'])*MA_INTEGRATION['integration_workdays'])
 
 
 COUNTRY_PROFILES = {
@@ -274,6 +325,7 @@ VARIANTS = {
     'low-turnover': {'person_context.baseline_annual_quit_probability': 'x0.5'},
     'reversed-share-response': {'autonomy_response': -0.25},
     'demand-shock': {'longitudinal.demand_schedule': 'shock'},
+    'ma-centralize': {'enterprise_acquisition.integration_mode': 'centralize'},
 }
 
 
@@ -291,6 +343,8 @@ def apply_variant(d, branch, name):
                 row[3] = {}; row[4] = 0.
         elif key == 'person_context.baseline_annual_quit_probability':
             pc['baseline_annual_quit_probability'] = min(.95, pc['baseline_annual_quit_probability']*float(value[1:]))
+        elif key.startswith('enterprise_acquisition.'):
+            d['enterprise_acquisition'][key.split('.', 1)[1]] = value
         elif key.startswith('person_context.'):
             pc[key.split('.', 1)[1]] = value
         elif key == 'longitudinal.demand_schedule':
