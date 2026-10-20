@@ -352,8 +352,9 @@ SICK_ANNUAL_LEVEL = 5.3
 # Amendment 6: market size matched to capacity. The template fixes the price
 # (price_adjustment_rate 0), and orders arrive at one unit per member per workday
 # times the demand schedule, so in every context 67-90 % of order units expire and
-# output is always capacity-bound. The factor scales base orders so that the
-# hierarchy arm's delivered units are 78 % of the orders that arrive, the 2021-2025
+# output is always capacity-bound. The factor scales base orders so that arriving
+# orders are 78 % of what the hierarchy arm delivers when capacity-bound (target
+# capacity utilization 0.78), the 2021-2025
 # mean of US capacity utilization (Federal Reserve G.17, series TCU: 76.9, 78.5,
 # 77.3, 76.1, 75.9). Ratios measured on pilot worlds 0-2 (not confirmation worlds),
 # hierarchy arm, delivered and arrived units per active member-workday: startup

@@ -228,8 +228,9 @@ governance work is lost output; the R11.3 contrasts may therefore not hold
 where demand binds.
 
 Variant demand-matched (research_tools/r11_design.py DEMAND_MATCH) scales
-base orders per workday by a context factor so that the hierarchy arm
-delivers 78 % of arriving units. The factors were measured on pilot worlds
+base orders per workday by a context factor so that arriving orders
+equal 78 % of the units the hierarchy arm delivers when it is
+capacity-bound, i.e. a target capacity utilization of 0.78. The factors were measured on pilot worlds
 0-2 (hierarchy arm), not on confirmation worlds: startup 0.166, traditional
 0.262, listed 0.226, century 0.257, unicorn 0.078. Price, elasticity and all
 other parameters are unchanged; dams_sim is unchanged (R11.4 code in its
@@ -243,7 +244,11 @@ world with their baselines:
 
 Arms control-hierarchy and dams-witness. Reported without selection: all
 paired DAMS-minus-hierarchy differences, the change from the baseline
-contrast on the same worlds, and the realised delivered share of arriving
-orders in each arm (target 0.78 for the hierarchy, not tuned after the
-run). The Amendment 4 robustness criterion applies. No world is added,
+contrast on the same worlds, the realised utilization of each arm
+(delivered units divided by delivered units of the same world and arm in
+the capacity-bound baseline; target about 0.78 for the hierarchy, not tuned
+after the run) and the delivered share of arriving orders. A local smoke
+run at 30 members, world 0, one year (not a confirmation world) delivered
+all arriving orders in both arms, which led to this correction of the
+target's wording before any confirmation world was run. The Amendment 4 robustness criterion applies. No world is added,
 removed or re-run after results are seen.
