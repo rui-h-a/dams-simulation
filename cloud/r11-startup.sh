@@ -45,6 +45,12 @@ upload_ready() {
     [ $ok = 1 ] && touch "$marker" && echo "DAMSR11 uploaded $rel/$(basename "$r")"
   done
 }
+# A batch that already has a done.json is finished; a relaunch on the same prefix
+# powers off instead of computing it again.
+if curl -sf -o /dev/null -H "Authorization: Bearer $(token)" \
+    "https://storage.googleapis.com/storage/v1/b/$BUCKET/o/$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1],safe=""))' "$PREFIX/done.json")"; then
+  echo "DAMSR11 already-done $PREFIX"; shutdown -h now; exit 0
+fi
 ( while true; do sleep 300; upload_ready; done ) &
 UPLOADER=$!
 # shellcheck disable=SC2086
