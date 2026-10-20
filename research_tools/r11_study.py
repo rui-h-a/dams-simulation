@@ -78,7 +78,11 @@ def _resume(cpdir, config, root):
     cps = sorted(cpdir.glob('checkpoint-day-*.json')) if cpdir.exists() else []
     if not cps:
         return None
-    k = len(list(root.glob('work-r*')))
+    # Next unused restore directory; counting existing ones is not enough when an
+    # earlier one has been removed (e.g. work-r0 deleted while work-r1 remains).
+    k = 0
+    while (root/f'work-r{k}').exists():
+        k += 1
     return Model.restore_checkpoint(cps[-1], expected_config=config, storage_dir=root/f'work-r{k}')
 
 
