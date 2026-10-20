@@ -208,7 +208,7 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
     d.pop('joint_population', None)
     if person_context:
         d['person_context'] = person_context_for(cx, context)
-    d = apply_variant(d, branch, variant) if person_context else d
+    d = apply_variant(d, branch, variant, context) if person_context else d
     return d, branch
 
 
@@ -328,6 +328,7 @@ VARIANTS = {
     'low-turnover': {'person_context.baseline_annual_quit_probability': 'x0.5'},
     'reversed-share-response': {'autonomy_response': -0.25},
     'demand-shock': {'longitudinal.demand_schedule': 'shock'},
+    'demand-matched': {'enterprise_operations.base_orders_per_workday': 'matched'},
     'ma-centralize': {'enterprise_acquisition.integration_mode': 'centralize'},
     # Absence in spells whose onset and length depend on age (R11.4 mechanism).
     'sickness-spells': {'person_context.sick_spells': 'aok2017'},
@@ -348,8 +349,20 @@ SICK_AGE_PROFILE = [[15+5*k, round(c/(sum(_AOK_CASES)/10), 4), round(d/(sum(_AOK
 # so the level is scaled to 4.3 x 4.9 / 3.97 = 5.3. The 2024 value (4.4) is held out.
 SICK_ANNUAL_LEVEL = 5.3
 
+# Amendment 6: market size matched to capacity. The template fixes the price
+# (price_adjustment_rate 0), and orders arrive at one unit per member per workday
+# times the demand schedule, so in every context 67-90 % of order units expire and
+# output is always capacity-bound. The factor scales base orders so that the
+# hierarchy arm's delivered units are 78 % of the orders that arrive, the 2021-2025
+# mean of US capacity utilization (Federal Reserve G.17, series TCU: 76.9, 78.5,
+# 77.3, 76.1, 75.9). Ratios measured on pilot worlds 0-2 (not confirmation worlds),
+# hierarchy arm, delivered and arrived units per active member-workday: startup
+# 0.350/1.639, traditional 0.335/0.997, listed 0.337/1.161, century 0.336/1.019,
+# unicorn 0.340/3.407; factor = 0.78 x delivered/arrived.
+DEMAND_MATCH = {'startup': .166, 'traditional': .262, 'listed': .226, 'century': .257, 'unicorn': .078}
 
-def apply_variant(d, branch, name):
+
+def apply_variant(d, branch, name, context=None):
     if name not in VARIANTS:
         raise ValueError('unknown variant')
     d = copy.deepcopy(d)
@@ -366,6 +379,10 @@ def apply_variant(d, branch, name):
         elif key == 'person_context.sick_spells':
             pc.update(sick_spell_model='spells', sick_spell_bins=SICK_SPELL_BINS, sick_age_profile=SICK_AGE_PROFILE,
                       annual_sick_days=SICK_ANNUAL_LEVEL)
+        elif key == 'enterprise_operations.base_orders_per_workday':
+            if context not in DEMAND_MATCH:
+                raise ValueError('demand-matched variant has no measured factor for this context')
+            d['enterprise_operations']['base_orders_per_workday'] *= DEMAND_MATCH[context]
         elif key.startswith('enterprise_acquisition.'):
             d['enterprise_acquisition'][key.split('.', 1)[1]] = value
         elif key.startswith('person_context.'):

@@ -212,3 +212,38 @@ paired DAMS-minus-hierarchy differences, the change from the baseline
 contrast on the same worlds, and simulated sick absence per member-year
 against the UK 2024 value of 4.4 days (held out from calibration). The
 same robustness criterion as Amendment 4 applies.
+
+## Amendment 6 (2026-10-20): demand regime check (variant demand-matched)
+
+Recorded before any world of this study was run. Reason: reading the
+Amendment 4 results showed that the demand-shock variant changed order
+counts but no operating outcome. The template fixes the market price
+(price_adjustment_rate 0), and orders arrive at one unit per member per
+workday times the demand schedule, so 67-90 % of order units expire in every
+context and output is always capacity-bound (hierarchy arms of the formal
+studies; delivered share 0.10-0.33). US capacity utilization (Federal Reserve
+G.17, FRED series TCU) averaged 75.9-78.5 % in 2021-2025, so real firms
+usually have spare capacity. In a capacity-bound firm every hour of
+governance work is lost output; the R11.3 contrasts may therefore not hold
+where demand binds.
+
+Variant demand-matched (research_tools/r11_design.py DEMAND_MATCH) scales
+base orders per workday by a context factor so that the hierarchy arm
+delivers 78 % of arriving units. The factors were measured on pilot worlds
+0-2 (hierarchy arm), not on confirmation worlds: startup 0.166, traditional
+0.262, listed 0.226, century 0.257, unicorn 0.078. Price, elasticity and all
+other parameters are unchanged; dams_sim is unchanged (R11.4 code in its
+default daily-absence mode reproduces R11.3 exactly). Studies, paired by
+world with their baselines:
+
+- founding-stage startup, 300 members, pre_years 0, post_years 5, worlds
+  1000-1056 (baseline: Amendment 1);
+- traditional context, 300 members, pre_years 2, post_years 5, worlds
+  1000-1064 (baseline: Amendment 2).
+
+Arms control-hierarchy and dams-witness. Reported without selection: all
+paired DAMS-minus-hierarchy differences, the change from the baseline
+contrast on the same worlds, and the realised delivered share of arriving
+orders in each arm (target 0.78 for the hierarchy, not tuned after the
+run). The Amendment 4 robustness criterion applies. No world is added,
+removed or re-run after results are seen.
