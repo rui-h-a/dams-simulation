@@ -10,7 +10,9 @@ Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-s
                 [--output DIRECTORY] [--runtime-limits JSON]
        enterprise-r11 options: [--context startup|unicorn|listed|traditional|century|multinational]
                 [--growth none|organic|acquisition|organic+acquisition] [--pre-years Y] [--post-years Y]
-                [--worlds 0,1,2] [--arms a,b,...] [--jobs N]
+                [--worlds 0,1,2] [--arms a,b,...] [--jobs N] [--variant NAME]
+       Rerunning the same command on the same --output resumes from the last checkpoints;
+       working journals are deleted after validation and only receipts, outcomes and figures stay.
 Defaults: bounded local validation, 120 people, runs/validation-n120.
 Full research runs use the same versioned pipeline and automatic resource scheduler.
 Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
@@ -127,8 +129,10 @@ if [[ "$task_spec" == enterprise-r11 ]]; then
   # Paired differences from the first arm, with Student-t intervals and Holm adjustment.
   task_first_world=$(printf '%s' "$task_worlds" | tr ',' '\n' | sort -n | head -1)
   "$task_uv" run --no-sync python research_tools/r11_inference.py "$task_output" --first-world "$task_first_world" > "$task_output/inference.json"
+  "$task_uv" run --no-sync python research_tools/r11_figure.py "$task_output" >/dev/null
   echo "Paired outcomes: $task_output/paired-outcomes.json"
   echo "Inference: $task_output/inference.json"
+  echo "Figure: $task_output/effects.pdf"
   exit 0
 fi
 task_args=(--spec "$task_spec" --scale "$task_scale" --output "$task_output")
