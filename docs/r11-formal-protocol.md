@@ -252,3 +252,41 @@ run at 30 members, world 0, one year (not a confirmation world) delivered
 all arriving orders in both arms, which led to this correction of the
 target's wording before any confirmation world was run. The Amendment 4 robustness criterion applies. No world is added,
 removed or re-run after results are seen.
+
+## Amendment 7 (2026-10-21): adoption timing, record process, growth and horizon at 300 members
+
+Recorded before any world of these studies was run. Reason: the protocol
+places these comparisons at 10,000 members, where their cost competes with
+the main and scale studies within the remaining compute budget. At 300
+members they cost a few dollars each and cover the factors that the
+10,000-member design cannot yet reach. They do not replace the
+10,000-member rows, which stay in the protocol and are reported as not
+run if they are not run.
+
+All four studies: traditional context, 300 initial members, two years of
+history, worlds 1000-1064, seed 20261017. These are the world identities of
+Amendment 2, so every study is paired by world with that baseline (the
+dams-witness and control-hierarchy arms of formal/r11-3-n300-traditional-mid).
+The reference arm in each study is control-hierarchy. The commit is the
+dev-branch head at launch; dams_sim is identical to e027d28 in its default
+daily-absence mode, which reproduces r11.3.
+
+- 7a, adoption timing: arms control-hierarchy, dams-staged-witness
+  (four guild waves six months apart) and dams-triggered-witness
+  (adoption when review backlog per active member reaches the threshold).
+  Organic growth, 2 + 5 years.
+- 7b, record process: arms control-hierarchy, dams-central and
+  dams-consensus. Organic growth, 2 + 5 years.
+- 7c, no growth: arms control-hierarchy and dams-witness, growth none,
+  2 + 5 years. Acquisition-only growth is not supported by the study
+  design (r11_design.base_config) and is not run.
+- 7d, ten-year horizon: arms control-hierarchy and dams-witness, organic
+  growth, 2 + 10 years. Outcomes are reported for the whole horizon.
+  Year-by-year paths are reported where the time series allow.
+
+World count: fixed at 65, the count the Amendment 2 pilot rule gave for
+this context; the achieved precision is reported against the same
+threshold. All outcomes are reported without selection, together with
+the difference from the matching Amendment 2 arm on the same worlds where
+the arm exists there. No world is added, removed or re-run after results
+are seen.
