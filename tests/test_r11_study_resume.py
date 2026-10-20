@@ -30,6 +30,26 @@ class InterruptedCheckpointTest(unittest.TestCase):
             self.assertEqual(len(aside), 1)
             self.assertEqual(aside[0].read_bytes(), b'partial')
 
+    def test_resume_removes_superseded_working_databases(self):
+        # Every resume used to restore into a new work-rK directory while earlier
+        # working databases stayed on disk; at 10,000 members they filled the disk.
+        d, _ = base_config(scale=12, context='startup', growth='organic', world=0, seed=3, pre_years=0, post_years=1)
+        config = Config.from_dict(d)
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR')) as tmp:
+            root = Path(tmp); cpdir = root/'progress'
+            m = Model(config, storage_dir=root/'work')
+            _segments(m, 60, cpdir, config, root, every=30)  # last checkpoint at day 30
+            m._long.ledger.close()
+            for old in ('work-r0', 'work-r3', 'restored'):
+                (root/old).mkdir()
+                (root/old/'ledger.sqlite').write_bytes(b'superseded')
+            r = _resume(cpdir, config, root)
+            r._long.ledger.close()
+            self.assertEqual(r._long.day, 30)
+            left = sorted(p.name for p in root.iterdir() if p.name.startswith(('work', 'restored')))
+            self.assertEqual(left, ['work-r0'])
+            self.assertFalse((root/'work-r0'/'ledger.sqlite').exists())
+
 
 if __name__ == '__main__':
     unittest.main()

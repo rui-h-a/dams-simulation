@@ -78,6 +78,14 @@ def _resume(cpdir, config, root):
     cps = sorted(cpdir.glob('checkpoint-day-*.json')) if cpdir.exists() else []
     if not cps:
         return None
+    # Working databases of earlier attempts ('work', 'work-rK', 'restored') are
+    # superseded by the checkpoint: the run continues only from cps[-1]. They are
+    # deterministic intermediate copies, so they are removed before restoring; kept,
+    # one full ledger per interrupted attempt filled a 300 GB disk at 10,000 members.
+    import shutil
+    for old in [root/'restored', *root.glob('work*')]:
+        if old.is_dir():
+            shutil.rmtree(old)
     # Next unused restore directory; counting existing ones is not enough when an
     # earlier one has been removed (e.g. work-r0 deleted while work-r1 remains).
     k = 0
