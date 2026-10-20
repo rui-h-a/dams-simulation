@@ -135,12 +135,22 @@ def prehistory(args):
                             seed=args['seed'], pre_years=args['pre_years'], post_years=args['post_years'], variant=args.get('variant','baseline'))
     config = Config.from_dict(d)
     t, cpu = time.monotonic(), time.process_time()
+    _retire_failure(out)
     m = _resume(out/'progress', config, out)
     if m is None:
         _retire_partial(out, ('work',))
         m = Model(config, storage_dir=out/'work', journal_chunk_bytes=CHUNK)
     _segments(m, branch, out/'progress', config, out)
     cp = out/f'checkpoint-day-{branch:06d}.json'
+    # A branch checkpoint written by an attempt interrupted before its receipt is
+    # moved aside (kept); the snapshot store refuses to overwrite it, and the
+    # rerun rewrites it deterministically.
+    old = list(out.glob(f'checkpoint-day-{branch:06d}*'))+list(out.glob(f'.checkpoint-day-{branch:06d}*'))
+    if old:
+        aside = out/f'interrupted-branch-{len(list(out.glob("interrupted-branch-*")))}'
+        aside.mkdir()
+        for f in old:
+            f.rename(aside/f.name)
     m.write_checkpoint(cp)
     m._long.ledger.close()
     for p in [out/'progress', *out.glob('work*')]:
