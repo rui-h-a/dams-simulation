@@ -53,3 +53,20 @@ class InterruptedCheckpointTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class PrehistoryRerunTest(unittest.TestCase):
+    def test_rerun_after_checkpoint_without_receipt(self):
+        # An attempt interrupted after writing the branch checkpoint but before its
+        # receipt left an immutable snapshot that made the rerun fail.
+        from research_tools.r11_study import prehistory
+        with tempfile.TemporaryDirectory(dir=os.environ.get('TMPDIR')) as tmp:
+            args = {'out': str(Path(tmp)/'pre'), 'scale': 12, 'context': 'traditional', 'growth': 'organic',
+                    'world': 0, 'seed': 3, 'pre_years': 1, 'post_years': 1}
+            first = prehistory(args)
+            (Path(tmp)/'pre'/'prehistory.json').unlink()
+            (Path(tmp)/'pre'/'failure.json').write_text('{"kind":"prehistory"}')
+            second = prehistory(args)
+            self.assertEqual(second['checkpoint_sha256'], first['checkpoint_sha256'])
+            self.assertFalse((Path(tmp)/'pre'/'failure.json').exists())
+            self.assertEqual(len(list((Path(tmp)/'pre').glob('interrupted-branch-*'))), 1)
