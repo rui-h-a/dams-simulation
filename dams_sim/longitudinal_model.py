@@ -628,13 +628,14 @@ class LongitudinalEngine:
         # A fixed slot cohort remains policy-common despite nonreused person IDs.
         attack_slots=math.ceil(p.n*p.attack_cohort_fraction)
         attackers=sorted(i for i in present if self.people[i]['slot']<attack_slots)
+        attacker_set=frozenset(attackers)  # membership is tested per person; a list made each day O(n^2)
         attack_time=p.attack_budget_hours_per_day/len(attackers) if attack_active and attackers else 0.
         efforts={};time_limits={}
         for i in sorted(present):
             a=self.agents[i];share,trust,fatigue,_=snapshot[i]
             reserved=variable_reservations[i]*funding+governance_time[i]
             limit=max(0.,(1-a.care_hours)*funding-reserved)
-            attack=attack_time if i in attackers else 0.
+            attack=attack_time if i in attacker_set else 0.
             if attack>limit+1e-12:raise ValueError('longitudinal attack budget infeasible for present actor capacity')
             limit=max(0.,limit-attack);time_limits[i]=limit
             autonomy=a.autonomy*p.autonomy_response*(len(self.members[a.guild])*share-1)
@@ -647,7 +648,7 @@ class LongitudinalEngine:
             if self.operations is not None:efforts[i]*=self.operations.calendar_fraction(self.clock,a.site,day)*coordination_readiness.get(a.site,1.)
             if self.organization is not None:efforts[i]=min(efforts[i],organization_cap[i]*funding)
             if not creating:efforts[i]=0.
-            if attack_active and p.attack=='freeride' and i in attackers:efforts[i]=max(0.,efforts[i]-attack);cooperation[i]=0.
+            if attack_active and p.attack=='freeride' and i in attacker_set:efforts[i]=max(0.,efforts[i]-attack);cooperation[i]=0.
             booked=a.care_hours+reserved+efforts[i]+attack
             if booked>1+1e-12:raise ValueError('longitudinal time budget exceeds a workday')
             self.metrics['max_individual_time_booked_hours']=max(self.metrics['max_individual_time_booked_hours'],booked)
@@ -717,7 +718,7 @@ class LongitudinalEngine:
             organization_produced[i]=produced
             daily_output+=produced;produced_by_site[a.site].append(produced);observed=max(0.,produced+p.review_error_sd*self.rng.normal('observed_work',day,token))
             if self.organization is not None:observed=max(0.,produced+p.review_error_sd/(1+self.organization.c.quality_measurement_efficiency*organization_quality[i]*funding)*self.rng.normal('observed_work',day,token))
-            fraud=attack_active and p.attack=='forge' and i in attackers
+            fraud=attack_active and p.attack=='forge' and i in attacker_set
             if fraud:observed+=attack_time;self.metrics['fraudulent_records_submitted']+=1
             audit=self.rng.uniform('review_audit',day,token)<(.6 if fraud else .02)
             event=f'work:{day}:{token}:g:{a.guild}'
@@ -725,13 +726,13 @@ class LongitudinalEngine:
             if self.organization is not None:ready+=self.organization.last_plan['topology']['reporting_depth'][str(i)]*self.organization.c.reporting_delay_days_per_layer
             claim=Claim(ready,event,i,day,observed,audit,fraud,priority=self.rng.uniform('review_priority',day,token))
             _,backend=self.policy(a.guild);resistance=p.administrative_censorship_exposure[('central','witness','consensus').index(backend)]
-            censor=attack_active and p.attack=='censor' and i not in attackers and self.rng.uniform('censor',day,token)<min(1.,p.attack_budget_hours_per_day/max(1,len(present)))*resistance
+            censor=attack_active and p.attack=='censor' and i not in attacker_set and self.rng.uniform('censor',day,token)<min(1.,p.attack_budget_hours_per_day/max(1,len(present)))*resistance
             if censor:self.metrics['censored_records']+=1;a.trust=clip(a.trust-.03)
             else:self.ledger.push('review',a.guild,claim)
-            if attack_active and p.attack=='duplicate' and i in attackers:self.ledger.push('review',a.guild,dataclasses.replace(claim))
+            if attack_active and p.attack=='duplicate' and i in attacker_set:self.ledger.push('review',a.guild,dataclasses.replace(claim))
             self.metrics['work_events']+=1
-            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attackers else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
-            workload=efforts[i]+coordination[i]*funding+(attack_time if i in attackers else 0.)+training[i]*funding
+            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attacker_set else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
+            workload=efforts[i]+coordination[i]*funding+(attack_time if i in attacker_set else 0.)+training[i]*funding
             if self.organization is not None:workload+=(fixed[i]+organization_quality[i]+organization_learning[i])*funding
             a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03+(self.pc.fatigue_extra(i) if self.pc is not None else 0.))
             a.learning=clip(a.learning+(self.pc.learning_factor(i) if self.pc is not None else 1.)*l.skill_learning_per_work_year*(efforts[i]+(organization_learning[i]*funding if self.organization is not None else 0.))/yearwork,0,2)
