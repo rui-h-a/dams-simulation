@@ -959,7 +959,7 @@ class LongitudinalEngine:
         if obj.organization is None and 'organization_tasks_state' in value:raise ValueError('unexpected organization state')
         obj.pc=PersonContextState.restore(obj.config,value.get('person_context_state')) if obj.config.person_context is not None else None
         if obj.pc is None and 'person_context_state' in value:raise ValueError('unexpected person context state')
-        if obj.pc is not None:obj.version=PERSON_CONTEXT_VERSION
+        if obj.pc is not None and obj.joint_control is None:obj.version=PERSON_CONTEXT_VERSION
         obj.clock=GregorianClock(obj.l)
         obj.rng=WorldRandom(obj.config.seed,obj.config.world,world_context=obj.l.world_context)
         obj.failed_day=False

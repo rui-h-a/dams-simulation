@@ -16,6 +16,13 @@ This repository contains the simulation models, study protocols, analysis tools 
 | `contracts/` | The Solidity reference contract used for local allocation checks. |
 | `tests/` | Unit and regression tests. |
 
+The separate [complete-history two-firm candidate](docs/full-history-counterfactuals-r12.md)
+adds common-state no-acquisition, autonomy and centralization branches with
+complete native histories and funded governance conversion. Its small
+engineering checks do not replace the frozen R11 results or establish formal
+large-population completion. The existing R11 command does not select this
+candidate automatically.
+
 ## Requirements
 
 The bootstrap has pinned uv 0.9.26 artifacts for macOS and Linux, on arm64 and x86_64. It requires `bash` and `curl`, installs Python 3.14.2 and the dependencies in `uv.lock`, and checks the downloaded uv archive's SHA-256. The installed toolchain follows uv's managed environment/cache locations. Artifact availability is not a clean full-workload validation of every platform; native Windows and WSL2 have not been validated. Local execution needs no root. The separately admitted VM archive path additionally requires `lsof`, a closed owned process group and an attached least-privilege workload identity.

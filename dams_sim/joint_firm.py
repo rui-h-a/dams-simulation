@@ -143,11 +143,22 @@ def references_from_snapshot(company,envelope):
 def verify_cash_records(records):
     """Independent scalar cash accountant; no engine transition function import."""
     costs=('recruitment_resource_units','migration_resource_units','operating_resource_units','infrastructure_setup_resource_units')
+    previous={}
     for expected, row in enumerate(records):
+        if set(row['firms'])!={'buyer','target'}:raise ValueError('joint accountant incomplete company roster')
         if row['day']!=expected: raise ValueError('joint accountant nonsequential day')
         ordinary=[]; deltas=[]; internal=[]; consideration=[]; fees=[]
         for company,f in row['firms'].items():
             a,b=f['metrics_before'],f['metrics_after']
+            if expected==0:
+                if any(type(v) not in (int,float) or not math.isfinite(v) or v!=0 for v in a.values()):
+                    raise ValueError('joint accountant initial cumulative metrics must be zero')
+            elif a!=previous[company]:raise ValueError('joint accountant previous cumulative metrics differ')
+            for key in ('revenue_resource_units','financing_inflow_resource_units')+costs:
+                before,after=a.get(key,0.),b.get(key,0.)
+                if any(type(v) not in (int,float) or not math.isfinite(v) or v<0 for v in (before,after)) or after<before:
+                    raise ValueError('joint accountant requires nonnegative cumulative cash flows')
+            previous[company]=b
             net=math.fsum(b.get(k,0.)-a.get(k,0.) for k in ('revenue_resource_units','financing_inflow_resource_units'))
             net-=math.fsum(b.get(k,0.)-a.get(k,0.) for k in costs)
             # Legacy capsule mechanisms are refused by JointRun admission.
@@ -166,6 +177,24 @@ def verify_cash_records(records):
     return {'status':'INDEPENDENT_TWO_FIRM_CASH_ACCOUNTING_PASS','days':len(records),'independent_transition_functions':True}
 
 
+def validate_joint_configs(buyer_config, target_config, terms):
+    """Pure pair admission shared by fresh, restore and intervention entry points."""
+    terms.validate(buyer_config.days)
+    for config in (buyer_config,target_config):
+        config.validate()
+        if config.longitudinal is None or config.enterprise_operations is None or config.enterprise_growth is None or config.organization_tasks is None:
+            raise ValueError('joint requires complete existing operations/growth/organization state')
+        if config.enterprise_acquisition is not None:
+            raise ValueError('joint does not project legacy acquisition capsules')
+    if (buyer_config.days!=target_config.days or buyer_config.longitudinal.calendar_start!=target_config.longitudinal.calendar_start
+            or buyer_config.longitudinal.holidays!=target_config.longitudinal.holidays
+            or buyer_config.longitudinal.work_weekdays!=target_config.longitudinal.work_weekdays):
+        raise ValueError('joint firm Gregorian calendars/horizons must match')
+    if (buyer_config.seed,buyer_config.world,buyer_config.longitudinal.world_context)==(target_config.seed,target_config.world,target_config.longitudinal.world_context):
+        raise ValueError('joint target requires its own independently evolved company identity')
+    return buyer_config, target_config
+
+
 class JointRun:
     """One two-firm world, before/after actual ownership of an operating unit.
 
@@ -177,17 +206,7 @@ class JointRun:
         from .model import Model
         root=Path(root)
         if root.exists(): raise ValueError('joint output must be fresh')
-        terms.validate(buyer_config.days)
-        for config in (buyer_config,target_config):
-            config.validate()
-            if config.longitudinal is None or config.enterprise_operations is None or config.enterprise_growth is None or config.organization_tasks is None:
-                raise ValueError('joint requires complete existing operations/growth/organization state')
-            if config.enterprise_acquisition is not None:
-                raise ValueError('joint does not project legacy acquisition capsules')
-        if buyer_config.days!=target_config.days or buyer_config.longitudinal.calendar_start!=target_config.longitudinal.calendar_start or buyer_config.longitudinal.holidays!=target_config.longitudinal.holidays:
-            raise ValueError('joint firm Gregorian calendars/horizons must match')
-        if (buyer_config.seed,buyer_config.world,buyer_config.longitudinal.world_context)==(target_config.seed,target_config.world,target_config.longitudinal.world_context):
-            raise ValueError('joint target requires its own independently evolved company identity')
+        validate_joint_configs(buyer_config, target_config, terms)
         root.mkdir(mode=0o700,parents=True)
         self.root=root; self.terms=terms; self.day=0; self.source=source_hash(); self.failed=False
         self.units={'buyer':Model(buyer_config,storage_dir=root/'buyer',journal_chunk_bytes=1048576)}
@@ -236,6 +255,10 @@ class JointRun:
         self._capacity()
         growth=buyer.enterprise
         margin=(growth.revenue_signal-growth.cost_signal)/max(growth.revenue_signal,growth.cost_signal,1e-12)
+        from .joint_counterfactual import no_acquisition
+        if no_acquisition(self):
+            self.status='declined';self.events.append({'day':self.day,'kind':'offer-declined',
+                'reason':'predeclared-no-acquisition','target':self.offer});return 0.,0.
         if (buyer.closed_day is not None or buyer.suspended_day is not None or not growth.observed_workdays or margin<t.minimum_past_margin
                 or t.require_unmet_orders and not buyer.operations.expansion_allowed(growth)
                 or buyer.cash<t.consideration+t.transaction_cost+t.parent_reserve):
@@ -249,6 +272,7 @@ class JointRun:
         return t.consideration,t.transaction_cost
 
     def _controls(self,consideration,fees):
+        from .joint_counterfactual import integration_mode, prepare_centralization
         firms=self._all(); b=firms['buyer']; t=self.terms
         result={name:None for name in firms}
         if self.owners['target']!='buyer':return result
@@ -264,10 +288,16 @@ class JointRun:
             else:
                 budget_fees+=due;self.integration_paid_days+=1;self.unfunded_days=0
                 if self.integration_paid_days>=t.integration_workdays:
-                    self.status='integrated';self.events.append({'day':self.day,'kind':'integration-complete','mode':t.integration_mode})
-        mode=t.integration_mode if self.status=='integrated' else self.status
+                    event={'day':self.day,'kind':'integration-complete','mode':integration_mode(self)}
+                    if getattr(self,'counterfactual',None) is not None:
+                        event.update(history_terms_mode=t.integration_mode,intervention_arm=self.counterfactual['arm'])
+                    self.status='integrated';self.events.append(event)
+        mode=integration_mode(self) if self.status=='integrated' else self.status
         policy=None; transfer=0.
         if mode=='centralize':
+            if getattr(self,'counterfactual',None) is not None:
+                prepare_centralization(self)
+                firms=self._all();target=firms['target']
             # Parent control sweeps surplus and funds only a finite declared daily
             # subsidiary operating budget. No future shipment revenue is spent.
             sweep=max(0.,target.cash-t.subsidiary_daily_cash_budget)
@@ -277,6 +307,10 @@ class JointRun:
             policies={b.policy(g) for g in b.guild_alias}
             if len(policies)!=1:raise ValueError('joint central control cannot project mixed parent guild policies')
             policy=list(next(iter(policies)))
+            if getattr(self,'counterfactual',None) is not None:
+                # The child config's ordinary paid _adopt governs activation.
+                # An unfunded conversion remains on its prior policy.
+                policy=None
         elif mode=='preserve-autonomy':
             # Retain unit treasury/governance, but actual parent treasury can
             # finance a bounded payroll shortfall; this is not new lender money.
@@ -296,6 +330,8 @@ class JointRun:
         if self.failed or self.day>=self.horizon:raise ValueError('joint failed/completed world cannot step')
         if source_hash()!=self.source:raise ValueError('joint source drift')
         try:
+            from .joint_counterfactual import check_intervention_binding
+            check_intervention_binding(self)
             if any(m.day!=self.day or m.failed_day for m in self._all().values()):raise ValueError('joint day or partially failed entity differs')
             consideration=fees=0.
             if self.day==self.terms.offer_day:consideration,fees=self._expose_offer()
@@ -329,6 +365,8 @@ class JointRun:
         self.validate_joint_metadata()
         from .longitudinal_model import verify_snapshot
         path=Path(path)
+        from .joint_counterfactual import snapshot_metadata, CHECKPOINT_SCHEMA
+        branch_metadata=snapshot_metadata(self,path)
         if path.exists():raise ValueError('joint checkpoint immutable collision')
         offer_pin=None
         if self.offer is not None:
@@ -358,19 +396,32 @@ class JointRun:
             'unfunded_days':self.unfunded_days,'seller_account':self.seller_account,
             'provider_account':self.provider_account,'offer':self.offer,'offer_snapshot_pin':offer_pin,'events':self.events,
             'records':self.records,'firms':pins}
+        if branch_metadata is not None:
+            value['schema']=CHECKPOINT_SCHEMA;value['counterfactual']=branch_metadata
         atomic_json(path,value);return value
 
     @classmethod
-    def restore(cls,path,root):
+    def restore(cls,path,root,*,expected_plan=None,expected_arm=None):
         from .model import Model
         from .config import Config
         path=Path(path);v=json.loads(path.read_bytes());root=Path(root)
-        if root.exists() or v['schema']!='dams-two-firm-joint-checkpoint-1' or v['source_sha256']!=source_hash() or v['model_version']!=VERSION:
+        from .joint_counterfactual import CHECKPOINT_SCHEMA, CounterfactualPlan, restore_metadata
+        if root.exists() or v['schema'] not in ('dams-two-firm-joint-checkpoint-1',CHECKPOINT_SCHEMA) or v['source_sha256']!=source_hash() or v['model_version']!=VERSION:
             raise ValueError('joint checkpoint source/schema/fresh destination differs')
-        terms=JointTerms(**v['terms']);terms.validate(v['firms']['buyer']['config']['days'])
+        if v['schema']==CHECKPOINT_SCHEMA:
+            if (type(expected_plan) is not CounterfactualPlan or expected_arm not in expected_plan.payload['arms']
+                    or v.get('counterfactual',{}).get('plan')!=expected_plan.payload
+                    or v['counterfactual'].get('arm')!=expected_arm):
+                raise ValueError('counterfactual restore requires its separately fixed plan and arm')
+        elif expected_plan is not None or expected_arm is not None or 'counterfactual' in v:
+            raise ValueError('legacy checkpoint cannot gain intervention authority')
+        terms=JointTerms(**v['terms'])
         if digest(canonical(asdict(terms)))!=v['terms_sha256']:raise ValueError('joint checkpoint terms altered')
         if set(v['firms'])!={'buyer','target'} or v['owners']['buyer']!='buyer' or v['owners']['target'] not in ('seller','buyer'):
             raise ValueError('joint checkpoint company/ownership differs')
+        configs={name:Config.from_dict(pin['config']) for name,pin in v['firms'].items()}
+        validate_joint_configs(configs['buyer'],configs['target'],terms)
+        verify_cash_records(v['records'])
         root.mkdir(mode=0o700,parents=True);obj=cls.__new__(cls)
         obj.root=root;obj.terms=terms;obj._terms_sha=v['terms_sha256'];obj.source=v['source_sha256'];obj.failed=False
         obj.units={};obj._private={}
@@ -379,7 +430,7 @@ class JointRun:
                 p=path.parent/pin['file']
                 if Path(pin['file']).name!=pin['file'] or file_digest(p)!=pin['sha256'] or pin['day']!=v['day']:
                     raise ValueError('joint complete firm snapshot pin/calendar differs')
-                m=Model.restore_checkpoint(p,storage_dir=root/name,expected_config=Config.from_dict(pin['config']))
+                m=Model.restore_checkpoint(p,storage_dir=root/name,expected_config=configs[name])
                 (obj._private if name=='target' and v['owners']['target']=='seller' else obj.units)[name]=m
                 if m.semantic_digest()!=pin['state_semantic_sha256']:raise ValueError('joint firm restored state differs')
             for k in ('day','owners','status','integration_paid_days','unfunded_days','seller_account','provider_account','offer','events','records'):
@@ -410,6 +461,9 @@ class JointRun:
                 db=env['ledger']['file']
                 if Path(db).name!=db:raise ValueError('joint offer database reference unsafe')
                 shutil.copyfile(p.parent/db,root/db)
+            if v['schema']==CHECKPOINT_SCHEMA:
+                obj._counterfactual_expected=(expected_plan.sha256,expected_arm)
+            restore_metadata(obj,v,path)
             obj.validate_joint_metadata()
             return obj
         except BaseException:
@@ -419,12 +473,19 @@ class JointRun:
     def close(self):
         for m in self._all().values():m.ledger.close()
 
+    @classmethod
+    def fork_counterfactual(cls,path,root,*,plan,arm):
+        from .joint_counterfactual import fork_counterfactual
+        return fork_counterfactual(path,root,plan=plan,arm=arm)
+
     def validate_joint_metadata(self):
         """Reconcile checkpoint metadata with genuine original firm journals.
 
         No JSON status or receipt flag can grant early integration, change paid
         counters, mint seller cash or detach the actual owned engine.
         """
+        from .joint_counterfactual import validate_lineage, integration_mode
+        validate_lineage(self)
         firms=self._all();t=self.terms;status='unoffered';owners={'buyer':'buyer','target':'seller'}
         paid=unfunded=0;sold=fees=0.;previous={}
         events={day:[e for e in self.events if e['day']==day] for day in range(self.day)}
@@ -459,6 +520,7 @@ class JointRun:
             if eligible!=set(m.slots.values()):raise ValueError('joint full eligible roster does not match actual closed state')
             eligible_rosters[company]=preday
         for day,r in enumerate(self.records):
+            completed_today=False
             if set(r['firms'])!={'buyer','target'}:raise ValueError('joint record entity scope differs')
             if day==t.offer_day:
                 e=events[day]
@@ -482,8 +544,15 @@ class JointRun:
                     if unfunded>=t.maximum_unfunded_workdays:status='failed-owned'
                 else:
                     fee+=due;paid+=1;unfunded=0
-                    if paid>=t.integration_workdays:status='integrated'
-            mode=t.integration_mode if status=='integrated' else status
+                    if paid>=t.integration_workdays:status='integrated';completed_today=True
+            completed=[e for e in events[day] if e['kind']=='integration-complete']
+            if completed_today:
+                expected={'day':day,'kind':'integration-complete','mode':integration_mode(self)}
+                if getattr(self,'counterfactual',None) is not None:
+                    expected.update(history_terms_mode=t.integration_mode,intervention_arm=self.counterfactual['arm'])
+                if completed!=[expected]:raise ValueError('joint integration completion event differs from effective paid policy')
+            elif completed:raise ValueError('joint completion event is outside its actual paid boundary')
+            mode=integration_mode(self) if status=='integrated' else status
             for company,f in r['firms'].items():
                 raw,controls=journals[company];actual=raw[day]
                 preactive=len(eligible_rosters[company][day])
@@ -495,8 +564,11 @@ class JointRun:
                 if day:
                     if f['cash_before']!=previous[company]['cash_after'] or f['metrics_before']!=previous[company]['metrics_after']:
                         raise ValueError('joint metadata previous committed balance differs')
-                elif f['cash_before']!=firms[company].config.n*firms[company].l.initial_cash_per_member:
-                    raise ValueError('joint metadata initial cash differs')
+                else:
+                    if f['cash_before']!=firms[company].config.n*firms[company].l.initial_cash_per_member:
+                        raise ValueError('joint metadata initial cash differs')
+                    if any(type(v) not in (int,float) or not math.isfinite(v) or v!=0 for v in f['metrics_before'].values()):
+                        raise ValueError('joint metadata initial cumulative metrics must be zero')
                 c=f['control']
                 if owners['target']=='buyer':
                     hours=t.autonomy_coordination_hours if mode in ('preserve-autonomy','integrating') else t.centralized_coordination_hours if mode=='centralize' else 0.
@@ -636,6 +708,20 @@ def run_joint_world(buyer_config,target_config,path,terms,*,checkpoint_days=(),
             'seller_account':run.seller_account,'provider_account':run.provider_account,
             'firm_summaries':{k:m.summary() for k,m in run._all().items()},
             'formal_worlds_added':0,'calibration_OOS':False}
+        if getattr(run,'counterfactual',None) is not None:
+            from .joint_counterfactual import ownership_scoped_totals
+            firms=run._all();owned=[c for c in firms if run.owners[c]=='buyer']
+            result.update({'counterfactual':copy.deepcopy(run.counterfactual),
+                'corporate_operating_unit_acquisition':run.owners['target']=='buyer',
+                'target_governance_adoption_days':dict(firms['target'].adoption),
+                'target_actual_policies':{str(g):list(firms['target'].policy(g)) for g in firms['target'].guild_alias},
+                'scope_flows_since_common_parent':ownership_scoped_totals(run.records,
+                    since_day=run.counterfactual['plan']['parent_day']),
+                'scope_stocks_at_end':{scope:{
+                    'active_members':sum(firms[c].summary()['active_members_final'] for c in selected),
+                    'cash_resource_units':math.fsum(firms[c].cash for c in selected),
+                    'financial_debt_resource_units':math.fsum(firms[c].operations.debt for c in selected)}
+                    for scope,selected in (('buyer-corporate-group',owned),('two-firm-system',list(firms)))}})
         compute_boundary()
         if controlled:write_guard()
         # Serialize and fsync both potentially expensive complete documents
