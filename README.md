@@ -2,6 +2,12 @@
 
 This repository contains the simulation models, study protocols, analysis tools and tests behind the computational evaluation in the DAMS thesis (Decentralized Autonomous Management System). DAMS is a governance design that links verified contribution to domain-specific formal authority while keeping procedural accountability, guild autonomy and data rights. The code here evaluates parts of that design under declared assumptions. It is a research instrument, not a governance product, and none of its parameters is calibrated to an observed company.
 
+## Current research snapshot — 22 October 2026
+
+This branch contains the complete current enterprise research candidate, temporal fixed-contribution experiment, ACS measurement tools, tests and retained engineering fixtures. The observed-population entry provider is a source-pinned data component; it is not yet connected to the enterprise engine. No complete 10,000- or 50,000-person formal study is accepted by this snapshot.
+
+See [current evidence and exact sources](docs/CURRENT_RESEARCH.md) before interpreting or executing a study. Historical results retain their original source commits. The existing one-command enterprise entry is available below; this update does not certify clean execution on every supported platform, complete cloud custody or empirical calibration.
+
 ## What is in the repository
 
 | Path | Content |
@@ -13,7 +19,7 @@ This repository contains the simulation models, study protocols, analysis tools 
 | `research_tools/r11_outcomes.py`, `r11_inference.py`, `r11_world_count.py`, `r11_robustness.py`, `r11_figure.py` | Outcomes per arm, paired Student-t intervals with Holm adjustment, the pre-registered world-count rule, variant-versus-baseline reports and a per-study effect figure. |
 | `docs/r11-formal-protocol.md` | The study protocol and its dated amendments, each recorded before the worlds it covers were run. |
 | `docs/r11-resource-measurements.md` | Measured run time, memory and disk use. |
-| `contracts/` | The Solidity reference contract used for local allocation checks. |
+| [Historical contract prototype](https://github.com/rui-h-a/dams-simulation/tree/838b78c62c9cb1ba330f047a541faad271e3d9e9/contracts) | The separately versioned Solidity/local-EVM allocation prototype. It is not an enterprise ABM consensus backend. |
 | `tests/` | Unit and regression tests. |
 
 The separate [complete-history two-firm candidate](docs/full-history-counterfactuals-r12.md)
@@ -110,7 +116,7 @@ TMPDIR="$PWD/runs/tmp" PYTHONPATH=.:tests .venv/bin/python -m unittest discover 
 
 ## Limits
 
-The models generate synthetic organizations from declared assumptions; behavior paths with literature support are marked as such in the thesis, and the rest are assumptions. The enterprise market uses a fixed price, so the simulated firms produce at their capacity limit. Demographic and origin labels never enter equations for skill, honesty or eligibility. The local contract and signature checks do not establish independently operated consensus. Results support conditional comparisons under these assumptions, not predictions for a particular organization.
+The models generate synthetic organizations from declared assumptions; behavior paths with literature support are marked as such in the thesis, and the rest are assumptions. The historical market baseline has fixed-price, capacity-bound production; the demand-matched variant changes that assumption. The current configuration permits some origin-conditioned trait and trust shifts. These are model assumptions, not empirical estimates of nationality, ability or honesty, and remain a design gap. The observed-population component preserves measured categories without inferring psychological traits or capability from them. The local contract and signature checks do not establish independently operated consensus. Results support conditional comparisons under these assumptions, not predictions for a particular organization.
 
 ## Licence and citation
 
