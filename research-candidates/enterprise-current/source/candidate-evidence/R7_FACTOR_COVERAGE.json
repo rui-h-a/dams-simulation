@@ -1,0 +1,365 @@
+{
+  "schema": "DAMS-enterprise-r7-factor-coverage-1",
+  "candidate_model_version": "longitudinal-enterprise-integrated-7-networks-tasks-1",
+  "source_sha256": "f2ce5ba098f199dd71cac4cb9ffb34e85a76d0a8e4c4396d33a31072586bc108",
+  "base_r6_core_sha256": "236c52d299676bf18f1f73b31a3c566e40ee5773a5ef8da92d05e266f7cbbec5",
+  "base_r6_manifest_sha256": "69cff74b2be65c5a5967129a05b6bd7878efff25633e5ab1b7a3d2f21232b84f",
+  "source_files_sha256": {
+    "dams_sim/organization_tasks.py": "538f97125d96a2066ead7c53e34c86a6ea34d6b077be03d9afa96c09dbff90b2",
+    "dams_sim/config.py": "2f26885074a08c78b56d9bc28eb0b38825ef9ad001c2eae878bf98793fa06174",
+    "dams_sim/longitudinal_model.py": "543ab385966c5b37352f79dca58178a12afaeedf6e20238e7246acc1e607c56b",
+    "dams_sim/model.py": "c44b90b97979079b962aed066288daa5272eef7f9ee72703829d016b9ed1dad6",
+    "dams_sim/cli.py": "46ae04e76d56176eab9867d6a0cc8ca0fd008bea7700160184f88f456445213b",
+    "research_tools/validate_longitudinal.py": "84acf42fcce67ee0b275359b3b93ddd3444427df01af025fb5607b630141a82f",
+    "research_tools/validate_organization_tasks.py": "3307cadf257f5bb5680251691c7b101bd2d762401e1df6393cd3fb4860825a34",
+    "tests/test_organization_tasks_r7.py": "edd211190135f3a90e8a4f84f0b00ef76f1b0e9045e3870796230782728a3f83"
+  },
+  "default_mode": "Config.organization_tasks=None; field omitted from default serialization; r6 daily state/ledger/result differential controls",
+  "explicit_parameter_defaults": {
+    "schema_version": 1,
+    "department_count": 2,
+    "management_span": 3,
+    "reporting_hours_per_layer": 0.01,
+    "reporting_delay_days_per_layer": 1,
+    "reporting_readiness_penalty_per_layer": 0.05,
+    "collaboration_contacts": 1,
+    "collaboration_hours_per_contact": 0.01,
+    "verification_contacts": 2,
+    "verification_hours_per_member_workday": 0.025,
+    "verification_hours_per_claim": 0.025,
+    "dependency_input_units_per_output_work_unit": 0.25,
+    "initial_dependency_units_per_department": 1.0,
+    "quality_measurement_efficiency": 2.0,
+    "department_objectives": [
+      [
+        0.8,
+        0.15,
+        0.05
+      ],
+      [
+        0.6,
+        0.3,
+        0.1
+      ]
+    ]
+  },
+  "parameter_fit_completed": false,
+  "parameter_recovery_completed": false,
+  "empirical_calibration_completed": false,
+  "external_validation_completed": false,
+  "formal_study_admitted": false,
+  "formal_worlds_added": 0,
+  "literature": [
+    {
+      "key": "Martela2019",
+      "doi": "10.1186/s41469-019-0062-9",
+      "local_fulltext_relative_to_thesis": "02_literature/fulltext/03_technical/Martela2019_what-makes-self-managing-organizations-novel-com.pdf",
+      "local_fulltext_sha256": "6517bc35d973d3ba915ecc010dfc41d9149a54fa770c485ff303dba923fb5623",
+      "checked_pages": [
+        5,
+        6,
+        12,
+        14,
+        15,
+        16
+      ],
+      "supports": "Conceptual distinction of direction, coordination of interdependence and monitoring; no coefficient estimates.",
+      "numerical_parameter_source": false,
+      "empirical_calibration_dataset": false
+    },
+    {
+      "key": "Simon1991",
+      "doi": "10.1257/jep.5.2.25",
+      "local_fulltext_relative_to_thesis": "02_literature/fulltext/01_core_theory/Simon1991.pdf",
+      "local_fulltext_sha256": "7474f377c1d4f38364e738b12dc40b1efc28abb5e6f1e0a736b872739f507843",
+      "checked_pages": [
+        32,
+        33,
+        34
+      ],
+      "supports": "Authority, information and policy premises; task interdependence and local incentive/measurement conflicts.",
+      "numerical_parameter_source": false,
+      "empirical_calibration_dataset": false
+    },
+    {
+      "key": "Dabbish2014",
+      "doi": "10.48550/arXiv.1407.0377",
+      "local_fulltext_relative_to_thesis": "02_literature/fulltext/03_technical/Dabbish2014_transparency-and-coordination-in-peer-production.pdf",
+      "local_fulltext_sha256": "424ab5e7ab83813fe69b1d22a1b7f45b0697dbe422e07e91ba25affefaccc1af",
+      "checked_pages": [
+        2,
+        3
+      ],
+      "supports": "Qualitative peer-production dependency monitoring and mutual adjustment; not an enterprise task-chain estimate.",
+      "numerical_parameter_source": false,
+      "empirical_calibration_dataset": false
+    },
+    {
+      "key": "Vogelpohl2020",
+      "doi": "10.1007/978-3-030-49183-3_33",
+      "local_fulltext_relative_to_thesis": "02_literature/fulltext/05_org_management/Vogelpohl2020_investigating-the-effect-of-conflicting-goals-an.pdf",
+      "local_fulltext_sha256": "552563c809f04693f19d50846d96ab091fa7cd14b092a68db1d06775e88497c1",
+      "checked_pages": [
+        434,
+        435,
+        437
+      ],
+      "supports": "Conflicting/common local-goal research design; analysis stated pending, planned sample is not an observed effect.",
+      "numerical_parameter_source": false,
+      "empirical_calibration_dataset": false
+    }
+  ],
+  "factors": [
+    {
+      "factor": "formal reporting",
+      "implementation_status": "opt_in_candidate_behavior_implemented",
+      "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+      "calibration_status": "not_calibrated",
+      "external_validity_status": "not_validated",
+      "paths": [
+        "dams_sim/organization_tasks.py:topology",
+        "dams_sim/organization_tasks.py:OrganizationTasksState.prepare",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "time_update": "Every day, a within-task-department breadth-first parent tree with declared management span; reserve depth*c_reporting; readiness=1/(1+depth*penalty); claim-ready=day+1+depth*calendar_delay.",
+      "units": "dimensionless depth/span/readiness; fractions of member workday; calendar days",
+      "information_available": "Actual membership, local reporting parent/depth and delayed evidence; latent true output remains research-only.",
+      "joint_distribution": "deterministic conditional on actual active/present roster and explicit configuration; inherited random streams preserved; no demographic capability/identity proxies",
+      "parameter_source": "predeclared bounded synthetic hypotheses; conceptual citations do not identify these numerical values",
+      "observables": [
+        "organization_plan.topology.reporting_parent",
+        "reporting_depth",
+        "work.organization.reporting_readiness_fraction",
+        "claim_ready_day",
+        "organization_network_hours"
+      ],
+      "tests": [
+        "tests/test_organization_tasks_r7.py:test_three_roles_separate_nonself_and_span_orthogonal_to_guilds",
+        "tests/test_organization_tasks_r7.py:test_reporting_depth_changes_latency_time_and_production"
+      ],
+      "conceptual_references": [
+        "Martela2019",
+        "Simon1991"
+      ],
+      "limitations": "No estimated management effect, politics, reporting manipulation or complex command network; synthetic BFS hierarchy."
+    },
+    {
+      "factor": "collaboration",
+      "implementation_status": "opt_in_candidate_behavior_implemented",
+      "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+      "calibration_status": "not_calibrated",
+      "external_validity_status": "not_validated",
+      "paths": [
+        "dams_sim/organization_tasks.py:topology",
+        "dams_sim/organization_tasks.py:OrganizationTasksState.prepare",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "time_update": "Rebuild bounded directed peer contacts from actual roster. Present contacts reserve count*c_contact; actual post-free-riding cooperation mean enters original production multiplier 1+cooperation_strength*help.",
+      "units": "peer identity/edge count; cooperation dimensionless; fractions of member workday",
+      "information_available": "Present collaborators and their actual cooperation inputs; no free absent or free-riding help.",
+      "joint_distribution": "deterministic conditional on actual active/present roster and explicit configuration; inherited random streams preserved; no demographic capability/identity proxies",
+      "parameter_source": "predeclared bounded synthetic hypotheses; conceptual citations do not identify these numerical values",
+      "observables": [
+        "organization_plan.topology.collaboration_peers",
+        "work.help_input",
+        "organization_network_hours"
+      ],
+      "tests": [
+        "tests/test_organization_tasks_r7.py:test_collaboration_contacts_causal_and_costed",
+        "tests/test_organization_tasks_r7.py:test_freeride_forge_duplicate_and_censor_preserve_raw_and_time_accounts"
+      ],
+      "conceptual_references": [
+        "Martela2019",
+        "Dabbish2014"
+      ],
+      "limitations": "Contacts are controlled deterministic routing, not empirical friendship, trust, influence or cultural structure."
+    },
+    {
+      "factor": "verification",
+      "implementation_status": "opt_in_candidate_behavior_implemented",
+      "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+      "calibration_status": "not_calibrated",
+      "external_validity_status": "not_validated",
+      "paths": [
+        "dams_sim/organization_tasks.py:topology",
+        "dams_sim/organization_tasks.py:OrganizationTasksState.reviewer",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "time_update": "Bounded directed candidates exclude self/direct superior/direct subordinate. Paid quota=floor(max(0,fixed_reporting_collaboration_residual)*funding/c_per_claim). Consume once in inherited queue order; no paid reviewer causes explicit next-day deferral, no credit. Inherited noisy sensor retained.",
+      "units": "reviewer identity; claim count; fractions of member workday; calendar deferral days",
+      "information_available": "Claim evidence and inherited audit information only; structural role exclusion does not imply independent motives.",
+      "joint_distribution": "deterministic conditional on actual active/present roster and explicit configuration; inherited random streams preserved; no demographic capability/identity proxies",
+      "parameter_source": "predeclared bounded synthetic hypotheses; conceptual citations do not identify these numerical values",
+      "observables": [
+        "organization_plan.topology.verification_candidates",
+        "review.reviewer",
+        "organization_verification_hours",
+        "organization_verification_deferred_records"
+      ],
+      "tests": [
+        "tests/test_organization_tasks_r7.py:test_actual_verification_is_independent_and_bounded_by_paid_time",
+        "tests/test_organization_tasks_r7.py:test_verification_capacity_causes_explicit_deferral_and_no_free_credit",
+        "tests/test_organization_tasks_r7.py:test_raw_production_measurement_and_verifier_tampering_refused"
+      ],
+      "conceptual_references": [
+        "Martela2019",
+        "Simon1991"
+      ],
+      "limitations": "No collusion/capture model or empirically identified auditor reliability; inherited review error and central resource accounting continue."
+    },
+    {
+      "factor": "task dependencies",
+      "implementation_status": "opt_in_candidate_behavior_implemented",
+      "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+      "calibration_status": "not_calibrated",
+      "external_validity_status": "not_validated",
+      "paths": [
+        "dams_sim/organization_tasks.py:OrganizationTasksState.task_allocation",
+        "dams_sim/organization_tasks.py:OrganizationTasksState.finish",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "time_update": "Acyclic d-1 -> d uses morning stock I and unconstrained potential P: f=min(1,I/(rP)), or1 for rP=0. Actual output creates one deliverable token per work unit; downstream actual output consumes r prior-day inputs. I_next=I+produced-consumed; no same-day bootstrap.",
+      "units": "deliverable/input tokens; model work units; input tokens per work unit; calendar boundary",
+      "information_available": "Actual morning deliverables; synthetic known task graph; research potentials not fed to governance authority.",
+      "joint_distribution": "deterministic conditional on actual active/present roster and explicit configuration; inherited random streams preserved; no demographic capability/identity proxies",
+      "parameter_source": "predeclared bounded synthetic hypotheses; conceptual citations do not identify these numerical values",
+      "observables": [
+        "organization_tasks.morning_stocks",
+        "potential_by_department",
+        "dependency_factors",
+        "produced_by_department",
+        "consumed_input_units",
+        "closing_stocks",
+        "organization_dependency_input_units"
+      ],
+      "tests": [
+        "tests/test_organization_tasks_r7.py:test_previous_day_dependency_no_free_bootstrap_and_conservation",
+        "tests/test_organization_tasks_r7.py:test_dependency_ablation_changes_real_output_not_population",
+        "tests/test_organization_tasks_r7.py:test_coherent_dayend_state_stock_forgery_requires_full_history_rejection",
+        "tests/test_organization_tasks_r7.py:test_extreme_dependency_and_objective_endpoints_keep_exact_accounts"
+      ],
+      "conceptual_references": [
+        "Martela2019",
+        "Simon1991",
+        "Dabbish2014"
+      ],
+      "limitations": "Knowledge/artifact enabling tokens, not saleable goods or valued balance-sheet assets. Work across departments is not final consumer-goods output. Simple chain does not cover a general project DAG or inherited unfinished target projects."
+    },
+    {
+      "factor": "competing departmental objectives",
+      "implementation_status": "opt_in_candidate_behavior_implemented",
+      "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+      "calibration_status": "not_calibrated",
+      "external_validity_status": "not_validated",
+      "paths": [
+        "dams_sim/organization_tasks.py:OrganizationTasksConfig",
+        "dams_sim/organization_tasks.py:OrganizationTasksState.prepare",
+        "dams_sim/longitudinal_model.py:_step"
+      ],
+      "time_update": "Each controlled task department sets nonnegative production/quality/learning weights summing1. Divide one residual capacity after inherited care/governance/coordination and network reservations. Cap effort by production share; observed-work noise sd/(1+efficiency*funded_quality); existing learning update includes funded learning time; all reservations enter fatigue/time budget.",
+      "units": "dimensionless weights/noise-efficiency; normalized member workday fractions; learning stock dimensionless",
+      "information_available": "Local declared priorities and resource constraints; true skill/output remain research-only; no demographic label sets priorities or capabilities.",
+      "joint_distribution": "deterministic conditional on actual active/present roster and explicit configuration; inherited random streams preserved; no demographic capability/identity proxies",
+      "parameter_source": "predeclared bounded synthetic hypotheses; conceptual citations do not identify these numerical values",
+      "observables": [
+        "task_department_count",
+        "work.organization.quality_hours",
+        "learning_hours",
+        "organization_quality_hours",
+        "organization_learning_hours",
+        "max_individual_time_booked_hours",
+        "produced_work_units",
+        "agents.learning",
+        "agents.fatigue"
+      ],
+      "tests": [
+        "tests/test_organization_tasks_r7.py:test_local_objective_tradeoff_changes_output_quality_learning",
+        "tests/test_organization_tasks_r7.py:test_closure_zero_funding_and_tail_do_not_create_dependency_output",
+        "tests/test_organization_tasks_r7.py:test_learning_and_fatigue_forgery_rejected_from_full_raw"
+      ],
+      "conceptual_references": [
+        "Simon1991",
+        "Vogelpohl2020"
+      ],
+      "limitations": "Declared local allocation conflict, not estimated organizational utility or all strategic KPI/ESG tradeoffs. Allocation metrics do not claim realized training on closed/tail/no-production days."
+    },
+    {
+      "factor": "lifecycle/M&A/network integration and recovery",
+      "implementation_status": "opt_in_candidate_behavior_implemented",
+      "program_correctness_status": "finite_author_controls_and_runtime_evidence",
+      "calibration_status": "not_calibrated",
+      "external_validity_status": "not_validated",
+      "paths": [
+        "dams_sim/longitudinal_model.py:_enter",
+        "dams_sim/longitudinal_model.py:validate_semantics",
+        "dams_sim/model.py:Model.restore_checkpoint",
+        "research_tools/validate_organization_tasks.py:verify_organization_accounts"
+      ],
+      "time_update": "Rebuild actual roster at each complete calendar day after entries/exits/leave/site moves/guild mergers/M&A. Preserve inherited transactions/person profiles, accumulated knowledge and original integration costs; exact schema2/raw/state/checkpoint restoration binds optional assumptions and source.",
+      "units": "people; guild/site identities; dimensionless knowledge/learning/fatigue; member-workdays; resource units; calendar days",
+      "information_available": "Historical entry/site/guild assignments retained in raw journal; no reconstruction from only final sites.",
+      "joint_distribution": "deterministic conditional on actual active/present roster and explicit configuration; inherited random streams preserved; no demographic capability/identity proxies",
+      "parameter_source": "predeclared bounded synthetic hypotheses; conceptual citations do not identify these numerical values",
+      "observables": [
+        "entry.organization_site",
+        "guild_move.organization_site",
+        "acquisition_entry",
+        "organization_tasks_state",
+        "state_semantic_sha256",
+        "source_sha256",
+        "timeseries.csv"
+      ],
+      "tests": [
+        "tests/test_organization_tasks_r7.py:test_complete_schema2_checkpoint_resume_and_ma_profiles",
+        "tests/test_organization_tasks_r7.py:test_weekend_leave_exit_hire_and_year_boundary_rebuilds_roster",
+        "tests/test_organization_tasks_r7.py:test_historical_site_change_and_fault_do_not_use_final_site",
+        "tests/test_organization_tasks_r7.py:test_acquired_empty_guild_preserves_transferred_knowledge",
+        "tests/test_organization_tasks_r7.py:test_none_to_enabled_and_enabled_to_none_fork_refused",
+        "tests/test_organization_tasks_r7.py:test_default_disabled_daily_r6_joint_source_bit_equivalence"
+      ],
+      "conceptual_references": [
+        "Martela2019"
+      ],
+      "limitations": "Inherited bounded immutable acquisition-target capsule, not two complete independently evolving companies; r7 does not establish empirically identified cultural M&A integration or transfer target project DAGs."
+    }
+  ],
+  "independent_internal_accounting_scope": {
+    "path": "research_tools/validate_organization_tasks.py",
+    "producer_functions_not_called": [
+      "topology",
+      "prepare",
+      "task_allocation",
+      "finish",
+      "reviewer"
+    ],
+    "independently_reconstructed": [
+      "role_contacts",
+      "time_and_review_quotas",
+      "production_and_quality_equations",
+      "prior_day_inventory",
+      "historical_sites",
+      "learning_and_fatigue",
+      "organizational_knowledge",
+      "adoption_routine_and_actual_demand"
+    ],
+    "shared_utilities": [
+      "schema1/schema2 journal parser",
+      "Gregorian calendar",
+      "keyed random-stream utility",
+      "configuration schema"
+    ],
+    "source_guard": "own imported bytes pinned before/after full raw validation; sealed SQLite immutable read-only; manifest explicitly includes research_tools SHA",
+    "not_claimed": "complete independent empirical/model verification"
+  },
+  "not_implemented_or_unadmitted": [
+    "estimated social trust/power/collusion networks",
+    "general project/task DAGs",
+    "endogenous task-department remapping",
+    "two independently evolving acquisition enterprises",
+    "empirical parameter fit/recovery/OOS",
+    "long-term full-model N10k/N50k resource admission",
+    "new formal statistical study",
+    "Linux platform certification"
+  ],
+  "no_favorable_result_tuning": true
+}

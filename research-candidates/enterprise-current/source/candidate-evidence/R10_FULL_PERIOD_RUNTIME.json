@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-12T09:52:59.335685+00:00",
+  "exit_code": 0,
+  "producer_reaped": true,
+  "owned_pgid_absent": true,
+  "wall_seconds": 266.34989554196363,
+  "CPU_user_seconds": 222.926349,
+  "CPU_system_seconds": 18.258011,
+  "RSS_bytes": 416858112,
+  "result_present": true,
+  "formal_worlds_added": 0,
+  "whole_goal_complete": false
+}

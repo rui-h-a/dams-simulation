@@ -1,0 +1,393 @@
+{
+  "comparison_tolerances": {
+    "credit_absolute": 1e-12,
+    "relative": 1e-12,
+    "share_absolute": 1e-14,
+    "sum_absolute": 1e-12
+  },
+  "day": 365,
+  "domains": [
+    {
+      "all_member_credit_max_error": 0.0,
+      "confirmed_credit_total_eligible": 3508200.2660911526,
+      "domain": "d0",
+      "eligible_count": 9900,
+      "policies": {
+        "equal": {
+          "max_all_member_absolute_error": 0.0,
+          "selected_members": {
+            "p00001": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p00002": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p00003": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p05001": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p09997": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p09998": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p09999": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            }
+          },
+          "sum": 1.0
+        },
+        "linear": {
+          "max_all_member_absolute_error": 3.2526065174565133e-19,
+          "selected_members": {
+            "p00001": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p00002": {
+              "expected": 6.291239182061315e-07,
+              "observed": 6.291239182061316e-07
+            },
+            "p00003": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p05001": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p09997": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p09998": {
+              "expected": 0.0006851159469264771,
+              "observed": 0.0006851159469264774
+            },
+            "p09999": {
+              "expected": 0.0,
+              "observed": 0.0
+            }
+          },
+          "sum": 1.0
+        },
+        "performance_tiers": {
+          "max_all_member_absolute_error": 0.0,
+          "selected_members": {
+            "p00001": {
+              "expected": 4.173750708404174e-05,
+              "observed": 4.173750708404174e-05
+            },
+            "p00002": {
+              "expected": 0.00010774410774410775,
+              "observed": 0.00010774410774410775
+            },
+            "p00003": {
+              "expected": 4.173750708404174e-05,
+              "observed": 4.173750708404174e-05
+            },
+            "p05001": {
+              "expected": 4.173750708404174e-05,
+              "observed": 4.173750708404174e-05
+            },
+            "p09997": {
+              "expected": 4.173750708404174e-05,
+              "observed": 4.173750708404174e-05
+            },
+            "p09998": {
+              "expected": 0.0002154882154882155,
+              "observed": 0.0002154882154882155
+            },
+            "p09999": {
+              "expected": 4.173750708404174e-05,
+              "observed": 4.173750708404174e-05
+            }
+          },
+          "sum": 1.0
+        },
+        "sublinear": {
+          "max_all_member_absolute_error": 1.6263032587282567e-19,
+          "selected_members": {
+            "p00001": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p00002": {
+              "expected": 1.3357941630247722e-05,
+              "observed": 1.3357941630247726e-05
+            },
+            "p00003": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p05001": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p09997": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p09998": {
+              "expected": 0.0004408120737981748,
+              "observed": 0.00044081207379817494
+            },
+            "p09999": {
+              "expected": 0.0,
+              "observed": 0.0
+            }
+          },
+          "sum": 1.0
+        },
+        "tenure_tiers": {
+          "max_all_member_absolute_error": 0.0,
+          "selected_members": {
+            "p00001": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            },
+            "p00002": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            },
+            "p00003": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            },
+            "p05001": {
+              "expected": 5.3872053872053874e-05,
+              "observed": 5.3872053872053874e-05
+            },
+            "p09997": {
+              "expected": 0.00010774410774410775,
+              "observed": 0.00010774410774410775
+            },
+            "p09998": {
+              "expected": 0.00010774410774410775,
+              "observed": 0.00010774410774410775
+            },
+            "p09999": {
+              "expected": 0.00010774410774410775,
+              "observed": 0.00010774410774410775
+            }
+          },
+          "sum": 1.0
+        }
+      },
+      "record_counts_all_domains": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    },
+    {
+      "all_member_credit_max_error": 0.0,
+      "confirmed_credit_total_eligible": 4699599.3264516145,
+      "domain": "d1",
+      "eligible_count": 9900,
+      "policies": {
+        "equal": {
+          "max_all_member_absolute_error": 0.0,
+          "selected_members": {
+            "p00001": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p00002": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p00003": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p05001": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p09997": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p09998": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            },
+            "p09999": {
+              "expected": 0.00010101010101010101,
+              "observed": 0.00010101010101010101
+            }
+          },
+          "sum": 1.0
+        },
+        "linear": {
+          "max_all_member_absolute_error": 2.710505431213761e-19,
+          "selected_members": {
+            "p00001": {
+              "expected": 2.087263231458407e-07,
+              "observed": 2.087263231458407e-07
+            },
+            "p00002": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p00003": {
+              "expected": 8.349052925833628e-07,
+              "observed": 8.349052925833629e-07
+            },
+            "p05001": {
+              "expected": 2.087263231458407e-07,
+              "observed": 2.087263231458407e-07
+            },
+            "p09997": {
+              "expected": 0.0005011519018731635,
+              "observed": 0.0005011519018731634
+            },
+            "p09998": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p09999": {
+              "expected": 0.0005218158078646018,
+              "observed": 0.0005218158078646016
+            }
+          },
+          "sum": 1.0
+        },
+        "performance_tiers": {
+          "max_all_member_absolute_error": 0.0,
+          "selected_members": {
+            "p00001": {
+              "expected": 5.3872053872053874e-05,
+              "observed": 5.3872053872053874e-05
+            },
+            "p00002": {
+              "expected": 3.7455736052140875e-05,
+              "observed": 3.7455736052140875e-05
+            },
+            "p00003": {
+              "expected": 5.3872053872053874e-05,
+              "observed": 5.3872053872053874e-05
+            },
+            "p05001": {
+              "expected": 5.3872053872053874e-05,
+              "observed": 5.3872053872053874e-05
+            },
+            "p09997": {
+              "expected": 0.0002154882154882155,
+              "observed": 0.0002154882154882155
+            },
+            "p09998": {
+              "expected": 3.7455736052140875e-05,
+              "observed": 3.7455736052140875e-05
+            },
+            "p09999": {
+              "expected": 0.0002154882154882155,
+              "observed": 0.0002154882154882155
+            }
+          },
+          "sum": 1.0
+        },
+        "sublinear": {
+          "max_all_member_absolute_error": 1.0842021724855044e-19,
+          "selected_members": {
+            "p00001": {
+              "expected": 6.858403383714319e-06,
+              "observed": 6.858403383714319e-06
+            },
+            "p00002": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p00003": {
+              "expected": 1.3716806767428639e-05,
+              "observed": 1.371680676742864e-05
+            },
+            "p05001": {
+              "expected": 6.858403383714319e-06,
+              "observed": 6.858403383714319e-06
+            },
+            "p09997": {
+              "expected": 0.00033606176580200164,
+              "observed": 0.00033606176580200164
+            },
+            "p09998": {
+              "expected": 0.0,
+              "observed": 0.0
+            },
+            "p09999": {
+              "expected": 0.00034292016918571603,
+              "observed": 0.0003429201691857159
+            }
+          },
+          "sum": 1.0
+        },
+        "tenure_tiers": {
+          "max_all_member_absolute_error": 0.0,
+          "selected_members": {
+            "p00001": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            },
+            "p00002": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            },
+            "p00003": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            },
+            "p05001": {
+              "expected": 5.3872053872053874e-05,
+              "observed": 5.3872053872053874e-05
+            },
+            "p09997": {
+              "expected": 0.00010774410774410775,
+              "observed": 0.00010774410774410775
+            },
+            "p09998": {
+              "expected": 0.00010774410774410775,
+              "observed": 0.00010774410774410775
+            },
+            "p09999": {
+              "expected": 2.6936026936026937e-05,
+              "observed": 2.6936026936026937e-05
+            }
+          },
+          "sum": 1.0
+        }
+      },
+      "record_counts_all_domains": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    }
+  ],
+  "inputs": {
+    "result": {
+      "basename": "result.json",
+      "bytes": 18342141,
+      "sha256": "981d511108ebd0147f2bb3fb0b333d6980b52c20b996906fc3b14352b87da654"
+    },
+    "tape": {
+      "basename": "input.json",
+      "bytes": 3519114,
+      "sha256": "8b4eb0b688650765590b05f9942f22eb223892f8189d6f27e7a1d47775909104"
+    }
+  },
+  "new_formal_abm_worlds": 0,
+  "scope": "full eligible C, tenure and five share vectors at one existing observation day; no behavioural or empirical validation",
+  "status": "verified_requested_day",
+  "verifier_source_sha256": "055680fb8ad3a51aabc89efa42b0f673c249cdc445d367928941be257e90198d"
+}

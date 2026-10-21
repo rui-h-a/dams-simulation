@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "designed fixed-exogenous temporal authority replay",
+  "new_formal_abm_worlds": 0,
+  "roster": 10000,
+  "events": 20403,
+  "domains": 2,
+  "query_days": [
+    0,
+    1,
+    30,
+    90,
+    180,
+    365
+  ],
+  "source_pins": {
+    "research_tools/fixed_contribution_replay.py": "22fdf5aeda6faa4f8315e7b4f17b8e59c7e95bda867ecc63934c8bc9e95fa5c5",
+    "tests/test_fixed_contribution_replay.py": "ab93cb1665a19755472cf2207613e0313ca3210cfbb761ffa3b1b6c4401f0f41",
+    "docs/fixed-contribution-replay.md": "40c47054856a6ac3e279e2c4800a0be1d0cdb3751343ac4725fb5f3bdc3aeedb",
+    "dams_sim/authority.py": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+    "research_tools/fixed_replay_fixture.py": "c346840b6e827dfee54e95fa3adcb80a6da16fb31935962e657c30fc4020dda0"
+  },
+  "assets": {
+    "input.json": {
+      "bytes": 3519114,
+      "sha256": "8b4eb0b688650765590b05f9942f22eb223892f8189d6f27e7a1d47775909104",
+      "gzip_asset": "input.json.gz",
+      "gzip_bytes": 286447,
+      "gzip_sha256": "2de61cc62b060a1ac2272b042d2f7d0d4ab7beabc81bceb18dd676f2bd5ef2d5",
+      "url": "https://github.com/rui-h-a/dams-simulation/releases/download/fixed-authority-replay-20261022/input.json.gz"
+    },
+    "result.json": {
+      "bytes": 18342141,
+      "sha256": "981d511108ebd0147f2bb3fb0b333d6980b52c20b996906fc3b14352b87da654",
+      "gzip_asset": "result.json.gz",
+      "gzip_bytes": 2545011,
+      "gzip_sha256": "2de3ce4327fd8a8de4af2acdd54f001095d8cb44d9fa3c6c4c7d5b017b107e49",
+      "url": "https://github.com/rui-h-a/dams-simulation/releases/download/fixed-authority-replay-20261022/result.json.gz"
+    }
+  },
+  "summary_sha256": "c9c357ca117a80a32f534368233756384c4465373761e05b86314bef8a47820b",
+  "observation": "All shares and all record states retained in complete output. This is not an enterprise or behavioral simulation.",
+  "reproduction": "Generate input with fixed_replay_fixture; replay with fixed_contribution_replay; full result bytes include pinned source SHA. Runtime is outside deterministic results.",
+  "scope_of_independent_checks": "Final day365, both domains, every eligible person, all five policies, credits and appointment scores independently reconstructed from raw input without producer imports. Other query rows are not claimed independently audited."
+}

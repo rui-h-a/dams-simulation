@@ -1,0 +1,232 @@
+{
+  "schema": "r8-actual-bounded-engineering-verification-1",
+  "recorded_UTC": "2026-10-12T01:01:30.676431+00:00",
+  "status": "SEPARATE_ENGINEERING_CANDIDATE_NOT_FORMAL_OR_CALIBRATED",
+  "model_core_sha256": "818bc44ea61e1c4a1fd982f1aedcc1134c3aacec9ff9912bbd111581289c05e8",
+  "base_r7_public_commit": "4f53b47de965320401eeefce1a0bddd5956c976e",
+  "actual_original_result_sha256": "46e1fd43f7fb829a0411db66f2c7dec8e17af93c604c980b609d25b55782afd6",
+  "source_files": {
+    "dams_sim/cli.py": {
+      "bytes": 24956,
+      "sha256": "9717ab7865548b081d80fc8d0387c03f427c8880baa45a451517eceeeda8fecc"
+    },
+    "dams_sim/joint_firm.py": {
+      "bytes": 36234,
+      "sha256": "29fca301a0a944de23da1b9964caa7786af16d280f1fb81a0b7865eb7f67f6a9"
+    },
+    "dams_sim/longitudinal_model.py": {
+      "bytes": 110771,
+      "sha256": "18a246c199ca7c2b0d94017ca847ccce62df8ba560c98953f872cf85a0a3c8a5"
+    },
+    "research_tools/validate_longitudinal.py": {
+      "bytes": 90160,
+      "sha256": "b1c8f79a1653de606828e63a038b2e0cfc6bfbbb261c1de434897cdc6eea9391"
+    },
+    "tests/test_joint_firm_r8.py": {
+      "bytes": 13897,
+      "sha256": "1097650107d1fc548df6c8dbabba1a6230a8dea54a440cde4c99febd8a5fcd78"
+    }
+  },
+  "new_formal_worlds": 0,
+  "calibration_completed": false,
+  "cross_enterprise_OOS_completed": false,
+  "full_five_year_study_completed": false,
+  "execution": {
+    "global_world": 91000,
+    "independent_initial_firms": 2,
+    "paired_buyer_strategies": 2,
+    "calendar_days": 90,
+    "initial_people_each_firm": 30,
+    "final_people_each_firm": 70,
+    "initial_system_people": 60,
+    "final_system_people": 140,
+    "offer_completed_day": 30,
+    "integration_mode": "centralize",
+    "integration_paid_workdays": 3,
+    "model_consideration_resource_units": 10.0,
+    "model_provider_cost_resource_units": 13.0,
+    "not_cloud_expenses": true,
+    "supervisor_wall_seconds": 31.730252958019264,
+    "child_user_seconds": 29.523017,
+    "child_system_seconds": 1.156419,
+    "sampled_peak_RSS_bytes": 76791808,
+    "normal_exit_and_reaped": true,
+    "same_target_preoffer_history_across_strategies": true
+  },
+  "controls": {
+    "native_controls_rounds_1_and_2_passed": 19,
+    "public_portable_controls_passed": 19,
+    "portable_test_final_sha256": "1097650107d1fc548df6c8dbabba1a6230a8dea54a440cde4c99febd8a5fcd78",
+    "command": "python3 -B -m unittest discover -s tests -p test_joint_firm_r8.py",
+    "control_command_is_not_formal_study": true
+  },
+  "actual_artifacts": [
+    {
+      "strategy": "dams-fixed0",
+      "company": "buyer",
+      "file": "final_state.json",
+      "sha256": "fb7cb1af26abe4f48dc2e34553f0dd6a57afe2ab76c2651e1922564428745ad5",
+      "bytes": 391414
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "buyer",
+      "file": "final_state.sqlite",
+      "sha256": "4dd0bf87d91ca704512fef8c80bd3c3e3a88d8ee7b84d923c37055cbd0035563",
+      "bytes": 2035712
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "buyer",
+      "file": "summary.json",
+      "sha256": "1471d34cf71b14aceab5625eb8cce350427bdafbb353092c31b5665574c33a2e",
+      "bytes": 29424
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "buyer",
+      "file": "timeseries.csv",
+      "sha256": "51883166128e1ca8366763c3389f5e1536c9de67c774c6a6c319314b8fa33b95",
+      "bytes": 84461
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "target",
+      "file": "final_state.json",
+      "sha256": "4ba1a62d4666f48df69347eda83b66898f9b597d4d1fc3e0f59f19767a88b0ec",
+      "bytes": 388171
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "target",
+      "file": "final_state.sqlite",
+      "sha256": "ce6b9ddfe697c76fbc919083510f4d3c552d2c0374f4a9f7fc400f1c64af1d53",
+      "bytes": 2056192
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "target",
+      "file": "summary.json",
+      "sha256": "d125bc13c29625411e5d21b896c5a9b06b787a84d6f954dfc543aec2784c6346",
+      "bytes": 28464
+    },
+    {
+      "strategy": "dams-fixed0",
+      "company": "target",
+      "file": "timeseries.csv",
+      "sha256": "f5cbf2694cd772997c4c54a332d040670941100f4397a549cdfafc38539c3d9e",
+      "bytes": 83125
+    },
+    {
+      "strategy": "dams-fixed0",
+      "checkpoint_day": 29,
+      "sha256": "06344b369cf8cd428a7a5fa77b3d46882c9c87f586ecae222e1fc075a0970afa",
+      "bytes": 255854
+    },
+    {
+      "strategy": "dams-fixed0",
+      "checkpoint_day": 35,
+      "sha256": "b14bdca821dba38b79243d4def5fced833a90143a6458d8eca82eca30a77c135",
+      "bytes": 317254
+    },
+    {
+      "strategy": "dams-fixed0",
+      "checkpoint_day": 90,
+      "sha256": "691e049c1008562eb2a4069cb57eaea3a754cac1eec97dbaad44850e9db37319",
+      "bytes": 870628
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "buyer",
+      "file": "final_state.json",
+      "sha256": "cc5be359eb757456c15f2c82f47fe469fe41783b37c47451ce83dbb33ca633d6",
+      "bytes": 388510
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "buyer",
+      "file": "final_state.sqlite",
+      "sha256": "21a370f24f65ae787200d07c519d7c8fc3fa17d41aa52bf3ad3a69bb5a7be747",
+      "bytes": 2011136
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "buyer",
+      "file": "summary.json",
+      "sha256": "ed1f4e6bafab4659980f7a68e11c15cee8b5c19934ab88c96aeb051a3ee6af64",
+      "bytes": 28678
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "buyer",
+      "file": "timeseries.csv",
+      "sha256": "1593a6db37115192e4f389d34e848e313c2dad05eb4bf5c5df81aa4fc63763e4",
+      "bytes": 83169
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "target",
+      "file": "final_state.json",
+      "sha256": "8893bd6bea304534221ccdfec3c0551c5ac3c7eaf1a68b132e91588f3c4d9a32",
+      "bytes": 388227
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "target",
+      "file": "final_state.sqlite",
+      "sha256": "6d45f82630d7779eb673ca470b57b012d0a55a72b318eef95a14e944603039f3",
+      "bytes": 2015232
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "target",
+      "file": "summary.json",
+      "sha256": "aef3297cd2596bd4f55f260f62f9c9013347b8146357e8baa4932161b630e042",
+      "bytes": 28498
+    },
+    {
+      "strategy": "hierarchy-never",
+      "company": "target",
+      "file": "timeseries.csv",
+      "sha256": "3f374c8956ea19e5bada6542ffefff84eb3acddbe5f2e796682e82e08bfe094d",
+      "bytes": 83096
+    },
+    {
+      "strategy": "hierarchy-never",
+      "checkpoint_day": 29,
+      "sha256": "4d2eb7803517be0555bd67a48062642c6f59a8bea03ca567517427071c9ccff0",
+      "bytes": 250095
+    },
+    {
+      "strategy": "hierarchy-never",
+      "checkpoint_day": 35,
+      "sha256": "9e74cb63036ed1421653ed8bfbaf8b81b801ccf8af284d867a18121bfdb90fe9",
+      "bytes": 310347
+    },
+    {
+      "strategy": "hierarchy-never",
+      "checkpoint_day": 90,
+      "sha256": "d0fca1b68c6bc250142b1d45a1cc535e24cdba7bd6cd4165bdae91f9bf4e2624",
+      "bytes": 853049
+    }
+  ],
+  "limitations": [
+    "One predeclared engineering global world, not an independent statistical sample set.",
+    "Full native target operating unit is acquired as a subsidiary; this is not a flattened merger.",
+    "Independent scalar cash checks do not establish complete independent economic verification.",
+    "Native raw validation shares some scientific mechanism functions.",
+    "Runtime r2 watchdog used a broader missing-file catch than final future-monitor policy; all mandatory final source/raw data were separately fully verified.",
+    "The first owned SQLite-journal monitor race failure and portable /var alias failure are retained.",
+    "No formal five-year experiment, empirical calibration or OOS claim follows from 90 calendar days.",
+    "Joint resource bounds and two-firm dimensions are engineering-case settings, not approved N10000 or N50000 study definitions.",
+    "Existing r7 documents describe their own historical mechanism scope; this extension requires new frozen scientific specifications."
+  ],
+  "independent_bounded_review": {
+    "receipt_sha256": "4841ceaf45992feab92c56ddef81ab7feb5a3236ec29f7aa3a3ab9736e68ceac",
+    "status": "NO_BLOCKER_ACTUAL_METADATA_SCALAR_SCOPE",
+    "entity_day_cash_balances_checked": 360,
+    "daily_two_firm_zero_sum_balances_checked": 180,
+    "largest_scalar_cash_residual": 5.087485988042317e-12,
+    "not_whole_model_or_external_validity": true
+  }
+}

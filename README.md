@@ -1,5 +1,14 @@
 # DAMS research reference implementation
 
+## Current enterprise research — 22 October 2026
+
+The [complete latest enterprise snapshot](research-candidates/enterprise-current/README.md) is included in this default-branch checkout. It preserves the entire source tree, tests, protocols, measurement tools and compact original engineering fixtures, with a per-file manifest. [Its current evidence index](research-candidates/enterprise-current/source/docs/CURRENT_RESEARCH.md) links the full raw release assets and states the remaining gaps.
+
+The current candidate adds complete-retention evidence admission, full-history two-firm counterfactuals, measured ACS joint-population diagnostics, a deterministic temporal allocation experiment and an observed-population data provider. The provider is not integrated into the enterprise engine. Complete 10,000- and 50,000-person formal studies remain unaccepted; these changes add no formal worlds.
+
+The root commands and historical results below keep their original implementation. To inspect or use the latest enterprise command, enter `research-candidates/enterprise-current/source/` and follow its README. The two implementations retain separate source histories and are not silently substituted for one another. No historical result is relabelled under a new model.
+
+
 This repository makes the DAMS research model, synthetic experiment design, analysis and resource measurements inspectable. It studies contribution-contingent **formal** authority, bounded observation, guild coordination, procedural capacity and conditional evidence-substrate costs. Parameters and populations are design or stress assumptions. Synthetic work, concentration and completed-record delay do not establish field effectiveness, fairness, organizational efficiency or real consensus performance.
 
 ## Run a declared specification and population

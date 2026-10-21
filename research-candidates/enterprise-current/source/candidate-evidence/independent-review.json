@@ -1,0 +1,87 @@
+{
+  "author_evidence_from_immutable_r3": {
+    "engineering_profiles": {
+      "arms": [
+        {
+          "arm": "control",
+          "checkpoint365_restored_and_reverified": true,
+          "complete1917": true,
+          "config_sha256": "6bb5198e3b04b5e65b725cf0e0317491b7562d20bd6440c09f2b455d338621ec",
+          "fullraw_pre_post_equal": true,
+          "ledger_semantic_sha256": "8f9a94c7abbeb02b167deae9854e13d6a53286dbe7ec7f8ab0c953c319edc0c0",
+          "source_sha256": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b",
+          "state_semantic_sha256": "33350b18cbb8fe0d5deb3efa285c93efd3af9e72cd7b5d7a0c2c5aac02870999"
+        },
+        {
+          "arm": "dams",
+          "checkpoint365_restored_and_reverified": true,
+          "complete1917": true,
+          "config_sha256": "9168a437140026b85c80049bee3495656bc029e2dc0655a129a9cb3976a99f32",
+          "fullraw_pre_post_equal": true,
+          "ledger_semantic_sha256": "8657e5e9035acaf458cd587c1210b0ce13bc4a3167e03e94217c6a69331711bd",
+          "source_sha256": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b",
+          "state_semantic_sha256": "7148372f195e2712480a4e674becf24f8febe1d914f846c54aaf80b3fbbe4c50"
+        }
+      ],
+      "checkpoint_day": 365,
+      "days_each": 1917,
+      "fixed_world": 90001,
+      "independent_review_scope": "Receipt and source bindings checked; profiles not reexecuted or raw-rescanned by this reviewer.",
+      "inferential_worlds": 0,
+      "seed": 20261010,
+      "terminal_receipt_sha256": "5f30358b6b21a3f88dc45acfc8ee118b5f0a1cbd059af5ab7ef9ce47c49e13c4",
+      "trajectories": 2
+    },
+    "final_receipt_sha256": "42e62f5a34a812d4760f3339d8aea6d721ac2c0b916394ef49a4a88fc236029b",
+    "tests": {
+      "actual_exit_code": 0,
+      "controls": 94,
+      "inherited_controls": 83,
+      "receipt_sha256": "6abe77869f2ee503b2dd412fc408914a22605d45246e63ddc9e7180eca3bbce9",
+      "repair_controls": 11
+    }
+  },
+  "author_source_roster": {
+    "files": 112,
+    "freeze_sha256": "05f6836f69d874cd486ba179f34f87316a1f6ad45eaedd1da9e9c2b92fe1628f"
+  },
+  "empirical_validation": false,
+  "formal_study_adopted": false,
+  "independent_execution": {
+    "actual_exit_code": 0,
+    "complete_raw_gate_scope": "Fresh bounded eight-day adverse controls only.",
+    "controls": [
+      "independent daily weekend revenue and paid-interest carry recurrence and exactly-once workday consumption",
+      "checkpoint exact semantic/summary resume and policy-fork carry preservation",
+      "three recovery admissions reject self-rehashed revenue forgery; coherent financial forgery rejected by final journal binding",
+      "unsafe finite composed order envelope refused before case creation; representable high elasticity and zero demand preserved",
+      "genuine portable schema2 disabled-path differential independently rerun"
+    ],
+    "elapsed_seconds": 0.9585948340245523,
+    "empirical_validation_added": 0,
+    "formal_samples_added": 0,
+    "meaningful_checks": 75,
+    "process_reaped": true,
+    "receipt_sha256": "d4a8077082e934cd52c0994123bf228942b5b289bcc1eb8f9f2788aa604fba7c",
+    "whole_1917_day_profiles_rerun": false
+  },
+  "pipeline_driver_sha256": "e91539f4bacfef633568ba88ddf312017355b037e33c08ca88583066c749d2f3",
+  "publication_refinement": {
+    "evidence_scope": "Author tests/profiles and independent controls ran on the immutable r3 runtime; publication changes only wording, this receipt, and manifest bindings.",
+    "existing_wording_changes": [
+      "README.md",
+      "candidate-evidence/CAUSAL_COVERAGE.json"
+    ],
+    "numerical_source_tests_fixture_configs_seeds_changed": false
+  },
+  "remaining_limits": [
+    "Shared transition implementation limits independence of complete raw accounting.",
+    "Last-row witness does not replace full-history raw validation.",
+    "Finite arithmetic support proof must change with demand/noise mechanisms.",
+    "No completed real-company calibration, external holdout, or Amazon decision-system reconstruction."
+  ],
+  "reviewed_model_candidate": "longitudinal-enterprise-causal-3",
+  "reviewed_runtime_core_sha256": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b",
+  "schema": "causal-r3-portable-independent-repair-review-v1",
+  "scope": "Three reproduced r2 internal failures and their r3 repair paths; no whole-model correctness or empirical claim."
+}

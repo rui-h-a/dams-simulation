@@ -1,0 +1,159 @@
+{
+  "UTC": "2026-10-12T10:12:39.636986+00:00",
+  "status": "EXISTING_FULL_PERIOD_ENGINEERING_MECHANISM_SUBSET_REVIEW_PASS",
+  "raw_artifacts": {
+    "files": 114,
+    "bytes": 463535486,
+    "all_full_SHA_beforeafter_native_stable": true
+  },
+  "source_SHA": "e92a655667cbdc3212077cc26984fae43bd72342e23d90e6d683815eda08ce68",
+  "source_stable_after_all_checks": true,
+  "profile_SHA": "49c7746e8faeb1c3107fadbaf687d4921384da43b2ce093e792b50b877bc4913",
+  "coverage": {
+    "prehistory30": "same original journal hashes, same joint raw records; buyer only declared regime/adoption_mode plus associated config/state hashes differ; target CP30 exact bytes.",
+    "adoption": "DAMS buyer day30 actual cost4resource_units and training; new empty guild day60 adoption costs0; hierarchy never adopts.",
+    "endogenous_growth": "Both arms request30 from past margin and cash/order eligibility, paidsetup24; mature60; adverse60 margin cancels target; request90->ready104->actualhire118 after additional14d lead. Two new entrants cost2resource_units. Workforce_targets empty.",
+    "structure": "installed2 vs task3 are explicit separate layers; one paid24 investment includes10 department setup; reorg uses that subset10 rather than charging again, delays until funded work0.15h and local D0 split at119; old D1 unaffected, initial/generated/consumed tokens conserved; family0 inherited, not new technology stage.",
+    "networks_tasks": "All4 full1947 raw organization accountants independently reconstruct topology/time/stocks. Reporting depth peaks1, finalbuyer0; actual paid network, verification, quality and learning; no deep hierarchy claim.",
+    "M_and_A": "Actual second firm evolves58d with seed732/world94003, source same; snapshot/state/ledger binding preserved, including43 pending rows and cash654.0503439383209; owners move to buyer58, paid integration workdays58/61/62 -> integrated62; seller10/provider1.6 independently derived; autonomy retained, treasury transfers all0.",
+    "periods": "[0,30) shared history; [30,1857)1827 observationdays; [1857,1947)90 settlementdays, no new work events; buyer4/target2 at1857 and buyer2/target2 at1947 after tail negative-margin contraction/layoff.",
+    "resource_units": "Synthetic model resource units/hours/people, no currency conversion."
+  },
+  "whole_period_summaries": {
+    "hierarchy": {
+      "buyer": {
+        "active_members_final": 2,
+        "ever_people": 4,
+        "cash_resource_units": 31987.424983717807,
+        "produced_work_units": 3238.493968212936,
+        "decision_regret_units": 477.8262697796622,
+        "revenue_resource_units": 32384.939682129298,
+        "organization_network_hours": 198.8100000000043,
+        "task_reorganization_work_hours": 0.15,
+        "unfinished_records": 2486,
+        "unfinished_appeals": 41
+      },
+      "target": {
+        "active_members_final": 2,
+        "ever_people": 2,
+        "cash_resource_units": 9869.264284194835,
+        "produced_work_units": 995.551184341198,
+        "decision_regret_units": 318.07844175833003,
+        "revenue_resource_units": 9955.511843411976,
+        "organization_network_hours": 97.36999999999699,
+        "task_reorganization_work_hours": 0.0,
+        "unfinished_records": 1265,
+        "unfinished_appeals": 10
+      }
+    },
+    "dams": {
+      "buyer": {
+        "active_members_final": 2,
+        "ever_people": 4,
+        "cash_resource_units": 28912.413749392763,
+        "produced_work_units": 2930.5933416475914,
+        "decision_regret_units": 738.7094085830823,
+        "revenue_resource_units": 29305.933416475946,
+        "organization_network_hours": 198.8100000000043,
+        "task_reorganization_work_hours": 0.15,
+        "unfinished_records": 2486,
+        "unfinished_appeals": 33
+      },
+      "target": {
+        "active_members_final": 2,
+        "ever_people": 2,
+        "cash_resource_units": 9869.264284194835,
+        "produced_work_units": 995.551184341198,
+        "decision_regret_units": 318.07844175833003,
+        "revenue_resource_units": 9955.511843411976,
+        "organization_network_hours": 97.36999999999699,
+        "task_reorganization_work_hours": 0.0,
+        "unfinished_records": 1265,
+        "unfinished_appeals": 10
+      }
+    }
+  },
+  "whole_period_buyer_DAMS_minus_hierarchy": {
+    "cash_resource_units": -3075.011234325044,
+    "produced_work_units": -307.90062656534474,
+    "decision_regret_units": 260.88313880342014,
+    "revenue_resource_units": -3079.006265653352
+  },
+  "observational_window_integral_differences_from_two_existing_cps": {
+    "hierarchy": {
+      "produced_work_units": 3227.057550813589,
+      "decision_regret_units": 477.4481578779929,
+      "revenue_resource_units": 32235.60722315197,
+      "recruitment_resource_units": 2.0,
+      "migration_resource_units": 0.0,
+      "operating_resource_units": 537.8628775406871,
+      "infrastructure_setup_resource_units": 24.0,
+      "joint_provider_resource_units": 1.5999999999999999,
+      "joint_consideration_resource_units": 10.0,
+      "present_member_workdays": 5096.0,
+      "available_member_work_hours": 4038.3508793376354,
+      "cash_gain_resource_units": 31660.144345610483
+    },
+    "dams": {
+      "produced_work_units": 2919.156924248244,
+      "decision_regret_units": 738.331296681413,
+      "revenue_resource_units": 29156.600957498616,
+      "recruitment_resource_units": 2.0,
+      "migration_resource_units": 4.0,
+      "operating_resource_units": 529.8678462124223,
+      "infrastructure_setup_resource_units": 24.0,
+      "joint_provider_resource_units": 1.5999999999999999,
+      "joint_consideration_resource_units": 10.0,
+      "present_member_workdays": 5096.0,
+      "available_member_work_hours": 4038.3508793376354,
+      "cash_gain_resource_units": 28585.13311128544
+    }
+  },
+  "counterexamples": {
+    "unearned_cash_1_refused_by_existing_r8_scalar": true,
+    "scalar_alone_does_not_check_top_level_seller_counter": true,
+    "added_independent_record_terms_terminal_subset_reconciles_accounts": true,
+    "first_review_TEXT_parser_error_preserved_not_research_failure": true
+  },
+  "unverified_scope": [
+    "One conditional engineering pair, not formal worlds or inferential replication.",
+    "Calibration/OOS/external validity not completed.",
+    "No decline, failed-owned, centralized takeover, target funding transfer, or nonzero inherited debt realized in this execution.",
+    "Restoration equality uses existing Root native receipt; this independent review did not call Model or restore.",
+    "Raw organization arithmetic and scalar/terms reconciliation are independent subsets, not complete independent economic/model validation.",
+    "Target treasury/policy retain autonomy; target outcomes are identical across two buyer-policy arms.",
+    "Depth max1 here; does not validate deep or multinational enterprise networks.",
+    "End-observation buyer4+target2; tail-induced contraction gives end-settlement buyer2+target2, not inevitable growth or real company forecast."
+  ],
+  "formal_worlds_added": 0,
+  "empirical_calibration_or_OOS": false,
+  "complete_independent_model_validation": false,
+  "review_Model_restore_new_seed_trajectory_provider_paid_calls": 0,
+  "evidence_files": [
+    {
+      "path": "review_raw_accounts.py",
+      "bytes": 4206,
+      "sha256": "fb4688d286323c0f0678578b4348624dc2c29f47b6d65f6dce304264ebae6a86"
+    },
+    {
+      "path": "review_closed_evidence.py",
+      "bytes": 11314,
+      "sha256": "02c30f1002779032c5dc5b40d3bcafb3e5ed4649da0cda4f19f156d66dc7a78a"
+    },
+    {
+      "path": "initial-raw-parser-refusal.json",
+      "bytes": 610,
+      "sha256": "a0fe20a6ecdbee36c3e9cb4e7466a819b6d984a72b4b9291076738b18f7c8cb2"
+    },
+    {
+      "path": "actual-readonly-organization-and-cash-checks.json",
+      "bytes": 34056,
+      "sha256": "60b832efdf2d9ba24e1bffa96af0243c3137e2cc0f72d2a8865810a77bf2c84e"
+    },
+    {
+      "path": "independent-existing-mechanism-review.json",
+      "bytes": 66922,
+      "sha256": "f44e799977729e8811422be4c166df79625db1e12b5b03028a7496d086953978"
+    }
+  ]
+}

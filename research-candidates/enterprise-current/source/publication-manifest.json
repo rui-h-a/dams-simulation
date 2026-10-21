@@ -1,0 +1,607 @@
+{
+  "actual_export_controls_count": 0,
+  "ancestor_source_freeze_sha256": "05f6836f69d874cd486ba179f34f87316a1f6ad45eaedd1da9e9c2b92fe1628f",
+  "ancestor_source_roster_count": 112,
+  "author_r3_controls_count": 94,
+  "candidate_original_source_packet": "source-manifest.causal-r3.json",
+  "candidate_runtime_changed": false,
+  "derived_from_public_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+  "documentation_only_added_paths": [
+    "candidate-evidence/independent-review.json"
+  ],
+  "documentation_only_changed_paths": [
+    "README.md",
+    "candidate-evidence/CAUSAL_COVERAGE.json",
+    "publication-manifest.json",
+    "source-manifest.causal-r3.json"
+  ],
+  "empirical_fit_completed": false,
+  "export_controls_interpretation": "No controls or numerical profiles rerun during documentation-only export; prior r3 evidence is bound separately in the portable review receipt.",
+  "file_count_including_manifest": 113,
+  "files": {
+    "README.md": {
+      "bytes": 2482,
+      "mode": 420,
+      "sha256": "02ec7d0750ab9ab597711919325939b7a1e5af8b82e4f57bb716a05282ab7ece"
+    },
+    "candidate-evidence/CAUSAL_COVERAGE.json": {
+      "bytes": 10070,
+      "mode": 420,
+      "sha256": "edb4103948f59193843fead3e97bc628b6d96f14ca87b3a742b7ca0589541435"
+    },
+    "candidate-evidence/REPRODUCING_PROFILE.md": {
+      "bytes": 1563,
+      "mode": 420,
+      "sha256": "4789265526d067aa7031b841859f17b04e22947e8ae65b585fed20bd84a0d1d9"
+    },
+    "candidate-evidence/calendar-control.json": {
+      "bytes": 4645,
+      "mode": 420,
+      "sha256": "f4969259e21569649ae2f1737b490897c1da35d5b5d7ccea1ae070c3a069f681"
+    },
+    "candidate-evidence/calendar-dams.json": {
+      "bytes": 4645,
+      "mode": 420,
+      "sha256": "01b025a945c27bda667223362abf6527a24bbc5cfec8bba06e900de11f1a8486"
+    },
+    "candidate-evidence/independent-review.json": {
+      "bytes": 4405,
+      "mode": 420,
+      "sha256": "db5257a29882053870330fa26cfd8b692f061927d35dd38ed4cbea54bb90a9b7"
+    },
+    "cloud/compute-only-services.sh": {
+      "bytes": 1592,
+      "mode": 420,
+      "sha256": "c2eb9d920fc5add5c8cee9443abe087a56cd9bd70738a5e5e5c87947441a66c6"
+    },
+    "cloud/compute-only-wait-source.sh": {
+      "bytes": 172,
+      "mode": 493,
+      "sha256": "d9e9c49430cf7a0ba7191b4ab3efd0f2ec58a1c98eeb23db8202b3d60469dcb2"
+    },
+    "cloud/prepare-compute-only.sh": {
+      "bytes": 13097,
+      "mode": 448,
+      "sha256": "c58bfd42a7e0f306178ba9bf2386145ce07eeee44d712f0b68fe0ef8d1bc2c52"
+    },
+    "dams_sim/__init__.py": {
+      "bytes": 104,
+      "mode": 420,
+      "sha256": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44"
+    },
+    "dams_sim/__main__.py": {
+      "bytes": 79,
+      "mode": 420,
+      "sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7"
+    },
+    "dams_sim/_committed_pages.py": {
+      "bytes": 44163,
+      "mode": 420,
+      "sha256": "6e6f3cc05678e89910dbc9f1c518ae2642be65962b501b58cf4cc64c2353e9e6"
+    },
+    "dams_sim/authority.py": {
+      "bytes": 4951,
+      "mode": 420,
+      "sha256": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b"
+    },
+    "dams_sim/cli.py": {
+      "bytes": 23921,
+      "mode": 420,
+      "sha256": "5c2afacaecd50c8259636a3408a096db10c18f9ffaf5d418b9b183c15d2c3d9d"
+    },
+    "dams_sim/config.py": {
+      "bytes": 9183,
+      "mode": 420,
+      "sha256": "08bc1c125ea5ffe64543e69ac9ffede1eade714cc9d7eba39b674fd768e0fbe2"
+    },
+    "dams_sim/design.py": {
+      "bytes": 4887,
+      "mode": 420,
+      "sha256": "93eb321819c39ea4e4e3844ef8dd507f9edf90a01e30813d439767778c7944eb"
+    },
+    "dams_sim/enterprise_growth.py": {
+      "bytes": 17289,
+      "mode": 420,
+      "sha256": "24e3821e6923cf57d7757d54ee331c51b56dd1d47d7cc89895b6b4e545056286"
+    },
+    "dams_sim/enterprise_operations.py": {
+      "bytes": 17698,
+      "mode": 420,
+      "sha256": "71e51fd7d570137f3e3909b75d698586aa4aea1bf69314ffd20345c4c3bd3334"
+    },
+    "dams_sim/journal_chunks.py": {
+      "bytes": 13287,
+      "mode": 420,
+      "sha256": "50a38b20a49c4c0231256df11199da3375242b82cf7471b3860780e4baf6618f"
+    },
+    "dams_sim/longitudinal.py": {
+      "bytes": 15644,
+      "mode": 420,
+      "sha256": "2da0220adbe306e6298ddfb0bde9130bf385042624d4f166eb1b37cf09f0a664"
+    },
+    "dams_sim/longitudinal_design.py": {
+      "bytes": 18859,
+      "mode": 420,
+      "sha256": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2"
+    },
+    "dams_sim/longitudinal_model.py": {
+      "bytes": 86540,
+      "mode": 420,
+      "sha256": "ce1178fd9c3fe2f492831b547101f641359dde371c7d636f04572420c64f8c1a"
+    },
+    "dams_sim/longitudinal_outputs.py": {
+      "bytes": 11636,
+      "mode": 420,
+      "sha256": "612fb5e269b35c83b8a0a413b92a66ada9f0176ebc82bd6ae4074de83e33ca98"
+    },
+    "dams_sim/longitudinal_pipeline.py": {
+      "bytes": 28105,
+      "mode": 420,
+      "sha256": "9a12123ed513077e79d03253d183fa187d37ace5bdab51def63cb2449c101873"
+    },
+    "dams_sim/longitudinal_statistics.py": {
+      "bytes": 6556,
+      "mode": 420,
+      "sha256": "0eb080ea1890f5cfe7087ddf6afd073a5e89356da87e427582c43961e42f442f"
+    },
+    "dams_sim/longitudinal_storage.py": {
+      "bytes": 29649,
+      "mode": 420,
+      "sha256": "74540ba541c451ce9dc5d1dafa2a2b741af24c8e5f8d91b3fda21e9358d0de4c"
+    },
+    "dams_sim/model.py": {
+      "bytes": 31295,
+      "mode": 420,
+      "sha256": "9a9cba6c46386d26e0f0e725b48cae796bbd40fc6369088eac089e669b0a2894"
+    },
+    "dams_sim/native_checkpoint_owner.py": {
+      "bytes": 9141,
+      "mode": 420,
+      "sha256": "425b7bd8bea6aa582389743c6c13a8fb9cc41301a42bed813b10a1e6f826b79d"
+    },
+    "dams_sim/native_page_backend.py": {
+      "bytes": 20537,
+      "mode": 420,
+      "sha256": "a7f5581e8156a876219c97e8cee6fba56b9b1a075ee0654f5c3406147a127faa"
+    },
+    "dams_sim/phase_storage.py": {
+      "bytes": 7781,
+      "mode": 420,
+      "sha256": "6d1268e8d0f81658d295f56fd8829b828ea4cd2bb807d27f159c319a7aa9cde8"
+    },
+    "dams_sim/pipeline.py": {
+      "bytes": 21958,
+      "mode": 420,
+      "sha256": "fe4b3323e6cf352e815a552120412741afca7050903ac5041d2117c2efa64057"
+    },
+    "dams_sim/randomness.py": {
+      "bytes": 2428,
+      "mode": 420,
+      "sha256": "94c69aeb3dbfcab213ab92b5c271ee38ea4c946ade214d31867c5ab693644e7e"
+    },
+    "dams_sim/report.py": {
+      "bytes": 4268,
+      "mode": 420,
+      "sha256": "004596067efd0e90876fef1f6a77a536f71d6c16cff95b8474df3f309840fe14"
+    },
+    "dams_sim/runtime.py": {
+      "bytes": 6743,
+      "mode": 420,
+      "sha256": "d5ff49535da4cfa6cffcc2e1525f2245a22f38f2aa1a5ca5eb2a056be8a83577"
+    },
+    "dams_sim/scheduler.py": {
+      "bytes": 27403,
+      "mode": 420,
+      "sha256": "114cddf6beda055868f0f24d93bfc5c4e2965ff3ecd4a4c1faccb9d6ee163ed2"
+    },
+    "dams_sim/spec.py": {
+      "bytes": 4927,
+      "mode": 420,
+      "sha256": "c54615aa41d7a9132adc4b9af9b7e1314ec35551f19ae090b3794ed057e2e02d"
+    },
+    "dams_sim/storage.py": {
+      "bytes": 6767,
+      "mode": 420,
+      "sha256": "ce3dba71799e61230d7ec67c05262e8c6cb7cda9509011900e6d5350f23d3226"
+    },
+    "dams_sim/transfer_spool.py": {
+      "bytes": 32196,
+      "mode": 420,
+      "sha256": "2c14d5524c94c4c79371bb80dd8558ac030c6ba6c912e919b3908923857d5ce0"
+    },
+    "pyproject.toml": {
+      "bytes": 487,
+      "mode": 420,
+      "sha256": "c8b2d35910153137f9bfdfea127c9b43675b6f46e9c088f28dc05ccaf7f1d515"
+    },
+    "research_tools/analysis_v2.py": {
+      "bytes": 42965,
+      "mode": 420,
+      "sha256": "990ba5ad686d25f3bcb90afdbfd196b115b56f4ec7e6d0f5d5a89646164454c6"
+    },
+    "research_tools/analyze.py": {
+      "bytes": 40241,
+      "mode": 420,
+      "sha256": "2204aaf6a4d69028b956d1cce0abab382ac9b7f1cb7feb4b924e7d7515ea03e1"
+    },
+    "research_tools/benchmark.py": {
+      "bytes": 25305,
+      "mode": 420,
+      "sha256": "bd79f203cfed8f8057ffc6c6b7bd2af346a5875ce3d91da745f23cf0a68279aa"
+    },
+    "research_tools/bounded_phase_storage.py": {
+      "bytes": 6804,
+      "mode": 420,
+      "sha256": "5627c4b12c9a7ea4d868e87e9e69c84ae05615aaa69a1c71a11a472612d5b2b3"
+    },
+    "research_tools/cloud_archive.py": {
+      "bytes": 10171,
+      "mode": 420,
+      "sha256": "114b122e8bdee99ce320eb40221cf0f16dc03cf77eed17fd2f9fe890902488c9"
+    },
+    "research_tools/cloud_cleanup.py": {
+      "bytes": 20023,
+      "mode": 420,
+      "sha256": "42ae4eadfd2bc4d66f0b9334153dbdfa624d21ff224536bd3efe94207e247518"
+    },
+    "research_tools/cloud_control.py": {
+      "bytes": 77708,
+      "mode": 420,
+      "sha256": "b964f0a734616137cd9d71a63b7dc4a5e79383ca075c0ee0d59f70d4b08708f6"
+    },
+    "research_tools/cloud_prices.py": {
+      "bytes": 12152,
+      "mode": 420,
+      "sha256": "9a2b0f36fa19c07cf56791a2753f17148dac6125202d85250a03d89c2dec924d"
+    },
+    "research_tools/cloud_worker.py": {
+      "bytes": 75863,
+      "mode": 420,
+      "sha256": "188e4b7d6e739f7a3ce7980068e476d3cece12c9c2a2e487d411a4e8f01d1c57"
+    },
+    "research_tools/compare_reproduction.py": {
+      "bytes": 24225,
+      "mode": 420,
+      "sha256": "6571ebf69c57d8700d2ab09eb1bba6608ffcdb6a6670ccc593070e22d0a0bb20"
+    },
+    "research_tools/compute_only_control.py": {
+      "bytes": 45990,
+      "mode": 420,
+      "sha256": "1b05f4a1b1238a551fc3d3bed573950707c56382617b299816eedc9f0eee2ed6"
+    },
+    "research_tools/compute_only_entry.py": {
+      "bytes": 20317,
+      "mode": 420,
+      "sha256": "798af88b9634faf9a5b96e1b7b1e7718c23db23cafa6ecd845fb67dbea630144"
+    },
+    "research_tools/compute_only_lifecycle.py": {
+      "bytes": 57540,
+      "mode": 420,
+      "sha256": "a15b91561025ebd84578e3fc85b63073565b7a2355a525af2a14f73c17bd2b8e"
+    },
+    "research_tools/compute_only_remote.py": {
+      "bytes": 22389,
+      "mode": 420,
+      "sha256": "f28bf9f17755c07a16da9de40fa7ff0b84560aa678966f1b0597d8e9e6034bfd"
+    },
+    "research_tools/compute_only_transport.py": {
+      "bytes": 60168,
+      "mode": 420,
+      "sha256": "57ac56be085bb9966b42affb50987d55871c23267cfdb11f959854814c7c26dd"
+    },
+    "research_tools/compute_only_worker.py": {
+      "bytes": 28846,
+      "mode": 420,
+      "sha256": "44c502135c3b4d449b4e32cb4f0848e1b8f0a3f72bc5cb304e59b4b51b06397e"
+    },
+    "research_tools/enterprise_observations.py": {
+      "bytes": 8582,
+      "mode": 420,
+      "sha256": "7e7d200aa520aeb263f17dcdb93f2e87c1167100b35c36a1175f2e5e99bb2a86"
+    },
+    "research_tools/enterprise_validation.py": {
+      "bytes": 16272,
+      "mode": 420,
+      "sha256": "f40965cb389f719a5111c47fdb13ba9bade4fb34c1faac7d533a22b9f58de1f6"
+    },
+    "research_tools/extended.py": {
+      "bytes": 3087,
+      "mode": 420,
+      "sha256": "64691fa4cc617ad468d5971aa7c7a9db141453bc47647615434703eed3e20517"
+    },
+    "research_tools/figure_style.py": {
+      "bytes": 8031,
+      "mode": 420,
+      "sha256": "eeebbec1cf4b2c770568035023a2182303e1eb2630d912adbf209f57779b55cf"
+    },
+    "research_tools/inventory.py": {
+      "bytes": 7868,
+      "mode": 420,
+      "sha256": "5bc2fdf8fe68de29b242e73add6d5146ba98c2574de70fa739c25400c576f6e4"
+    },
+    "research_tools/longitudinal_analysis.py": {
+      "bytes": 25642,
+      "mode": 420,
+      "sha256": "effba7b973c4721f86016007fce1e87854be0de615d089b59d181843c89cd2c9"
+    },
+    "research_tools/longitudinal_benchmark.py": {
+      "bytes": 24405,
+      "mode": 420,
+      "sha256": "5352bbd79335be9bedcde41804925146222900e9416317fea03ff3f367545df9"
+    },
+    "research_tools/longitudinal_derived.py": {
+      "bytes": 14671,
+      "mode": 420,
+      "sha256": "8e718b19c8eb06253d7fcc7090a1bbbc2e2b5b5e25860f51bdc60984cfc8e050"
+    },
+    "research_tools/package_evidence.py": {
+      "bytes": 2427,
+      "mode": 420,
+      "sha256": "32bf2425a44fd72df639994b58f20af70ef4404057e4fa30fc37aa576d8c8814"
+    },
+    "research_tools/performance_figures.py": {
+      "bytes": 35313,
+      "mode": 420,
+      "sha256": "314f36a7a4e8c51d11d639c237794453d82eb1701a129cce1dbbf90a2aef6f59"
+    },
+    "research_tools/pipeline.py": {
+      "bytes": 318,
+      "mode": 420,
+      "sha256": "7ab66dff604d6f6f367ac9e5bc74426be712cb47b2cb7072f0164593e3f9c525"
+    },
+    "research_tools/recovery.py": {
+      "bytes": 5803,
+      "mode": 420,
+      "sha256": "ea62eb0e47c428cfe7f7de5a5b78a571c597b74a5a336808249f6770d36818d6"
+    },
+    "research_tools/recovery_checks.py": {
+      "bytes": 7591,
+      "mode": 420,
+      "sha256": "e291da076390980711633c92b72f0bee614617252644daef756545856c393048"
+    },
+    "research_tools/reproduce_thesis.py": {
+      "bytes": 9724,
+      "mode": 420,
+      "sha256": "16e73d7bb3e931b292e3d2f3782a46fe2ca6e8556730c10948b1d08afde70fcc"
+    },
+    "research_tools/study.py": {
+      "bytes": 17671,
+      "mode": 420,
+      "sha256": "bafa8f5e2d0bf318696e8f4b8dda36ee48a5bf586009fa490b5c6938d1b84838"
+    },
+    "research_tools/unpack_evidence.py": {
+      "bytes": 2154,
+      "mode": 420,
+      "sha256": "9a5978369f6c3fd8fd1f233edca58891cca3849980f98c5b9c386eeb21bd76ab"
+    },
+    "research_tools/validate_longitudinal.py": {
+      "bytes": 73890,
+      "mode": 420,
+      "sha256": "be004ab7137214a344f5771fa37493aa7ead371336adec7d044fa8d6cd8122cc"
+    },
+    "research_tools/validate_pipeline.py": {
+      "bytes": 10817,
+      "mode": 420,
+      "sha256": "527dae1a1b26b3c1747f432ef1ca33d1f19cafda490de20106088c197b6c4b9e"
+    },
+    "run.sh": {
+      "bytes": 5665,
+      "mode": 493,
+      "sha256": "51e44f906773eba33daab3b7f9758a994f72636c7d9b38065346350ae6e57302"
+    },
+    "source-manifest.causal-r3.json": {
+      "bytes": 11843,
+      "mode": 420,
+      "sha256": "5d8be9a1ddbfa9fb5f81d1461b2254b9d8958e02d411b0a7bf58a600cf73a2ef"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/__init__.py": {
+      "bytes": 104,
+      "mode": 420,
+      "sha256": "a00999715180b99029ebb071d38b9775a109741401b9ae5a0037c2802a2b6c44"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/__main__.py": {
+      "bytes": 79,
+      "mode": 420,
+      "sha256": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/_committed_pages.py": {
+      "bytes": 44163,
+      "mode": 420,
+      "sha256": "6e6f3cc05678e89910dbc9f1c518ae2642be65962b501b58cf4cc64c2353e9e6"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/authority.py": {
+      "bytes": 4951,
+      "mode": 420,
+      "sha256": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/cli.py": {
+      "bytes": 23921,
+      "mode": 420,
+      "sha256": "5c2afacaecd50c8259636a3408a096db10c18f9ffaf5d418b9b183c15d2c3d9d"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/config.py": {
+      "bytes": 7950,
+      "mode": 420,
+      "sha256": "ab69e75cf2fd43e2dcef629f6031dfeaf0d39db7958e5e6656b7a742dfe32114"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/design.py": {
+      "bytes": 4887,
+      "mode": 420,
+      "sha256": "93eb321819c39ea4e4e3844ef8dd507f9edf90a01e30813d439767778c7944eb"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/journal_chunks.py": {
+      "bytes": 11347,
+      "mode": 420,
+      "sha256": "c5f92c1a6063dfc63ea619f89ef64bd4d595f08ebf0b30be74b90d54702c0e3c"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal.py": {
+      "bytes": 15471,
+      "mode": 420,
+      "sha256": "494ebb7cdbf5a8d99593d29ae0edb45ef6a87d4a233a588f5225f5cdad7f18b8"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal_design.py": {
+      "bytes": 18859,
+      "mode": 420,
+      "sha256": "9c7c42d697c71376000c9f4ed24afd3718a19a42fb606a0514cba3c0d17c53d2"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal_model.py": {
+      "bytes": 70939,
+      "mode": 420,
+      "sha256": "0d03c6f387ba2faaeb757b39c043a4fbd1c605dc8cdf2b2bd34686489d495775"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal_outputs.py": {
+      "bytes": 11272,
+      "mode": 420,
+      "sha256": "7b2437afa00ef7c987f4b31d10c8e164d06b5255c230aa9e1a53d431ae2b1300"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal_pipeline.py": {
+      "bytes": 28105,
+      "mode": 420,
+      "sha256": "9a12123ed513077e79d03253d183fa187d37ace5bdab51def63cb2449c101873"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal_statistics.py": {
+      "bytes": 6556,
+      "mode": 420,
+      "sha256": "0eb080ea1890f5cfe7087ddf6afd073a5e89356da87e427582c43961e42f442f"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/longitudinal_storage.py": {
+      "bytes": 29326,
+      "mode": 420,
+      "sha256": "1c3a7f39227de6b48af234bd6af79c3bb0e5358ba3cd44feffcffe2e39814596"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/model.py": {
+      "bytes": 31221,
+      "mode": 420,
+      "sha256": "95dd9d25f58787f7f864b3ade063935eb330c95930d7bd051674d1e25c419acb"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/native_checkpoint_owner.py": {
+      "bytes": 9141,
+      "mode": 420,
+      "sha256": "425b7bd8bea6aa582389743c6c13a8fb9cc41301a42bed813b10a1e6f826b79d"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/native_page_backend.py": {
+      "bytes": 20537,
+      "mode": 420,
+      "sha256": "a7f5581e8156a876219c97e8cee6fba56b9b1a075ee0654f5c3406147a127faa"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/phase_storage.py": {
+      "bytes": 7781,
+      "mode": 420,
+      "sha256": "6d1268e8d0f81658d295f56fd8829b828ea4cd2bb807d27f159c319a7aa9cde8"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/pipeline.py": {
+      "bytes": 21958,
+      "mode": 420,
+      "sha256": "fe4b3323e6cf352e815a552120412741afca7050903ac5041d2117c2efa64057"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/randomness.py": {
+      "bytes": 2428,
+      "mode": 420,
+      "sha256": "94c69aeb3dbfcab213ab92b5c271ee38ea4c946ade214d31867c5ab693644e7e"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/report.py": {
+      "bytes": 4268,
+      "mode": 420,
+      "sha256": "004596067efd0e90876fef1f6a77a536f71d6c16cff95b8474df3f309840fe14"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/runtime.py": {
+      "bytes": 6743,
+      "mode": 420,
+      "sha256": "d5ff49535da4cfa6cffcc2e1525f2245a22f38f2aa1a5ca5eb2a056be8a83577"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/scheduler.py": {
+      "bytes": 27403,
+      "mode": 420,
+      "sha256": "114cddf6beda055868f0f24d93bfc5c4e2965ff3ecd4a4c1faccb9d6ee163ed2"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/spec.py": {
+      "bytes": 4927,
+      "mode": 420,
+      "sha256": "c54615aa41d7a9132adc4b9af9b7e1314ec35551f19ae090b3794ed057e2e02d"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/storage.py": {
+      "bytes": 6767,
+      "mode": 420,
+      "sha256": "ce3dba71799e61230d7ec67c05262e8c6cb7cda9509011900e6d5350f23d3226"
+    },
+    "tests/fixtures/schema2-reference/dams_sim/transfer_spool.py": {
+      "bytes": 32196,
+      "mode": 420,
+      "sha256": "2c14d5524c94c4c79371bb80dd8558ac030c6ba6c912e919b3908923857d5ce0"
+    },
+    "tests/fixtures/schema2-reference/provenance.json": {
+      "bytes": 4384,
+      "mode": 420,
+      "sha256": "c0924cbcfba4aff2939fe8f85961226503e772ba37f17dc4665e44025664b14a"
+    },
+    "tests/test_authority.py": {
+      "bytes": 2978,
+      "mode": 420,
+      "sha256": "13a5359cfca59cdcaba6c50150511938398346f10422b5c316efd09cc2f1b3a2"
+    },
+    "tests/test_enterprise_causal_recovery.py": {
+      "bytes": 10526,
+      "mode": 420,
+      "sha256": "1485333cc4045c8903a9a1406b5674bf6123f2f073f9e296847a70c3fc4d063a"
+    },
+    "tests/test_enterprise_growth.py": {
+      "bytes": 12045,
+      "mode": 420,
+      "sha256": "70bd9b13fe4bec33468d2b8f5ea06525221960266bb26f36a856356b34ebc982"
+    },
+    "tests/test_enterprise_operations.py": {
+      "bytes": 12773,
+      "mode": 420,
+      "sha256": "5cf35f5fdf305cf5ada6405aad9c90bead6d8b1dc55e533f39633d1251d5a970"
+    },
+    "tests/test_enterprise_validation.py": {
+      "bytes": 8755,
+      "mode": 420,
+      "sha256": "0c42db08cc8731cf26f67604c6e4cf762329e2e2ccaf5645c6b595ad83ffbe42"
+    },
+    "tests/test_longitudinal_checkpoint.py": {
+      "bytes": 13510,
+      "mode": 420,
+      "sha256": "f878225416da9c6f45d1e123b37f30ecf548dea0ffed2f4471cb177868a71d19"
+    },
+    "tests/test_longitudinal_model.py": {
+      "bytes": 12506,
+      "mode": 420,
+      "sha256": "9214fe7d767c46195f78c9fa248445a04388a37347381f7a329c5b9d31389366"
+    },
+    "tests/test_model.py": {
+      "bytes": 7649,
+      "mode": 420,
+      "sha256": "ba509eaf97c2c45bf7b69bc521ae83b98e8cfc2676d7218a874bcfe5b11fcff8"
+    },
+    "uv.lock": {
+      "bytes": 195517,
+      "mode": 420,
+      "sha256": "ba061682fb1b67f1c91beeccf9f36352dd68a912020662d9b74b376f4239e00c"
+    }
+  },
+  "fixture_commit": "ddd185d0d96abae6c07d1e1fb5f9e57f7dc974cb",
+  "fixture_manifest": "tests/fixtures/schema2-reference/provenance.json",
+  "formal_study_adopted": false,
+  "git_publication_completed": false,
+  "independent_r3_repair_checks_count": 75,
+  "independent_review": "candidate-evidence/independent-review.json",
+  "manifest_self_binding": "This manifest excludes itself to avoid a self-hash cycle; the complete external export allowlist binds its final bytes.",
+  "model_candidate": "longitudinal-enterprise-causal-3",
+  "model_source_sha256": "e7c902df555c5e01a0a876c38812c64ebb5832e048c9812fea3b6b76e349d05b",
+  "model_version": "longitudinal-enterprise-causal-2",
+  "model_version_interpretation": "Inherited runtime version label retained in unchanged code; candidate scientific identity is longitudinal-enterprise-causal-3 plus exact runtime source hash.",
+  "pipeline_driver_sha256": "e91539f4bacfef633568ba88ddf312017355b037e33c08ca88583066c749d2f3",
+  "privacy_scope": "Finite source allowlist only; no raw/execution logs/operation ledgers/private Git history/full-text literature.",
+  "profile_configs": [
+    "candidate-evidence/calendar-control.json",
+    "candidate-evidence/calendar-dams.json"
+  ],
+  "reference_fixture_source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+  "runtime_packet": "source-manifest.causal-r3.json",
+  "runtime_version_label": "longitudinal-enterprise-causal-2",
+  "schema": "dams-causal-r3-publication-export-v1",
+  "scientific_status": "Versioned synthetic repair candidate; no complete-model correctness claim, empirical calibration, frozen-study adoption or statistical inference.",
+  "source_packet_interpretation": "Its preserved inherited-parent-manifest note records candidate history. This export does not include or claim an old source-manifest.json as its current code packet.",
+  "test_only_change": "tests/test_enterprise_growth.py now resolves the entire public schema2 reference core relative to this test file."
+}

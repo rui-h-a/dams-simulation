@@ -1,0 +1,100 @@
+{
+  "calibration_accepted": false,
+  "formal_worlds": 0,
+  "full_summary": {
+    "bytes": 1791981,
+    "name": "summary.json",
+    "sha256": "66d84d4f08520b4f46406c440cf090822a2abec3c8619b703e68e177cd7d0267"
+  },
+  "holdout_accepted": false,
+  "state": "44",
+  "state_selection_reason": "RI file size, fixed before download, not an outcome",
+  "status": "PUBLIC_DATA_MEASUREMENT_DIAGNOSTIC_ONLY",
+  "year2024_seen": true,
+  "years": [
+    {
+      "HU_NP_R18_R65_checked": true,
+      "housing_records": 5236,
+      "independently_checked_joint_cell": {
+        "conditional_share": 0.6193628465039305,
+        "conditional_share_se": 0.02719148528608341,
+        "joint_share": 0.02595254215018404,
+        "joint_share_se": 0.0018247391391990428,
+        "key": [
+          "25_34",
+          "21",
+          "1",
+          "1"
+        ],
+        "replicate_ratio_unestimated": false,
+        "unweighted_n": 254,
+        "weighted_total": 28443,
+        "weighted_total_se": 1999.844756474862
+      },
+      "many_to_one_housing_join": true,
+      "negative_replicate_values_observed": 0,
+      "person_records": 10204,
+      "tables": {
+        "age_school_employment": {
+          "cell_count": 970,
+          "person_weighted_total": 1095962,
+          "unweighted_n": 10204
+        },
+        "household_employment": {
+          "cell_count": 24,
+          "person_weighted_total": 917267,
+          "unweighted_n": 8851
+        },
+        "industry_hours": {
+          "cell_count": 668,
+          "person_weighted_total": 560994,
+          "unweighted_n": 5040
+        }
+      },
+      "unique_person_keys": true,
+      "year": 2023
+    },
+    {
+      "HU_NP_R18_R65_checked": true,
+      "housing_records": 5282,
+      "independently_checked_joint_cell": {
+        "conditional_share": 0.5628611788878901,
+        "conditional_share_se": 0.02852192667661009,
+        "joint_share": 0.023642732049036778,
+        "joint_share_se": 0.0018360521816305833,
+        "key": [
+          "25_34",
+          "21",
+          "1",
+          "1"
+        ],
+        "replicate_ratio_unestimated": false,
+        "unweighted_n": 232,
+        "weighted_total": 26298,
+        "weighted_total_se": 2042.2555300451509
+      },
+      "many_to_one_housing_join": true,
+      "negative_replicate_values_observed": 0,
+      "person_records": 10239,
+      "tables": {
+        "age_school_employment": {
+          "cell_count": 961,
+          "person_weighted_total": 1112308,
+          "unweighted_n": 10239
+        },
+        "household_employment": {
+          "cell_count": 26,
+          "person_weighted_total": 935611,
+          "unweighted_n": 8926
+        },
+        "industry_hours": {
+          "cell_count": 670,
+          "person_weighted_total": 579332,
+          "unweighted_n": 5035
+        }
+      },
+      "unique_person_keys": true,
+      "year": 2024
+    }
+  ]
+}

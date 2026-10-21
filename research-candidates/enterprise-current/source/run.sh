@@ -1,0 +1,178 @@
+#!/bin/bash
+# One shared entry; public default is bounded local validation, never paid GCP.
+set -euo pipefail
+task_root=$(cd "$(dirname "$0")" && pwd)
+cd "$task_root"
+case "$(uname -s)" in Darwin|Linux) ;; *) echo 'Use a POSIX Linux/macOS terminal or WSL2; native Windows is not verified.' >&2; exit 2;; esac
+if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
+  cat <<'HELP'
+Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|enterprise-r11] [--scale PEOPLE]
+                [--output DIRECTORY] [--runtime-limits JSON]
+       enterprise-r11 options: [--context startup|unicorn|listed|traditional|century|multinational]
+                [--growth none|organic|organic+acquisition] [--pre-years Y] [--post-years Y]
+                [--worlds 0,1,2] [--arms a,b,...] [--jobs N] [--variant NAME]
+       Same bound source/plan and output resume from verified checkpoints.
+       New R11 batches retain all original journals, prehistory and interrupted evidence;
+       legacy unbound plans refuse resume; completed compact arms are never regenerated.
+       Local inspection: --spec enterprise-r11 --inspect-retention --output DIRECTORY
+       Zero-step recovery: --recover-checkpoint FILE --recovery-output NEW_DIRECTORY
+       Explicit archive transport: --archive-config PRIVATE_JSON --archive-owned-pgid PGID
+                --archive-state PRIVATE_DIRECTORY --output CLOSED_DIRECTORY
+       Transport success does not accept science, recovery, off-GCP custody or disk deletion.
+Defaults: bounded local validation, 120 people, runs/validation-n120.
+World jobs require a separately admitted full storage/time/cost estimate.
+Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
+private mode-0600 file. Its explicit execution mode selects legacy GCS or
+compute-only IAP phases; no public paid default or implicit storage fallback.
+HELP
+  exit 0
+fi
+task_spec=validation
+task_scale=120
+task_output=
+task_limits=
+task_prepare=false
+task_inspect=false
+task_recover=
+task_recovery_output=
+task_archive_config=
+task_archive_pgid=
+task_archive_state=
+task_context=multinational
+task_growth=organic
+task_pre=2
+task_post=5
+task_worlds=0,1,2
+task_arms=control-hierarchy,control-process,dams-witness,linear-witness
+task_jobs=
+task_variant=baseline
+while (($#)); do
+  case "$1" in
+    --spec) task_spec=${2:?missing spec}; shift 2;;
+    --scale) task_scale=${2:?missing scale}; shift 2;;
+    --output) task_output=${2:?missing output}; shift 2;;
+    --runtime-limits) task_limits=${2:?missing limits}; shift 2;;
+    --prepare-only) task_prepare=true; shift;;
+    --inspect-retention) task_inspect=true; shift;;
+    --recover-checkpoint) task_recover=${2:?missing checkpoint}; shift 2;;
+    --recovery-output) task_recovery_output=${2:?missing recovery output}; shift 2;;
+    --archive-config) task_archive_config=${2:?missing archive admission}; shift 2;;
+    --archive-owned-pgid) task_archive_pgid=${2:?missing owned process group}; shift 2;;
+    --archive-state) task_archive_state=${2:?missing persistent accounting directory}; shift 2;;
+    --context) task_context=${2:?missing context}; shift 2;;
+    --growth) task_growth=${2:?missing growth}; shift 2;;
+    --pre-years) task_pre=${2:?missing years}; shift 2;;
+    --post-years) task_post=${2:?missing years}; shift 2;;
+    --worlds) task_worlds=${2:?missing worlds}; shift 2;;
+    --arms) task_arms=${2:?missing arms}; shift 2;;
+    --jobs) task_jobs=${2:?missing jobs}; shift 2;;
+    --variant) task_variant=${2:?missing variant}; shift 2;;
+    *) echo "Unknown argument: $1" >&2; exit 2;;
+  esac
+done
+case "$task_spec" in validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|enterprise-r11) ;; *) echo 'Unknown research spec.' >&2; exit 2;; esac
+case "$task_scale" in ''|*[!0-9]*) echo 'Scale must be an integer population.' >&2; exit 2;; esac
+if ((task_scale<2)); then echo 'Scale must be at least two people.' >&2; exit 2; fi
+if [[ -z "$task_output" ]]; then task_output="runs/${task_spec}-n${task_scale}"; fi
+task_modes=0
+[[ "$task_inspect" == false ]] || task_modes=$((task_modes+1))
+[[ -z "$task_recover" ]] || task_modes=$((task_modes+1))
+[[ -z "$task_archive_config" ]] || task_modes=$((task_modes+1))
+if ((task_modes>1)) || { ((task_modes>0)) && [[ "$task_prepare" == true ]]; }; then echo 'Choose one preparation, inspection, recovery or archive action.' >&2; exit 2; fi
+if [[ -n "$task_recovery_output" && -z "$task_recover" ]] || { [[ -z "$task_archive_config" ]] && [[ -n "$task_archive_pgid$task_archive_state" ]]; }; then echo 'Recovery/archive options require their explicit action.' >&2; exit 2; fi
+if command -v uv >/dev/null 2>&1 && [[ "$(uv --version)" == 'uv 0.9.26'* ]]; then
+  task_uv=$(command -v uv)
+else
+  # Official release artifacts pinned by SHA256; no sudo or profile changes.
+  task_uv="$task_root/runs/.tools/uv/uv"
+  if [[ ! -x "$task_uv" ]]; then
+    [[ "${DAMS_OFFLINE_DEPENDENCIES:-0}" != 1 ]] || { echo 'Offline image lacks the fixed uv binary.' >&2; exit 2; }
+    command -v curl >/dev/null || { echo 'curl is required for first installation.' >&2; exit 2; }
+    case "$(uname -s)/$(uname -m)" in
+      Darwin/arm64) task_target=aarch64-apple-darwin; task_sha=fcf0a9ea6599c6ae28a4c854ac6da76f2c889354d7c36ce136ef071f7ab9721f;;
+      Darwin/x86_64) task_target=x86_64-apple-darwin; task_sha=171eb8c518313e157c5b4cec7b4f743bc6bab1bd23e09b646679a02d096a047f;;
+      Linux/aarch64) task_target=aarch64-unknown-linux-gnu; task_sha=f71040c59798f79c44c08a7a1c1af7de95a8d334ea924b47b67ad6b9632be270;;
+      Linux/x86_64) task_target=x86_64-unknown-linux-gnu; task_sha=30ccbf0a66dc8727a02b0e245c583ee970bdafecf3a443c1686e1b30ec4939e8;;
+      *) echo 'No verified uv binary for this OS/architecture.' >&2; exit 2;;
+    esac
+    task_tmp=$(mktemp -d)
+    trap 'rm -rf "$task_tmp"' EXIT
+    curl --fail --location --proto '=https' --tlsv1.2 --retry 2 --max-time 180 \
+      "https://github.com/astral-sh/uv/releases/download/0.9.26/uv-${task_target}.tar.gz" -o "$task_tmp/uv.tar.gz"
+    if command -v sha256sum >/dev/null 2>&1; then
+      task_actual=$(sha256sum "$task_tmp/uv.tar.gz" | cut -d' ' -f1)
+    else
+      task_actual=$(shasum -a 256 "$task_tmp/uv.tar.gz" | cut -d' ' -f1)
+    fi
+    [[ "$task_actual" == "$task_sha" ]] || { echo 'uv release checksum mismatch.' >&2; exit 2; }
+    tar -xzf "$task_tmp/uv.tar.gz" -C "$task_tmp"
+    mkdir -p "$(dirname "$task_uv")"
+    cp "$task_tmp/uv-${task_target}/uv" "$task_uv"
+    chmod 755 "$task_uv"
+  fi
+fi
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+# Storage opens each directory component with O_NOFOLLOW, so temporary paths must
+# not pass through a symbolic link (macOS: /var -> /private/var, /tmp -> /private/tmp).
+TMPDIR="$(cd "${TMPDIR:-/tmp}" && pwd -P)"; export TMPDIR
+task_uv_version=$("$task_uv" --version)
+[[ "$task_uv_version" == 'uv 0.9.26'* ]] || { echo 'uv tool version differs from the verified bootstrap version.' >&2; exit 2; }
+echo "Using $task_uv_version at $task_uv; managed Python 3.14.2"
+echo "Preparing locked dependencies; spec=$task_spec population=$task_scale output=$task_output"
+task_sync_args=(sync --locked --extra analysis --python 3.14.2)
+if [[ "${DAMS_OFFLINE_DEPENDENCIES:-0}" == 1 ]]; then task_sync_args+=(--offline); fi
+"$task_uv" "${task_sync_args[@]}"
+if [[ "$task_prepare" == true ]]; then
+  "$task_uv" run --no-sync python - "$task_spec" "$task_scale" <<'PY'
+import sys
+from dams_sim.spec import resolve_spec
+name, scale = sys.argv[1], int(sys.argv[2])
+if name == 'enterprise-r11':
+    print('Prepared R11 toolchain only; this does not execute or validate a study')
+elif name == 'historical-full-study':
+    if scale != 120:
+        raise ValueError('historical design requires scale 120')
+    print('Prepared immutable historical design at population 120')
+else:
+    spec = resolve_spec(name, scale)
+    print(f'Prepared scientific specification: {spec.name}, N={spec.n}, days={spec.days}, SHA256={spec.sha256}')
+PY
+  exec "$task_uv" run --no-sync python -m dams_sim doctor
+fi
+if [[ "$task_inspect" == true ]]; then
+  exec "$task_uv" run --no-sync python -m research_tools.r11_retention "$task_output"
+fi
+if [[ -n "$task_recover" ]]; then
+  [[ -n "$task_recovery_output" ]] || { echo 'Zero-step recovery requires --recovery-output NEW_DIRECTORY.' >&2; exit 2; }
+  exec "$task_uv" run --no-sync python -m research_tools.r11_archive recover-checkpoint "$task_recover" --destination "$task_recovery_output"
+fi
+if [[ -n "$task_archive_config" ]]; then
+  [[ -n "$task_archive_pgid" && -n "$task_archive_state" ]] || { echo 'Archive transport requires owned PGID and persistent accounting state.' >&2; exit 2; }
+  exec "$task_uv" run --no-sync python -m research_tools.r11_archive upload-closed --source "$task_output" \
+    --private-config "$task_archive_config" --owned-pgid "$task_archive_pgid" --state "$task_archive_state"
+fi
+if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then
+  # Science arguments stay explicit; controller rejects conflicts with its frozen plan.
+  exec "$task_uv" run --no-sync python research_tools/cloud_control.py execute \
+    --private-config "$DAMS_CLOUD_PRIVATE_CONFIG" --state-dir "${DAMS_CLOUD_STATE_DIR:?private persistent state directory required}" \
+    --spec "$task_spec" --scale "$task_scale"
+fi
+if [[ "$task_spec" == enterprise-r11 ]]; then
+  # Paired-world enterprise study: common-state arms -> raw-admitted inference -> figure.
+  r11_args=(batch --scale "$task_scale" --context "$task_context" --growth "$task_growth" --pre-years "$task_pre"
+            --post-years "$task_post" --worlds "$task_worlds" --arms "$task_arms" --variant "$task_variant" --out "$task_output")
+  if [[ -n "$task_jobs" ]]; then r11_args+=(--jobs "$task_jobs"); fi
+  "$task_uv" run --no-sync python research_tools/r11_study.py "${r11_args[@]}"
+  # The inference entry verifies original evidence and records assigned/missing
+  # worlds before calculating conditional paired differences. Do not publish the
+  # standalone outcomes aggregate as an independently admitted analysis.
+  task_first_world=$(printf '%s' "$task_worlds" | tr ',' '\n' | sort -n | head -1)
+  "$task_uv" run --no-sync python research_tools/r11_inference.py "$task_output" --first-world "$task_first_world" > "$task_output/inference.json"
+  "$task_uv" run --no-sync python research_tools/r11_figure.py "$task_output" >/dev/null
+  echo "Inference: $task_output/inference.json"
+  echo "Figure: $task_output/effects.pdf"
+  exit 0
+fi
+task_args=(--spec "$task_spec" --scale "$task_scale" --output "$task_output")
+if [[ -n "$task_limits" ]]; then task_args+=(--runtime-limits "$task_limits"); fi
+exec "$task_uv" run --no-sync python -m dams_sim pipeline "${task_args[@]}"

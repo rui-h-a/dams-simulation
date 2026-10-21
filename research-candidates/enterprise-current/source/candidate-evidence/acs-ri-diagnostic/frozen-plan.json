@@ -1,0 +1,312 @@
+{
+  "age_bins": [
+    [
+      0,
+      15,
+      "00_15"
+    ],
+    [
+      16,
+      24,
+      "16_24"
+    ],
+    [
+      25,
+      34,
+      "25_34"
+    ],
+    [
+      35,
+      44,
+      "35_44"
+    ],
+    [
+      45,
+      54,
+      "45_54"
+    ],
+    [
+      55,
+      64,
+      "55_64"
+    ],
+    [
+      65,
+      99,
+      "65_plus"
+    ]
+  ],
+  "alias_rule": "Exactly one named alias must exist; state values must all be 44; original header is recorded",
+  "arithmetic_probe": {
+    "key": [
+      "25_34",
+      "21",
+      "1",
+      "1"
+    ],
+    "table": "age_school_employment"
+  },
+  "bounds": {
+    "compressed_bytes": 104857600,
+    "decoded_bytes_all_passes": 1073741824,
+    "freefloor_bytes": 2147483648,
+    "io_window_seconds": 90.0,
+    "per_zip_bytes": 26214400,
+    "redirects": 0,
+    "retries": 0
+  },
+  "conditional_denominators": {
+    "age_school_employment": [
+      "age_bin",
+      "SCHL"
+    ],
+    "household_employment": [
+      "household_context"
+    ],
+    "industry_hours": [
+      "INDP"
+    ]
+  },
+  "documentation": {
+    "accuracy": "https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2024AccuracyPUMS.pdf",
+    "accuracy_pages": [
+      12,
+      13
+    ],
+    "dictionaries": {
+      "2023": "https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2023.pdf",
+      "2024": "https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2024.pdf"
+    },
+    "dictionary_dates": {
+      "2023": "2024-10-17",
+      "2024": "2025-10-16"
+    },
+    "guide": "https://www2.census.gov/programs-surveys/acs/tech_docs/pums/2024ACS_PUMS_User_Guide.pdf",
+    "guide_date": "2025-10-16",
+    "guide_pages": [
+      6,
+      11
+    ],
+    "variables": "https://api.census.gov/data/2024/acs/acs1/pums/variables.html"
+  },
+  "header_aliases": {
+    "STATE": [
+      "STATE",
+      "ST"
+    ],
+    "TYPEHUGQ": [
+      "TYPEHUGQ",
+      "TYPE"
+    ]
+  },
+  "hours_bins": [
+    [
+      1,
+      19,
+      "01_19"
+    ],
+    [
+      20,
+      34,
+      "20_34"
+    ],
+    [
+      35,
+      40,
+      "35_40"
+    ],
+    [
+      41,
+      59,
+      "41_59"
+    ],
+    [
+      60,
+      98,
+      "60_98"
+    ],
+    [
+      99,
+      99,
+      "99_plus"
+    ]
+  ],
+  "household_context": "HU: presence under18 (R18=1) and65+ (R65=1/2); GQ2/3 separate; not care hours",
+  "housing_columns": [
+    "SERIALNO",
+    "PUMA",
+    "NP",
+    "R18",
+    "R65",
+    "WGTP"
+  ],
+  "implementation_sha256": "3e13d044f5b5b1098a1ef30453068a0a3d6f4bab64026918a179b5ef52da1207",
+  "person_columns": [
+    "SERIALNO",
+    "SPORDER",
+    "PUMA",
+    "AGEP",
+    "SEX",
+    "SCHL",
+    "ESR",
+    "COW",
+    "INDP",
+    "OCCP",
+    "WKHP",
+    "WKWN",
+    "WAGP",
+    "ADJINC",
+    "JWMNP",
+    "JWTRNS",
+    "RELSHIPP",
+    "GCL",
+    "GCR",
+    "GCM",
+    "PWGTP",
+    "FAGEP",
+    "FSCHLP",
+    "FSEXP",
+    "FCOWP",
+    "FESRP",
+    "FWAGP",
+    "FWKHP",
+    "FWKWNP",
+    "FJWMNP",
+    "FJWTRNSP",
+    "PWGTP1",
+    "PWGTP2",
+    "PWGTP3",
+    "PWGTP4",
+    "PWGTP5",
+    "PWGTP6",
+    "PWGTP7",
+    "PWGTP8",
+    "PWGTP9",
+    "PWGTP10",
+    "PWGTP11",
+    "PWGTP12",
+    "PWGTP13",
+    "PWGTP14",
+    "PWGTP15",
+    "PWGTP16",
+    "PWGTP17",
+    "PWGTP18",
+    "PWGTP19",
+    "PWGTP20",
+    "PWGTP21",
+    "PWGTP22",
+    "PWGTP23",
+    "PWGTP24",
+    "PWGTP25",
+    "PWGTP26",
+    "PWGTP27",
+    "PWGTP28",
+    "PWGTP29",
+    "PWGTP30",
+    "PWGTP31",
+    "PWGTP32",
+    "PWGTP33",
+    "PWGTP34",
+    "PWGTP35",
+    "PWGTP36",
+    "PWGTP37",
+    "PWGTP38",
+    "PWGTP39",
+    "PWGTP40",
+    "PWGTP41",
+    "PWGTP42",
+    "PWGTP43",
+    "PWGTP44",
+    "PWGTP45",
+    "PWGTP46",
+    "PWGTP47",
+    "PWGTP48",
+    "PWGTP49",
+    "PWGTP50",
+    "PWGTP51",
+    "PWGTP52",
+    "PWGTP53",
+    "PWGTP54",
+    "PWGTP55",
+    "PWGTP56",
+    "PWGTP57",
+    "PWGTP58",
+    "PWGTP59",
+    "PWGTP60",
+    "PWGTP61",
+    "PWGTP62",
+    "PWGTP63",
+    "PWGTP64",
+    "PWGTP65",
+    "PWGTP66",
+    "PWGTP67",
+    "PWGTP68",
+    "PWGTP69",
+    "PWGTP70",
+    "PWGTP71",
+    "PWGTP72",
+    "PWGTP73",
+    "PWGTP74",
+    "PWGTP75",
+    "PWGTP76",
+    "PWGTP77",
+    "PWGTP78",
+    "PWGTP79",
+    "PWGTP80"
+  ],
+  "schema": "acs-ri-measurement-diagnostic-1",
+  "selection_reason": "RI files are small; no outcome-based state selection",
+  "source_files": [
+    {
+      "kind": "h",
+      "name": "2023-h-ri.zip",
+      "url": "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/csv_hri.zip",
+      "year": 2023
+    },
+    {
+      "kind": "p",
+      "name": "2023-p-ri.zip",
+      "url": "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/csv_pri.zip",
+      "year": 2023
+    },
+    {
+      "kind": "h",
+      "name": "2024-h-ri.zip",
+      "url": "https://www2.census.gov/programs-surveys/acs/data/pums/2024/1-Year/csv_hri.zip",
+      "year": 2024
+    },
+    {
+      "kind": "p",
+      "name": "2024-p-ri.zip",
+      "url": "https://www2.census.gov/programs-surveys/acs/data/pums/2024/1-Year/csv_pri.zip",
+      "year": 2024
+    }
+  ],
+  "state": "44",
+  "status": {
+    "US_firm_representative": false,
+    "calibration_accepted": false,
+    "engineering_measurement_only": true,
+    "formal_worlds": 0,
+    "holdout_accepted": false,
+    "year2024_is_seen_after_this_run": true
+  },
+  "universes": {
+    "age_school_employment": "all person records, with original SCHL/ESR/COW and explicit blank category",
+    "employment_codes": {
+      "1": "civilian_at_work",
+      "2": "civilian_job_not_at_work",
+      "3": "unemployed",
+      "4": "armed_at_work",
+      "5": "armed_job_not_at_work",
+      "6": "not_in_labor_force"
+    },
+    "household_employment": "AGEP>=16 and ESR in {1,2,3,4,5,6}; includes GQ with separate context",
+    "industry_hours": "AGEP>=16 and ESR in {1,2}; current civilian employment, hours refer to past 12 months"
+  },
+  "weights": "PWGTP for people; preserve signed PWGTP1..80; variance=4/80*sum((estimate_r-estimate)^2)",
+  "years": [
+    2023,
+    2024
+  ]
+}

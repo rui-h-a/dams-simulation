@@ -1,0 +1,159 @@
+{
+  "OOS": false,
+  "Root_actual_clean_source_controls": {
+    "Model_trajectories_generated": 0,
+    "controls_executed": 16,
+    "core_sha256": "1a4321b415d958f6b8fd7d525c48b39d0085be4f3315396b6b66a5af4075d82a",
+    "exact_source_files": 300,
+    "explicit_retained_fixture_skips": 2,
+    "platform": "macOS native clean source namespace without retained private fixtures",
+    "provider_calls": 0,
+    "status": "PASS",
+    "stderr_sha256": "5790643dad3de2c362c55e85ae307670490fa64aebe0afc14efa6a3eec915573",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "total_tests": 18,
+    "wall_seconds": 0.28007579199038446,
+    "whole_goal_complete": false
+  },
+  "artifacts": {
+    "r10-1-controls-stable-1.stderr": {
+      "bytes": 3627,
+      "sha256": "41f52b6d73651d4e222f8655b925353529917d3e895ae2d2e71a14430e7a3010"
+    },
+    "r10-1-controls-stable-2.stderr": {
+      "bytes": 3627,
+      "sha256": "589b7e7a6aa24caef6241594aae3207b0e7b814b397a6bf4e9ab0b85d5469219"
+    },
+    "r10-1-missing-obligation.stderr": {
+      "bytes": 292,
+      "sha256": "e05bf8a550d4e2336717c540f8f5a4cab5cdea8b683cac5b0f736a3ea11c1bac"
+    },
+    "r10-1-one-joint-world/actual-joint-engineering-receipt.json": {
+      "bytes": 21821,
+      "sha256": "29cef829eb924aa859975e8bad8ffc7e370476bd545a22b389e09282ca8ea3f3"
+    },
+    "r10-1-one-joint-world/predeclared-engineering-scenario.json": {
+      "bytes": 10963,
+      "sha256": "f2865481f8d67162a1dcb2c44b3e646e89ef523c5dcbe76a679d9113d092c451"
+    },
+    "r10-1-original-preservation-receipt.json": {
+      "bytes": 615,
+      "sha256": "d507b555528337286726b19870f724fa2944fe6423684afd944d7d7d3413713c"
+    },
+    "r10-1-preflight-failure-1.stderr": {
+      "bytes": 1015,
+      "sha256": "f617cddc7b6efb82be810fd2c75534d1b270390398950bc74d9c8b6b4754cd40"
+    },
+    "r10-1-preflight-failure-1/failed-engineering-receipt.json": {
+      "bytes": 182,
+      "sha256": "2110eff432417626238db78c6e420680f435b0a973881f55b445d99d7a7e9358"
+    },
+    "r10-1-source-only.diff": {
+      "bytes": 2444,
+      "sha256": "92905a3cb9abc2381b674773db3373a5f3b515a464febafa2f8bb14be79b325c"
+    },
+    "run_joint_r10_1.py": {
+      "bytes": 8120,
+      "sha256": "3075c398ef8c58f6a35c051b501dbc817a79075c6ae609d6dd5569ef66058b3b"
+    }
+  },
+  "calibrated": false,
+  "core_sha256": "1a4321b415d958f6b8fd7d525c48b39d0085be4f3315396b6b66a5af4075d82a",
+  "engineering_control_scope": "18 local unit controls twice, including two retained-private-fixture controls; not 18 pure-state clean-platform controls.",
+  "formal_worlds_added": 0,
+  "frozen_formal_N30_N120_N300_original_144_unchanged": true,
+  "independent_review": {
+    "blockers": [],
+    "independent_split_stock_balance_residuals": {
+      "consumed": 0,
+      "generated": 0,
+      "initial_units": 0,
+      "stocks": 0
+    },
+    "scope": "source delta, ten SHA-bound small artifacts, existing joint recovery receipts; no reviewer full raw or SQL rerun"
+  },
+  "limitations": [
+    "Two R10 60-day trajectories were not repeated under R10.1 and remain only old core evidence.",
+    "Native joint raw verification and subset independent task accountant do not establish full independent enterprise transition or external validity.",
+    "Split-only; no department closure/merge. Replan positive still pure-state coverage, not this no-exit joint world.",
+    "R9 prediction adapter remains fail-closed for R10/R10.1; it was not widened.",
+    "Legacy Model.restore(state) generic version dispatch remains unchanged; supported tested recovery is Model.restore_checkpoint/JointRun.restore."
+  ],
+  "native": {
+    "all_entity_headers_and_semantic_digests_restore_exact": true,
+    "both_full_raw_daily_summary_and_task_gates_pass": true,
+    "buyer_initial_population": 4,
+    "buyer_model_version": "longitudinal-enterprise-task-structure-10",
+    "buyer_task_departments_final": 3,
+    "calendar_days": 20,
+    "checkpoints_days": [
+      6,
+      7,
+      13,
+      14,
+      20
+    ],
+    "completed": true,
+    "cpu_seconds": 2.237085,
+    "engineering_worlds": 1,
+    "global_world": 93001,
+    "initial_total_population": 8,
+    "limits": {
+      "RSS_bytes": 536870912,
+      "nice_increment": 10,
+      "owned_bytes": 268435456,
+      "true_free_floor_bytes": 103079215104,
+      "wall_seconds": 120
+    },
+    "measured": {
+      "available_bytes": 105562152960,
+      "owned_bytes": 5125544,
+      "owned_cap_bytes": 268435456,
+      "peak_rss_bytes": 59686912,
+      "safety_floor_bytes": 103079215104
+    },
+    "old_unconditional_R8_restore_fault_injected_and_rejected": true,
+    "owned_subsidiary": true,
+    "pre_Model_team_size5_n4_refusal_preserved": true,
+    "scope_clarification": "Root accepted completed 4+4 under original per-firm <=6 authorization; later total<=6 applied only to not-yet-started work. No second world generated.",
+    "target_default_task_departments_final": 2,
+    "target_initial_population": 4,
+    "target_model_version_after_offer": "longitudinal-enterprise-joint-integration-8",
+    "target_model_version_before_offer": "longitudinal-enterprise-integrated-7-networks-tasks-1",
+    "wall_seconds": 2.3193583749816753
+  },
+  "paid_actions": 0,
+  "preserved_R10_core_sha256": "2f47a4bee6552976bca3677fbaaa0fb18795d36284decd24de1f2571470ed4b3",
+  "preserved_R10_files_exact": 299,
+  "preserved_R10_freeze_receipt_sha256": "899fd4d326d3a727968c52fe8238146e0ff59a1a460a0518efd49b78a7b9e951",
+  "provider_calls": 0,
+  "public_source_delta_from_r9": [
+    "dams_sim/joint_firm.py",
+    "dams_sim/longitudinal_model.py",
+    "dams_sim/organization_tasks.py",
+    "research_tools/validate_organization_tasks.py",
+    "tests/fixtures/task-structure-r9-reference/organization_tasks.py",
+    "tests/test_task_structure_r10.py",
+    "tests/test_task_structure_r10_1.py"
+  ],
+  "schema": "DAMS-task-structure-r10-1-verified-candidate-release-1",
+  "source_delta_since_preserved_r10": [
+    "dams_sim/longitudinal_model.py",
+    "research_tools/validate_organization_tasks.py"
+  ],
+  "source_manifest": "source-manifest.task-structure-r10-1.json",
+  "source_manifest_sha256": "4c063222a3e3883b7bd82019b686d12194bec543168fafb5537109dc06c6b11c",
+  "syntax_parsed_python_files": 263,
+  "tests": {
+    "additional_Model_runs_from_unit_tests": 0,
+    "new_missing_obligation_verifier_rejects": true,
+    "new_tests_depend_on_retained_private_engineering_fixture": "two retained-data tests explicitly skip on clean checkout; no automatic Model fallback",
+    "old_missing_obligation_verifier_accepts_coherent_counterexample": true,
+    "pure_controls": 18,
+    "stable_rounds": 2,
+    "v1_default_task_subset_genuine_old_raw_still_passes": true
+  },
+  "unchanged_R10_files": 297,
+  "whole_goal_complete": false,
+  "writers_stopped": true
+}
