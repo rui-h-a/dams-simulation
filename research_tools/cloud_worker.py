@@ -40,6 +40,38 @@ def unique_json_object(pairs):
     return result
 
 
+def read_private_accounting(path):
+    """Read an existing ledger while its caller holds the original state lock.
+
+    New archive callers refuse a lost/replaced/unsafe ledger. This function
+    never initializes an allowance or returns an empty fallback state.
+    """
+    path = lexical_path(path)
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | getattr(os, 'O_NOFOLLOW', 0))
+    try:
+        before = os.fstat(fd)
+        if (not stat.S_ISREG(before.st_mode) or before.st_mode & 0o077 or before.st_nlink != 1
+                or before.st_size > MAX_DESCRIPTOR_BYTES):
+            raise GuardError('original private accounting ledger is unsafe')
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            raw = stream.read(MAX_DESCRIPTOR_BYTES+1)
+        after = os.fstat(fd)
+        if (len(raw) > MAX_DESCRIPTOR_BYTES or path.is_symlink() or identity(path) != (before.st_dev, before.st_ino,
+                before.st_size, before.st_mtime_ns, before.st_ctime_ns)
+                or (after.st_size, after.st_mtime_ns, after.st_ctime_ns)
+                != (before.st_size, before.st_mtime_ns, before.st_ctime_ns)):
+            raise GuardError('original accounting ledger changed during read')
+        result = json.loads(raw, object_pairs_hook=unique_json_object)
+        if not isinstance(result, dict):
+            raise GuardError('original accounting ledger must be an object')
+        for key in ('bytes', 'bytes_upper', 'requests_upper'):
+            if key in result and (type(result[key]) is not int or result[key] < 0):
+                raise GuardError('invalid original cumulative accounting counter')
+        return result
+    finally:
+        os.close(fd)
+
+
 def guarded_local_path(path, anchor, *, directory=False):
     """Check a local sibling and every existing ancestor up to its trusted parent."""
     path, anchor = lexical_path(path), lexical_path(anchor)
@@ -114,7 +146,8 @@ def persistence_error_facts(error):
 class Store:
     def __init__(self, bucket, prefix, gcloud_project=None, deadline=None, transfer_state=None, max_transfer_bytes=None,
                  gcloud_configuration=None, gcloud_account=None, request_state=None, max_requests=None,
-                 final_storage_requests_reserved=0, final_storage_bytes_reserved=0, persistence_role='periodic'):
+                 final_storage_requests_reserved=0, final_storage_bytes_reserved=0, persistence_role='periodic',
+                 require_existing_state=False):
         self.bucket, self.prefix = bucket, prefix.strip("/")
         self.project, self.deadline = gcloud_project, deadline
         self.gcloud_configuration, self.gcloud_account = gcloud_configuration, gcloud_account
@@ -122,6 +155,13 @@ class Store:
         self.transfer_state, self.max_transfer_bytes = transfer_state, max_transfer_bytes
         self.request_state = lexical_path(request_state) if request_state is not None else None
         self.max_requests = max_requests
+        if type(require_existing_state) is not bool:
+            raise GuardError('strict accounting selection must be boolean')
+        if require_existing_state and (request_state is None or transfer_state is None
+                or type(max_requests) is not int or max_requests <= 0
+                or type(max_transfer_bytes) is not int or max_transfer_bytes <= 0):
+            raise GuardError('strict accounting requires existing request/transfer state and finite caps')
+        self.require_existing_state = require_existing_state
         self.final_storage_requests_reserved=natural(final_storage_requests_reserved,'final request reserve')
         self.final_storage_bytes_reserved=natural(final_storage_bytes_reserved,'final byte reserve')
         if persistence_role not in ('periodic','final'):
@@ -174,7 +214,8 @@ class Store:
         path=Path(self.request_state)
         with snapshot_locked(path.with_suffix('.lock')):
             self.check_phase()
-            d=json.loads(path.read_text()) if path.exists() else {'requests_upper':0}
+            d=(read_private_accounting(path) if self.require_existing_state else
+               json.loads(path.read_text()) if path.exists() else {'requests_upper':0})
             ceiling=self.max_requests-(self.final_storage_requests_reserved if self.persistence_role=='periodic' else 0)
             if d['requests_upper']>=ceiling:raise GuardError('reserved storage HTTP request allowance exhausted')
             d['requests_upper']+=1
@@ -184,8 +225,10 @@ class Store:
         if self.transfer_state is None:
             return
         path = Path(self.transfer_state)
-        with locked(path.with_suffix(".lock")):
-            d = json.loads(path.read_text()) if path.exists() else {"bytes_upper": 0}
+        state_lock = snapshot_locked if self.require_existing_state else locked
+        with state_lock(path.with_suffix(".lock")):
+            d = (read_private_accounting(path) if self.require_existing_state else
+                 json.loads(path.read_text()) if path.exists() else {"bytes_upper": 0})
             if d["bytes_upper"] + count > self.max_transfer_bytes:
                 raise GuardError("cumulative download egress exceeds the reserved bound")
             d["bytes_upper"] += count
@@ -471,7 +514,9 @@ def recheck_snapshot_roster(source,inventory,identities,include_reaped_working,m
 def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=False,
              transport_codec=RAW_CODEC, archive_max_raw_bytes=None, archive_min_free_bytes=None,
              archive_max_files=None, preserve_interrupted_evidence=False,
-             owned_pipeline_group_id=None, owned_pipeline_deadline=None):
+             owned_pipeline_group_id=None, owned_pipeline_deadline=None, require_existing_state=False):
+    if type(require_existing_state) is not bool:
+        raise GuardError('strict snapshot accounting selection must be boolean')
     if type(preserve_interrupted_evidence) is not bool:
         raise GuardError('interrupted evidence selection must be boolean')
     group_verification=None
@@ -494,7 +539,8 @@ def snapshot(source, store, state_path, max_bytes, *, include_reaped_working=Fal
         selected=snapshot_paths(source,include_reaped_working,max_files,preserve_interrupted_evidence)
         if options.get('archive_max_raw_bytes') is not None and sum(path.stat().st_size for path in selected)>options['archive_max_raw_bytes']:
             raise GuardError('whole snapshot exceeds the trusted logical raw allowance')
-        state = json.loads(state_path.read_text()) if state_path.exists() else {"uploaded": {}, "bytes": 0}
+        state = (read_private_accounting(state_path) if require_existing_state else
+                 json.loads(state_path.read_text()) if state_path.exists() else {"uploaded": {}, "bytes": 0})
         if state['bytes']>max_bytes:raise GuardError('prior storage reservations exceed this persistence phase allowance')
         state.setdefault('verified',list(state['uploaded']))
         state.setdefault('metadata_sizes',{})

@@ -20,7 +20,9 @@ OUTCOMES = {
     'operating_margin_ratio': ('ratio of revenue', 'higher', 'profit'),
     'net_operating_result_per_member_year': ('resource units / member-year', 'higher', 'profit'),
     'operating_cost_per_delivered_unit': ('resource units / product unit', 'lower', 'cost'),
-    'governance_cost_per_member_year': ('resource units / member-year', 'lower', 'cost'),
+    'governance_cost_per_member_year': ('mixed member-hours and resource units / member-year', 'descriptive', 'legacy mixed-unit index'),
+    'governance_member_hours_per_member_year': ('member-hours / member-year', 'lower', 'governance time'),
+    'witness_resource_units_per_member_year': ('resource units / member-year', 'lower', 'external verification cost'),
     'output_per_available_member_hour': ('work units / member-hour', 'higher', 'efficiency'),
     'delivered_share_of_orders': ('ratio', 'higher', 'delivery'),
     'expired_share_of_orders': ('ratio', 'lower', 'delivery'),
@@ -55,13 +57,13 @@ def _f(x):
 def outcomes(arm_dir):
     arm_dir = Path(arm_dir)
     s = json.loads((arm_dir/'summary.json').read_text())
-    rows = list(csv.DictReader((arm_dir/'timeseries.csv').open()))
-    last = rows[-1]
+    with (arm_dir/'timeseries.csv').open() as stream:
+        rows = list(csv.DictReader(stream))
     member_years = s['active_member_calendar_days']/365.25 if s['active_member_calendar_days'] else None
-    rev, opc = s['revenue_resource_units'], s['operating_resource_units']
-    gov = s['review_hours']+s['appeal_hours']+s['governance_hours']+s.get('organization_verification_hours', 0.)
+    rev, opc = s.get('revenue_resource_units', 0.), s.get('operating_resource_units', 0.)
+    gov = sum(s.get(k, 0.) for k in ('review_hours', 'appeal_hours', 'governance_hours', 'organization_verification_hours'))
     orders = s.get('orders_arrived_units') or None
-    delivered = s.get('delivered_product_units') or None
+    delivered = s.get('delivered_product_units', 0.)
     per_my = (lambda v: v/member_years if member_years else None)
     tail = rows[-365:]
     def mean_col(col):
@@ -72,13 +74,17 @@ def outcomes(arm_dir):
         'operating_margin_ratio': (rev-opc)/rev if rev else None,
         'net_operating_result_per_member_year': per_my(rev-opc),
         'operating_cost_per_delivered_unit': opc/delivered if delivered else None,
+        # Historical index retained exactly for source/result conservation; its
+        # terms have different dimensions. Never present it as one-unit cost.
         'governance_cost_per_member_year': per_my(gov+s.get('verification_resource_units', 0.)),
+        'governance_member_hours_per_member_year': per_my(gov),
+        'witness_resource_units_per_member_year': per_my(s.get('verification_resource_units', 0.)),
         'output_per_available_member_hour': s.get('produced_work_per_available_member_hour'),
-        'delivered_share_of_orders': delivered/orders if orders and delivered is not None else None,
+        'delivered_share_of_orders': delivered/orders if orders else None,
         'expired_share_of_orders': s.get('orders_expired_units', 0.)/orders if orders else None,
         'confirmation_mean_days': s.get('confirmation_mean_days'),
-        'honest_rejection_share': s['honest_records_rejected']/max(1., s['confirmed_records']+s['reviews_rejected']),
-        'fraud_acceptance_share': (s['fraudulent_records_accepted']/max(1., s['fraudulent_records_accepted']+s['fraudulent_records_detected'])) if (s['fraudulent_records_accepted']+s['fraudulent_records_detected']) else None,
+        'honest_rejection_share': s.get('honest_records_rejected', 0.)/(s.get('confirmed_records', 0.)+s.get('reviews_rejected', 0.)) if s.get('confirmed_records', 0.)+s.get('reviews_rejected', 0.) else None,
+        'fraud_acceptance_share': (s.get('fraudulent_records_accepted', 0.)/max(1., s.get('fraudulent_records_accepted', 0.)+s.get('fraudulent_records_detected', 0.))) if (s.get('fraudulent_records_accepted', 0.)+s.get('fraudulent_records_detected', 0.)) else None,
         'decision_regret_per_available_member_hour': s.get('decision_regret_per_available_member_hour'),
         'learning_hours_per_member_year': per_my(s.get('organization_learning_hours', 0.)),
         'memory_loss_per_member_year': per_my(s.get('memory_loss_units', 0.)),

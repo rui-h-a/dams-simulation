@@ -9,12 +9,18 @@ if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
 Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y|enterprise-r11] [--scale PEOPLE]
                 [--output DIRECTORY] [--runtime-limits JSON]
        enterprise-r11 options: [--context startup|unicorn|listed|traditional|century|multinational]
-                [--growth none|organic|acquisition|organic+acquisition] [--pre-years Y] [--post-years Y]
+                [--growth none|organic|organic+acquisition] [--pre-years Y] [--post-years Y]
                 [--worlds 0,1,2] [--arms a,b,...] [--jobs N] [--variant NAME]
-       Rerunning the same command on the same --output resumes from the last checkpoints;
-       working journals are deleted after validation and only receipts, outcomes and figures stay.
+       Same bound source/plan and output resume from verified checkpoints.
+       New R11 batches retain all original journals, prehistory and interrupted evidence;
+       legacy unbound plans refuse resume; completed compact arms are never regenerated.
+       Local inspection: --spec enterprise-r11 --inspect-retention --output DIRECTORY
+       Zero-step recovery: --recover-checkpoint FILE --recovery-output NEW_DIRECTORY
+       Explicit archive transport: --archive-config PRIVATE_JSON --archive-owned-pgid PGID
+                --archive-state PRIVATE_DIRECTORY --output CLOSED_DIRECTORY
+       Transport success does not accept science, recovery, off-GCP custody or disk deletion.
 Defaults: bounded local validation, 120 people, runs/validation-n120.
-Full research runs use the same versioned pipeline and automatic resource scheduler.
+World jobs require a separately admitted full storage/time/cost estimate.
 Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
 private mode-0600 file. Its explicit execution mode selects legacy GCS or
 compute-only IAP phases; no public paid default or implicit storage fallback.
@@ -26,6 +32,12 @@ task_scale=120
 task_output=
 task_limits=
 task_prepare=false
+task_inspect=false
+task_recover=
+task_recovery_output=
+task_archive_config=
+task_archive_pgid=
+task_archive_state=
 task_context=multinational
 task_growth=organic
 task_pre=2
@@ -41,6 +53,12 @@ while (($#)); do
     --output) task_output=${2:?missing output}; shift 2;;
     --runtime-limits) task_limits=${2:?missing limits}; shift 2;;
     --prepare-only) task_prepare=true; shift;;
+    --inspect-retention) task_inspect=true; shift;;
+    --recover-checkpoint) task_recover=${2:?missing checkpoint}; shift 2;;
+    --recovery-output) task_recovery_output=${2:?missing recovery output}; shift 2;;
+    --archive-config) task_archive_config=${2:?missing archive admission}; shift 2;;
+    --archive-owned-pgid) task_archive_pgid=${2:?missing owned process group}; shift 2;;
+    --archive-state) task_archive_state=${2:?missing persistent accounting directory}; shift 2;;
     --context) task_context=${2:?missing context}; shift 2;;
     --growth) task_growth=${2:?missing growth}; shift 2;;
     --pre-years) task_pre=${2:?missing years}; shift 2;;
@@ -56,6 +74,12 @@ case "$task_spec" in validation|historical-full-study|full-study|governance-scal
 case "$task_scale" in ''|*[!0-9]*) echo 'Scale must be an integer population.' >&2; exit 2;; esac
 if ((task_scale<2)); then echo 'Scale must be at least two people.' >&2; exit 2; fi
 if [[ -z "$task_output" ]]; then task_output="runs/${task_spec}-n${task_scale}"; fi
+task_modes=0
+[[ "$task_inspect" == false ]] || task_modes=$((task_modes+1))
+[[ -z "$task_recover" ]] || task_modes=$((task_modes+1))
+[[ -z "$task_archive_config" ]] || task_modes=$((task_modes+1))
+if ((task_modes>1)) || { ((task_modes>0)) && [[ "$task_prepare" == true ]]; }; then echo 'Choose one preparation, inspection, recovery or archive action.' >&2; exit 2; fi
+if [[ -n "$task_recovery_output" && -z "$task_recover" ]] || { [[ -z "$task_archive_config" ]] && [[ -n "$task_archive_pgid$task_archive_state" ]]; }; then echo 'Recovery/archive options require their explicit action.' >&2; exit 2; fi
 if command -v uv >/dev/null 2>&1 && [[ "$(uv --version)" == 'uv 0.9.26'* ]]; then
   task_uv=$(command -v uv)
 else
@@ -103,7 +127,9 @@ if [[ "$task_prepare" == true ]]; then
 import sys
 from dams_sim.spec import resolve_spec
 name, scale = sys.argv[1], int(sys.argv[2])
-if name == 'historical-full-study':
+if name == 'enterprise-r11':
+    print('Prepared R11 toolchain only; this does not execute or validate a study')
+elif name == 'historical-full-study':
     if scale != 120:
         raise ValueError('historical design requires scale 120')
     print('Prepared immutable historical design at population 120')
@@ -113,6 +139,18 @@ else:
 PY
   exec "$task_uv" run --no-sync python -m dams_sim doctor
 fi
+if [[ "$task_inspect" == true ]]; then
+  exec "$task_uv" run --no-sync python -m research_tools.r11_retention "$task_output"
+fi
+if [[ -n "$task_recover" ]]; then
+  [[ -n "$task_recovery_output" ]] || { echo 'Zero-step recovery requires --recovery-output NEW_DIRECTORY.' >&2; exit 2; }
+  exec "$task_uv" run --no-sync python -m research_tools.r11_archive recover-checkpoint "$task_recover" --destination "$task_recovery_output"
+fi
+if [[ -n "$task_archive_config" ]]; then
+  [[ -n "$task_archive_pgid" && -n "$task_archive_state" ]] || { echo 'Archive transport requires owned PGID and persistent accounting state.' >&2; exit 2; }
+  exec "$task_uv" run --no-sync python -m research_tools.r11_archive upload-closed --source "$task_output" \
+    --private-config "$task_archive_config" --owned-pgid "$task_archive_pgid" --state "$task_archive_state"
+fi
 if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then
   # Science arguments stay explicit; controller rejects conflicts with its frozen plan.
   exec "$task_uv" run --no-sync python research_tools/cloud_control.py execute \
@@ -120,17 +158,17 @@ if [[ -n "${DAMS_CLOUD_PRIVATE_CONFIG:-}" ]]; then
     --spec "$task_spec" --scale "$task_scale"
 fi
 if [[ "$task_spec" == enterprise-r11 ]]; then
-  # Paired-world enterprise study: prehistory -> common-state fork -> arms -> independent validators -> outcomes.
+  # Paired-world enterprise study: common-state arms -> raw-admitted inference -> figure.
   r11_args=(batch --scale "$task_scale" --context "$task_context" --growth "$task_growth" --pre-years "$task_pre"
             --post-years "$task_post" --worlds "$task_worlds" --arms "$task_arms" --variant "$task_variant" --out "$task_output")
   if [[ -n "$task_jobs" ]]; then r11_args+=(--jobs "$task_jobs"); fi
   "$task_uv" run --no-sync python research_tools/r11_study.py "${r11_args[@]}"
-  "$task_uv" run --no-sync python research_tools/r11_outcomes.py "$task_output" > "$task_output/paired-outcomes.json"
-  # Paired differences from the first arm, with Student-t intervals and Holm adjustment.
+  # The inference entry verifies original evidence and records assigned/missing
+  # worlds before calculating conditional paired differences. Do not publish the
+  # standalone outcomes aggregate as an independently admitted analysis.
   task_first_world=$(printf '%s' "$task_worlds" | tr ',' '\n' | sort -n | head -1)
   "$task_uv" run --no-sync python research_tools/r11_inference.py "$task_output" --first-world "$task_first_world" > "$task_output/inference.json"
   "$task_uv" run --no-sync python research_tools/r11_figure.py "$task_output" >/dev/null
-  echo "Paired outcomes: $task_output/paired-outcomes.json"
   echo "Inference: $task_output/inference.json"
   echo "Figure: $task_output/effects.pdf"
   exit 0

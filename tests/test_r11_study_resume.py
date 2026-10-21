@@ -47,8 +47,11 @@ class InterruptedCheckpointTest(unittest.TestCase):
             r._long.ledger.close()
             self.assertEqual(r._long.day, 30)
             left = sorted(p.name for p in root.iterdir() if p.name.startswith(('work', 'restored')))
-            self.assertEqual(left, ['work-r0'])
-            self.assertFalse((root/'work-r0'/'ledger.sqlite').exists())
+            self.assertEqual(left, ['work-r1'])
+            self.assertFalse((root/'work-r1'/'ledger.sqlite').exists())
+            # Unknown/advanced work is not established equivalent merely because
+            # a checkpoint exists; preserve it while restoring the checkpoint.
+            self.assertEqual((root/'interrupted-work-r0-0'/'ledger.sqlite').read_bytes(), b'superseded')
 
 
 if __name__ == '__main__':

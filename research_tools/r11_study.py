@@ -6,10 +6,9 @@ governance arm, run to the common horizon, write the final state and run every
 independent raw validator. batch: schedule prehistories and arms over worker
 processes; one independent world (all its arms) is the inferential unit.
 
-Retention: after a validated arm, the full compressed journal is either kept
-(audit worlds) or released. Released journals are reproducible by deterministic
-replay from the recorded config, source digest, seed and world; the receipt
-retains the ledger semantic digest that a replay must reproduce.
+Retention: new batches retain every original full compressed journal.  Completed
+legacy compact arms are reported as missing originals, never regenerated.
+Legacy plans without a complete science/design binding are inspection-only.
 """
 from __future__ import annotations
 
@@ -19,7 +18,6 @@ import hashlib
 import json
 import os
 import resource
-import sqlite3
 import sys
 import time
 from pathlib import Path
@@ -31,6 +29,9 @@ from dams_sim.config import Config  # noqa: E402
 from dams_sim.model import Model  # noqa: E402
 from dams_sim.storage import canonical, atomic_csv, source_hash, file_digest  # noqa: E402
 from research_tools.r11_design import base_config, arm_config, ARMS  # noqa: E402
+from research_tools.r11_retention import (  # noqa: E402
+    RETENTION_POLICY, bind_plan, retention_report, retire_equivalent_work, science_manifest,
+)
 
 CHUNK = 4_194_304
 
@@ -51,7 +52,7 @@ def world_key(scale, context, growth, world, pre_years, post_years):
 
 
 def _segments(m, target, cpdir, config, root, *, every=365):
-    """Run to target with yearly resumable checkpoints; keep only the latest one."""
+    """Run with yearly checkpoints; retirement needs separate recovery admission."""
     cpdir.mkdir(parents=True, exist_ok=True)
     while m._long.day < target:
         stop = min(target, m._long.day+every)
@@ -68,9 +69,10 @@ def _segments(m, target, cpdir, config, root, *, every=365):
                 for f in stale:
                     f.rename(aside/f.name)
             m.write_checkpoint(cp)
-            for old in cpdir.glob('checkpoint-day-*'):
-                if not old.name.startswith(f'checkpoint-day-{stop:06d}'):
-                    old.unlink()
+            # Verify the complete new sidecar before continuing.  This alone is
+            # not zero-step recovery/Root retirement admission for earlier CPs.
+            from dams_sim.longitudinal_model import verify_snapshot
+            verify_snapshot(cp, expected_config=config)
     return m
 
 
@@ -78,31 +80,36 @@ def _resume(cpdir, config, root):
     cps = sorted(cpdir.glob('checkpoint-day-*.json')) if cpdir.exists() else []
     if not cps:
         return None
-    # Working databases of earlier attempts ('work', 'work-rK', 'restored') are
-    # superseded by the checkpoint: the run continues only from cps[-1]. They are
-    # deterministic intermediate copies, so they are removed before restoring; kept,
-    # one full ledger per interrupted attempt filled a 300 GB disk at 10,000 members.
-    import shutil
-    for old in [root/'restored', *root.glob('work*')]:
-        if old.is_dir():
-            shutil.rmtree(old)
+    # Validate the complete replacement before retiring any old working copies.
+    # If validation fails, all possible recovery evidence remains untouched.
+    from dams_sim.longitudinal_model import verify_snapshot
+    envelope, _ = verify_snapshot(cps[-1], expected_config=config)
     # Next unused restore directory; counting existing ones is not enough when an
     # earlier one has been removed (e.g. work-r0 deleted while work-r1 remains).
     k = 0
     while (root/f'work-r{k}').exists():
         k += 1
-    return Model.restore_checkpoint(cps[-1], expected_config=config, storage_dir=root/f'work-r{k}')
+    restored = root/f'work-r{k}'
+    model = Model.restore_checkpoint(cps[-1], expected_config=config, storage_dir=restored)
+    # Restore admission can fail (e.g. disk pressure) after snapshot verification.
+    # Never remove recovery work until restoration has actually succeeded.
+    try:
+        retire_equivalent_work(root, envelope['ledger'], keep=restored)
+    except BaseException:
+        model._long.ledger.close()
+        raise
+    return model
 
 
 def _retire_partial(out, names):
-    """An interrupted attempt that never reached a resumable checkpoint leaves
-    scratch directories; they are deterministic and are removed before the
-    attempt is repeated. A previous failure receipt is kept under a new name."""
-    import shutil
+    """Keep an incomplete attempt with no verified replacement as evidence."""
     for n in names:
         p = out/n
         if p.exists():
-            shutil.rmtree(p)
+            k = 0
+            while (out/f'interrupted-{n}-{k}').exists():
+                k += 1
+            p.rename(out/f'interrupted-{n}-{k}')
     _retire_failure(out)
 
 
@@ -153,11 +160,10 @@ def prehistory(args):
             f.rename(aside/f.name)
     m.write_checkpoint(cp)
     m._long.ledger.close()
-    for p in [out/'progress', *out.glob('work*')]:
-        if p.exists():
-            for f in sorted(p.rglob('*'), reverse=True):
-                f.unlink() if f.is_file() else f.rmdir()
-            p.rmdir()
+    from dams_sim.longitudinal_model import verify_snapshot
+    verify_snapshot(cp, expected_config=config)
+    # Preserve progress and interruption evidence pending independent recovery
+    # and named retirement admission.  Snapshot validation is not that admission.
     receipt = {'kind': 'r11-prehistory', 'python': sys.version, 'source_sha256': source_hash(), 'config': d, 'branch_day': branch,
                'checkpoint': cp.name, 'checkpoint_sha256': file_digest(cp),
                'semantic_sha256': m.semantic_digest() if False else None,
@@ -184,23 +190,6 @@ def _validate(model, final_json, parent_config, branch, summary):
         r = verify_organization_accounts(model.config, env['state'], db); receipts['organization'] = 'pass'
         receipts['organization_formal_worlds_added'] = r.get('formal_worlds_added')
     return env, db, receipts
-
-
-def _release_journal(database):
-    """Write a compact state image without journal chunks; return its digest and the released bytes."""
-    compact = Path(str(database).replace('.sqlite', '.compact.sqlite'))
-    src = sqlite3.connect(f'file:{database}?mode=ro', uri=True)
-    try:
-        src.execute(f"VACUUM INTO '{compact}'")
-    finally:
-        src.close()
-    db = sqlite3.connect(compact)
-    try:
-        db.execute('DELETE FROM journal_chunks'); db.commit(); db.execute('VACUUM')
-    finally:
-        db.close()
-    released = Path(database).stat().st_size
-    return compact.name, file_digest(compact), released
 
 
 def arm(args):
@@ -238,19 +227,13 @@ def arm(args):
     tv = time.monotonic()
     env, db, receipts = _validate(m, final, parent, branch, summary)
     validation_wall = time.monotonic()-tv
-    retained = 'journal' if args.get('retain_journal') else 'compact'
+    retained = 'journal'
     files = {}
     db_path = Path(db)
-    if retained == 'compact':
-        name, digest, released = _release_journal(db_path)
-        files['compact_state'] = {'file': name, 'sha256': digest}
-        files['released_journal_bytes'] = released
-        db_path.unlink()
-    for p in [out/'restored', out/'progress', *out.glob('work*')]:
-        if p.exists():
-            for f in sorted(p.rglob('*'), reverse=True):
-                f.unlink() if f.is_file() else f.rmdir()
-            p.rmdir()
+    files['original_ledger'] = {'file': db_path.name, 'sha256': file_digest(db_path),
+                                'bytes': db_path.stat().st_size}
+    # A complete final image does not alone authorize retiring older originals
+    # or interrupted streams; retain them for the separate recovery inventory.
     receipt = {'kind': 'r11-arm', 'python': sys.version, 'arm': args['arm'], 'arm_spec': ARMS[args['arm']], 'source_sha256': source_hash(),
                'parent_prehistory_sha256': file_digest(pre/'prehistory.json'), 'branch_day': branch,
                'config': child_d, 'days': child.days, 'state_semantic_sha256': semantic,
@@ -285,11 +268,11 @@ def batch(ns):
     audit = {int(w) for w in ns.audit_worlds.split(',')} if ns.audit_worlds else set()
     plan = {'scale': ns.scale, 'context': ns.context, 'growth': ns.growth, 'pre_years': ns.pre_years,
             'post_years': ns.post_years, 'seed': ns.seed, 'variant': ns.variant, 'worlds': worlds, 'arms': arms, 'audit_worlds': sorted(audit),
-            'source_sha256': source_hash(), 'jobs': ns.jobs, 'python': sys.version, 'executable': sys.executable}
+            'source_sha256': source_hash(), 'jobs': ns.jobs, 'python': sys.version, 'executable': sys.executable,
+            'scientific_dependencies': science_manifest(ROOT), 'retention_policy': RETENTION_POLICY}
     plan_path = root/'plan.json'
-    if plan_path.exists() and json.loads(plan_path.read_text()) != json.loads(canonical(plan)):
-        raise SystemExit('existing plan differs; use a new output directory')
-    _json(plan_path, plan)
+    # Never overwrite an existing plan or manufacture an old dependency binding.
+    bind_plan(plan_path, plan)
     log = (root/'events.jsonl').open('a')
     def note(**kw):
         log.write(json.dumps({'t': time.time(), **kw})+'\n'); log.flush()
@@ -307,10 +290,15 @@ def batch(ns):
                 continue
             if kind == 'prehistory':
                 for a in arms:
-                    job = {'prehistory': payload['out'], 'arm': a, 'retain_journal': w in audit,
+                    job = {'prehistory': payload['out'], 'arm': a, 'retain_journal': True,
                            'out': str(Path(payload['out']).parent/a)}
                     pending[ex.submit(_run, ('arm', job))] = w
     note(kind='batch-complete')
+    report = retention_report(root)
+    _json(root/'preservation-status.json', report)
+    if report['missing_original_journal']:
+        raise SystemExit('completed arms lack original journals; preserved without rerun; '
+                         'complete preservation acceptance refused')
     failed = sorted(str(f.relative_to(root)) for f in root.rglob('failure.json'))
     if failed:
         raise SystemExit(f'{len(failed)} jobs failed; receipts kept: ' + ', '.join(failed[:5]))
