@@ -1,0 +1,81 @@
+{
+  "schema": "r12-zero-day-adapter-native-fixture-1",
+  "source_base_commit": "cc959421df1f120d85d6e765fc084d9eda3f322d",
+  "adapter_sha256": "cbe5efa6da8e9936ac7b80e0da4c2593dc6b9e879da2f0a6b4aa6d5ef2168cf0",
+  "engine_sha256": "d29dd6b8e04a177aa16012fce0a0091856d56b765daca69e84205acb58ca9603",
+  "world": 91000,
+  "members_per_firm": 8,
+  "parent_day": 3,
+  "staged_day": 3,
+  "arm": "preserve-autonomy",
+  "commands_exit_codes": {
+    "prepare": 0,
+    "stage": 0
+  },
+  "native_files": [
+    {
+      "path": "lineage-parent/common-parent-buyer.json",
+      "bytes": 38026,
+      "sha256": "898e620eb2540b4e336f9c2c838982922fb96113c9835db41614923f3dc0f56f"
+    },
+    {
+      "path": "lineage-parent/common-parent-buyer.sqlite",
+      "bytes": 106496,
+      "sha256": "2f1c899f04d87dd7730dd98d3144246dad9cc4024fccfcaddbb6a862169792ec"
+    },
+    {
+      "path": "lineage-parent/common-parent-target.json",
+      "bytes": 37365,
+      "sha256": "d2b10be6cd4aff555123ea5c1f0fc2d606c293ded9b68db54e734e225c24bf89"
+    },
+    {
+      "path": "lineage-parent/common-parent-target.sqlite",
+      "bytes": 102400,
+      "sha256": "3580742a8438f7e1b9cf66a9e9176493976b845ebcc5b9b67a256c4766647693"
+    },
+    {
+      "path": "lineage-parent/common-parent.json",
+      "bytes": 36575,
+      "sha256": "c7c23fe5f9af4c973dcae60e03d503b661731ec6da0c4be48522e75d07d9ae59"
+    },
+    {
+      "path": "staged-common-buyer.json",
+      "bytes": 38026,
+      "sha256": "37d5fe8558a7a51422a6b779ed85a491e28b4d0418f01a136717d829d3957b19"
+    },
+    {
+      "path": "staged-common-buyer.sqlite",
+      "bytes": 106496,
+      "sha256": "2f1c899f04d87dd7730dd98d3144246dad9cc4024fccfcaddbb6a862169792ec"
+    },
+    {
+      "path": "staged-common-target.json",
+      "bytes": 37365,
+      "sha256": "beb63898665de6765982759bc3ecd5d99d647036335c771343d6fac975d1dad5"
+    },
+    {
+      "path": "staged-common-target.sqlite",
+      "bytes": 102400,
+      "sha256": "3580742a8438f7e1b9cf66a9e9176493976b845ebcc5b9b67a256c4766647693"
+    },
+    {
+      "path": "staged-common.json",
+      "bytes": 38693,
+      "sha256": "539ca38222621700d362f64b96520e00477d6b595c1e9066bc9d03ef05637738"
+    }
+  ],
+  "native_bytes": 643842,
+  "independent_io_scope": [
+    "full file hashes and EOF",
+    "original five files identities checked before and after execution",
+    "literal company-state equality after relative ledger rename",
+    "unchanged joint day, terms, records and events",
+    "complete lineage-parent files"
+  ],
+  "simulated_days_added": 0,
+  "formal_worlds_added": 0,
+  "raw_admitted": false,
+  "full_branch_restore_verified": false,
+  "full_horizon_validation_verified": false,
+  "measurement_note": "A zero-day engineering entry fixture, not an independent new world or formal acquisition result."
+}
