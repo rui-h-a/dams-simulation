@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "protocol": "fixed-contribution-replay-1",
+  "freeze_utc": "2026-10-21T16:42:02.800720+00:00",
+  "kind": "unpaid fixed exogenous mechanism replay, not longitudinal ABM or new formal worlds",
+  "source_pins": {
+    "research_tools/fixed_contribution_replay.py": "22fdf5aeda6faa4f8315e7b4f17b8e59c7e95bda867ecc63934c8bc9e95fa5c5",
+    "tests/test_fixed_contribution_replay.py": "ab93cb1665a19755472cf2207613e0313ca3210cfbb761ffa3b1b6c4401f0f41",
+    "docs/fixed-contribution-replay.md": "40c47054856a6ac3e279e2c4800a0be1d0cdb3751343ac4725fb5f3bdc3aeedb",
+    "dams_sim/authority.py": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+    "research_tools/fixed_replay_fixture.py": "c346840b6e827dfee54e95fa3adcb80a6da16fb31935962e657c30fc4020dda0"
+  },
+  "roster": 10000,
+  "domains": [
+    "d0",
+    "d1"
+  ],
+  "alpha": 0.5,
+  "half_life_days": 180,
+  "tier_weights": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "query_days": [
+    0,
+    1,
+    30,
+    90,
+    180,
+    365
+  ],
+  "credit_per_record": "((i mod100)+1)^2, earned day0; designed test values, not empirical coefficients",
+  "confirmation_day": "1+(i mod31)",
+  "attribution": "primary domain d(i mod2); i mod10=0 split1/4 primary,3/4 other; otherwise all primary",
+  "initial_eligibility": "all10000 in both domains",
+  "appointment_day": "-((17*i) mod3650), appointment proxy only",
+  "revocation_day90": "i mod97=0; remove precisely that confirmed record",
+  "eligibility_remove_day120_and_regrant181": "i mod101=0 in primary domain; regrant only if not selected for exit",
+  "exit_day181": "i mod100=0",
+  "order": "day then record,confirm,revoke,eligibility removal,exit,eligibility grant then member id; explicit increasing sequence in each day",
+  "determinism_check": "second pure replay compared in memory; not new sample",
+  "formal_worlds_added": 0,
+  "analysis": "retain all shares/statuses; per-query-domain formal-share Gini and TV from linear; no hypothesis significance, MC interval, fairness or behavioral claim",
+  "preserves_existing_static_experiment": "research_tools/study.py mechanisms; new temporal replay is additional, not a replacement"
+}
