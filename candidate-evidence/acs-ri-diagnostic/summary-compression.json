@@ -1,0 +1,26 @@
+{
+  "calibration_accepted": false,
+  "compressed": {
+    "bytes": 215039,
+    "name": "summary.json.gz",
+    "sha256": "74b500db5e864471d4fb8faae9440a0c42009482bb81433230a126aa3cab4222"
+  },
+  "decoded_full_SHA_and_byte_equality_verified": true,
+  "formal_worlds_added": 0,
+  "gzip": {
+    "compresslevel": 9,
+    "deterministic_same_input_bytes_verified": true,
+    "filename": "",
+    "mtime": 0,
+    "single_member_normal_EOF_and_no_trailing_bytes": true
+  },
+  "holdout_accepted": false,
+  "raw_ZIP_or_person_CSV_reads": 0,
+  "status": "LOSSLESS_FULL_DIAGNOSTIC_SUMMARY_COMPRESSION_NOT_MODEL_VALIDATION",
+  "uncompressed": {
+    "bytes": 1791981,
+    "name": "summary.json",
+    "sha256": "66d84d4f08520b4f46406c440cf090822a2abec3c8619b703e68e177cd7d0267"
+  },
+  "year2024_seen": true
+}
