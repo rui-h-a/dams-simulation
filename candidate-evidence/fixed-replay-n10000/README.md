@@ -18,6 +18,7 @@ At this fixed source version, from the repository root:
 ```sh
 python3 -B -m research_tools.fixed_replay_fixture --population 10000 --output NEW_INPUT.json
 python3 -B -m research_tools.fixed_contribution_replay --tape NEW_INPUT.json --output NEW_RESULT.json
+python3 -B -m research_tools.verify_fixed_replay --tape NEW_INPUT.json --result NEW_RESULT.json --day 365 --output NEW_CHECK.json
 python3 -B -m unittest tests.test_fixed_contribution_replay
 ```
 
@@ -40,3 +41,5 @@ publication is not a power-failure custody guarantee: the CLI fsyncs its file,
 not its parent directory. Extremely small decay factors may refuse even when
 an algebraically rescaled calculation could represent the final product.
 These limitations do not change the reported, independently reconstructed run.
+
+`research_tools/fixed_replay_table.py` formats the thesis table from the verified full result and manifest; it does not run the experiment. The independent CLI receipt is retained as `independent-day365.json`. The execution source remains pinned at ed82a581; subsequent commits add verification and presentation materials without changing that source or its output.
