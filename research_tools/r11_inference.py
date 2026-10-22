@@ -368,7 +368,7 @@ def infer(root, *, first_world=1000, reference='control-hierarchy', deltas=None,
                 row.update(assigned_worlds=len(worlds), missing_worlds=missing,
                            conditional_on_completion=bool(missing))
                 rows[key] = row
-            # The predeclared three-outcome family cannot shrink when a test is
+            # The predeclared primary family (Amendment 8: four endpoints) cannot shrink when a test is
             # unavailable. A placeholder 1 reserves its multiplicity slot only;
             # its unavailable p-value remains null in the output.
             adjusted = holm([rows[k].get('p_two_sided') if rows[k].get('p_two_sided') is not None else 1.
