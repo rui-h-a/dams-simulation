@@ -148,8 +148,8 @@ class EvidenceAdmissionTest(unittest.TestCase):
         self.assertEqual(rows[PRIMARY[1]]['missing_worlds'][0]['world'], 1001)
         self.assertIsNone(rows[PRIMARY[1]]['p_holm'])
         for key in PRIMARY:
-            self.assertEqual(rows[key]['holm_family_size'], 3)
-        self.assertAlmostEqual(rows[PRIMARY[0]]['p_holm'], rows[PRIMARY[0]]['p_two_sided']*3)
+            self.assertEqual(rows[key]['holm_family_size'], len(PRIMARY))
+        self.assertAlmostEqual(rows[PRIMARY[0]]['p_holm'], rows[PRIMARY[0]]['p_two_sided']*len(PRIMARY))
 
 
     def test_zero_delivery_and_absent_zero_counters_keep_their_meanings(self):

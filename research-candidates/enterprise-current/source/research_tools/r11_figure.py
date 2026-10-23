@@ -31,6 +31,8 @@ PRIMARY_LABELS = {
     'net_operating_result_per_member_year': 'Net operating result',
     'decision_regret_per_available_member_hour': 'Decision regret',
     'governance_cost_per_member_year': 'Legacy governance index',
+    'governance_member_hours_per_member_year': 'Governance member-hours',
+    'witness_resource_units_per_member_year': 'Witness resource units',
 }
 
 

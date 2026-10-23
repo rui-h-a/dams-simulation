@@ -17,3 +17,14 @@ The ACS builder preserves observed rows and household context, integer survey we
 The required complete 10,000-person primary study and 50,000-person model comparison, empirical behavioral calibration, unseen-data validation, full-history M&A evaluation, platform reproduction and complete off-cloud preservation remain unfinished. Older accepted studies keep their own sources and acceptance boundaries; this update does not erase them or relabel preliminary summaries as accepted results.
 
 The current thesis manuscript is maintained in the separate `rui-h-a/dams-thesis` repository. Its manuscript and source are distinct from scientific acceptance of these candidates.
+
+## Update — 23 October 2026
+
+| Material | Exact source and retained evidence | Interpretation |
+|---|---|---|
+| Attack-cohort membership correction | `f826b26` (dev) / `aae53d7` (ops); `research_tools/r11_equivalence.py` | The daily step tested membership of the attack cohort (half of the members by default) against a list, a cost growing with the square of the population. A frozenset gives byte-identical storage in six test worlds (including all four attack modes); a negative control with a changed payload is detected. Three simulated days of an 80,000-member firm: 220 s before, 63 s after (Apple M2 Pro). |
+| Amendment 8 (prospective statistical design) | `9042f2a` on `research/enterprise-amendment8`; `docs/r11-formal-protocol.md`, `research_tools/r11_world_count.py` | Frozen before any 10,000- or 50,000-member confirmation world: four primary endpoints with their own units (the mixed-unit legacy index is descriptive only), thresholds of 2 % of positive reference-arm anchors, world count with t at the confirmation's own degrees of freedom, sensitivity values, a check of the 50k-from-10k variance assumption, a world cap, a Holm family of four and rules for degenerate samples, closure and missing pairs. |
+| Batched complete-retention studies | `f802888`; `research_tools/r11_pool.py`, `cloud/r11-complete-batches-startup.sh` | A large complete-retention study runs in batches of worlds: each batch is admitted by `r11_inference.infer()` on the machine, uploaded create-only with per-file MD5 checks and removed locally before the next batch; `r11_pool.py` pools fully admitted batch reports of one study. |
+| Complete-retention pilots (running) | source `3b4d44676872fff8d602cafbc47b49f0df6f79b9`; `cloud/r11-complete-startup.sh` | 10,000 members: worlds 0-2, four arms, 2 + 5 years; 50,000 members: worlds 0-1, two arms. No arm of either pilot is accepted yet. Resumes after Spot preemption retain interrupted copies, so a 10,000-member pilot needs more than 500 GB of disk. |
+
+No formal 10,000- or 50,000-member paired world is accepted at this date.

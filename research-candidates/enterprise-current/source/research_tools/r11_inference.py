@@ -292,7 +292,9 @@ def infer(root, *, first_world=1000, reference='control-hierarchy', deltas=None,
               'excluded_before_first_world': [w for w in plan['worlds'] if w < first_world],
               'failures': sorted(str(f.relative_to(root)) for f in root.rglob('failure*.json')),
               'admission_errors': [], 'world_inventory': [], 'comparisons': {},
-              'measurement_warnings': ['The legacy primary governance_cost_per_member_year mixes member-hours and resource units. Separate components are reported; the legacy index is not a one-unit cost, and a revised formal endpoint requires prospective freezing.'],
+              'measurement_warnings': ['The legacy governance_cost_per_member_year mixes member-hours and resource units; under Amendment 8 it is a descriptive secondary outcome and the separate components are primary.'],
+              # Identity shared by batches of one study: all plan fields except the world list and the worker count.
+              'study_identity': {k: v for k, v in plan.items() if k not in ('worlds', 'jobs')},
               'complete_preservation_accepted': False, 'scientific_completion': False,
               'scope': 'raw integrity and conditional model inference; not external validation, independent transitions, recovery or off-GCP preservation'}
     if plan.get('source_sha256') != source_hash():
@@ -354,7 +356,7 @@ def infer(root, *, first_world=1000, reference='control-hierarchy', deltas=None,
             rows = {}
             pairs = [w for w in worlds if (w, arm) in cache and (w, reference) in cache]
             for key in OUTCOMES:
-                differences, missing = [], []
+                differences, missing, per_world = [], [], []
                 for world in worlds:
                     if world not in pairs:
                         missing.append({'world': world, 'reason': 'missing or invalid paired raw evidence'})
@@ -364,11 +366,14 @@ def infer(root, *, first_world=1000, reference='control-hierarchy', deltas=None,
                         missing.append({'world': world, 'reason': 'undefined or nonfinite outcome'})
                         continue
                     differences.append(values[0]-values[1])
+                    per_world.append([world, values[0], values[1]])
                 row = _difference_summary(differences, key, deltas)
+                # Admitted world-level values ([world, arm, reference]) allow
+                # batches of one study to be pooled without re-reading raw files.
                 row.update(assigned_worlds=len(worlds), missing_worlds=missing,
-                           conditional_on_completion=bool(missing))
+                           conditional_on_completion=bool(missing), world_values=per_world)
                 rows[key] = row
-            # The predeclared three-outcome family cannot shrink when a test is
+            # The predeclared primary family (Amendment 8: four endpoints) cannot shrink when a test is
             # unavailable. A placeholder 1 reserves its multiplicity slot only;
             # its unavailable p-value remains null in the output.
             adjusted = holm([rows[k].get('p_two_sided') if rows[k].get('p_two_sided') is not None else 1.

@@ -34,7 +34,7 @@ class FigureTest(unittest.TestCase):
         comparison = data['comparisons']['dams-witness']
         comparison[PRIMARY[0]].update(ci95=None, status='degenerate paired differences; Student-t inference undefined')
         comparison[PRIMARY[1]] = {'unit': 'u', 'worlds': 1, 'status': 'fewer than two complete pairs'}
-        self.assertEqual([r[1] for r in rows(data)], [PRIMARY[2]])
+        self.assertEqual([r[1] for r in rows(data)], list(PRIMARY[2:]))
         with tempfile.TemporaryDirectory() as d:
             (Path(d)/'inference.json').write_text(json.dumps(data))
             with patch.object(r11_figure.plt, 'close'):
@@ -53,7 +53,7 @@ class FigureTest(unittest.TestCase):
     def test_short_primary_titles_and_wrapped_units_fit_the_canvas(self):
         data = inference()
         units = ('resource units / member-year', 'regret units / member-hour',
-                 'mixed member-hours and resource units / member-year')
+                 'member-hours / member-year', 'resource units / member-year')
         for key, unit in zip(PRIMARY, units):
             data['comparisons']['dams-witness'][key]['unit'] = unit
         with tempfile.TemporaryDirectory() as d:
@@ -69,9 +69,11 @@ class FigureTest(unittest.TestCase):
                     self.assertLessEqual(box.x1, fig.bbox.x1)
                     self.assertLessEqual(box.y1, fig.bbox.y1)
                 self.assertFalse(boxes[0].overlaps(boxes[1]))
-                self.assertFalse(boxes[1].overlaps(boxes[2]))
-                self.assertIn('Legacy governance index', fig.axes[2].get_title())
-                self.assertNotIn('cost', fig.axes[2].get_title())
+                for a, b in zip(boxes, boxes[1:]):
+                    self.assertFalse(a.overlaps(b))
+                # Amendment 8: the mixed-unit legacy index is not a primary panel
+                self.assertIn('Governance member-hours', fig.axes[2].get_title())
+                self.assertNotIn('cost', ' '.join(ax.get_title() for ax in fig.axes))
             finally:
                 r11_figure.plt.close(fig)
 
