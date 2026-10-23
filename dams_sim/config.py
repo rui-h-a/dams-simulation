@@ -50,6 +50,12 @@ class Config:
     attack_stop_day: int = 25
     fault_start_day: int = 25
     fault_stop_day: int = 30
+    # Optional decision-execution path (longitudinal engine only). All defaults reproduce the
+    # model without execution: a guild vote is scored against the hidden proposal value and changes nothing.
+    decision_effect: float = 0.0
+    decision_execution_delay_days: int = 0
+    decision_execution_hours: float = 0.0
+    decision_effect_days: int = 20
     trace_every_days: int = 5
     max_wall_seconds: float = 300.0
     max_output_mb: float = 100.0
@@ -89,7 +95,7 @@ class Config:
             if self.joint_population is not None:raise ValueError('person_context supersedes joint_population; enable only one entry copula')
             self.person_context.validate()
         horizon_limit = 50_000 if self.longitudinal is not None else 3650
-        integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
+        integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "decision_execution_delay_days": (0, 3650), "decision_effect_days": (1, 3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
         if self.longitudinal is not None:
             for name in ('days','appeal_delay_days','attack_start_day','attack_stop_day','fault_start_day','fault_stop_day','quorum_unavailable_start_day','quorum_unavailable_stop_day','trace_every_days'):
                 integers[name] = (integers[name][0], horizon_limit)
@@ -107,7 +113,7 @@ class Config:
             raise ValueError("hierarchy_basis must be performance or tenure")
         if self.behavior_rule not in {"linear_response", "satisficing", "reinforcement"}:
             raise ValueError("unknown behavior_rule")
-        bounded = {"alpha": (0.001, 0.999), "decay_per_day": (0, 1), "review_capacity_per_member_day": (0.001, 10), "appeal_capacity_per_member_day": (0, 2), "review_error_sd": (0, 5), "decision_noise_sd": (0, 5), "shared_signal_sd": (0,5), "cooperation_strength": (0, 2), "autonomy_response": (-2, 2), "learning_rate": (0, 1), "attack_budget_hours_per_day": (0, self.n), "max_wall_seconds": (0.1, 86400), "max_output_mb": (0.1, 10_000_000), "max_rss_mb": (1,4_000_000)}
+        bounded = {"alpha": (0.001, 0.999), "decay_per_day": (0, 1), "review_capacity_per_member_day": (0.001, 10), "appeal_capacity_per_member_day": (0, 2), "review_error_sd": (0, 5), "decision_noise_sd": (0, 5), "shared_signal_sd": (0,5), "cooperation_strength": (0, 2), "autonomy_response": (-2, 2), "learning_rate": (0, 1), "decision_effect": (0, 1), "decision_execution_hours": (0, self.n), "attack_budget_hours_per_day": (0, self.n), "max_wall_seconds": (0.1, 86400), "max_output_mb": (0.1, 10_000_000), "max_rss_mb": (1,4_000_000)}
         for name, (low, high) in bounded.items():
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:
@@ -116,6 +122,10 @@ class Config:
             raise ValueError("attack_cohort_fraction must be finite in (0,1]")
         if self.attack == "censor" and math.ceil(self.n * self.attack_cohort_fraction) >= self.n:
             raise ValueError("censor requires a nonattacking target population")
+        if self.decision_effect > 0 and self.longitudinal is None:
+            raise ValueError("decision_effect requires the longitudinal engine")
+        if self.decision_effect == 0 and (self.decision_execution_delay_days != 0 or self.decision_execution_hours != 0):
+            raise ValueError("decision_execution_delay_days and decision_execution_hours require decision_effect > 0")
         if self.attack_start_day > self.attack_stop_day or self.fault_start_day > self.fault_stop_day or self.quorum_unavailable_start_day > self.quorum_unavailable_stop_day:
             raise ValueError("event starts must not exceed stops")
         for name in ("backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
@@ -153,6 +163,9 @@ class Config:
         if self.joint_population is None:value.pop('joint_population')
         if self.organization_tasks is None:value.pop('organization_tasks')
         if self.person_context is None:value.pop('person_context')
+        # Defaults of the optional decision-execution path are omitted so that a world without it keeps its historical identity.
+        if self.decision_effect == 0 and self.decision_execution_delay_days == 0 and self.decision_execution_hours == 0 and self.decision_effect_days == 20:
+            for k in ('decision_effect', 'decision_execution_delay_days', 'decision_execution_hours', 'decision_effect_days'):value.pop(k)
         return value
 
     @classmethod

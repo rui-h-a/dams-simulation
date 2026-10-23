@@ -98,7 +98,7 @@ def verify_organization_accounts(config,state,database):
         return {'splits':edges,'moved_people':sorted({i for row in edges for i in row['moved_people']})}
 
     people_by_token={p['token']:p['id'] for p in state['people']}
-    day=0;events=[];last=None;last_plan=None;remaining={}
+    day=0;events=[];last=None;last_plan=None;remaining={};decision_live=[]
     l=config.longitudinal;clock=GregorianClock(l);learn={};fatigue={};guilds={};memory={str(g):l.initial_memory for g in range(config.guilds)};exit_sizes={};inventory_guilds=config.guilds
     routine={str(g):l.initial_routine_strength for g in range(config.guilds)};aliases={g:g for g in range(config.guilds)};adoptions={str(g):None for g in range(config.guilds)}
     rows=iter_journal_rows(db)
@@ -253,6 +253,11 @@ def verify_organization_accounts(config,state,database):
                 remaining[key]=int((served+1e-12)/c.verification_hours_per_claim)
             metrics['organization_network_hours']+=net;metrics['organization_quality_hours']+=quality;metrics['organization_learning_hours']+=learning
             work=[p for k,e,p in events if k=='work']
+            # Optional decision execution: the productivity multiplier is re-derived from the executed-decision rows only.
+            decision_live=[r for r in decision_live if r[0]>day]+[[v['ends_day'],v['guild'],v['delta']] for k,e,v in events if k=='decision_execution']
+            decision_shift={}
+            for ends,g_,delta in decision_live:
+                if ends>day:decision_shift[g_]=decision_shift.get(g_,0.)+delta
             for person in learn:learn[person]*=2**(-1/l.skill_forgetting_half_life_days)
             for g in v['memory']:memory.setdefault(str(g),0.)
             for g in memory:memory[g]*=2**(-1/l.memory_half_life_days)
@@ -286,7 +291,11 @@ def verify_organization_accounts(config,state,database):
                 demand=1. if config.enterprise_operations is not None else next((amount for when,amount in reversed(l.demand_schedule) if when<=day),1.)
                 _close(o['transition_fraction'],transition,'production adoption/routine transition')
                 _close(o['demand_fraction'],demand,'production actual demand schedule')
-                before=agent['skill']*(1+morning['learning'])*o['planned_effort']*(1-morning['fatigue'])*noise*shock*o['demand_fraction']*o['transition_fraction']/difficulty*(1+config.cooperation_strength*help_input)*readiness
+                decision_factor=1.
+                if config.decision_effect>0:
+                    decision_factor=max(.5,min(1.5,1+decision_shift.get(guilds[i],0.)))
+                    _close(p['decision_productivity_multiplier'],decision_factor,'decision execution productivity multiplier')
+                before=agent['skill']*(1+morning['learning'])*o['planned_effort']*(1-morning['fatigue'])*noise*shock*o['demand_fraction']*o['transition_fraction']/difficulty*(1+config.cooperation_strength*help_input)*readiness*decision_factor
                 _close(o['potential_before_dependencies'],before,'production equation before dependencies')
                 potential[key]+=before;by_department[key]+=p['produced_research_only']
                 sd=config.review_error_sd/(1+c.quality_measurement_efficiency*o['quality_hours'])

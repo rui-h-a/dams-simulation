@@ -44,6 +44,9 @@ def age_at(birth: str, current: date) -> float:
 
 class LongitudinalEngine:
     version = 'longitudinal-1'
+    # Research bound only: True/False forces every executed decision to be right/wrong (clairvoyant/inverted vote).
+    # Never set in a study; it affects the execution path (decision_effect > 0) and not the regret score.
+    decision_force_correct = None
     def __init__(self, config, *, storage_dir=None, page_options=None, native_owner_dir=None,known_latest_floor=None,journal_chunk_bytes=None):
         from .model import Agent
         if source_hash()!=IMPORTED_SOURCE_SHA256:raise ValueError('longitudinal source changed after import; restart from a frozen source')
@@ -74,6 +77,7 @@ class LongitudinalEngine:
         self.closed_day=None; self.suspended_day=None; self.unfunded_workdays=0
         self.metrics=defaultdict(float); self.history=[]; self.authority_change_sum=0.; self.authority_change_count=0
         self.branch_origin=None
+        self.decision_pending=[]; self.decision_effects=[]
         self.last_work_per_present_member=0.
         for i in range(config.n):
             if i%1000==0:self.check_disk()
@@ -599,6 +603,7 @@ class LongitudinalEngine:
             self.ledger.add_journal(day,'organization_plan',f'organization:plan:{day}',plan)
         governance_time={i:.05 if (1-self.agents[i].care_hours-variable_reservations[i])*funding>=.05 else 0. for i in present}
         losses=[];participation=[];influence=[]
+        decision_actions=[];decision_multiplier={};decision_execution={}
         if creating and working and operating and self.closed_day is None:
             for g,ids in sorted(self.members.items()):
                 theta=self.rng.normal('proposal_value',day,g)
@@ -619,11 +624,34 @@ class LongitudinalEngine:
                 if mass:
                     accepted=math.fsum(w*v for w,v in zip(effective,votes))/mass>=.5
                     loss=abs(theta) if accepted!=(theta>=0) else 0.
+                    if p.decision_effect>0:decision_actions.append((g,accepted==(theta>=0) if self.decision_force_correct is None else self.decision_force_correct,abs(theta)))
                     influence.append(total_variation([snapshot[i][0] for i in ids],[v/mass for v in effective]))
                     self.metrics['decisions_completed']+=1;self.metrics['decision_errors']+=int(loss>0)
                 else:loss=abs(theta);self.metrics['decisions_unresolved']+=1
                 losses.append(loss);participation.append(sum(flags)/len(ids) if ids else 0.)
                 self.ledger.add_journal(day,'decision',f'decision:{day}:{g}',{'guild':g,'proposal_truth_research_only':theta,'loss':loss,'participation':sum(flags),'effective_mass':mass})
+        if p.decision_effect>0:
+            # Optional execution of resolved guild decisions: the adopted/rejected action is carried out after a declared delay,
+            # charges execution hours once to the guild's present members, and shifts the guild's productivity for a declared period.
+            # Unresolved decisions keep the status quo. The same mapping applies in every arm; no randomness is used.
+            if creating and working and operating and self.closed_day is None:
+                for g,right,size in decision_actions:
+                    self.decision_pending.append([day+p.decision_execution_delay_days,g,(p.decision_effect*size if right else -p.decision_effect*size)])
+                due=[r for r in self.decision_pending if r[0]<=day];self.decision_pending=[r for r in self.decision_pending if r[0]>day]
+                for _,g,delta in due:
+                    self.decision_effects.append([day+p.decision_effect_days,g,delta])
+                    present_members=[i for i in self.members.get(g,[]) if i in present]
+                    if p.decision_execution_hours>0 and present_members:
+                        share=p.decision_execution_hours/len(present_members)
+                        for i in present_members:
+                            room=max(0.,(1-self.agents[i].care_hours)*funding-variable_reservations[i]*funding-governance_time[i]-decision_execution.get(i,0.))
+                            decision_execution[i]=decision_execution.get(i,0.)+min(share,room)
+                    self.metrics['decisions_executed']+=1
+                    self.ledger.add_journal(day,'decision_execution',f'decision:execute:{day}:{g}:{len(self.decision_effects)}',{'guild':g,'delta':delta,'ends_day':day+p.decision_effect_days})
+            self.decision_effects=[r for r in self.decision_effects if r[0]>day]
+            for _,g,delta in self.decision_effects:decision_multiplier[g]=decision_multiplier.get(g,0.)+delta
+            decision_multiplier={g:min(1.5,max(.5,1+v)) for g,v in decision_multiplier.items()}
+            self.metrics['decision_execution_hours']+=math.fsum(decision_execution.values())
         attack_active=creating and p.attack!='none' and p.attack_budget_hours_per_day>0 and p.attack_start_day<=day<p.attack_stop_day and bool(present)
         # A fixed slot cohort remains policy-common despite nonreused person IDs.
         attack_slots=math.ceil(p.n*p.attack_cohort_fraction)
@@ -633,7 +661,7 @@ class LongitudinalEngine:
         efforts={};time_limits={}
         for i in sorted(present):
             a=self.agents[i];share,trust,fatigue,_=snapshot[i]
-            reserved=variable_reservations[i]*funding+governance_time[i]
+            reserved=variable_reservations[i]*funding+governance_time[i]+decision_execution.get(i,0.)
             limit=max(0.,(1-a.care_hours)*funding-reserved)
             attack=attack_time if i in attacker_set else 0.
             if attack>limit+1e-12:raise ValueError('longitudinal attack budget infeasible for present actor capacity')
@@ -665,7 +693,7 @@ class LongitudinalEngine:
                 a=self.agents[i];token=self.people[i]['token']
                 shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
                 adopt=self.adoption[a.guild];transition=1. if adopt is None else 1-.2*self.routine[a.guild]*(1-clip((day-adopt)/l.transition_days))
-                organization_potential[i]=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*(self.demand if self.operations is None else 1.)*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*organization_help[i])*organization_readiness[i]
+                organization_potential[i]=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*(self.demand if self.operations is None else 1.)*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*organization_help[i])*organization_readiness[i]*decision_multiplier.get(a.guild,1.)
             organization_unconstrained=dict(organization_potential)
             organization_potential=self.organization.task_allocation(organization_potential)
         production_fraction=1.
@@ -677,7 +705,7 @@ class LongitudinalEngine:
                 help_input=(team_help[a.team]+cooperation.get(cross,0.)*(self.pc.help_language_factor(i,cross) if self.pc is not None else 1.))/2
                 shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
                 adopt=self.adoption[a.guild];transition=1. if adopt is None else 1-.2*self.routine[a.guild]*(1-clip((day-adopt)/l.transition_days))
-                potential=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input)
+                potential=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input)*decision_multiplier.get(a.guild,1.)
                 if self.organization is not None:potential=organization_potential[i]
                 potential_by_person[i]=potential;potential_by_site[a.site]+=potential
             allocated=self.operations.allocate_production(dict(potential_by_site),self.enterprise.capacity,self.cash,self.site_count)
@@ -710,7 +738,7 @@ class LongitudinalEngine:
                 transition=1-.2*self.routine[a.guild]*(1-progress)
             difficulty=.5+self.rng.uniform('task_difficulty',day,token)
             quality=math.exp(.1*self.rng.normal('task_output',day,token))
-            produced=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*quality*shock*(self.demand if self.operations is None else 1.)*transition/difficulty*(1+p.cooperation_strength*help_input)
+            produced=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*quality*shock*(self.demand if self.operations is None else 1.)*transition/difficulty*(1+p.cooperation_strength*help_input)*decision_multiplier.get(a.guild,1.)
             if self.organization is not None:
                 help_input=organization_help[i]
                 produced=organization_potential[i]
@@ -731,7 +759,7 @@ class LongitudinalEngine:
             else:self.ledger.push('review',a.guild,claim)
             if attack_active and p.attack=='duplicate' and i in attacker_set:self.ledger.push('review',a.guild,dataclasses.replace(claim))
             self.metrics['work_events']+=1
-            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attacker_set else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
+            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attacker_set else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'decision_productivity_multiplier':decision_multiplier.get(a.guild,1.)} if p.decision_effect>0 else {}),**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
             workload=efforts[i]+coordination[i]*funding+(attack_time if i in attacker_set else 0.)+training[i]*funding
             if self.organization is not None:workload+=(fixed[i]+organization_quality[i]+organization_learning[i])*funding
             a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03+(self.pc.fatigue_extra(i) if self.pc is not None else 0.))
@@ -845,6 +873,7 @@ class LongitudinalEngine:
         if self.acquisitions is not None:value['enterprise_acquisition_state']=self.acquisitions.to_dict()
         if self.organization is not None:value['organization_tasks_state']=self.organization.to_dict()
         if self.pc is not None:value['person_context_state']=self.pc.to_dict()
+        if self.config.decision_effect>0:value['decision_execution_state']={'pending':copy.deepcopy(self.decision_pending),'effects':copy.deepcopy(self.decision_effects)}
         if self.joint_control is not None:value['joint_control']=copy.deepcopy(self.joint_control)
         if self._state_hash_codec!=LEGACY_STATE_HASH_CODEC:value['state_hash_codec']=self._state_hash_codec
         return value
@@ -968,6 +997,12 @@ class LongitudinalEngine:
         for name in ('day','people','target','demand','cash','closed_day','suspended_day','unfunded_workdays','history','authority_change_sum','authority_change_count','last_work_per_present_member','branch_origin','execution_source_sha256'):setattr(obj,name,copy.deepcopy(value[name]))
         for name in ('slots','slot_guild','guild_alias','memory','routine','adoption','migration_paid'):setattr(obj,name,typed[name])
         obj.metrics=defaultdict(float,value['metrics'])
+        obj.decision_pending=[];obj.decision_effects=[]
+        if obj.config.decision_effect>0:
+            des=value.get('decision_execution_state')
+            if des is None:raise ValueError('decision execution state missing')
+            obj.decision_pending=[list(r) for r in des['pending']];obj.decision_effects=[list(r) for r in des['effects']]
+        elif 'decision_execution_state' in value:raise ValueError('unexpected decision execution state')
         if not 0<=obj.day<=obj.config.days or len(obj.agents)!=len(obj.people) or len(obj.agents)>(obj.l.max_people_ever or obj.config.n*5):raise ValueError('longitudinal day/population outside bounds')
         if [a.id for a in obj.agents]!=list(range(len(obj.agents))) or [r['id'] for r in obj.people]!=list(range(len(obj.people))):raise ValueError('person identity roster differs')
         if len(set(r['token'] for r in obj.people))!=len(obj.people) or len(set(obj.slots.values()))!=len(obj.slots):raise ValueError('person/exogenous identities reused')
