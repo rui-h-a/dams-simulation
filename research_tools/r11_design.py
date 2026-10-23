@@ -333,6 +333,10 @@ VARIANTS = {
     # Absence in spells whose onset and length depend on age (R11.4 mechanism).
     'sickness-spells': {'person_context.sick_spells': 'aok2017'},
 }
+# Amendment 9: executed governance decisions change later productivity. The null (effect 0) is the default path, not a variant.
+for _effect in (0.05, 0.1, 0.2):
+    VARIANTS[f'decision-effect-{_effect:g}'] = {'decision_effect': _effect, 'decision_execution_delay_days': 5,
+                                                'decision_execution_hours': 0.01, 'decision_effect_days': 20}
 
 # Spell lengths: share of sickness cases by calendar-day length band, German statutory
 # insurer AOK, 2017 (WIdO Fehlzeiten-Report 2018, Abb. 29.1.5); the open band above 42 days
