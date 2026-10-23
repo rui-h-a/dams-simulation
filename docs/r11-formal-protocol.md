@@ -314,3 +314,17 @@ Recorded before any confirmation world of either study was run or any of their s
 ## Correction note (2026-10-23)
 
 The 'Growth modes' row lists 'none, acquisition, organic+acquisition'. Acquisition without organic growth was never runnable: `research_tools/r11_design.py` refuses it because the installed-inventory contract sizes guilds and sites from the maximum capacity, and a small acquired firm cannot be installed without organic headroom (Amendment 7c and README already state this). The executable growth-mode comparison is none, organic (reference) and organic+acquisition. The row is kept as written for the record; this note states the executable set.
+
+## Amendment 9 (2026-10-23): decision-execution sensitivity
+
+Recorded before any world of this study was run. This is an exploratory sensitivity study, not a confirmatory one.
+
+**Purpose.** To see whether governance decisions that change later productivity alter the contrast between the DAMS arm (dams-witness) and the hierarchy arm (control-hierarchy). In all earlier amendments a resolved decision affected only the regret score and nothing in the work process.
+
+**Mechanism as implemented** (`dams_sim/config.py` lines 55-58; decision block of `dams_sim/longitudinal_model.py`, lines 627-654). The path is default off (`decision_effect = 0` reproduces the historical identity of every world). When `decision_effect > 0`, each resolved guild decision with true value theta is carried out, in every arm by the same mapping and without randomness: after `decision_execution_delay_days` it creates a productivity effect of `+decision_effect * |theta|` if the adopted action was right (accepted equals theta >= 0) and `-decision_effect * |theta|` if it was wrong, lasting `decision_effect_days` days. Unresolved decisions keep the status quo and create no effect. Executing a decision costs `decision_execution_hours` member-hours, shared among the present members and limited by their free time. A guild's live effects stack additively, and the guild's productivity multiplier is `min(1.5, max(0.5, 1 + sum of live effects))`, i.e. clipped to [0.5, 1.5]. The multiplier enters each member's work output. Regret scoring is unchanged.
+
+**Design.** Startup context, 300 members, founding adoption (pre-years 0, post-years 1), growth organic, worlds 2000-2009 (10 worlds), arms control-hierarchy and dams-witness. Four conditions: effect size 0 (null: the default path, no variant), and variants decision-effect-0.05, decision-effect-0.1, decision-effect-0.2, each setting `decision_effect` to that value together with `decision_execution_delay_days = 5`, `decision_execution_hours = 0.01` and `decision_effect_days = 20`. The same ten worlds are used in every condition.
+
+**Outcomes.** The Amendment 8 endpoints (E1 net operating result per member-year, E2 decision regret per available member-hour, E3 governance member-hours per member-year, E4 witness resource units per member-year) plus output per available member-hour (`output_per_available_member_hour`) and decision regret. Paired differences dams-witness minus control-hierarchy by world, paired Student-t 95 % intervals, no multiplicity adjustment (exploratory). All effect sizes are reported; none is selected. The change of each contrast relative to the null condition is reported descriptively, with no test of the change against a threshold.
+
+**Limits stated in advance.** Ten worlds, one context, one year after adoption; the effect sizes are assumed values, not estimates; no claim of equivalence or of mechanism validity is made.
