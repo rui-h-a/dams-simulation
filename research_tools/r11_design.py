@@ -348,6 +348,9 @@ VARIANTS['scale-caps-wide'] = {'scale.caps': (20, 60)}  # active/ever-people cap
 VARIANTS['scale-no-work-stop'] = {'scale.work_stop_days': 0}  # no stop of new work 60 days before the end
 # Review and appeal capacity of a fixed total (calibrated at 100 initial members) instead of per member.
 VARIANTS['scale-fixed-review'] = {'scale.fixed_review_reference_n': 100}
+# Every present member files about one claim per workday while review slots are 0.9/unit per member-day,
+# so the default review queue is unstable (rho > 1) in every arm; 1.6 gives rho < 1 for all three backends.
+VARIANTS['review-stable'] = {'review_capacity_per_member_day': 1.6}
 
 # Spell lengths: share of sickness cases by calendar-day length band, German statutory
 # insurer AOK, 2017 (WIdO Fehlzeiten-Report 2018, Abb. 29.1.5); the open band above 42 days
