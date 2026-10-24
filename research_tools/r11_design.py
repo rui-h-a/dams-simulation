@@ -334,9 +334,20 @@ VARIANTS = {
     'sickness-spells': {'person_context.sick_spells': 'aok2017'},
 }
 # Amendment 9: executed governance decisions change later productivity. The null (effect 0) is the default path, not a variant.
-for _effect in (0.05, 0.1, 0.2):
+# Amendment 9a: at 0.05-0.2 the summed live effects (20 days of daily decisions) reach the 1.5 clip on
+# 72-98 % of work rows in both arms, so those sizes measure the clip, not decision quality; 0.005/0.01 keep it rare.
+for _effect in (0.005, 0.01, 0.05, 0.1, 0.2):
     VARIANTS[f'decision-effect-{_effect:g}'] = {'decision_effect': _effect, 'decision_execution_delay_days': 5,
                                                 'decision_execution_hours': 0.01, 'decision_effect_days': 20}
+# Scale-limit study (exploratory): each variant relaxes one design rule that is a fixed multiple
+# of the initial population, so that a flat per-member curve over N can be checked for being
+# true or an artefact of per-capita design arithmetic.
+VARIANTS['scale-capacity-1n'] = {'scale.capacity_multiplier': 1}  # organization capacity ceiling n instead of 3n
+VARIANTS['scale-capacity-6n'] = {'scale.capacity_multiplier': 6}
+VARIANTS['scale-caps-wide'] = {'scale.caps': (20, 60)}  # active/ever-people caps 20n/60n instead of 4n/12n
+VARIANTS['scale-no-work-stop'] = {'scale.work_stop_days': 0}  # no stop of new work 60 days before the end
+# Review and appeal capacity of a fixed total (calibrated at 100 initial members) instead of per member.
+VARIANTS['scale-fixed-review'] = {'scale.fixed_review_reference_n': 100}
 
 # Spell lengths: share of sickness cases by calendar-day length band, German statutory
 # insurer AOK, 2017 (WIdO Fehlzeiten-Report 2018, Abb. 29.1.5); the open band above 42 days
@@ -388,6 +399,23 @@ def apply_variant(d, branch, name, context=None):
             if context not in DEMAND_MATCH:
                 raise ValueError('demand-matched variant has no measured factor for this context')
             d['enterprise_operations']['base_orders_per_workday'] *= DEMAND_MATCH[context]
+        elif key == 'scale.capacity_multiplier':
+            n, G, L = d['n'], d['enterprise_growth'], d['longitudinal']
+            if 'enterprise_acquisition' in d or G['maximum_organization_capacity'] != 3*n:
+                raise ValueError('scale capacity variants are defined for organic growth only')
+            ceiling = int(value)*n
+            G.update(maximum_organization_capacity=ceiling, members_per_guild=max(8, math.ceil(ceiling/d['guilds'])),
+                     members_per_site=max(16, ceiling))
+            L.update(max_active_members=max(L['max_active_members'], ceiling), max_people_ever=max(L['max_people_ever'], 3*ceiling))
+        elif key == 'scale.caps':
+            n, L = d['n'], d['longitudinal']
+            L.update(max_active_members=value[0]*n, max_people_ever=value[1]*n)
+        elif key == 'scale.work_stop_days':
+            d['longitudinal']['work_creation_stop_day'] = d['days']-int(value)
+        elif key == 'scale.fixed_review_reference_n':
+            factor = value/d['n']
+            d['review_capacity_per_member_day'] = d.get('review_capacity_per_member_day', .9)*factor
+            d['appeal_capacity_per_member_day'] = d.get('appeal_capacity_per_member_day', .1)*factor
         elif key.startswith('enterprise_acquisition.'):
             d['enterprise_acquisition'][key.split('.', 1)[1]] = value
         elif key.startswith('person_context.'):
