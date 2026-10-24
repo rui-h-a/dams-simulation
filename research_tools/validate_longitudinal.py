@@ -32,6 +32,18 @@ from dams_sim.storage import canonical,digest,file_digest,source_hash,verify_out
 from research_tools import longitudinal_derived as _derived
 
 
+LEAVING_KINDS=frozenset({'exit','retirement','layoff','voluntary_exit'})
+
+
+def occupied_slots(people,members,events):
+    """Slots of members not leaving today. Same set as testing every member against
+    every event (the former form, quadratic in population per day); the leavers are
+    collected once. A leaving event without 'person' now always fails (KeyError); the
+    former form failed only if some member was not matched by an earlier leaving event."""
+    leaving={v['person'] for k,e,v in events if k in LEAVING_KINDS}
+    return {people[i]['slot'] for i in members if i not in leaving}
+
+
 VALIDATOR_IMPORT_SHA256=file_digest(Path(__file__))
 SOURCE_IMPORT_SHA256=source_hash()
 
@@ -349,7 +361,7 @@ class _RawDailyAccounting:
             if change!=current-self.previous_reported.get(key,0.):
                 raise ValueError('raw metric cumulative difference differs: '+key)
         if self.operations is not None:
-            occupied={self.people[i]['slot'] for i in self.members if not any(k in {'exit','retirement','layoff','voluntary_exit'} and v['person']==i for k,e,v in events)}
+            occupied=occupied_slots(self.people,self.members,events)
             if day==0:occupied=set(range(p.n))
             ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
             for k,e,v in events:
