@@ -107,7 +107,17 @@ The 10,000-member main study (protocol Table A and Amendment 10) is
          --jobs 6 --output /path/on/a/large/volume/main-n10000
 ```
 
-followed, after every arm has its receipt, by retiring intermediate checkpoints as Amendment 10 describes. A quick check of the whole path (environment, two arms, validation, inference and figure) takes about three and a half minutes on the reference workstation:
+followed, after every arm has its receipt, by retiring intermediate checkpoints as Amendment 10 describes.
+Under Amendment 12 each world of the main study, the 50,000-member comparison and the 100,000-member scale check runs as its own batch on its own machine, with the same command and one world, for example
+
+```sh
+./run.sh --spec enterprise-r11 --scale 50000 --context multinational --growth organic --pre-years 2 --post-years 5 \
+         --worlds 1003 --arms control-hierarchy,control-process,dams-witness --jobs 3 --output /srv/runs/batch
+./run.sh --spec enterprise-r11 --scale 100000 --context multinational --growth organic --pre-years 2 --post-years 5 \
+         --worlds 1001 --arms control-hierarchy,dams-witness --jobs 2 --output /srv/runs/batch
+```
+
+and the admitted per-world reports are pooled with `research_tools/r11_pool.py`. A world's result does not depend on the machine it runs on. A quick check of the whole path (environment, two arms, validation, inference and figure) takes about three and a half minutes on the reference workstation:
 
 ```sh
 ./run.sh --spec enterprise-r11 --scale 120 --context multinational --growth organic --pre-years 1 --post-years 1 \
