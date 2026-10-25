@@ -116,7 +116,7 @@ followed, after every arm has its receipt, by retiring intermediate checkpoints 
 
 ## Computing resources
 
-Measured complete runs (`docs/r11-resource-measurements.md`): a 10,000-member arm needs about 15 hours for five simulated years and 12 to 14 hours of full validation on one core, about 7.3 GB of retained output and up to about 14 GB of working space; the main study (40 arms) therefore needs about 320 GB retained, 6 to 8 cores for about four to five days, and memory well below 1 GB per process. A 50,000-member arm needs at least 75 hours of simulation.
+Measured complete runs (`docs/r11-resource-measurements.md`): a 10,000-member arm needs about 15 hours for five simulated years and 12 to 14 hours of full validation (both measured with 12 arms sharing 16 vCPU), about 7.3 GB of retained output and up to about 14 GB of working space; the main study (40 arms) therefore needs about 320 GB retained, 6 to 8 cores for about four to five days, and memory well below 1 GB per process. A 50,000-member arm needs at least 75 hours of simulation.
 
 Worlds can run independently in parallel. Admission must measure the complete world and batch, including prehistory, validation, full checkpoints/journals, interrupted attempts, upload, off-GCP transfer and recovery. The historical short probes in `docs/r11-resource-measurements.md` are not a full-retention forecast. Worker count changes wall time and simultaneous disk demand; it does not change the declared population, horizon, world count or model. The candidate has not established a new hardware/cost boundary for complete 10,000- and 50,000-person studies.
 
