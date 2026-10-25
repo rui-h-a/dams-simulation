@@ -193,7 +193,7 @@ class LongitudinalEngine:
         i=len(self.agents); p=self.config; guild=self.guild_alias[guild]
         birth=birth_for_age(self.clock.at(self.day),age).isoformat()
         if p.joint_population is None:
-            a=Agent(i,guild,0,guild%self.site_count if site is None else site,math.exp(.4*self.rng.normal('skill',token)),
+            a=Agent(i,guild,0,guild%self.site_count if site is None else site,math.exp(p.skill_log_sd*self.rng.normal('skill',token)),
                     self.rng.uniform('tenure',token) if initial else 0.,
                     .3*self.rng.uniform('care',token),self.rng.uniform('autonomy',token),self.rng.uniform('reciprocity',token))
         else:
@@ -281,7 +281,7 @@ class LongitudinalEngine:
             elif i in scheduled:self._exit(i,scheduled[i])
             elif age_at(record['birth_date'],self.clock.at(day))>=l.retirement_age_years:self._exit(i,'retirement')
             elif self.rng.uniform('exit',day,record['token'])<interval_probability(l.annual_exit_probability,1,self.clock.days_in_year(day)):self._exit(i,'exit')
-            elif self.pc is not None and day>record['entered_day'] and self.rng.uniform('pc_quit',day,record['token'])<interval_probability(self.pc.annual_quit_probability(i),1,self.clock.days_in_year(day)):self._exit(i,'voluntary_exit')
+            elif self.pc is not None and day>record['entered_day'] and self.rng.uniform('pc_quit',day,record['token'])<interval_probability(self._tenure_quit(self.pc.annual_quit_probability(i),day-record['entered_day']),1,self.clock.days_in_year(day)):self._exit(i,'voluntary_exit')
         self._topology()
         if self.closed_day is not None or self.suspended_day is not None:return
         if self.enterprise is not None:
@@ -419,11 +419,21 @@ class LongitudinalEngine:
                 remaining-=len(batch)
                 for source,claim in batch:self._appeal_one(source,claim,day,settlement)
 
+    def _tenure_quit(self,probability,tenure_days):
+        # Optional tenure-dependent exit (exploratory): multiplies the quit odds by the profile row covering the tenure.
+        rows=self.config.tenure_quit_profile
+        if not rows or probability<=0 or probability>=1:return probability
+        years=tenure_days/365.25;mult=next((m for upper,m in rows if years<upper),rows[-1][1])
+        odds=probability/(1-probability)*mult;return odds/(1+odds)
+
     def _review_one(self,source,claim,day,backend,unit,settlement,*,reviewer=None):
         from .model import clip
         p=self.config
         self.metrics['review_hours']+=.1;self.metrics['verification_resource_units']+=unit-1
         shift=self.pc.evaluation_shift(claim.agent,reviewer) if self.pc is not None else 0.
+        if p.status_evaluation_bias:
+            # Optional status-conditioned review (exploratory): standing is the claimant's formal share relative to an equal guild share.
+            a=self.agents[claim.agent];shift+=p.status_evaluation_bias*max(-1.,min(1.,len(self.members[a.guild])*a.share-1))
         accepted=claim.observed+shift>=.25 and not claim.audit_detected
         if self.pc is not None:self.pc.observe_review(claim.agent,accepted,not claim.fraudulent)
         self.ledger.add_journal(day,'review',claim.event,{'accepted':accepted,'observed':claim.observed,'audit_detected':claim.audit_detected,'backend':backend,**({'verification_reviewer':reviewer,'verification_hours':self.organization.c.verification_hours_per_claim} if self.organization is not None else {})})

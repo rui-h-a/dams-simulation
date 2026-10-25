@@ -56,6 +56,11 @@ class Config:
     decision_execution_delay_days: int = 0
     decision_execution_hours: float = 0.0
     decision_effect_days: int = 20
+    # Optional engine-sensitivity parameters (longitudinal engine only; exploratory). Defaults reproduce the frozen model
+    # and are omitted from the canonical dictionary so that worlds without them keep their historical identity.
+    skill_log_sd: float = 0.4                 # skill = exp(skill_log_sd * z)
+    status_evaluation_bias: float = 0.0       # review shift per unit of (guild size * formal share - 1), clipped to [-1, 1]
+    tenure_quit_profile: tuple = ()           # ((upper tenure in years, quit-odds multiplier), ...), last row open-ended
     trace_every_days: int = 5
     max_wall_seconds: float = 300.0
     max_output_mb: float = 100.0
@@ -113,7 +118,7 @@ class Config:
             raise ValueError("hierarchy_basis must be performance or tenure")
         if self.behavior_rule not in {"linear_response", "satisficing", "reinforcement"}:
             raise ValueError("unknown behavior_rule")
-        bounded = {"alpha": (0.001, 0.999), "decay_per_day": (0, 1), "review_capacity_per_member_day": (0.001, 10), "appeal_capacity_per_member_day": (0, 2), "review_error_sd": (0, 5), "decision_noise_sd": (0, 5), "shared_signal_sd": (0,5), "cooperation_strength": (0, 2), "autonomy_response": (-2, 2), "learning_rate": (0, 1), "decision_effect": (0, 1), "decision_execution_hours": (0, self.n), "attack_budget_hours_per_day": (0, self.n), "max_wall_seconds": (0.1, 86400), "max_output_mb": (0.1, 10_000_000), "max_rss_mb": (1,4_000_000)}
+        bounded = {"alpha": (0.001, 0.999), "decay_per_day": (0, 1), "review_capacity_per_member_day": (0.001, 10), "appeal_capacity_per_member_day": (0, 2), "review_error_sd": (0, 5), "decision_noise_sd": (0, 5), "shared_signal_sd": (0,5), "cooperation_strength": (0, 2), "autonomy_response": (-2, 2), "learning_rate": (0, 1), "decision_effect": (0, 1), "skill_log_sd": (0, 2), "status_evaluation_bias": (-1, 1), "decision_execution_hours": (0, self.n), "attack_budget_hours_per_day": (0, self.n), "max_wall_seconds": (0.1, 86400), "max_output_mb": (0.1, 10_000_000), "max_rss_mb": (1,4_000_000)}
         for name, (low, high) in bounded.items():
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:
@@ -128,6 +133,13 @@ class Config:
             raise ValueError("decision_execution_delay_days and decision_execution_hours require decision_effect > 0")
         if self.attack_start_day > self.attack_stop_day or self.fault_start_day > self.fault_stop_day or self.quorum_unavailable_start_day > self.quorum_unavailable_stop_day:
             raise ValueError("event starts must not exceed stops")
+        if self.tenure_quit_profile:
+            rows = self.tenure_quit_profile
+            if any(len(r) != 2 or not all(isinstance(v, (int, float)) and math.isfinite(v) and v > 0 for v in r) for r in rows) \
+                    or [r[0] for r in rows] != sorted({r[0] for r in rows}) or max(r[1] for r in rows) > 20:
+                raise ValueError("tenure_quit_profile rows must be increasing (years, multiplier) pairs with positive values")
+            if self.longitudinal is None:
+                raise ValueError("tenure_quit_profile requires the longitudinal engine")
         for name in ("backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             values = getattr(self, name)
             if len(values) != 3 or any(isinstance(v, bool) or not isinstance(v, (int,float)) or not math.isfinite(v) for v in values):
@@ -166,6 +178,9 @@ class Config:
         # Defaults of the optional decision-execution path are omitted so that a world without it keeps its historical identity.
         if self.decision_effect == 0 and self.decision_execution_delay_days == 0 and self.decision_execution_hours == 0 and self.decision_effect_days == 20:
             for k in ('decision_effect', 'decision_execution_delay_days', 'decision_execution_hours', 'decision_effect_days'):value.pop(k)
+        for k, default in (('skill_log_sd', 0.4), ('status_evaluation_bias', 0.0), ('tenure_quit_profile', ())):
+            if value[k] == default or (k == 'tenure_quit_profile' and not value[k]):value.pop(k)
+            elif k == 'tenure_quit_profile':value[k] = [list(r) for r in value[k]]
         return value
 
     @classmethod
@@ -186,4 +201,6 @@ class Config:
         for name in ("hierarchy_weights", "backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             if name in value:
                 value[name] = tuple(value[name])
+        if 'tenure_quit_profile' in value:
+            value['tenure_quit_profile'] = tuple(tuple(r) for r in value['tenure_quit_profile'])
         return cls(**value).validate()

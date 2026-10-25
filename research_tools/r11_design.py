@@ -355,6 +355,17 @@ VARIANTS['review-stable'] = {'review_capacity_per_member_day': 1.6}
 # default 0.25 (reversed -0.25 already exists); Kosfeld & Neckermann 2011, Deci, Koestner & Ryan 1999.
 VARIANTS['share-response-0'] = {'autonomy_response': 0.0}
 VARIANTS['share-response-0.5'] = {'autonomy_response': 0.5}
+# Exploratory engine sensitivity (2026-10-25 factor audit items 3, 7, 10). Defaults keep the frozen model.
+# Skill dispersion: output SD 19 % (low-complexity) and 48 % (professional) of the mean, Hunter, Schmidt &
+# Judiesch 1990; a lognormal with these coefficients of variation has log-SD 0.1883 and 0.4553 (default 0.4 gives about 42 %).
+VARIANTS['skill-dispersion-low'] = {'skill_log_sd': 0.1883}
+VARIANTS['skill-dispersion-high'] = {'skill_log_sd': 0.4553}
+# Status-conditioned review: reviewers favour claimants of higher formal standing (direction from Tomkins, Zhang &
+# Heavlin 2017; Simcoe & Waguespack 2011). The size, 0.05 observed-quality units per unit of standing, is assumed
+# and matches the existing evaluation-bias variant.
+VARIANTS['status-bias'] = {'status_evaluation_bias': 0.05}
+# Tenure-dependent exit: quit odds fall with tenure (Farber 1994). The multipliers are assumed, not estimated.
+VARIANTS['tenure-quit-profile'] = {'tenure_quit_profile': [[1, 2.0], [3, 1.0], [100, 0.6]]}
 
 # Spell lengths: share of sickness cases by calendar-day length band, German statutory
 # insurer AOK, 2017 (WIdO Fehlzeiten-Report 2018, Abb. 29.1.5); the open band above 42 days
