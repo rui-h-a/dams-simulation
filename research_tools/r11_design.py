@@ -351,6 +351,10 @@ VARIANTS['scale-fixed-review'] = {'scale.fixed_review_reference_n': 100}
 # Every present member files about one claim per workday while review slots are 0.9/unit per member-day,
 # so the default review queue is unstable (rho > 1) in every arm; 1.6 gives rho < 1 for all three backends.
 VARIANTS['review-stable'] = {'review_capacity_per_member_day': 1.6}
+# Exploratory sensitivity (2026-10-25 factor audit item 6): share-to-effort response grid around the
+# default 0.25 (reversed -0.25 already exists); Kosfeld & Neckermann 2011, Deci, Koestner & Ryan 1999.
+VARIANTS['share-response-0'] = {'autonomy_response': 0.0}
+VARIANTS['share-response-0.5'] = {'autonomy_response': 0.5}
 
 # Spell lengths: share of sickness cases by calendar-day length band, German statutory
 # insurer AOK, 2017 (WIdO Fehlzeiten-Report 2018, Abb. 29.1.5); the open band above 42 days
