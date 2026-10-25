@@ -310,3 +310,56 @@ Recorded before any confirmation world of either study was run or any of their s
 **Degenerate samples, closure and missing pairs.** Paired differences with zero sample variance (relative tolerance 1e-12) have no interval or p-value. They are classified as structural identity (excluded from the family only if listed before data), unexplained identity, or constant nonzero offset. Indicators such as closure are analysed with the paired table, the exact McNemar test, an exact interval for the risk difference and, when no pair is discordant, the exact upper bound 1 - 0.05^(1/n) on the discordance rate. Firms that close remain in the roster; rate outcomes are defined whenever exposure is positive. A world-arm with an undefined denominator is counted by reason and its pair is dropped from the complete-pair estimate, which is labelled conditional. If more than 5 % of assigned worlds are undefined for a primary endpoint, that endpoint supports no confirmatory claim. Extreme-case bounds that replace each missing difference by the observed minimum and maximum are always reported. Operational interruptions are resumed under the same identity; failed validation is reported by count and cause and is not replaced.
 
 **Table A (filled mechanically before freeze):** endpoint, unit, direction, pilot file SHA-256, reference mean of the anchor, Delta_k, s_k, nu_p, rho_k = s_k/Delta_k, R_k (point s, 80 % upper s, K = 4), R*, binding endpoint, W_max, planned n.
+
+## Correction note (2026-10-23)
+
+The 'Growth modes' row lists 'none, acquisition, organic+acquisition'. Acquisition without organic growth was never runnable: `research_tools/r11_design.py` refuses it because the installed-inventory contract sizes guilds and sites from the maximum capacity, and a small acquired firm cannot be installed without organic headroom (Amendment 7c and README already state this). The executable growth-mode comparison is none, organic (reference) and organic+acquisition. The row is kept as written for the record; this note states the executable set.
+
+## 100,000-person admission decision (recorded 2026-10-24 16:10Z, Asia/Tokyo 10-25 01:10)
+
+No 100,000-person world of this design has been run to completion or inspected
+(the 2026-10-21 pilot attempt and the 500,000-member probe stopped during their
+histories; no arm outcome exists). Arithmetic under the rule above:
+
+- Remaining research budget: after the reserve for archiving and cleanup, the
+  remaining cloud budget is smaller than the cost of one further 3-world batch of
+  10,000-person worlds on Spot (about 26 h of a 16-vCPU machine with a 1.1 TB disk
+  per batch after the validator fix a4e1fe3).
+- Committed cost of the 10,000-person confirmation and the 50,000-person comparison
+  on GCP: ten 10,000-person worlds need about four such batches and the
+  50,000-person comparison considerably more, which already exceeds the remainder.
+  If both run on the local workstation their cloud cost is zero, and the remainder
+  is unchanged.
+- Three complete 100,000-person worlds with a 25 % margin: the measured rate after
+  the attack-cohort fix is about 21 s per simulated day at 80,000 members on the
+  workstation, i.e. about 26 s at 100,000; one world (2-year history, two 5-year
+  arms, final validation) needs roughly 40 h of a c4d-highcpu-16 plus a disk of
+  more than 1 TB, i.e. 3 x 1.25 x 40 = 150 machine-hours with such disks, several
+  times the remaining budget.
+
+
+Decision: the 100,000-person study is not admitted. It is reported as not run, with
+this arithmetic, and is not replaced by an extrapolated result.
+
+## Table A: main-study world count from the 10,000-member pilot (recorded 2026-10-25, before any confirmation world)
+
+Pilot: worlds 0-2, multinational / organic, 2 + 5 years, four arms, source 3b4d446 (science manifest equal to a4e1fe3 and to this commit). All 12 arms passed the full raw validators of a4e1fe3 (snapshot, daily evidence, summary, organization accounts) in standalone runs on the pilot machine (receipts `validation/*.json`, input SHA-256 re-checked locally); the plan-bound admission of 3b4d446 was not run because its plan binds the former validator, whose quadratic step kept the arms in validation for more than 22 hours. Pilot worlds are not used for inference.
+
+| Endpoint | Pilot paired differences (worlds 0-2) | Threshold delta_k | Pilot SD | R_k | R_k (80 % upper SD) | R_k (Bonferroni) |
+|---|---|---|---|---|---|---|
+| net_operating_result_per_member_year | -25.61, -25.77, -25.67 | 12.48 | 0.083 | 10 | 10 | 10 |
+| decision_regret_per_available_member_hour | 2.318e-06, 1.502e-06, 1.442e-06 | 8.562e-07 | 4.89e-07 | 10 | 25 | 12 |
+| governance_member_hours_per_member_year | -1.558, -1.587, -1.558 | 4.776 | 0.0167 | 10 | 10 | 10 |
+| witness_resource_units_per_member_year | 18.56, 18.62, 18.63 | 0.1642 | 0.0392 | 10 | 10 | 10 |
+
+R* = max(10, max_k R_k) = 10. The main study runs confirmation worlds 1000-1009, seed 20261017, arms control-hierarchy (reference), control-process, dams-witness and linear-witness, from this commit, on the local workstation (Rui decision 2026-10-25; GCP budget exhausted). Every endpoint's point requirement is at the minimum of 10; the regret endpoint would need 25 worlds at the 80 % upper SD and 12 under Bonferroni, reported as sensitivity values that do not set R* (Amendment 8).
+
+## Amendment 10: execution and retention for the main study on the workstation (recorded 2026-10-25, before any confirmation world)
+
+Science is unchanged (same commit family, design, arms, worlds 1000-1009, seed, endpoints, Amendment 8 inference). Changed are the machine and the retention of intermediate states:
+
+- Machine: the local workstation (Apple M2 Pro, 12 cores) instead of GCP, because the cumulative cloud budget is exhausted. Simulation is deterministic per world identity, so the machine does not change results; any cross-machine difference found by the reproduction check is reported, not hidden.
+- Output location: the external research volume (AGENTS.md: raw outputs, recovery states and evidence live there; the internal disk holds only bounded rebuildable scratch).
+- Retained for every arm: final_state.json, final_state.sqlite (the complete original journal in its chunked lossless form and the terminal state), summary.json, timeseries.csv, arm.json receipt, and the world's prehistory branch checkpoint and receipt; plus plan.json, events.jsonl, inference.json and a full SHA-256 manifest of everything retained.
+- Retired after the arm's receipt exists and its final state has passed verify_snapshot and the full validators: the yearly intermediate checkpoints of that arm and superseded working databases. They are derived states that the deterministic engine regenerates from the retained branch checkpoint and source; their SHA-256 values are kept in the manifest before deletion. Measured sizes at 10,000 members (pilot): about 7 GB per final state and per branch checkpoint against about 6-7 GB per yearly checkpoint, so retaining every yearly checkpoint would need about 1.7 TB, which the research volume cannot hold.
+- Not changed: no output is truncated, no failed or missing world is dropped, and no world is replaced.
