@@ -63,7 +63,7 @@
     "GCS_egress_operations_tax_credits_not_fully_reconciled": true,
     "PD_retained_and_continuing_charge_possible": true,
     "cost_observation_utc": "2026-10-13T16:17:39.216539Z",
-    "known_compute_plus_PD_used_upper_at_retained_prices_USD": 1.6479026110502022,
+    "known_compute_plus_PD_used_upper_at_retained_prices_USD": "[amount withheld: private cost record]",
     "partial_usage_estimate_not_actual_total_bill": true,
     "readonly_independent_cost_receipt_sha256": "3b280824863d109e150e36be56ca4a7ce600b91248cc707cae65664b7fac7544",
     "supplier_total_invoice_reconciled": false

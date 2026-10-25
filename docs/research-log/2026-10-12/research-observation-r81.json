@@ -183,12 +183,12 @@
     "all_current_provider_operations_DONE": true,
     "all_research_paid_resources_project_billing_closed": false,
     "current_research_VM_disk_absence_verified": true,
-    "effective_original_holds_usd": "99.95",
+    "effective_original_holds_usd": "[amount withheld: private cost record]",
     "no_new_paid_create_admitted": true,
     "original_deadlines_unchanged": true,
-    "paid_failure_uncertain_upper_usd": "0.41",
+    "paid_failure_uncertain_upper_usd": "[amount withheld: private cost record]",
     "unused_child_is_refund_or_released_hold": false,
-    "unused_nonadditive_archive_child_usd": "1.10"
+    "unused_nonadditive_archive_child_usd": "[amount withheld: private cost record]"
   },
   "paper": {
     "main_pdf_pages": 86,

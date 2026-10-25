@@ -104,14 +104,14 @@
       "IPv4_52hours_and_control_allowance": "0.460"
     },
     "margin_multiplier": "1.2",
-    "full_upper_USD": "30.45322856911507080718813333",
-    "master_unallocated_upper_USD": "31.20",
+    "full_upper_USD": "[amount withheld: private cost record]",
+    "master_unallocated_upper_USD": "[amount withheld: private cost record]",
     "arithmetic_fits_current_upper_allocation": true,
     "actual_supplier_spend_or_invoice_not_claimed": true,
     "provider_VM_mutations": 0,
     "Model_SQL_calls": 0,
     "rate_basis": {
-      "N2_2CPU16GiB": "Half retained within24h Iowa N2-4 0.262028 USD/hour rate; same linear CPU/RAM family. This is a derived quoted rate, not billed usage.",
+      "N2_2CPU16GiB": "Half retained within24h Iowa N2-4 [amount withheld: private cost record] rate; same linear CPU/RAM family. This is a derived quoted rate, not billed usage.",
       "pd_standard": "current official disks-image-pricing Iowa .000054795 GiBh",
       "egress": "current official GCS Asia excludingChina .12 GiB",
       "GCS": "retained conservative .0000356161 GiBh; greater than current official Iowa .000027397",

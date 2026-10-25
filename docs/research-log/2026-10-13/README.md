@@ -12,7 +12,7 @@ Same core package17cb744e completed a genuine local48-day two-arm interruption/r
 
 The parallel integrated micro engineering model completed1947 days in both arms with independent raw, accounting and restore checks. It began with4 people per firm,16 across firms and arms, and remains engineering evidence. Formal10000/50000 execution and actual scale measurements have not started; calibration and out-of-sample validation remain incomplete. Existing annual headcount data do not identify claim confirmation delays or paid reviewer-time costs. Local capacity is a local condition, not evidence that all permitted cloud measurements are impossible.
 
-An unchanged offline liability routine rechecked all358 provider command records. Known compute/provisioning/failed-start-margin plus retained-disk usage at frozen prices has a partial upper estimate US$1.647903 as of16:17:39Z; it is not the total invoice. GCS, egress, operations, tax and credits remain unreconciled, and the retained disk can continue charging. Pure Model CPU is not isolated from historical worker elapsed time. The next required scientific delivery remains complete original world52021 paired raw verification and restore; the current preservation bottleneck must be resolved in the same deployed path before another paid launch. Earlier sections below are dated historical snapshots.
+An unchanged offline liability routine rechecked all358 provider command records. Known compute/provisioning/failed-start-margin plus retained-disk usage at frozen prices has a partial upper estimate [amount withheld: private cost record] as of16:17:39Z; it is not the total invoice. GCS, egress, operations, tax and credits remain unreconciled, and the retained disk can continue charging. Pure Model CPU is not isolated from historical worker elapsed time. The next required scientific delivery remains complete original world52021 paired raw verification and restore; the current preservation bottleneck must be resolved in the same deployed path before another paid launch. Earlier sections below are dated historical snapshots.
 
 ## Latest actual result — 2026-10-13T13:54:51.546913+00:00
 
@@ -24,7 +24,7 @@ The same four operation sources have now been repaired to measure a genuinely co
 
 Parallel integration completed the existing micro engineering pair through1947 days in both arms, with independent complete raw, restore, state and accounting verification PASS. Original scenario:4 initial people per firm/16 across both arms and firms. The previous713.225726s same-process attempt failed at the unchanged512MiB limit; completed hierarchy and DAMS day1857 were preserved. A fresh DAMS-only process advanced the last90 days and completed native restore/accounting in399.504464s; sampled407.203125MiB peak,25 files/7 directories stable, no raised limit/new world. Independent receipt SHA c0ec9cccd71fc1126c691841f20a42242d9ab64f6a47b5d077dee998f14b3551. This is engineering evidence; formal large-scale research, calibration and out-of-sample validation remain incomplete.
 
-Known compute-plus-disk partial usage upper estimate US$1.470374 as of13:13:44Z is not the total invoice; retained storage may keep charging and GCS/egress/operations/tax/credits remain unreconciled. Pure Model CPU is not isolated. All failed records, charges, original sources, counters and deadlines remain preserved. The first scientific delivery remains complete original world52021 paired raw verification/restore/external custody; large-model scientific integration proceeds in parallel. Earlier sections are dated historical snapshots.
+Known compute-plus-disk partial usage upper estimate [amount withheld: private cost record] as of13:13:44Z is not the total invoice; retained storage may keep charging and GCS/egress/operations/tax/credits remain unreconciled. Pure Model CPU is not isolated. All failed records, charges, original sources, counters and deadlines remain preserved. The first scientific delivery remains complete original world52021 paired raw verification/restore/external custody; large-model scientific integration proceeds in parallel. Earlier sections are dated historical snapshots.
 
 ## Latest actual result — 2026-10-13T12:06:29.033722+00:00
 
@@ -38,7 +38,7 @@ The single repair keeps complete small stdout/stderr/error within the original 1
 
 Parallel model integration completed the retained post-adoption 100-day engineering pair: reuse completed hierarchy, restore DAMS from day 41 to 100, verify both allocation seams and 90+10 restore. Independent readback verified old 59 plus new 49 complete files and four firms' full SQLite journals. All four chose B on day 42 and applied funded allocation on day 43; this establishes branch execution, not a choice difference, DAMS superiority, fairness, calibration/OOS or a formal large-scale sample. The full scientific calendar for this source remains unfinished.
 
-The same six-source local operation package completed both 48-day arms, same-case interruption/resume, collection and complete 1,742-file, 751-directory capture/wire/restore in 241.860 s. Pure Model CPU time has not been isolated. As of the dated provider cutoff, known compute-plus-disk usage has a partial upper estimate of US$1.411054 at retained rates. This is not the total invoice; storage remains retained and GCS/egress/operations/tax/credits are not fully reconciled. All failed charges, data, original sources and deadlines remain preserved.
+The same six-source local operation package completed both 48-day arms, same-case interruption/resume, collection and complete 1,742-file, 751-directory capture/wire/restore in 241.860 s. Pure Model CPU time has not been isolated. As of the dated provider cutoff, known compute-plus-disk usage has a partial upper estimate of [amount withheld: private cost record] at retained rates. This is not the total invoice; storage remains retained and GCS/egress/operations/tax/credits are not fully reconciled. All failed charges, data, original sources and deadlines remain preserved.
 
 The next scientific delivery remains the complete original world 52021 pair with full raw validation, restoration and off-GCP preservation. Model integration proceeds in parallel; completion of all N300 cases is not a prerequisite for large-model work.
 
@@ -50,7 +50,7 @@ Earlier sections below are dated historical snapshots.
 
 本機同操作包flow6完整48日兩臂／CP恢復／真Collector／全raw封存傳輸恢復PASS，不代表GCP全流程PASS。平行新版模型兩制度100日原始帳目與完整恢復資料獨立核對PASS，但外監控FAILED及導入前仲裁覆蓋限制保留；formal／calibration／OOS沒有增加。
 
-N30025/70（確認21/66）、完整cloud0、一萬／五萬正式0，PDF86頁INTERIM。部分compute＋PD用量估算US$1.337665不是完整實付帳單。接續只修同包整件request／custody准入，先重現與完整預驗收，再做原CP1080有限同案例續行；不以文件、測試或開機數代替正式成果。
+N30025/70（確認21/66）、完整cloud0、一萬／五萬正式0，PDF86頁INTERIM。部分compute＋PD用量估算[amount withheld: private cost record]不是完整實付帳單。接續只修同包整件request／custody准入，先重現與完整預驗收，再做原CP1080有限同案例續行；不以文件、測試或開機數代替正式成果。
 
 [完整當前報告](operations-convergence.md) · [精確結構化紀錄](operations-convergence-current.json) · [可執行離線阻斷反例](reproduce-deployment-metadata-bound.py)
 
@@ -64,7 +64,7 @@ N30025/70（確認21/66）、完整cloud0、一萬／五萬正式0，PDF86頁INT
 
 同一操作套件lease窄修復後，最新凍結b6ab30d8的flow5仍在父程序退出後群組存活判定拒絕；兩制度48日與CP3恢復通過，Collector及全raw封存未開始，整套E2E FAILED（d1db6028）。唯一優先修復是有限、具名owned程序群組觀察與自然回收驗收；清理成功不能改判PASS。原VM最後provider截點06:23:15Z為TERMINATED／550GB PD READY／pending0，23 start／19 readiness不是成果。
 
-N300仍25/70（確認21/66），一萬／五萬正式仍0；同一c9大型整合微型90+10日与原始治理帳目通過，但校準/OOS及正式凍結未完。最新資源水位83.1GiB低於完整量測所需120／240GiB。費用部分compute+PD估算US$1.232939，完整實付帳單未知；原失敗、截止與預扣紀錄保留。以下段落均為歷史截點。
+N300仍25/70（確認21/66），一萬／五萬正式仍0；同一c9大型整合微型90+10日与原始治理帳目通過，但校準/OOS及正式凍結未完。最新資源水位83.1GiB低於完整量測所需120／240GiB。費用部分compute+PD估算[amount withheld: private cost record]，完整實付帳單未知；原失敗、截止與預扣紀錄保留。以下段落均為歷史截點。
 
 [完整當前報告](operations-convergence.md) · [結構化當前計數](operations-convergence-current.json)
 

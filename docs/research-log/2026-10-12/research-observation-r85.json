@@ -74,10 +74,10 @@
     "supplier_invoice_reconciled": false
   },
   "budget": {
-    "cumulative_authorization_USD": "100",
-    "retained_envelopes_and_holds_USD_upper": "68.80",
-    "unallocated_USD_upper": "31.20",
-    "cleanup_and_uncertainty_reserve_USD": "20",
+    "cumulative_authorization_USD": "[amount withheld: private cost record]",
+    "retained_envelopes_and_holds_USD_upper": "[amount withheld: private cost record]",
+    "unallocated_USD_upper": "[amount withheld: private cost record]",
+    "cleanup_and_uncertainty_reserve_USD": "[amount withheld: private cost record]",
     "holds_are_not_invoice_totals_or_cash_balance": true,
     "no_new_paid_compute_grant_or_resource_create_this_stage": true
   },

@@ -264,9 +264,9 @@
   },
   "budget": {
     "Master_sha256": "e3e4ebcbbff2d9f52c4b1a128f086d151f65a213681fb9f40959e095bb46ef02",
-    "cumulative_cap_USD": "100",
-    "effective_total_holds_upper_USD": "90.05",
-    "unallocated_upper_USD": "9.95",
+    "cumulative_cap_USD": "[amount withheld: private cost record]",
+    "effective_total_holds_upper_USD": "[amount withheld: private cost record]",
+    "unallocated_upper_USD": "[amount withheld: private cost record]",
     "supplier_invoice_reconciled": false,
     "unallocated_upper_is_not_refund_or_new_job_admission": true
   },

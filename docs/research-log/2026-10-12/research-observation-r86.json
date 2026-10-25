@@ -109,10 +109,10 @@
     "new_Root_selected_handoff_budget_capacity_authority_not_issued": true
   },
   "budget": {
-    "cumulative_cap_USD": "100",
-    "retained_holds_upper_USD": "68.80",
-    "unallocated_upper_USD": "31.20",
-    "cleanup_and_uncertainty_USD": "20",
+    "cumulative_cap_USD": "[amount withheld: private cost record]",
+    "retained_holds_upper_USD": "[amount withheld: private cost record]",
+    "unallocated_upper_USD": "[amount withheld: private cost record]",
+    "cleanup_and_uncertainty_USD": "[amount withheld: private cost record]",
     "holds_not_invoice_or_cash_balance": true,
     "supplier_invoice_reconciled": false,
     "original_global_deadline_UTC": "2026-10-15T08:54:46.960873Z"

@@ -2529,7 +2529,7 @@
     "backup_complete": false,
     "cached_auth_refresh_interval_seconds": 2700,
     "durable_meter_closed_attempts": 1315,
-    "durable_meter_held_cost_usd_upper": "0.29161908678626537322998046875000",
+    "durable_meter_held_cost_usd_upper": "[amount withheld: private cost record]",
     "durable_meter_pending_attempts": 0,
     "ended_utc": "2026-10-10T10:55:14.513118+00:00",
     "execution_status": "ACTUAL_FAILED_EXIT1_REAPED_29_OF140_REMOTE_CASES_PRESERVED",

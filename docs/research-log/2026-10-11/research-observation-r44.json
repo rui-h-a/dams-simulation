@@ -1288,7 +1288,7 @@
     "all_primary_CAS_sink_decoded": true,
     "final_all140_physical_raw_rehashed": false,
     "scientific_samples_added": 0,
-    "meter_cost_upper_usd": "0.75527215599143028259277343750000",
+    "meter_cost_upper_usd": "[amount withheld: private cost record]",
     "meter_cost_is_not_provider_invoice": true,
     "whole_backup_raw_retirement_completed_cases": 1,
     "remaining_original_cases_not_claimed_retired": 139
@@ -1424,7 +1424,7 @@
     "Compute_Engine_subtotal": "32.461316",
     "Networking_subtotal": "0.000000",
     "final_invoice_or_complete_USD_reconciliation": false,
-    "budget_cap_USD": 100,
+    "budget_cap_USD": "[amount withheld: private cost record]",
     "reserved_9955_is_not_actual_spend": true,
     "GCS_backup_remains_active": true,
     "all_paid_services_closed": false,
@@ -1434,12 +1434,12 @@
       "disks": 0,
       "not_all_paid_service_closure": true
     },
-    "provider_lifecycle_meter_cost_upper_usd": "0.77247599929910421371459960937500",
+    "provider_lifecycle_meter_cost_upper_usd": "[amount withheld: private cost record]",
     "new_parent_suballocation_is_not_yet_issued": false,
-    "new_storage_suballocation_issued_usd": "5.50",
-    "suballocation_is_within_unchanged_existing_parent_usd": "34.00",
-    "existing_parent_allocation_remaining_usd": "28.50",
-    "prior_total_envelopes_and_holds_usd": "99.55",
+    "new_storage_suballocation_issued_usd": "[amount withheld: private cost record]",
+    "suballocation_is_within_unchanged_existing_parent_usd": "[amount withheld: private cost record]",
+    "existing_parent_allocation_remaining_usd": "[amount withheld: private cost record]",
+    "prior_total_envelopes_and_holds_usd": "[amount withheld: private cost record]",
     "suballocation_not_added_on_top_of_total": true,
     "new_segment_requests": 592,
     "new_segment_meter_upper_is_not_provider_invoice": true,
@@ -1462,7 +1462,7 @@
       "field": "GCP.new_parent_suballocation_is_not_yet_issued",
       "published_value": true,
       "correct_value": false,
-      "reason": "R42 inherited an obsolete R41 flag despite its actual US$5.50 funding receipt. Original R42 bytes and history remain unchanged; no budget, payment or scientific count is changed by this erratum."
+      "reason": "R42 inherited an obsolete R41 flag despite its actual [amount withheld: private cost record] funding receipt. Original R42 bytes and history remain unchanged; no budget, payment or scientific count is changed by this erratum."
     },
     {
       "record": "docs/research-log/2026-10-11/research-observation-r43.json",

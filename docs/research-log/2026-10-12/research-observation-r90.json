@@ -1,14 +1,14 @@
 {
   "budget": {
     "actual_provider_invoice_reconciliation_pending": true,
-    "cleanup_and_uncertainty_in_total_USD": "20",
-    "cumulative_authorization_USD": "100",
-    "current_parent_upper_USD": "29.00",
+    "cleanup_and_uncertainty_in_total_USD": "[amount withheld: private cost record]",
+    "cumulative_authorization_USD": "[amount withheld: private cost record]",
+    "current_parent_upper_USD": "[amount withheld: private cost record]",
     "holds_are_not_actual_billed_spend": true,
     "no_optimistic_refund": true,
-    "nonadditive_archive_child_in_parent_USD": "3.00",
-    "total_envelopes_and_holds_upper_USD": "98.84",
-    "unallocated_upper_USD": "1.16"
+    "nonadditive_archive_child_in_parent_USD": "[amount withheld: private cost record]",
+    "total_envelopes_and_holds_upper_USD": "[amount withheld: private cost record]",
+    "unallocated_upper_USD": "[amount withheld: private cost record]"
   },
   "gcp": {
     "RAM_GiB": 16,

@@ -108,8 +108,8 @@
     "source_package_files": 130,
     "source_package_tar_bytes": 3399680,
     "original_parent_raw_gate_pass": true,
-    "current_cost_arithmetic_upper_USD": "30.45322856911507080718813333",
-    "current_unallocated_upper_USD": "31.20",
+    "current_cost_arithmetic_upper_USD": "[amount withheld: private cost record]",
+    "current_unallocated_upper_USD": "[amount withheld: private cost record]",
     "supplier_invoice_reconciled": false,
     "arithmetic_is_not_paid_or_native_capacity_admission": true,
     "global_deadline_unchanged": "2026-10-15T08:54:46.960873Z"

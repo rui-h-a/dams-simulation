@@ -1102,7 +1102,7 @@
     "all_primary_CAS_sink_decoded": true,
     "final_all140_physical_raw_rehashed": false,
     "scientific_samples_added": 0,
-    "meter_cost_upper_usd": "0.75527215599143028259277343750000",
+    "meter_cost_upper_usd": "[amount withheld: private cost record]",
     "meter_cost_is_not_provider_invoice": true,
     "whole_backup_raw_retirement_completed_cases": 1,
     "remaining_original_cases_not_claimed_retired": 139
@@ -1174,7 +1174,7 @@
     "Compute_Engine_subtotal": "32.461316",
     "Networking_subtotal": "0.000000",
     "final_invoice_or_complete_USD_reconciliation": false,
-    "budget_cap_USD": 100,
+    "budget_cap_USD": "[amount withheld: private cost record]",
     "reserved_9955_is_not_actual_spend": true,
     "GCS_backup_remains_active": true,
     "all_paid_services_closed": false,
@@ -1184,7 +1184,7 @@
       "disks": 0,
       "not_all_paid_service_closure": true
     },
-    "provider_lifecycle_meter_cost_upper_usd": "0.77247599929910421371459960937500",
+    "provider_lifecycle_meter_cost_upper_usd": "[amount withheld: private cost record]",
     "new_parent_suballocation_is_not_yet_issued": true
   },
   "formal_PDF": {

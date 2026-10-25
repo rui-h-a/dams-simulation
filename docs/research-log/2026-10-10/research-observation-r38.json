@@ -5,9 +5,9 @@
   "formal_observation": {
     "budget": {
       "actual_provider_total_verified": false,
-      "actual_reconciled_ledger_field_usd": "0",
-      "cap_usd": "100",
-      "envelopes_and_holds_usd": "99.55",
+      "actual_reconciled_ledger_field_usd": "[amount withheld: private cost record]",
+      "cap_usd": "[amount withheld: private cost record]",
+      "envelopes_and_holds_usd": "[amount withheld: private cost record]",
       "global_deadline_utc": "2026-10-15T08:54:46.960873Z",
       "ledger_zero_is_not_actual_cost_claim": true,
       "master_reference": {
@@ -16,7 +16,7 @@
         "sha256": "bee3cda2736bca953b6b0018afb40c79ab21bf8c85ac1338111c2175f2971bf3"
       },
       "master_unchanged_against_retained_capture": true,
-      "unallocated_upper_usd": "0.45"
+      "unallocated_upper_usd": "[amount withheld: private cost record]"
     },
     "full_paired_results": {
       "bytes": 302249,

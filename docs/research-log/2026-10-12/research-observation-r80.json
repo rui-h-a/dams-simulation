@@ -120,7 +120,7 @@
       "actual_services_activated": true,
       "all_provider_operations_DONE": true,
       "archive_task_unused_and_not_reallocated": true,
-      "archive_task_usd": "1.10",
+      "archive_task_usd": "[amount withheld: private cost record]",
       "complete_closed_worktree_offGCP_preserved": true,
       "complete_fullraw_pair_receipt_available": false,
       "complete_unit_journals_without_tail_limit": true,
@@ -142,7 +142,7 @@
       "preservation_utc": "2026-10-11T21:55:14.616515+00:00",
       "preserved_files": 22,
       "preserved_full_bytes": 258815,
-      "refund_usd": "0",
+      "refund_usd": "[amount withheld: private cost record]",
       "research_project_closed": false,
       "scheduler_complete_attempt_admission_pass": false,
       "scientific_case_or_Model_subprocess_started_not_proven": true,
@@ -242,12 +242,12 @@
     "all_current_provider_operations_DONE": true,
     "all_research_paid_resources_project_billing_closed": false,
     "current_research_VM_disk_absence_verified": true,
-    "effective_original_holds_usd": "99.95",
+    "effective_original_holds_usd": "[amount withheld: private cost record]",
     "no_new_paid_create_admitted": true,
     "original_deadlines_unchanged": true,
-    "paid_failure_uncertain_upper_usd": "0.41",
+    "paid_failure_uncertain_upper_usd": "[amount withheld: private cost record]",
     "unused_child_is_refund_or_released_hold": false,
-    "unused_nonadditive_archive_child_usd": "1.10"
+    "unused_nonadditive_archive_child_usd": "[amount withheld: private cost record]"
   },
   "original_absolute_deadlines_unchanged": {
     "node_deadline_utc": "2026-10-11T22:15:21Z",

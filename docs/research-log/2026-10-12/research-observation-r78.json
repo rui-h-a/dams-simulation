@@ -145,12 +145,12 @@
     "raw_retired_in_this_work": 0
   },
   "budget": {
-    "cap_USD": "100",
-    "cleanup_reserve_USD": "20",
-    "parent_pair_envelope_upper_USD": "15.40",
-    "total_envelopes_and_holds_upper_USD": "99.95",
-    "unallocated_upper_USD": "0.05",
-    "three_actual_N2_pre_science_failure_uncertain_fee_upper_USD": "0.08",
+    "cap_USD": "[amount withheld: private cost record]",
+    "cleanup_reserve_USD": "[amount withheld: private cost record]",
+    "parent_pair_envelope_upper_USD": "[amount withheld: private cost record]",
+    "total_envelopes_and_holds_upper_USD": "[amount withheld: private cost record]",
+    "unallocated_upper_USD": "[amount withheld: private cost record]",
+    "three_actual_N2_pre_science_failure_uncertain_fee_upper_USD": "[amount withheld: private cost record]",
     "provider_invoice_reconciled": false,
     "holds_are_not_actual_spend_or_refunds": true,
     "old_attempts_request_prefixes_holds_and_global_deadline_preserved": true

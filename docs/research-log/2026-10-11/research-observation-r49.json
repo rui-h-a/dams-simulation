@@ -141,8 +141,8 @@
     "real_case_admission_source_review_sha256": "6114c4852644f375c5889632a2fcdb1b35bb1cc983da73a6f1478cd42b1f8a35"
   },
   "budget_and_resources": {
-    "cumulative_budget_USD": 100,
-    "existing_reservation_envelopes_USD": 99.55,
+    "cumulative_budget_USD": "[amount withheld: private cost record]",
+    "existing_reservation_envelopes_USD": "[amount withheld: private cost record]",
     "reservations_are_not_supplier_spend": true,
     "supplier_cost_reconciliation": "Official delayed project-filtered billing report observed; final cumulative supplier invoice reconciliation remains pending.",
     "new_funding_suballocation_issued": false,

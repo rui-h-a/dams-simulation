@@ -131,11 +131,11 @@
     "shared_case_ID_alone_is_not_formal_source_config_attempt_or_byte_identity": true
   },
   "financial": {
-    "cumulative_cap_usd": "100",
-    "global_held_usd": "99.55",
+    "cumulative_cap_usd": "[amount withheld: private cost record]",
+    "global_held_usd": "[amount withheld: private cost record]",
     "held_is_actual_spend": false,
-    "new_nested_archive_reservation_usd": "18.50",
-    "existing_parent_reservation_usd": "34",
+    "new_nested_archive_reservation_usd": "[amount withheld: private cost record]",
+    "existing_parent_reservation_usd": "[amount withheld: private cost record]",
     "new_nested_reservation_increases_global_held": false,
     "reservation_refunded_or_epoch_reset": false,
     "supplier_invoice_fully_reconciled": false

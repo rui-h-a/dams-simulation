@@ -35,10 +35,10 @@
   "newly_found_precreate_continuation_gap": "Existing private runtime-phase glue still assumed N2-4/batch32; native cloud_worker.verify_guest lacked N2-2. Isolated operations-only fix pending; no second VM created to discover this.",
   "fiscal_closure": {
     "old25_hold": {
-      "permanent_past_unbilled_and_fixture_softdelete_upper_USD": "1.00",
-      "unused_future_closed_USD": "24.00"
+      "permanent_past_unbilled_and_fixture_softdelete_upper_USD": "[amount withheld: private cost record]",
+      "unused_future_closed_USD": "[amount withheld: private cost record]"
     },
-    "new_future_complete_pair_hold_USD": "25.00",
+    "new_future_complete_pair_hold_USD": "[amount withheld: private cost record]",
     "no_new_create_authority_issued": true,
     "not_invoice_or_refund": true,
     "old_scope_counters_histories_and_globalD_retained": true

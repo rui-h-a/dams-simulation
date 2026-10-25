@@ -59,12 +59,12 @@
     }
   },
   "budget": {
-    "cumulative_cap_USD": "100",
-    "effective_envelopes_and_holds_upper_USD": "94.80",
-    "unallocated_upper_USD": "5.20",
+    "cumulative_cap_USD": "[amount withheld: private cost record]",
+    "effective_envelopes_and_holds_upper_USD": "[amount withheld: private cost record]",
+    "unallocated_upper_USD": "[amount withheld: private cost record]",
     "cleanup_and_uncertainty20_included": true,
-    "past_failed_launch_and_fixture_unbilled_upper_USD": "1.00",
-    "next_complete_pair_future_hold_USD": "25.00",
+    "past_failed_launch_and_fixture_unbilled_upper_USD": "[amount withheld: private cost record]",
+    "next_complete_pair_future_hold_USD": "[amount withheld: private cost record]",
     "actual_provider_invoice_reconciled": false,
     "reserve_is_not_actual_spend": true
   },

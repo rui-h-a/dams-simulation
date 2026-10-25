@@ -88,12 +88,12 @@
     "new_paid_study_admitted_this_record": false
   },
   "fiscal": {
-    "total_cap_USD": "100",
-    "holds_upper_USD": "68.80",
-    "unallocated_upper_USD": "31.20",
+    "total_cap_USD": "[amount withheld: private cost record]",
+    "holds_upper_USD": "[amount withheld: private cost record]",
+    "unallocated_upper_USD": "[amount withheld: private cost record]",
     "cleanup20_included_retained": true,
-    "unused_future_purpose_closed_USD": "21.25",
-    "refund_USD": "0",
+    "unused_future_purpose_closed_USD": "[amount withheld: private cost record]",
+    "refund_USD": "[amount withheld: private cost record]",
     "supplier_invoice_reconciled": false,
     "Master_sha256": "b8f33b10e67a84b74c7fd70a77d0ec7a5713b9362a69665eabbff39634811e70"
   },
