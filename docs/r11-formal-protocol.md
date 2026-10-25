@@ -340,3 +340,16 @@ histories; no arm outcome exists). Arithmetic under the rule above:
 
 Decision: the 100,000-person study is not admitted. It is reported as not run, with
 this arithmetic, and is not replaced by an extrapolated result.
+
+## Table A: main-study world count from the 10,000-member pilot (recorded 2026-10-25, before any confirmation world)
+
+Pilot: worlds 0-2, multinational / organic, 2 + 5 years, four arms, source 3b4d446 (science manifest equal to a4e1fe3 and to this commit). All 12 arms passed the full raw validators of a4e1fe3 (snapshot, daily evidence, summary, organization accounts) in standalone runs on the pilot machine (receipts `validation/*.json`, input SHA-256 re-checked locally); the plan-bound admission of 3b4d446 was not run because its plan binds the former validator, whose quadratic step kept the arms in validation for more than 22 hours. Pilot worlds are not used for inference.
+
+| Endpoint | Pilot paired differences (worlds 0-2) | Threshold delta_k | Pilot SD | R_k | R_k (80 % upper SD) | R_k (Bonferroni) |
+|---|---|---|---|---|---|---|
+| net_operating_result_per_member_year | -25.61, -25.77, -25.67 | 12.48 | 0.083 | 10 | 10 | 10 |
+| decision_regret_per_available_member_hour | 2.318e-06, 1.502e-06, 1.442e-06 | 8.562e-07 | 4.89e-07 | 10 | 25 | 12 |
+| governance_member_hours_per_member_year | -1.558, -1.587, -1.558 | 4.776 | 0.0167 | 10 | 10 | 10 |
+| witness_resource_units_per_member_year | 18.56, 18.62, 18.63 | 0.1642 | 0.0392 | 10 | 10 | 10 |
+
+R* = max(10, max_k R_k) = 10. The main study runs confirmation worlds 1000-1009, seed 20261017, arms control-hierarchy (reference), control-process, dams-witness and linear-witness, from this commit, on the local workstation (Rui decision 2026-10-25; GCP budget exhausted). Every endpoint's point requirement is at the minimum of 10; the regret endpoint would need 25 worlds at the 80 % upper SD and 12 under Bonferroni, reported as sensitivity values that do not set R* (Amendment 8).
