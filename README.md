@@ -99,7 +99,24 @@ Each study in the protocol states its command, worlds and source commit. For exa
 
 Historical results name their original commits, including `93e5b87`, `e027d28` and `4347ccb`; use each result's actual source and protocol rather than silently applying a newer model. Those historical commits predate the complete-retention candidate. Deterministic replay is useful for reproduction but is not preservation of the deleted original journal. Random streams are keyed to world/person/event rather than worker identity. Exact platform/source equivalence and complete input preservation must be checked for the reported run; this README does not certify them for untested platforms.
 
+The 10,000-member main study (protocol Table A and Amendment 10) is
+
+```sh
+./run.sh --spec enterprise-r11 --scale 10000 --context multinational --growth organic --pre-years 2 --post-years 5 \
+         --worlds $(seq -s, 1000 1009) --arms control-hierarchy,control-process,dams-witness,linear-witness \
+         --jobs 6 --output /path/on/a/large/volume/main-n10000
+```
+
+followed, after every arm has its receipt, by retiring intermediate checkpoints as Amendment 10 describes. A quick check of the whole path (environment, two arms, validation, inference and figure) takes about three and a half minutes on the reference workstation:
+
+```sh
+./run.sh --spec enterprise-r11 --scale 120 --context multinational --growth organic --pre-years 1 --post-years 1 \
+         --worlds 0 --arms control-hierarchy,dams-witness --jobs 2 --output runs/smoke
+```
+
 ## Computing resources
+
+Measured complete runs (`docs/r11-resource-measurements.md`): a 10,000-member arm needs about 15 hours for five simulated years and 12 to 14 hours of full validation on one core, about 7.3 GB of retained output and up to about 14 GB of working space; the main study (40 arms) therefore needs about 320 GB retained, 6 to 8 cores for about four to five days, and memory well below 1 GB per process. A 50,000-member arm needs at least 75 hours of simulation.
 
 Worlds can run independently in parallel. Admission must measure the complete world and batch, including prehistory, validation, full checkpoints/journals, interrupted attempts, upload, off-GCP transfer and recovery. The historical short probes in `docs/r11-resource-measurements.md` are not a full-retention forecast. Worker count changes wall time and simultaneous disk demand; it does not change the declared population, horizon, world count or model. The candidate has not established a new hardware/cost boundary for complete 10,000- and 50,000-person studies.
 
