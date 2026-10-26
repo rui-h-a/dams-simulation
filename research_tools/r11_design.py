@@ -193,7 +193,11 @@ def base_config(*, scale, context, growth, world, seed, pre_years, post_years, p
     A = d['enterprise_acquisition']
     if targets:
         for t in targets:
-            t.update(guilds=1, departments=1, sites=1)
+            # One more guild, department and site of the acquirer while the target fits in them; a target larger
+            # than the acquirer's guild or site size is installed as as many units as it needs (Amendment 13a).
+            g_units = max(1, math.ceil(len(t['employees'])/G['members_per_guild']))
+            t.update(guilds=g_units, departments=max(1, math.ceil(g_units/G['guilds_per_department'])),
+                     sites=max(1, math.ceil(len(t['employees'])/G['members_per_site'])))
         A.update(MA_INTEGRATION, targets=targets,
                  # The price may be borrowed in full at the operating credit rate, so
                  # whether the deal closes turns on the acquirer's margin, not on its
