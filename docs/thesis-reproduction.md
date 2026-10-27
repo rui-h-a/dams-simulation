@@ -26,5 +26,5 @@ The 50,000- and 100,000-member comparisons and the 10,000-member supplementary s
 stopped before their horizons (Amendment 14); their commands are in the README and in Amendments 12 and 13.
 
 Machine time measured for complete runs is in `docs/r11-resource-measurements.md`; a 10,000-member arm needs
-15 to 22 hours of one core for two years of history and five years after adoption, and 12 to 20 hours more for
-full validation (measured on cloud machines with four arms sharing four physical cores).
+about 4 hours for the two years of history (run once per world) and 22 hours for five years after adoption, then
+15 hours or more of full validation (main study, n2-standard-8 machines, four arms sharing four physical cores).
