@@ -17,5 +17,7 @@ for example `../.venv/bin/python 04_evaluation/r11/make_tables.py` and
 | `04_evaluation/r11/projections/make_projection_tables.py` | partial-roster and projection tables (inputs from `research_tools/projection`) |
 | `04_evaluation/figures/thesis_figures.py` | every result figure of the thesis |
 
-Figures of the earlier reference model read CSV files under `05_thesis/generated/` produced by the historical
-commits named in the thesis; those inputs are not regenerated here.
+Figures of the earlier reference model read CSV files under `05_thesis/generated/analysis/`. Their generation
+manifest records simulation source hash 3d67a62e (identical `dams_sim` in commits 53ad715 to 5504d62, 7-8 October
+2026; `research_tools/source_commits.py 3d67a62e`); rebuild them from one of those commits with its own README.
+The tools here do not regenerate them.
