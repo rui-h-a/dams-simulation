@@ -19,7 +19,8 @@ import statistics
 import subprocess
 from pathlib import Path
 
-B = 'gs://dams-r11-formal-78ce2a-20261017'
+import os
+B = os.environ.get('DAMS_STUDY_BUCKET', 'gs://YOUR-STUDY-BUCKET')  # store holding the study receipts
 HERE = Path(__file__).resolve().parent
 # (members, prefix, machine family, code): 'list' is the source before commit f826b26,
 # which tested attack-cohort membership against a daily list (a cost growing with
