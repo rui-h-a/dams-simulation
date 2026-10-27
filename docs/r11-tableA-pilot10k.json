@@ -1,0 +1,107 @@
+{
+ "pilot_worlds": [
+  "n10000-multinational-organic-pre2-post5-w0",
+  "n10000-multinational-organic-pre2-post5-w1",
+  "n10000-multinational-organic-pre2-post5-w2"
+ ],
+ "outcomes": {
+  "net_operating_result_per_member_year": {
+   "pilot_pairs": 3,
+   "anchor": 624.042762623361,
+   "nu_p": 2,
+   "status": "ok",
+   "delta": 12.48085525246722,
+   "sd_paired_difference": 0.0829641599667133,
+   "rho": 0.006647313688724409,
+   "sd_upper80": 0.17562985789027066,
+   "required_worlds_point": 10,
+   "required_worlds_upper80": 10,
+   "required_worlds_bonferroni": 10,
+   "unit": "resource units per member-year",
+   "differences": [
+    -25.610530136855914,
+    -25.77461778072427,
+    -25.671229419342126
+   ],
+   "reference_values": [
+    614.994088068701,
+    614.4290298548902,
+    618.0695210731697
+   ]
+  },
+  "decision_regret_per_available_member_hour": {
+   "pilot_pairs": 3,
+   "anchor": 4.2810406982273e-05,
+   "nu_p": 2,
+   "status": "ok",
+   "delta": 8.5620813964546e-07,
+   "sd_paired_difference": 4.894991855847201e-07,
+   "rho": 0.57170583053253,
+   "sd_upper80": 1.0362386895273885e-06,
+   "required_worlds_point": 10,
+   "required_worlds_upper80": 25,
+   "required_worlds_bonferroni": 12,
+   "unit": "regret units per available member-hour",
+   "differences": [
+    2.3179387015042683e-06,
+    1.5018606925766152e-06,
+    1.4415612824588266e-06
+   ],
+   "reference_values": [
+    4.254564299671482e-05,
+    4.3590024282832866e-05,
+    4.229555366727132e-05
+   ]
+  },
+  "governance_member_hours_per_member_year": {
+   "pilot_pairs": 3,
+   "anchor": 238.81239731217389,
+   "nu_p": 2,
+   "status": "ok",
+   "delta": 4.776247946243478,
+   "sd_paired_difference": 0.016720701783023408,
+   "rho": 0.003500802716109881,
+   "sd_upper80": 0.03539666380225189,
+   "required_worlds_point": 10,
+   "required_worlds_upper80": 10,
+   "required_worlds_bonferroni": 10,
+   "unit": "member-hours per member-year",
+   "differences": [
+    -1.557782036140754,
+    -1.5867986240425118,
+    -1.5578933226159428
+   ],
+   "reference_values": [
+    30.86801400691835,
+    30.947943809107038,
+    30.923241105989227
+   ]
+  },
+  "witness_resource_units_per_member_year": {
+   "pilot_pairs": 3,
+   "anchor": 8.211882957774044,
+   "nu_p": 2,
+   "status": "ok",
+   "delta": 0.1642376591554809,
+   "sd_paired_difference": 0.03916655333850035,
+   "rho": 0.23847486343812335,
+   "sd_upper80": 0.08291310608885122,
+   "required_worlds_point": 10,
+   "required_worlds_upper80": 10,
+   "required_worlds_bonferroni": 10,
+   "unit": "resource units per member-year",
+   "differences": [
+    18.557226400972755,
+    18.617733927165506,
+    18.6305636429999
+   ],
+   "reference_values": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "R": 10,
+ "binding_endpoint": "net_operating_result_per_member_year"
+}
