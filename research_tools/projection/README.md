@@ -7,7 +7,8 @@ Run with the repository environment (`.venv/bin/python3`), from the repository r
    `summary.json` and `timeseries.csv`:
    `python research_tools/projection/partial_studies.py ROOT OUT`
 2. Horizon check on the complete ten-year worlds (years 1-5 predict the ten-year contrast):
-   `python research_tools/projection/horizon_projection.py ROOT/tenyear 1001,1002,1004,1005,1006 OUT/horizon-projection.json`
+   `python research_tools/projection/horizon_projection.py ROOT/tenyear $(seq -s, 1000 1064 | sed 's/,$//') OUT/horizon-projection.json`
+   (the thesis uses the complete roster, worlds 1000-1064; earlier drafts used the worlds complete at the time)
 3. Size check on the first-year scale study (`scale-study.json`, one row per size and variant):
    `python research_tools/projection/scale_projection.py scale-study.json OUT/scale-projection.json`
 4. Projections of the main study (MAIN holds `w<id>/n10000-*/<arm>/{summary.json,timeseries.csv}`):
