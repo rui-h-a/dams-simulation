@@ -19,7 +19,7 @@ Arms: H = control-hierarchy (reference), P = control-process, D = dams-witness, 
 | Sickness spells | Amendment 5 | R11.4: e027d28 | founding or traditional arguments with `--variant sickness-spells --arms H,D` |
 | Demand matched to capacity | Amendment 6 | R11.4: 981bf50 (founding); source hash 5f0497a8 (traditional) | founding or traditional arguments with `--variant demand-matched --arms H,D` |
 | Partial 300-member rosters: ten-year, no growth, timing, record | Amendment 7, reported under Amendment 14 | R11.4: source hash 5f0497a8 | `--scale 300 --context traditional --pre-years 2` with `--growth organic --post-years 10 --arms H,D`; `--growth none --post-years 5 --arms H,D`; `--growth organic --post-years 5 --arms H,dams-staged-witness,dams-triggered-witness`; `--growth organic --post-years 5 --arms H,dams-central,dams-consensus`; worlds `W(1000,1064)` |
-| Main study, 10,000 members | Table A, Amendments 8 and 12 | 9567255 | `--scale 10000 --context multinational --growth organic --pre-years 2 --post-years 5 --worlds 1000` (one world per machine, 1000-1009) `--arms H,P,D,L`; pool with `research_tools/r11_pool.py` |
+| Main study, 10,000 members | Table A, Amendments 8 and 12 | 9567255 | `--scale 10000 --context multinational --growth organic --pre-years 2 --post-years 5 --worlds 1000` (one world per machine, 1000-1009) `--arms H,P,D,L`; pool the saved arm receipts with `research_tools/projection/pool_validated_arms.py ROOT OUT` (Amendment 14 addendum) |
 | Projections to ten years, 50,000 and 100,000 members | Amendment 14 | fd34f98 | `research_tools/projection/README.md` |
 
 The 50,000- and 100,000-member comparisons and the 10,000-member supplementary studies of Amendment 13 were

@@ -22,7 +22,7 @@ from research_tools.r11_inference import _difference_summary, holm, t_quantile  
 from research_tools.r11_world_count import PRIMARY  # noqa: E402
 
 REF = 'control-hierarchy'
-DELTA = {k: v['delta'] for k, v in json.loads(Path(__file__).resolve().parents[2]/'docs'/'r11-tableA-pilot10k.json'.read_text())['outcomes'].items()}
+DELTA = {k: v['delta'] for k, v in json.loads((Path(__file__).resolve().parents[2]/'docs'/'r11-tableA-pilot10k.json').read_text())['outcomes'].items()}
 
 
 def check_world(wdir):
