@@ -32,4 +32,4 @@ about 4 hours for the two years of history (run once per world) and 22 hours for
 Table and figure numbers refer to the thesis PDF of 1 November 2026. Tables and figures are rebuilt from the study
 outputs with the generators in `thesis-tools/` (see its README): `make_tables.py` (Tables 14–18),
 `make_sens_table.py` (Table 19), `projections/make_projection_tables.py` (Tables 20–21), `make_main_macros.py`
-(main-study numbers) and `figures/thesis_figures.py` (Figures 10–16, 20–23, 25–27).
+(main-study numbers) and `figures/thesis_figures.py` (Figures 10–23 and 25–27; Figure 19 also needs the daily series of the reference-model runs).
