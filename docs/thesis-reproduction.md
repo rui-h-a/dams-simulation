@@ -25,7 +25,7 @@ Arms: H = control-hierarchy (reference), P = control-process, D = dams-witness, 
 The 50,000- and 100,000-member comparisons and the 10,000-member supplementary studies of Amendment 13 were
 stopped before their horizons (Amendment 14); their commands are in the README and in Amendments 12 and 13.
 
-Machine time measured for complete runs (thesis Figure 27 and Table 33) is in `docs/r11-resource-measurements.md`; a 10,000-member arm needs
+Machine time measured for complete runs on the processors used here (not reported in the thesis, which states cost in terms of members, days, arms and worlds) is in `docs/r11-resource-measurements.md`; a 10,000-member arm needs
 about 4 hours for the two years of history (run once per world) and 22 hours for five years after adoption, then
 15 hours or more of full validation (main study, n2-standard-8 machines, four arms sharing four physical cores).
 

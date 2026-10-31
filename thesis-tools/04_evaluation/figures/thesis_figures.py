@@ -299,7 +299,9 @@ def attack_cost_effects():
     h1 = axs[-1].plot([], [], marker='o', color=INK, mfc='white', ls='none', label='2 attack hours per day')[0]
     h2 = axs[-1].plot([], [], marker='o', color=INK, ls='none', label='8 attack hours per day')[0]
     fig.legend(handles=[h1, h2], loc='upper right', ncol=2, bbox_to_anchor=(1, 1.02))
-    fig.tight_layout(pad=.4, rect=(0, 0, 1, .89))
+    fig.tight_layout(pad=.4, rect=(0, 0, 1, .89), w_pad=2.5)
+    for ax in axs:
+        ax.spines['left'].set_visible(True); ax.spines['left'].set_color('#bbbbbb')
     return save(fig, 'attack-cost-effects')
 
 
@@ -862,7 +864,7 @@ def projections():
         b.plot([int(N)], [r['invariant_projection']], marker=st[1], mfc='white', mec=st[0], ms=5, ls='none',
                label='Multinational, 50k, 100k,\nfive years (projected)' if i == 0 else None)
     zero_line(b, 'y'); ygrid(b)
-    b.axvline(3000, color='#9a9a9a', lw=.8, ls=(0, (2, 2)))
+    b.plot([3000, 3000], [-110, -45], color='#9a9a9a', lw=.8, ls=(0, (2, 2)))
     b.text(2600, -62, 'founding\nstartup, year 1', ha='right', va='center', fontsize=7, color='#555555')
     b.text(3500, -62, 'multinational,\nfive years', ha='left', va='center', fontsize=7, color='#555555')
     b.set_xscale('log'); b.minorticks_off()
@@ -870,7 +872,7 @@ def projections():
     b.set_xlabel('Initial members (log scale)')
     b.set_title('(b) By initial members\n(units per member-year; below 0: DAMS lower)', loc='left')
     h, l = b.get_legend_handles_labels(); o = [1, 2, 0]
-    b.legend([h[i] for i in o], [l[i] for i in o], loc='upper left', fontsize=7.5, handlelength=1.2, borderaxespad=.3)
+    b.legend([h[i] for i in o], [l[i] for i in o], loc='upper left', fontsize=7.5, handlelength=1.2, borderaxespad=.3, framealpha=1, facecolor='white', edgecolor='none')
     b.set_ylim(-110, 8); b.set_xlim(18, 1.7e5)
     fig.tight_layout(pad=.4, w_pad=1.4)
     return save(fig, 'r11-projections')
