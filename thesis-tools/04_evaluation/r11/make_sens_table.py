@@ -21,7 +21,7 @@ def cell(x, scale=1, fmt='{:.1f}'):
 
 
 lines = [r'\begin{table}[htbp]', r'\centering', r'\footnotesize', r'\setlength{\tabcolsep}{3pt}',
-         r'\caption{Exploratory behavioral sensitivity of the founding contrast: DAMS on the witnessed record minus the kept performance-tier hierarchy, 300 initial members, one year after founding adoption, ten paired worlds (3000--3009) per row, paired Student-$t$ 95\% intervals. The default share response is 0.25. All batches passed the raw-evidence admission; synthetic, uncalibrated model.}',
+         r'\caption{Exploratory behavioral sensitivity of the founding contrast: DAMS on the witnessed record minus the kept performance-tier hierarchy, 300 initial members, one year after founding adoption, ten paired worlds per row, paired Student-$t$ 95\% intervals. The default share response is 0.25. Every arm passed the validators on its complete event record; synthetic, uncalibrated model.}',
          r'\label{tab:r11-sensitivity}', r'\begin{tabular}{@{}lrrr@{}}', r'\toprule',
          r'Variant & Net operating result & Decision regret & Governance time \\',
          r' & (units per member-year) & ($10^{-6}$ per member-hour) & (hours per member-year) \\', r'\midrule']

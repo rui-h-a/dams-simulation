@@ -32,7 +32,7 @@ def main():
     for arm, a in ARMS.items():
         for key, (k, scale, f) in KEYS.items():
             r = pooled['comparisons'].get(arm, {}).get(key)
-            if not r or r.get('mean_difference') is None:
+            if not r or r.get('mean_difference') is None or r.get('ci95') is None:
                 continue
             m, (lo, hi) = r['mean_difference']*scale, (v*scale for v in r['ci95'])
             lines += [f"\\newcommand{{\\Main{a}{k}}}{{{fmt(m, f)}}}",

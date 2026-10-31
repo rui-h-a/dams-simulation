@@ -116,7 +116,8 @@ def allocation_effects():
         m, lo, hi = float(r['mean']), float(r['low']), float(r['high'])
         if p == 'linear':
             ax.plot(0, y, marker=s['marker'], color=s['color'], mfc='white', ms=5, zorder=3)
-            ax.annotate('reference (0 by definition)', (0, y), xytext=(6, 0), textcoords='offset points', va='center', color='#555555')
+            ax.annotate('reference (0 by definition)', (0, y), xytext=(8, 0), textcoords='offset points', va='center', color='#555555',
+                        bbox=dict(boxstyle='square,pad=.15', fc='white', ec='none'), zorder=4)
             continue
         ax.plot([lo, hi], [y, y], color=s['color'], lw=1.4, solid_capstyle='butt')
         ax.plot(m, y, marker=s['marker'], color=s['color'], ms=5.5, zorder=3)
@@ -146,9 +147,8 @@ def outcome_tradeoffs():
                                               '(b) Decision regret, left is less\n(units per guild-day)'])):
         for p in ORDER:
             vals = [data[b][p][k] for b, *_ in procs]
-            ax.plot([min(vals), max(vals)], [ys[p]]*2, color='#cccccc', lw=2.2, zorder=1, solid_capstyle='butt')
-            for (b, name, m, c), v in zip(procs, vals):
-                ax.plot(v, ys[p], marker=m, color=c, ms=6, ls='none', mec='black', mew=.5, zorder=3, label=name if p == ORDER[0] else None)
+            for (b, name, m, c), v, dy in zip(procs, vals, (.2, 0, -.2)):
+                ax.plot(v, ys[p]+dy, marker=m, color=c, ms=6, ls='none', mec='black', mew=.5, zorder=3, label=name if p == ORDER[0] else None)
         ax.set_title(title, loc='left')
         ax.xaxis.grid(True, color=GRID, lw=.6); ax.set_axisbelow(True)
     axs[0].set_yticks(list(ys.values()), [POLICY[p]['label'] for p in ys])
@@ -259,7 +259,7 @@ def sensitivity_screen():
         for y, value in enumerate(values):
             ax.annotate(f'{value:.3f}', (value, y), xytext=(5, 0),
                         textcoords='offset points', va='center', fontsize=8)
-        ax.set_xlim(0, max(values)*1.38)
+        ax.set_xlim(-max(values)*.04, max(values)*1.38)
         ax.set_title(title, fontsize=8)
         ax.set_xlabel(symbol + ' (work per member-day)', fontsize=8)
         ax.set_yticks(range(len(factors)))
@@ -267,7 +267,7 @@ def sensitivity_screen():
         ax.spines['left'].set_visible(False)
         xgrid(ax)
     axs[0].set_yticklabels([FACTORS[k] for k in factors])
-    axs[0].invert_yaxis()
+    axs[0].set_ylim(len(factors)-.4, -.6)
     fig.tight_layout(pad=.4, w_pad=1.0)
     return save(fig, 'sensitivity-screen')
 
@@ -292,6 +292,9 @@ def attack_cost_effects():
         ax.set_yticks(range(len(ORDER)), [POLICY[p]['label'] for p in reversed(ORDER)])
         ax.tick_params(axis='y', length=0)
         ax.spines['left'].set_visible(False)
+    from matplotlib.ticker import MaxNLocator
+    for ax in axs:
+        ax.xaxis.set_major_locator(MaxNLocator(4))
     axs[0].set_xlabel('Work change from the same rule without attack (units per member-day)', loc='left')
     h1 = axs[-1].plot([], [], marker='o', color=INK, mfc='white', ls='none', label='2 attack hours per day')[0]
     h2 = axs[-1].plot([], [], marker='o', color=INK, ls='none', label='8 attack hours per day')[0]
@@ -305,6 +308,7 @@ def organizational_scale():
     for r in rows(ANALYSIS/'scale_effects.csv'):
         data[r['policy']][int(r['population_n'])] = (float(r['mean']), float(r['low']), float(r['high']))
     fig, ax = plt.subplots(figsize=(TEXT_W*.68, 2.5))
+    ends = []
     for p in ORDER:
         s = POLICY[p]
         ns = sorted(data[p])
@@ -315,7 +319,14 @@ def organizational_scale():
             ax.plot([n, n], [lo, hi], color=s['color'], lw=1.1)
         ax.plot(ns, m, color=s['color'], marker=s['marker'], ls='none', ms=5,
                 mfc='white' if p == 'linear' else s['color'])
-        ax.annotate(s['label'], (ns[-1], m[-1]), xytext=(6, 0), textcoords='offset points', va='center', color=s['color'], fontsize=8)
+        ends.append((m[-1], ns[-1], s))
+    # end labels, spread vertically so that none touches another, on a white ground over the zero line
+    lo_y, hi_y = ax.get_ylim(); gap = .075*(hi_y-lo_y); placed = []
+    for v, n, s in sorted(ends, key=lambda e: e[0]):
+        y = max(v, placed[-1]+gap) if placed else v
+        placed.append(y)
+        ax.annotate(s['label'], (n, v), xytext=(n*1.12, y), textcoords='data', va='center', color=s['color'], fontsize=8,
+                    bbox=dict(boxstyle='square,pad=.1', fc='white', ec='none'), zorder=5)
     ax.set_xscale('log')
     ax.set_xticks([500, 1000, 5000, 10000], ['500', '1,000', '5,000', '10,000'])
     ax.minorticks_off()
@@ -366,6 +377,11 @@ def confirmation_contrasts():
         ax.set_title(f'{title} ({unit}); {side}', loc='left')
         xgrid(ax)
     fig.tight_layout(pad=.4, h_pad=.6)
+    # one common plot area for the three stacked panels
+    pos = [ax.get_position() for ax in axs]
+    L, R = max(q.x0 for q in pos), min(q.x1 for q in pos)
+    for ax, q in zip(axs, pos):
+        ax.set_position([L, q.y0, R-L, q.height])
     return save(fig, 'founding-confirmation')
 
 
@@ -397,7 +413,9 @@ def r11_sizes():
         if key == 'decision_regret_per_available_member_hour' and min(values) > 0:
             ax.set_yscale('log')  # differences fall about tenfold per size step and are all positive
             ax.set_ylim(min(values)/1.6, max(values)*1.6)
+            ax.yaxis.set_major_locator(matplotlib.ticker.LogLocator(base=10, subs=(1, 3)))
             ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f'{v:g}'))
+            ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
         else:
             zero_line(ax, 'y')
             ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
@@ -619,22 +637,22 @@ def r11_resources():
     base = statistics.median(by[1])
     ws = sorted(by)
     ax = axs[2]
-    ax.plot(ws, ws, color='#777777', lw=.9, ls=(0, (3, 2)), zorder=5)
-    ax.text(.04, .97, 'dashed: ideal\n(speedup =\nprocesses)', transform=ax.transAxes, ha='left', va='top', fontsize=7.5, color='#555555')
+    ax.plot(ws, ws, color='#c8c8c8', lw=4.5, solid_capstyle='round', zorder=1)
+    ax.text(ws[-1]-.15, ws[-1]+.25, 'ideal', ha='right', va='bottom', fontsize=8, color='#666666')
     sp = [base/statistics.median(by[w]) for w in ws]
     for w in ws:
         lo, hi = base/max(by[w]), base/min(by[w])
         ax.plot([w, w], [lo, hi], color=INK, lw=1)
     ax.plot(ws, sp, color=INK, marker='o', ms=5)
     ax.set_xticks(ws); ax.set_yticks(ws)
-    ax.set_xlim(.6, ws[-1]+.6); ax.set_ylim(.6, ws[-1]+.6)
-    ax.set_title('Speedup, four worlds\n(log-log)')
+    ax.set_xlim(.6, ws[-1]+.6); ax.set_ylim(.6, ws[-1]+.9)
+    ax.set_title('Speedup, four worlds\n(log scale)')
     ax.set_xlabel('Worker processes')
     ax.set_ylabel('Speedup over one process')
     ax.grid(True, color=GRID, lw=.6); ax.set_axisbelow(True)
-    labels = {'Apple M2 Pro': 'Workstation (Apple M2 Pro)', 'n2d': 'Cloud N2D', 'c4d': 'Cloud C4D', 'n2-': 'Cloud N2'}
+    labels = {'Apple M2 Pro': 'ARM laptop-class processor', 'n2d': 'x86 server processor A', 'c4d': 'x86 server processor C', 'n2-': 'x86 server processor B'}
     fig.legend([seen[k] for k in seen], [labels.get(k, k) for k in seen], loc='upper center', ncol=len(seen), bbox_to_anchor=(.5, 1.02))
-    fig.tight_layout(pad=.4, rect=(0, 0, 1, .9), w_pad=1.0)
+    fig.tight_layout(pad=.4, rect=(0, 0, 1, .9), w_pad=2.2)
     return save(fig, 'r11-resources'), {w: round(base/statistics.median(by[w]), 3) for w in ws}
 
 
@@ -790,6 +808,7 @@ def formal_study(study, name):
                 d = r['delta']*scale
                 for v in (-d, d):
                     ax.axvline(v, color='#999999', lw=.7, ls=(0, (4, 2)), zorder=1)
+                span += [-d, d]
         lo, hi = min(span+[0]), max(span+[0])
         ax.set_xlim(lo-.06*(hi-lo), hi+.06*(hi-lo))
         zero_line(ax); xgrid(ax)
@@ -828,31 +847,31 @@ def projections():
     zero_line(a, 'y'); ygrid(a)
     a.set_xticks(range(1, 11)); a.set_xlim(.5, 10.6)
     a.set_xlabel('Year after adoption')
-    a.set_title('(a) Horizon: DAMS minus hierarchy, net result by year\n(units per member-year; below 0: DAMS lower)', loc='left')
+    a.set_title('(a) By year after adoption\n(units per member-year; below 0: DAMS lower)', loc='left')
     a.legend(loc='lower right', fontsize=7.5, handlelength=1.8)
     # (b) five-year contrast by size
     pts = sorted((r['N'], r['net_operating_result_per_member_year']['diff_ci']) for r in scale if r['variant'] == 'baseline')
     b.errorbar([n for n, _ in pts], [d[0] for _, d in pts], yerr=[[d[0]-d[1] for _, d in pts], [d[2]-d[0] for _, d in pts]],
-               fmt='o', color='#8a8a8a', ms=4, lw=1, label='Founding, 30–1,000, first year\n(observed)')
+               fmt='o', color='#8a8a8a', ms=4, lw=1, label='Founding, 30–1,000,\nfirst year (observed)')
     s = proj['scale']['dams-witness']['net_operating_result_per_member_year']
     m, c = s['observed_10000']['mean'], s['observed_10000']['ci95']
-    b.errorbar([10000], [m], yerr=[[m-c[0]], [c[1]-m]], fmt=st[1], color=st[0], ms=5, lw=1.2, label='Multinational, 10,000, five years\n(observed)')
+    b.errorbar([10000], [m], yerr=[[m-c[0]], [c[1]-m]], fmt=st[1], color=st[0], ms=5, lw=1.2, label='Multinational, 10k,\nfive years (observed)')
     for i, N in enumerate(('50000', '100000')):
         r = s['projection'][N]
         b.plot([int(N)]*2, r['interval'], color=st[0], lw=1)
         b.plot([int(N)], [r['invariant_projection']], marker=st[1], mfc='white', mec=st[0], ms=5, ls='none',
-               label='Multinational, 50,000 and\n100,000, five years (projected)' if i == 0 else None)
+               label='Multinational, 50k, 100k,\nfive years (projected)' if i == 0 else None)
     zero_line(b, 'y'); ygrid(b)
+    b.axvline(3000, color='#9a9a9a', lw=.8, ls=(0, (2, 2)))
+    b.text(2600, -62, 'founding\nstartup, year 1', ha='right', va='center', fontsize=7, color='#555555')
+    b.text(3500, -62, 'multinational,\nfive years', ha='left', va='center', fontsize=7, color='#555555')
     b.set_xscale('log'); b.minorticks_off()
-    ticks = [30, 300, 1000, 10000, 50000, 100000]
-    b.set_xticks(ticks, ['30', '300', '1,000', '10,000', '50,000', '100,000'], fontsize=7.5)
-    for t in b.get_xticklabels():
-        t.set_rotation(35); t.set_ha('right'); t.set_rotation_mode('anchor')
+    b.set_xticks([30, 100, 300, 1000, 3000, 10000, 30000, 100000], ['30', '100', '300', '1k', '3k', '10k', '30k', '100k'], fontsize=7.5)
     b.set_xlabel('Initial members (log scale)')
-    b.set_title('(b) Size: DAMS minus hierarchy, net result\n(units per member-year; below 0: DAMS lower)', loc='left')
+    b.set_title('(b) By initial members\n(units per member-year; below 0: DAMS lower)', loc='left')
     h, l = b.get_legend_handles_labels(); o = [1, 2, 0]
-    b.legend([h[i] for i in o], [l[i] for i in o], loc='upper left', bbox_to_anchor=(0, .93), fontsize=7.5, handlelength=1.2)
-    b.set_ylim(-110, 8)
+    b.legend([h[i] for i in o], [l[i] for i in o], loc='upper left', fontsize=7.5, handlelength=1.2, borderaxespad=.3)
+    b.set_ylim(-110, 8); b.set_xlim(18, 1.7e5)
     fig.tight_layout(pad=.4, w_pad=1.4)
     return save(fig, 'r11-projections')
 

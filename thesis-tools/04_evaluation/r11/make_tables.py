@@ -10,7 +10,7 @@ OUT = ROOT.parent.parent/'05_thesis'/'generated'
 ARMS = [('control-process', 'Process change, hierarchy kept'), ('dams-witness', 'DAMS, sublinear, witnessed'),
         ('linear-witness', 'Linear allocation, witnessed')]
 ROWS = [('net_operating_result_per_member_year', 'Net operating result', 'units/member-year', 2, 1),
-        ('governance_cost_per_member_year', 'Legacy governance index', r'\begin{tabular}[t]{@{}l@{}}mixed units/\\member-year\end{tabular}', 2, 1),
+        ('governance_cost_per_member_year', 'Governance index', 'mixed units', 2, 1),
         ('decision_regret_per_available_member_hour', r'Decision regret', r'$10^{-6}$/member-hour', 2, 1e6),
         ('confirmation_mean_days', 'Mean confirmation delay', 'days', 1, 1),
         ('honest_rejection_share', 'Honest claims rejected', 'percentage points', 2, 100),
@@ -26,8 +26,8 @@ def fmt(v, digits):
 def table(study, label, caption):
     inf = json.loads((ROOT/study/'inference.json').read_text())
     w = inf['worlds_with_reference']
-    lines = [r'\begin{table}[htbp]', r'\centering', r'\footnotesize', r'\setlength{\tabcolsep}{4pt}',
-             rf'\caption{{Compact-retention enterprise-model summary (Section~\ref{{sec:r11-status}}). {caption} Each entry is the mean paired difference from the performance-tier hierarchy over {w} independent worlds with a paired Student-$t$ 95\% interval. $^{{\dagger}}$Primary outcome; p-values are Holm-adjusted across the three primary outcomes within each comparison. Displayed intervals are pointwise, not multiplicity-adjusted. Other rows are secondary. The legacy governance index adds member hours and resource units; it is not a cost in one unit. Recorded failure files (not a complete missing-world inventory): {len(inf["failures"])}.}}',
+    lines = [r'\begin{table}[htbp]', r'\centering', r'\footnotesize', r'\setlength{\tabcolsep}{5.5pt}',
+             rf'\caption{{Enterprise-model summary. {caption} Each entry is the mean paired difference from the performance-tier hierarchy over {w} independent worlds with a paired Student-$t$ 95\% interval. $^{{\dagger}}$Primary outcome; p-values are Holm-adjusted across the three primary outcomes within each comparison. Displayed intervals are pointwise, not multiplicity-adjusted. Other rows are secondary. The governance index adds member hours and resource units; it is not a cost in one unit.}}',
              rf'\label{{{label}}}',
              r'\begin{tabular}{@{}llrrr@{}}', r'\toprule',
              r'Outcome & Unit & ' + ' & '.join(r'\shortstack[r]{'+name.replace(', ', r',\\ ',1)+'}' for _, name in ARMS) + r' \\', r'\midrule']
@@ -55,8 +55,8 @@ def context_table(label, caption, studies=None):
     done = [(c, name) for c, name in (studies or CONTEXTS) if (ROOT/c/'inference.json').exists()]
     infs = {c: json.loads((ROOT/c/'inference.json').read_text()) for c, _ in done}
     failures = sum(len(infs[c]['failures']) for c, _ in done)
-    lines = [r'\begin{table}[htbp]', r'\centering', r'\footnotesize', r'\setlength{\tabcolsep}{4pt}',
-             rf'\caption{{Compact-retention enterprise-model summary (Section~\ref{{sec:r11-status}}). {caption} Each entry is the mean paired difference between DAMS on the witnessed process and the performance-tier hierarchy, with a paired Student-$t$ 95\% interval. $^{{\dagger}}$Primary outcome; p-values are Holm-adjusted across the three primary outcomes. Displayed intervals are pointwise, not multiplicity-adjusted. Other rows are secondary. The legacy governance index adds member hours and resource units; it is not a cost in one unit. Recorded failure files (not a complete missing-world inventory): {failures}.}}',
+    lines = [r'\begin{table}[htbp]', r'\centering', r'\footnotesize', r'\setlength{\tabcolsep}{5.5pt}',
+             rf'\caption{{Enterprise-model summary. {caption} Each entry is the mean paired difference between DAMS on the witnessed process and the performance-tier hierarchy, with a paired Student-$t$ 95\% interval. $^{{\dagger}}$Primary outcome; p-values are Holm-adjusted across the three primary outcomes. Displayed intervals are pointwise, not multiplicity-adjusted. Other rows are secondary. The governance index adds member hours and resource units; it is not a cost in one unit.}}',
              rf'\label{{{label}}}',
              r'\begin{tabular}{@{}l' + 'r'*len(done) + r'@{}}', r'\toprule',
              r'Outcome (unit) & ' + ' & '.join(name for _, name in done) + r' \\',
