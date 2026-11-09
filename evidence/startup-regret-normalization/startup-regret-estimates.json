@@ -1,0 +1,898 @@
+{
+  "aggregate_sha256": "ac6d21700b3219c56ae01128a856dfe7e98a420ec171ac3a5435327f489e4c6f",
+  "scope": "Retrospective paired summaries of synthetic worlds. Intervals are unadjusted Student-t intervals.",
+  "by_initial_size": {
+    "30": {
+      "enterprise": {
+        "control-process": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": 2.20805505716529,
+            "sd_difference": 1.8058107342374967,
+            "interval_95": [
+              2.002881600064961,
+              2.413228514265619
+            ],
+            "positive_pairs": 278,
+            "zero_pairs": 0,
+            "treatment_mean": 25.68196473208737,
+            "reference_mean": 23.47390967492208,
+            "relative_difference_of_means": 0.09406422226819017
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": 2.2167253589497635,
+            "sd_difference": 1.8125615746058037,
+            "interval_95": [
+              2.010784881679249,
+              2.422665836220278
+            ],
+            "positive_pairs": 278,
+            "zero_pairs": 0,
+            "treatment_mean": 25.693148731168456,
+            "reference_mean": 23.476423372218694,
+            "relative_difference_of_means": 0.09442347004071203
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": 131.3134774073683,
+            "sd_difference": 126.064412150775,
+            "interval_95": [
+              116.99023147250752,
+              145.63672334222912
+            ],
+            "positive_pairs": 268,
+            "zero_pairs": 0,
+            "treatment_mean": 1420.3373259217858,
+            "reference_mean": 1289.0238485144175,
+            "relative_difference_of_means": 0.10187047940090892
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": 0.13532592185112163,
+            "sd_difference": 0.12887607362388362,
+            "interval_95": [
+              0.12068321923472931,
+              0.14996862446751394
+            ],
+            "positive_pairs": 268,
+            "zero_pairs": 0,
+            "treatment_mean": 1.4597333122734433,
+            "reference_mean": 1.3244073904223217,
+            "relative_difference_of_means": 0.10217847078606943
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": 122.47036424152995,
+              "sd_difference": 103.08550603237249,
+              "interval_95": [
+                110.7579465176817,
+                134.18278196537818
+              ],
+              "positive_pairs": 278,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 8.843113165838362,
+              "sd_difference": 57.828920271898454,
+              "interval_95": [
+                2.2726795829553383,
+                15.413546748721387
+              ],
+              "positive_pairs": 151,
+              "zero_pairs": 32
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 185,
+            "available_member_hours": 32,
+            "present_member_workdays": 32,
+            "scored_proposals": 300
+          }
+        },
+        "dams-witness": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": 4.932675466588322,
+            "sd_difference": 4.059456132207102,
+            "interval_95": [
+              4.471446261998535,
+              5.39390467117811
+            ],
+            "positive_pairs": 282,
+            "zero_pairs": 0,
+            "treatment_mean": 28.406585141510405,
+            "reference_mean": 23.47390967492208,
+            "relative_difference_of_means": 0.21013438046317676
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": 5.017378608284471,
+            "sd_difference": 4.204809545560029,
+            "interval_95": [
+              4.539634570908762,
+              5.495122645660179
+            ],
+            "positive_pairs": 282,
+            "zero_pairs": 0,
+            "treatment_mean": 28.493801980503164,
+            "reference_mean": 23.476423372218694,
+            "relative_difference_of_means": 0.21371988947097828
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": 286.42564074624846,
+            "sd_difference": 260.2822820098078,
+            "interval_95": [
+              256.85276546678875,
+              315.99851602570817
+            ],
+            "positive_pairs": 278,
+            "zero_pairs": 0,
+            "treatment_mean": 1575.4494892606658,
+            "reference_mean": 1289.0238485144175,
+            "relative_difference_of_means": 0.22220352329117116
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": 0.295277844389736,
+            "sd_difference": 0.26879913665954674,
+            "interval_95": [
+              0.2647372970951657,
+              0.32581839168430626
+            ],
+            "positive_pairs": 278,
+            "zero_pairs": 0,
+            "treatment_mean": 1.6196852348120576,
+            "reference_mean": 1.3244073904223217,
+            "relative_difference_of_means": 0.2229509186713153
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": 274.87917687636065,
+              "sd_difference": 234.8737824026431,
+              "interval_95": [
+                248.19317650870371,
+                301.5651772440176
+              ],
+              "positive_pairs": 282,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 11.5464638698878,
+              "sd_difference": 78.6138538100138,
+              "interval_95": [
+                2.61447788909172,
+                20.47844985068388
+              ],
+              "positive_pairs": 166,
+              "zero_pairs": 0
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 69,
+            "available_member_hours": 0,
+            "present_member_workdays": 0,
+            "scored_proposals": 300
+          }
+        },
+        "linear-witness": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": 8.28553413491031,
+            "sd_difference": 4.83298436936174,
+            "interval_95": [
+              7.736417833642723,
+              8.834650436177899
+            ],
+            "positive_pairs": 298,
+            "zero_pairs": 0,
+            "treatment_mean": 31.75944380983239,
+            "reference_mean": 23.47390967492208,
+            "relative_difference_of_means": 0.3529677948689565
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": 8.377583029458128,
+            "sd_difference": 5.020955540777258,
+            "interval_95": [
+              7.807109730835662,
+              8.948056328080593
+            ],
+            "positive_pairs": 298,
+            "zero_pairs": 0,
+            "treatment_mean": 31.854006401676823,
+            "reference_mean": 23.476423372218694,
+            "relative_difference_of_means": 0.35685090938391884
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": 469.83974507232176,
+            "sd_difference": 301.71274174567884,
+            "interval_95": [
+              435.5596042460915,
+              504.119885898552
+            ],
+            "positive_pairs": 297,
+            "zero_pairs": 0,
+            "treatment_mean": 1758.8635935867392,
+            "reference_mean": 1289.0238485144175,
+            "relative_difference_of_means": 0.3644926706467112
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": 0.4845231317788689,
+            "sd_difference": 0.3126016582894826,
+            "interval_95": [
+              0.44900580888864317,
+              0.5200404546690947
+            ],
+            "positive_pairs": 297,
+            "zero_pairs": 0,
+            "treatment_mean": 1.8089305222011907,
+            "reference_mean": 1.3244073904223217,
+            "relative_difference_of_means": 0.3658414588160567
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": 458.8625801040284,
+              "sd_difference": 280.0142800855327,
+              "interval_95": [
+                427.0477853454473,
+                490.67737486260944
+              ],
+              "positive_pairs": 298,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 10.977164968293508,
+              "sd_difference": 81.41584153631035,
+              "interval_95": [
+                1.72682142230126,
+                20.227508514285756
+              ],
+              "positive_pairs": 157,
+              "zero_pairs": 0
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 72,
+            "available_member_hours": 0,
+            "present_member_workdays": 1,
+            "scored_proposals": 300
+          }
+        },
+        "dams-minus-linear-witnessed": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": -3.3528586683219883,
+            "sd_difference": 2.8062295899261636,
+            "interval_95": [
+              -3.6716981875839587,
+              -3.034019149060018
+            ],
+            "positive_pairs": 11,
+            "zero_pairs": 0,
+            "treatment_mean": 28.406585141510405,
+            "reference_mean": 31.75944380983239,
+            "relative_difference_of_means": -0.10557044664881626
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": -3.3602044211736573,
+            "sd_difference": 2.9375731302899415,
+            "interval_95": [
+              -3.6939669928537495,
+              -3.026441849493565
+            ],
+            "positive_pairs": 11,
+            "zero_pairs": 0,
+            "treatment_mean": 28.493801980503164,
+            "reference_mean": 31.854006401676823,
+            "relative_difference_of_means": -0.10548765448219327
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": -183.41410432607339,
+            "sd_difference": 170.5201122410941,
+            "interval_95": [
+              -202.78833899547485,
+              -164.03986965667193
+            ],
+            "positive_pairs": 13,
+            "zero_pairs": 0,
+            "treatment_mean": 1575.4494892606658,
+            "reference_mean": 1758.8635935867392,
+            "relative_difference_of_means": -0.10427989128596869
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": -0.18924528738913296,
+            "sd_difference": 0.17572205861545898,
+            "interval_95": [
+              -0.2092105592591908,
+              -0.16928001551907512
+            ],
+            "positive_pairs": 13,
+            "zero_pairs": 0,
+            "treatment_mean": 1.6196852348120576,
+            "reference_mean": 1.8089305222011907,
+            "relative_difference_of_means": -0.10461722275483003
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": -184.9858828631567,
+              "sd_difference": 158.870551624986,
+              "interval_95": [
+                -203.0365122510135,
+                -166.93525347529987
+              ],
+              "positive_pairs": 11,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 1.5717785370832824,
+              "sd_difference": 42.66760623110955,
+              "interval_95": [
+                -3.2760497046337362,
+                6.419606778800301
+              ],
+              "positive_pairs": 129,
+              "zero_pairs": 81
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 150,
+            "available_member_hours": 81,
+            "present_member_workdays": 81,
+            "scored_proposals": 300
+          }
+        }
+      },
+      "frozen": {
+        "startup-founding": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 66,
+            "difference": -2.175458432602667,
+            "sd_difference": 1.1028228611522,
+            "interval_95": [
+              -2.446566129606111,
+              -1.9043507355992229
+            ],
+            "positive_pairs": 1,
+            "zero_pairs": 0,
+            "treatment_mean": 19.332854390402115,
+            "reference_mean": 21.508312823004783,
+            "relative_difference_of_means": -0.10114500614273417
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 66,
+            "difference": -2.175404387163758,
+            "sd_difference": 1.1027816721474342,
+            "interval_95": [
+              -2.446501958646035,
+              -1.9043068156814806
+            ],
+            "positive_pairs": 1,
+            "zero_pairs": 0,
+            "treatment_mean": 19.332908435841027,
+            "reference_mean": 21.508312823004783,
+            "relative_difference_of_means": -0.10114249337293424
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 66,
+            "difference": -274.99615811959774,
+            "sd_difference": 138.2127561625833,
+            "interval_95": [
+              -308.97309434359687,
+              -241.0192218955986
+            ],
+            "positive_pairs": 1,
+            "zero_pairs": 0,
+            "treatment_mean": 2450.0172013248025,
+            "reference_mean": 2725.0133594444005,
+            "relative_difference_of_means": -0.10091552658503897
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 66,
+            "difference": -0.23377119752818257,
+            "sd_difference": 0.11841996621422896,
+            "interval_95": [
+              -0.2628824586839617,
+              -0.2046599363724034
+            ],
+            "positive_pairs": 1,
+            "zero_pairs": 0,
+            "treatment_mean": 2.0793159163733894,
+            "reference_mean": 2.3130871139015716,
+            "relative_difference_of_means": -0.10106458858519679
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 66,
+              "difference": -274.99615811959774,
+              "sd_difference": 138.2127561625833,
+              "interval_95": [
+                -308.97309434359687,
+                -241.0192218955986
+              ],
+              "positive_pairs": 1,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 66,
+              "difference": 0.0,
+              "sd_difference": 0.0,
+              "interval_95": [
+                0.0,
+                0.0
+              ],
+              "positive_pairs": 0,
+              "zero_pairs": 66
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 65,
+            "available_member_hours": 66,
+            "present_member_workdays": 66,
+            "scored_proposals": 66
+          }
+        }
+      }
+    },
+    "120": {
+      "enterprise": {
+        "control-process": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": 0.6308069804006777,
+            "sd_difference": 0.9951964207827678,
+            "interval_95": [
+              0.5177342833153475,
+              0.7438796774860079
+            ],
+            "positive_pairs": 231,
+            "zero_pairs": 0,
+            "treatment_mean": 13.405817346189652,
+            "reference_mean": 12.775010365788972,
+            "relative_difference_of_means": 0.04937819714729599
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": 0.6308069804006777,
+            "sd_difference": 0.9951964207827678,
+            "interval_95": [
+              0.5177342833153475,
+              0.7438796774860079
+            ],
+            "positive_pairs": 231,
+            "zero_pairs": 0,
+            "treatment_mean": 13.405817346189652,
+            "reference_mean": 12.775010365788972,
+            "relative_difference_of_means": 0.04937819714729599
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": 12.148729153839575,
+            "sd_difference": 18.491452072843284,
+            "interval_95": [
+              10.047758616530029,
+              14.249699691149122
+            ],
+            "positive_pairs": 236,
+            "zero_pairs": 0,
+            "treatment_mean": 246.99916185024233,
+            "reference_mean": 234.85043269640275,
+            "relative_difference_of_means": 0.05172964347715106
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": 0.012472742507902283,
+            "sd_difference": 0.01903335613069191,
+            "interval_95": [
+              0.010310201659342788,
+              0.014635283356461777
+            ],
+            "positive_pairs": 235,
+            "zero_pairs": 0,
+            "treatment_mean": 0.25386378168211826,
+            "reference_mean": 0.24139103917421598,
+            "relative_difference_of_means": 0.05167027968631634
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": 11.601979480697313,
+              "sd_difference": 18.302759287374176,
+              "interval_95": [
+                9.522447929429088,
+                13.681511031965538
+              ],
+              "positive_pairs": 231,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 0.5467496731422635,
+              "sd_difference": 1.6742193814981148,
+              "interval_95": [
+                0.3565274245236187,
+                0.7369719217609083
+              ],
+              "positive_pairs": 214,
+              "zero_pairs": 0
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 300,
+            "available_member_hours": 0,
+            "present_member_workdays": 0,
+            "scored_proposals": 300
+          }
+        },
+        "dams-witness": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": 1.0043847756503055,
+            "sd_difference": 1.0221314039541807,
+            "interval_95": [
+              0.8882517669224314,
+              1.1205177843781797
+            ],
+            "positive_pairs": 251,
+            "zero_pairs": 0,
+            "treatment_mean": 13.779395141439279,
+            "reference_mean": 12.775010365788972,
+            "relative_difference_of_means": 0.07862105367366375
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": 1.0048134063032015,
+            "sd_difference": 1.0223047490321249,
+            "interval_95": [
+              0.88866070237237,
+              1.120966110234033
+            ],
+            "positive_pairs": 251,
+            "zero_pairs": 0,
+            "treatment_mean": 13.779823772092174,
+            "reference_mean": 12.775010365788972,
+            "relative_difference_of_means": 0.07865460594803558
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": 19.142325665649356,
+            "sd_difference": 19.104925656284337,
+            "interval_95": [
+              16.97165319692036,
+              21.31299813437835
+            ],
+            "positive_pairs": 251,
+            "zero_pairs": 0,
+            "treatment_mean": 253.99275836205211,
+            "reference_mean": 234.85043269640275,
+            "relative_difference_of_means": 0.08150858163584965
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": 0.01967075111751065,
+            "sd_difference": 0.019635087030032475,
+            "interval_95": [
+              0.017439842523361292,
+              0.02190165971166001
+            ],
+            "positive_pairs": 254,
+            "zero_pairs": 0,
+            "treatment_mean": 0.26106179029172666,
+            "reference_mean": 0.24139103917421598,
+            "relative_difference_of_means": 0.08148915214418519
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": 18.480398094285302,
+              "sd_difference": 18.862477171949223,
+              "interval_95": [
+                16.337272251986555,
+                20.62352393658405
+              ],
+              "positive_pairs": 251,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 0.6619275713640553,
+              "sd_difference": 1.868589188888312,
+              "interval_95": [
+                0.44962132214552986,
+                0.8742338205825808
+              ],
+              "positive_pairs": 218,
+              "zero_pairs": 0
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 278,
+            "available_member_hours": 0,
+            "present_member_workdays": 0,
+            "scored_proposals": 300
+          }
+        },
+        "linear-witness": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": 2.471560988081375,
+            "sd_difference": 1.3148702420303442,
+            "interval_95": [
+              2.3221674397538283,
+              2.620954536408922
+            ],
+            "positive_pairs": 295,
+            "zero_pairs": 0,
+            "treatment_mean": 15.24657135387035,
+            "reference_mean": 12.775010365788972,
+            "relative_difference_of_means": 0.19346841351300414
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": 2.4720475360699483,
+            "sd_difference": 1.3152654201080927,
+            "interval_95": [
+              2.3226090882128747,
+              2.621485983927022
+            ],
+            "positive_pairs": 295,
+            "zero_pairs": 0,
+            "treatment_mean": 15.247057901858922,
+            "reference_mean": 12.775010365788972,
+            "relative_difference_of_means": 0.19350649943032566
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": 46.06928480748299,
+            "sd_difference": 24.53237716668539,
+            "interval_95": [
+              43.28195358901874,
+              48.85661602594723
+            ],
+            "positive_pairs": 295,
+            "zero_pairs": 0,
+            "treatment_mean": 280.9197175038857,
+            "reference_mean": 234.85043269640275,
+            "relative_difference_of_means": 0.1961643599228022
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": 0.04745907340792515,
+            "sd_difference": 0.02522563228002472,
+            "interval_95": [
+              0.044592975602487234,
+              0.050325171213363065
+            ],
+            "positive_pairs": 295,
+            "zero_pairs": 0,
+            "treatment_mean": 0.2888501125821411,
+            "reference_mean": 0.24139103917421598,
+            "relative_difference_of_means": 0.19660660797633478
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": 45.48097996070651,
+              "sd_difference": 24.228172710755082,
+              "interval_95": [
+                42.72821198782786,
+                48.233747933585164
+              ],
+              "positive_pairs": 295,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 0.5883048467764772,
+              "sd_difference": 1.882515349750416,
+              "interval_95": [
+                0.3744163284341503,
+                0.8021933651188041
+              ],
+              "positive_pairs": 201,
+              "zero_pairs": 0
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 278,
+            "available_member_hours": 0,
+            "present_member_workdays": 0,
+            "scored_proposals": 300
+          }
+        },
+        "dams-minus-linear-witnessed": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 300,
+            "difference": -1.4671762124310697,
+            "sd_difference": 1.0481560346305125,
+            "interval_95": [
+              -1.5862660999416347,
+              -1.3480863249205046
+            ],
+            "positive_pairs": 19,
+            "zero_pairs": 0,
+            "treatment_mean": 13.779395141439279,
+            "reference_mean": 15.24657135387035,
+            "relative_difference_of_means": -0.09622991152424747
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 300,
+            "difference": -1.467234129766747,
+            "sd_difference": 1.0482591219141488,
+            "interval_95": [
+              -1.5863357298970047,
+              -1.3481325296364894
+            ],
+            "positive_pairs": 19,
+            "zero_pairs": 0,
+            "treatment_mean": 13.779823772092174,
+            "reference_mean": 15.247057901858922,
+            "relative_difference_of_means": -0.09623063932798877
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 300,
+            "difference": -26.92695914183363,
+            "sd_difference": 19.377960111720142,
+            "interval_95": [
+              -29.12865336830676,
+              -24.7252649153605
+            ],
+            "positive_pairs": 19,
+            "zero_pairs": 0,
+            "treatment_mean": 253.99275836205211,
+            "reference_mean": 280.9197175038857,
+            "relative_difference_of_means": -0.09585286280754278
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 300,
+            "difference": -0.027788322290414495,
+            "sd_difference": 0.019940210100393888,
+            "interval_95": [
+              -0.030053898501717847,
+              -0.025522746079111144
+            ],
+            "positive_pairs": 18,
+            "zero_pairs": 0,
+            "treatment_mean": 0.26106179029172666,
+            "reference_mean": 0.2888501125821411,
+            "relative_difference_of_means": -0.09620325933753013
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 300,
+              "difference": -27.04512868383913,
+              "sd_difference": 19.344242284156934,
+              "interval_95": [
+                -29.24299194225127,
+                -24.847265425426993
+              ],
+              "positive_pairs": 19,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 300,
+              "difference": 0.11816954200549806,
+              "sd_difference": 0.869424144214532,
+              "interval_95": [
+                0.01938689885640163,
+                0.2169521851545945
+              ],
+              "positive_pairs": 186,
+              "zero_pairs": 9
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 300,
+            "available_member_hours": 9,
+            "present_member_workdays": 9,
+            "scored_proposals": 300
+          }
+        }
+      },
+      "frozen": {
+        "startup-founding": {
+          "regret_per_1000_scored_proposals": {
+            "pairs": 66,
+            "difference": -0.4339903410788009,
+            "sd_difference": 0.34173043401524894,
+            "interval_95": [
+              -0.5179981670183791,
+              -0.34998251513922274
+            ],
+            "positive_pairs": 7,
+            "zero_pairs": 0,
+            "treatment_mean": 10.67128206074138,
+            "reference_mean": 11.10527240182018,
+            "relative_difference_of_means": -0.03907966643012457
+          },
+          "regret_per_1000_completed_decisions": {
+            "pairs": 66,
+            "difference": -0.4339903410788009,
+            "sd_difference": 0.34173043401524894,
+            "interval_95": [
+              -0.5179981670183791,
+              -0.34998251513922274
+            ],
+            "positive_pairs": 7,
+            "zero_pairs": 0,
+            "treatment_mean": 10.67128206074138,
+            "reference_mean": 11.10527240182018,
+            "relative_difference_of_means": -0.03907966643012457
+          },
+          "regret_per_million_available_hours": {
+            "pairs": 66,
+            "difference": -13.772565767505126,
+            "sd_difference": 10.840513040940612,
+            "interval_95": [
+              -16.437496490644726,
+              -11.107635044365528
+            ],
+            "positive_pairs": 7,
+            "zero_pairs": 0,
+            "treatment_mean": 339.3287097991691,
+            "reference_mean": 353.1012755666742,
+            "relative_difference_of_means": -0.039004576648448065
+          },
+          "regret_per_1000_present_workdays": {
+            "pairs": 66,
+            "difference": -0.011719861241761779,
+            "sd_difference": 0.00922776867564991,
+            "interval_95": [
+              -0.013988329916343151,
+              -0.009451392567180406
+            ],
+            "positive_pairs": 7,
+            "zero_pairs": 0,
+            "treatment_mean": 0.288289509449477,
+            "reference_mean": 0.3000093706912388,
+            "relative_difference_of_means": -0.039064983919530734
+          },
+          "hourly_difference_components": {
+            "regret_per_scored_proposal": {
+              "pairs": 66,
+              "difference": -13.77256576750513,
+              "sd_difference": 10.840513040940605,
+              "interval_95": [
+                -16.437496490644726,
+                -11.107635044365534
+              ],
+              "positive_pairs": 7,
+              "zero_pairs": 0
+            },
+            "scored_proposals_per_available_hour": {
+              "pairs": 66,
+              "difference": 0.0,
+              "sd_difference": 0.0,
+              "interval_95": [
+                0.0,
+                0.0
+              ],
+              "positive_pairs": 0,
+              "zero_pairs": 66
+            }
+          },
+          "pairs_with_equal_denominators": {
+            "completed_decisions": 66,
+            "available_member_hours": 66,
+            "present_member_workdays": 66,
+            "scored_proposals": 66
+          }
+        }
+      }
+    }
+  }
+}
