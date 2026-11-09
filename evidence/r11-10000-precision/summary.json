@@ -1,0 +1,495 @@
+{
+  "schema": "dams-ten-world-supplementary-precision-v1",
+  "source": {
+    "public_commit": "2c921307a0aad405b515426c43c8ab156762fcd0",
+    "public_path": "evidence/r11-10000-paired-results",
+    "source_sha256": {
+      "pooled.json": "9507497f0e295c93fcbf31ed6d29a9a02cb2532dbd10ab63d07973420de1eecc",
+      "roster.json": "ee1c8bc5378089291b9ffde35a97c860ad5ddc500714355bd5e8ee037ed377c9",
+      "figure.json": "60a4971aaaec50eac87582438c3e34617447114a4c6b080afba269db9bb5df01",
+      "SHA256SUMS": "f86119af3b19194193b6702cb96fc7ff59548859b64b0c8b5cd4cee033ed8dfb",
+      "verify.py": "24bfe241654ba295ea04d18786d649e2d61eee33de1c731d6667faf8d1f40e25"
+    },
+    "original_verifier_output": [
+      "Verified 75 paired outcome summaries across 10 worlds.",
+      "Verified plotted differences and adjusted intervals for 12 primary comparisons."
+    ],
+    "protocol_commit": "956725516ddac7f7c2336b0ccc23a69c5d7a27c5",
+    "protocol_path": "docs/r11-formal-protocol.md",
+    "protocol_sha256": "1487eb9ab3aa64a6437db25710d72a92b3e082a5be25c9da4a8a18ca9fbefc67",
+    "protocol_lines": "294\u2013310, 348\u2013355"
+  },
+  "worlds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "reference": "control-hierarchy",
+  "assumptions": {
+    "scope": "Retrospective numerical reporting on fixed synthetic outcomes; original scientific and precision gates are preserved.",
+    "precision": "Design criterion uses marginal paired 95% half-width <= threshold/2, not the adjusted interval.",
+    "multiple_testing": "Within-arm Holm families have four slots; the study-wide family has twelve. The all-zero test reserves a slot but has null p-values.",
+    "interval": "Paired Student-t marginal 95% and Bonferroni simultaneous 95% within each arm, conditional on the simulation.",
+    "detectable_difference": "Plug-in achieved sensitivity using retained paired SD, independent normal paired differences, two-sided tests of zero, n=10. Marginal alpha=.05; Bonferroni per-test alpha=.05/4. This is not realized power or empirical validation.",
+    "degenerate": "No Student-t interval, test or minimum detectable difference is identified from all-zero paired differences."
+  },
+  "rows": [
+    {
+      "endpoint": "net_operating_result_per_member_year",
+      "code": "E1",
+      "display_scale": 1,
+      "unit": "resource units per member-year",
+      "world_count": 10,
+      "mean_difference": -25.169100227342064,
+      "sample_sd_paired_differences": 0.6027852323149113,
+      "design_threshold": 12.48085525246722,
+      "design_half_width_target": 6.24042762623361,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 4.1649342210790395e-16,
+      "marginal": {
+        "interval": [
+          -25.600306806095666,
+          -24.73789364858846
+        ],
+        "half_width": 0.4312065787536033,
+        "half_width_ratio_to_design_target": 0.06909888305424618,
+        "minimum_detectable_difference_80pct": 0.600374918078739,
+        "interval_relation_to_threshold": "wholly below the negative threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          -25.762098620154582,
+          -24.576101834529545
+        ],
+        "half_width": 0.5929983928125193,
+        "half_width_ratio_to_design_target": 0.09502528165211997,
+        "minimum_detectable_difference_80pct": 0.7741550319345875,
+        "interval_relation_to_threshold": "wholly below the negative threshold"
+      },
+      "status": "defined",
+      "arm": "dams-witness",
+      "contrast_status": "primary",
+      "p_holm_within_arm_four": 8.329868442158079e-16,
+      "p_holm_study_wide_twelve": 3.3319473768632316e-15
+    },
+    {
+      "endpoint": "decision_regret_per_available_member_hour",
+      "code": "E2",
+      "display_scale": 1000000.0,
+      "unit": "regret units per million modeled available member-hours",
+      "world_count": 10,
+      "mean_difference": 2.147409199133606,
+      "sample_sd_paired_differences": 0.5590981217745715,
+      "design_threshold": 0.85620813964546,
+      "design_half_width_target": 0.42810406982273,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 6.946607250792546e-07,
+      "marginal": {
+        "interval": [
+          1.7474544966069387,
+          2.547363901660274
+        ],
+        "half_width": 0.39995470252666737,
+        "half_width_ratio_to_design_target": 0.9342464384706299,
+        "minimum_detectable_difference_80pct": 0.5568624960656351,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          1.5973886115960347,
+          2.697429786671178
+        ],
+        "half_width": 0.5500205875375717,
+        "half_width_ratio_to_design_target": 1.2847824309760125,
+        "minimum_detectable_difference_80pct": 0.7180478238571709,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "status": "defined",
+      "arm": "dams-witness",
+      "contrast_status": "primary",
+      "p_holm_within_arm_four": 6.946607250792546e-07,
+      "p_holm_study_wide_twelve": 2.7786429003170183e-06
+    },
+    {
+      "endpoint": "governance_member_hours_per_member_year",
+      "code": "E3",
+      "display_scale": 1,
+      "unit": "modeled member-hours per member-year",
+      "world_count": 10,
+      "mean_difference": -1.5606371339445335,
+      "sample_sd_paired_differences": 0.01609617841651085,
+      "design_threshold": 4.776247946243478,
+      "design_half_width_target": 2.388123973121739,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 2.1256331486552218e-19,
+      "marginal": {
+        "interval": [
+          -1.5721516463345204,
+          -1.5491226215545466
+        ],
+        "half_width": 0.011514512389986993,
+        "half_width_ratio_to_design_target": 0.004821572296741071,
+        "minimum_detectable_difference_80pct": 0.016031815778036296,
+        "interval_relation_to_threshold": "wholly within the design thresholds"
+      },
+      "bonferroni": {
+        "interval": [
+          -1.5764719743150553,
+          -1.5448022935740118
+        ],
+        "half_width": 0.015834840370521762,
+        "half_width_ratio_to_design_target": 0.0066306609492398205,
+        "minimum_detectable_difference_80pct": 0.02067226741472134,
+        "interval_relation_to_threshold": "wholly within the design thresholds"
+      },
+      "status": "defined",
+      "arm": "dams-witness",
+      "contrast_status": "primary",
+      "p_holm_within_arm_four": 6.376899445965666e-19,
+      "p_holm_study_wide_twelve": 1.9130698337896996e-18
+    },
+    {
+      "endpoint": "witness_resource_units_per_member_year",
+      "code": "E4",
+      "display_scale": 1,
+      "unit": "verification processing units per member-year",
+      "world_count": 10,
+      "mean_difference": 18.595792042131016,
+      "sample_sd_paired_differences": 0.03295220637863265,
+      "design_threshold": 0.1642376591554809,
+      "design_half_width_target": 0.08211882957774044,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 2.7739215438560707e-26,
+      "marginal": {
+        "interval": [
+          18.57221945373109,
+          18.619364630530942
+        ],
+        "half_width": 0.023572588399925452,
+        "half_width_ratio_to_design_target": 0.28705460758679835,
+        "minimum_detectable_difference_80pct": 0.03282044274560089,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          18.563374848784868,
+          18.628209235477165
+        ],
+        "half_width": 0.03241719334614865,
+        "half_width_ratio_to_design_target": 0.39475956382768296,
+        "minimum_detectable_difference_80pct": 0.042320407026889974,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "status": "defined",
+      "arm": "dams-witness",
+      "contrast_status": "primary",
+      "p_holm_within_arm_four": 1.1095686175424283e-25,
+      "p_holm_study_wide_twelve": 3.328705852627285e-25
+    },
+    {
+      "endpoint": "net_operating_result_per_member_year",
+      "code": "E1",
+      "display_scale": 1,
+      "unit": "resource units per member-year",
+      "world_count": 10,
+      "mean_difference": -19.619615182472046,
+      "sample_sd_paired_differences": 1.1353241765860627,
+      "design_threshold": 12.48085525246722,
+      "design_half_width_target": 6.24042762623361,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 1.1571483714405597e-12,
+      "marginal": {
+        "interval": [
+          -20.431777172708344,
+          -18.807453192235748
+        ],
+        "half_width": 0.8121619902362983,
+        "half_width_ratio_to_design_target": 0.1301452462683997,
+        "minimum_detectable_difference_80pct": 1.1307844369262392,
+        "interval_relation_to_threshold": "wholly below the negative threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          -20.73650620093849,
+          -18.502724164005603
+        ],
+        "half_width": 1.1168910184664418,
+        "half_width_ratio_to_design_target": 0.17897668002289416,
+        "minimum_detectable_difference_80pct": 1.4580929940929983,
+        "interval_relation_to_threshold": "wholly below the negative threshold"
+      },
+      "status": "defined",
+      "arm": "control-process",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 4.628593485762239e-12,
+      "p_holm_study_wide_twelve": 8.100038600083918e-12
+    },
+    {
+      "endpoint": "decision_regret_per_available_member_hour",
+      "code": "E2",
+      "display_scale": 1000000.0,
+      "unit": "regret units per million modeled available member-hours",
+      "world_count": 10,
+      "mean_difference": 0.6426712431836069,
+      "sample_sd_paired_differences": 0.5266903397386258,
+      "design_threshold": 0.85620813964546,
+      "design_half_width_target": 0.42810406982273,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 0.0038551079343045976,
+      "marginal": {
+        "interval": [
+          0.26589967134354525,
+          1.0194428150236685
+        ],
+        "half_width": 0.3767715718400616,
+        "half_width_ratio_to_design_target": 0.8800934127911368,
+        "minimum_detectable_difference_80pct": 0.5245843007120041,
+        "interval_relation_to_threshold": "crosses at least one design threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          0.12453226393980706,
+          1.1608102224274066
+        ],
+        "half_width": 0.5181389792437998,
+        "half_width_ratio_to_design_target": 1.2103108000312905,
+        "minimum_detectable_difference_80pct": 0.6764266191693632,
+        "interval_relation_to_threshold": "crosses at least one design threshold"
+      },
+      "status": "defined",
+      "arm": "control-process",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 0.011565323802913793,
+      "p_holm_study_wide_twelve": 0.011565323802913793
+    },
+    {
+      "endpoint": "governance_member_hours_per_member_year",
+      "code": "E3",
+      "display_scale": 1,
+      "unit": "modeled member-hours per member-year",
+      "world_count": 10,
+      "mean_difference": -0.016384084770695397,
+      "sample_sd_paired_differences": 0.019163231709121563,
+      "design_threshold": 4.776247946243478,
+      "design_half_width_target": 2.388123973121739,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 0.024247589234240172,
+      "marginal": {
+        "interval": [
+          -0.03009263491453153,
+          -0.0026755346268592627
+        ],
+        "half_width": 0.013708550143836134,
+        "half_width_ratio_to_design_target": 0.005740300879738841,
+        "minimum_detectable_difference_80pct": 0.019086605063803497,
+        "interval_relation_to_threshold": "wholly within the design thresholds"
+      },
+      "bonferroni": {
+        "interval": [
+          -0.03523618166258849,
+          0.0024680121211976963
+        ],
+        "half_width": 0.018852096891893093,
+        "half_width_ratio_to_design_target": 0.007894103113604174,
+        "minimum_detectable_difference_80pct": 0.02461127356881652,
+        "interval_relation_to_threshold": "wholly within the design thresholds"
+      },
+      "status": "defined",
+      "arm": "control-process",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 0.048495178468480345,
+      "p_holm_study_wide_twelve": 0.048495178468480345
+    },
+    {
+      "endpoint": "witness_resource_units_per_member_year",
+      "code": "E4",
+      "display_scale": 1,
+      "unit": "verification processing units per member-year",
+      "world_count": 10,
+      "mean_difference": 0.0,
+      "sample_sd_paired_differences": 0.0,
+      "design_threshold": 0.1642376591554809,
+      "design_half_width_target": 0.08211882957774044,
+      "prespecified_marginal_precision_met": false,
+      "p_unadjusted_two_sided": null,
+      "marginal": {
+        "interval": null,
+        "half_width": null,
+        "half_width_ratio_to_design_target": null,
+        "minimum_detectable_difference_80pct": null,
+        "interval_relation_to_threshold": "undefined for degenerate differences"
+      },
+      "bonferroni": {
+        "interval": null,
+        "half_width": null,
+        "half_width_ratio_to_design_target": null,
+        "minimum_detectable_difference_80pct": null,
+        "interval_relation_to_threshold": "undefined for degenerate differences"
+      },
+      "status": "all ten paired differences exactly zero; Student-t inference undefined",
+      "arm": "control-process",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": null,
+      "p_holm_study_wide_twelve": null
+    },
+    {
+      "endpoint": "net_operating_result_per_member_year",
+      "code": "E1",
+      "display_scale": 1,
+      "unit": "resource units per member-year",
+      "world_count": 10,
+      "mean_difference": -14.462744951227922,
+      "sample_sd_paired_differences": 1.0190882740668308,
+      "design_threshold": 12.48085525246722,
+      "design_half_width_target": 6.24042762623361,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 6.770159605391867e-12,
+      "marginal": {
+        "interval": [
+          -15.191756785875356,
+          -13.733733116580488
+        ],
+        "half_width": 0.7290118346474328,
+        "half_width_ratio_to_design_target": 0.11682081394274987,
+        "minimum_detectable_difference_80pct": 1.015013318604723,
+        "interval_relation_to_threshold": "wholly below the negative threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          -15.46528727685013,
+          -13.460202625605714
+        ],
+        "half_width": 1.0025423256222092,
+        "half_width_ratio_to_design_target": 0.1606528247211306,
+        "minimum_detectable_difference_80pct": 1.308811618235218,
+        "interval_relation_to_threshold": "wholly below the negative threshold"
+      },
+      "status": "defined",
+      "arm": "linear-witness",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 1.3540319210783733e-11,
+      "p_holm_study_wide_twelve": 4.0620957632351197e-11
+    },
+    {
+      "endpoint": "decision_regret_per_available_member_hour",
+      "code": "E2",
+      "display_scale": 1000000.0,
+      "unit": "regret units per million modeled available member-hours",
+      "world_count": 10,
+      "mean_difference": 4.151348560096093,
+      "sample_sd_paired_differences": 0.7870387246807419,
+      "design_threshold": 0.85620813964546,
+      "design_half_width_target": 0.42810406982273,
+      "prespecified_marginal_precision_met": false,
+      "p_unadjusted_two_sided": 4.472576352946179e-08,
+      "marginal": {
+        "interval": [
+          3.58833497312938,
+          4.714362147062806
+        ],
+        "half_width": 0.5630135869667133,
+        "half_width_ratio_to_design_target": 1.3151325265369396,
+        "minimum_detectable_difference_80pct": 0.7838916491705611,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          3.3770882202656844,
+          4.925608899926501
+        ],
+        "half_width": 0.7742603398304083,
+        "half_width_ratio_to_design_target": 1.8085797225684288,
+        "minimum_detectable_difference_80pct": 1.0107911680236175,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "status": "defined",
+      "arm": "linear-witness",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 4.472576352946179e-08,
+      "p_holm_study_wide_twelve": 2.2362881764730898e-07
+    },
+    {
+      "endpoint": "governance_member_hours_per_member_year",
+      "code": "E3",
+      "display_scale": 1,
+      "unit": "modeled member-hours per member-year",
+      "world_count": 10,
+      "mean_difference": -1.55572870010995,
+      "sample_sd_paired_differences": 0.01528207448133932,
+      "design_threshold": 4.776247946243478,
+      "design_half_width_target": 2.388123973121739,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 1.3707320928056777e-19,
+      "marginal": {
+        "interval": [
+          -1.5666608376277342,
+          -1.5447965625921658
+        ],
+        "half_width": 0.010932137517784147,
+        "half_width_ratio_to_design_target": 0.004577709382270357,
+        "minimum_detectable_difference_80pct": 0.01522096714209818,
+        "interval_relation_to_threshold": "wholly within the design thresholds"
+      },
+      "bonferroni": {
+        "interval": [
+          -1.5707626543617375,
+          -1.5406947458581626
+        ],
+        "half_width": 0.015033954251787426,
+        "half_width_ratio_to_design_target": 0.006295298912868056,
+        "minimum_detectable_difference_80pct": 0.01962671648854747,
+        "interval_relation_to_threshold": "wholly within the design thresholds"
+      },
+      "status": "defined",
+      "arm": "linear-witness",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 4.112196278417033e-19,
+      "p_holm_study_wide_twelve": 1.3707320928056777e-18
+    },
+    {
+      "endpoint": "witness_resource_units_per_member_year",
+      "code": "E4",
+      "display_scale": 1,
+      "unit": "verification processing units per member-year",
+      "world_count": 10,
+      "mean_difference": 18.604522586142274,
+      "sample_sd_paired_differences": 0.03420505396555884,
+      "design_threshold": 0.1642376591554809,
+      "design_half_width_target": 0.08211882957774044,
+      "prespecified_marginal_precision_met": true,
+      "p_unadjusted_two_sided": 3.864658966317428e-26,
+      "marginal": {
+        "interval": [
+          18.580053764568913,
+          18.628991407715635
+        ],
+        "half_width": 0.024468821573361787,
+        "half_width_ratio_to_design_target": 0.29796846471365723,
+        "minimum_detectable_difference_80pct": 0.034068280660404016,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "bonferroni": {
+        "interval": [
+          18.57087288648101,
+          18.638172285803538
+        ],
+        "half_width": 0.033649699661263785,
+        "half_width_ratio_to_design_target": 0.40976837875420774,
+        "minimum_detectable_difference_80pct": 0.04392943493877371,
+        "interval_relation_to_threshold": "wholly above the positive threshold"
+      },
+      "status": "defined",
+      "arm": "linear-witness",
+      "contrast_status": "supportive",
+      "p_holm_within_arm_four": 1.5458635865269713e-25,
+      "p_holm_study_wide_twelve": 4.251124862949171e-25
+    }
+  ]
+}

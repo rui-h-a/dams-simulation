@@ -1,7 +1,8 @@
 """List the commits whose dams_sim sources give a recorded source_sha256 (dams_sim.storage.source_hash).
 
 A study's plan.json and every receipt record source_sha256, the SHA-256 over the names and bytes of
-dams_sim/*.py. Any listed commit reproduces the simulation of that study; tools outside dams_sim may differ.
+dams_sim/*.py. Matches identify the engine only. The study driver, configuration, roster and
+locked dependencies must be checked separately before comparing reproductions.
 Usage: python research_tools/source_commits.py SOURCE_SHA256_PREFIX [...]
 """
 import hashlib

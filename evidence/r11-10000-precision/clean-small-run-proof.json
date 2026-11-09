@@ -1,0 +1,427 @@
+{
+  "audit_scope": [
+    "No new model step was executed in this audit.",
+    "This is an actual two-world, one-year startup execution of the historical launcher and an immutable output audit.",
+    "Producer validator statuses are retained evidence. The archived arm databases are compact and original journals are not present here for independent event revalidation.",
+    "The source, effective arm configuration and byte comparisons establish only the reported scope. The different engine binds a different provenance; differing state digests do not establish changed trajectories or an effect of the engine change.",
+    "This historical small run does not verify the full 10,000-member workflow, lossless archive recovery, or portability to other platforms."
+  ],
+  "historical_comparison_runs": {
+    "different_engine": {
+      "arms": [
+        {
+          "arm": "control-hierarchy",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": false,
+          "final_state_differing_fields": [
+            "config_sha256",
+            "source_sha256",
+            "state.branch_origin.parent_config_sha256",
+            "state.branch_origin.parent_source_sha256",
+            "state.branch_origin.parent_state_semantic_sha256",
+            "state.config.person_context.sick_age_profile",
+            "state.config.person_context.sick_spell_bins",
+            "state.config.person_context.sick_spell_model",
+            "state.execution_source_sha256",
+            "state_semantic_sha256"
+          ],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "d7d867d08ab2a9045f561682a7eae1810f5f4453916763c6bda4a30921a2afdf",
+          "state_semantic_sha256_equal": false,
+          "summary.json_equal": false,
+          "summary_differing_fields": [
+            "branch_origin.parent_config_sha256",
+            "branch_origin.parent_source_sha256",
+            "branch_origin.parent_state_semantic_sha256"
+          ],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "3066460ed0a53c3016cdda6fc09c024142d56cc640121ea37c9dc6409febac99",
+            "final_state.json": "6ffcc6e61d01f4ecc55b3720ee47246d726b0c9780a5025cb4ebe68ea271ddd4",
+            "summary.json": "2a8fa4b6097104c24c64e5db53975692193378887dcb85e7bbb0d9f3d330c5f6",
+            "timeseries.csv": "238185813d3d86835971bc294a35c035d6283c41628ceb87365713b53a325be2"
+          },
+          "world": 0
+        },
+        {
+          "arm": "dams-witness",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": false,
+          "final_state_differing_fields": [
+            "config_sha256",
+            "source_sha256",
+            "state.branch_origin.parent_config_sha256",
+            "state.branch_origin.parent_source_sha256",
+            "state.branch_origin.parent_state_semantic_sha256",
+            "state.config.person_context.sick_age_profile",
+            "state.config.person_context.sick_spell_bins",
+            "state.config.person_context.sick_spell_model",
+            "state.execution_source_sha256",
+            "state_semantic_sha256"
+          ],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "84b6716da88eb434d1312571d4398de05afd591c9cb648ed1f9ed4a4e9c6ee59",
+          "state_semantic_sha256_equal": false,
+          "summary.json_equal": false,
+          "summary_differing_fields": [
+            "branch_origin.parent_config_sha256",
+            "branch_origin.parent_source_sha256",
+            "branch_origin.parent_state_semantic_sha256"
+          ],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "24489c9a9a491568cc213b6efdb4f5424e7923942f68c71bdd717c1e0f16425b",
+            "final_state.json": "dbffcb8639c3b2330f806ea39c492c82d154b1a2dcae1316ce6c5b9dc6c4c1a5",
+            "summary.json": "196fe97bea39e323714a439a4a2438ef56326576065b2125f08ae8cf1ed0c1b4",
+            "timeseries.csv": "b9be42d020e554f17efdab1eb9acfb78f66d32787bb0d2784f272a2aee1b4327"
+          },
+          "world": 0
+        },
+        {
+          "arm": "control-hierarchy",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": false,
+          "final_state_differing_fields": [
+            "config_sha256",
+            "source_sha256",
+            "state.branch_origin.parent_config_sha256",
+            "state.branch_origin.parent_source_sha256",
+            "state.branch_origin.parent_state_semantic_sha256",
+            "state.config.person_context.sick_age_profile",
+            "state.config.person_context.sick_spell_bins",
+            "state.config.person_context.sick_spell_model",
+            "state.execution_source_sha256",
+            "state_semantic_sha256"
+          ],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "9cf1df47f169f15a1c517157a36d0729002588175ba3f004e1909880e9cbc1d4",
+          "state_semantic_sha256_equal": false,
+          "summary.json_equal": false,
+          "summary_differing_fields": [
+            "branch_origin.parent_config_sha256",
+            "branch_origin.parent_source_sha256",
+            "branch_origin.parent_state_semantic_sha256"
+          ],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "64e01fa74860ad03e827bede1d397535b51ffde12d172cb65fbccbae36f8a137",
+            "final_state.json": "b08d647714e4927171eb1f29e9aa8b5f6fdf4593f8adb0cc03f40ed0ec8cd6b8",
+            "summary.json": "032b82cfbf1aa679427734fda49e6f8ad2691b67a43e3d657bbd2aa6ebbf2488",
+            "timeseries.csv": "1701982edad8df9606aab98190d7093b4f590d9d456839e6be5380afcc5104be"
+          },
+          "world": 1
+        },
+        {
+          "arm": "dams-witness",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": false,
+          "final_state_differing_fields": [
+            "config_sha256",
+            "source_sha256",
+            "state.branch_origin.parent_config_sha256",
+            "state.branch_origin.parent_source_sha256",
+            "state.branch_origin.parent_state_semantic_sha256",
+            "state.config.person_context.sick_age_profile",
+            "state.config.person_context.sick_spell_bins",
+            "state.config.person_context.sick_spell_model",
+            "state.execution_source_sha256",
+            "state_semantic_sha256"
+          ],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "1eb2f8ed44f906c458c2eef4b1533b58ff2107cc1800ac15e795f2e5d81afe80",
+          "state_semantic_sha256_equal": false,
+          "summary.json_equal": false,
+          "summary_differing_fields": [
+            "branch_origin.parent_config_sha256",
+            "branch_origin.parent_source_sha256",
+            "branch_origin.parent_state_semantic_sha256"
+          ],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "4f4c04f5c5a266077bfc13b7de2e0035a4505a4d361e2ad07866ee191a262e0a",
+            "final_state.json": "849f4e3ab9d36275ee30d892a332b24f3c1f2ec0495a3064fa3db74d8753749b",
+            "summary.json": "47477e03425351578bedfc9c6a3678910ba0e3619191afc72f7e30cd427da719",
+            "timeseries.csv": "9c579af31fb590d01a48b866ffd3b416c4597ba1317c5d4c243eda66e0a8e2d0"
+          },
+          "world": 1
+        }
+      ],
+      "batch_complete_event_utc": "2026-10-19T09:45:18.277449+00:00",
+      "engine_sha256": "5f0497a859b4b2295f234ed8ccc3dd6c4ce85d80ef3aa08c70f902c7cdff0c34",
+      "equal_arm_count_by_check": {
+        "final_state.compact.sqlite_equal": 4,
+        "final_state.json_equal": 0,
+        "recorded_arm_config_equal": 4,
+        "state_semantic_sha256_equal": 0,
+        "summary.json_equal": 0,
+        "timeseries.csv_equal": 4
+      },
+      "events_sha256": "4ff06c3039a1dcb25c9070a8b98721cfbd77f574f4c028850be0a7f7af39d108",
+      "fields_differing_in_saved_plan": [
+        "executable",
+        "source_sha256"
+      ],
+      "first_saved_stage_event_utc": "2026-10-19T09:44:53.767009+00:00",
+      "plan_sha256": "84f8acc8f8e71a297ee20cb5d1a8c23df3edda80471193059f6687b153f3c7c4"
+    },
+    "same_engine": {
+      "arms": [
+        {
+          "arm": "control-hierarchy",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": true,
+          "final_state_differing_fields": [],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "6ce7c50e1b480791a1b3dc91e4bdd655b458920db425221456d229ae07cb50e3",
+          "state_semantic_sha256_equal": true,
+          "summary.json_equal": true,
+          "summary_differing_fields": [],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "3066460ed0a53c3016cdda6fc09c024142d56cc640121ea37c9dc6409febac99",
+            "final_state.json": "1ac56e7a41a4f92a48c03575fff22a2bd48f312f881f942050e6601b8895939f",
+            "summary.json": "332b333510e3aaf300fa9e3057326d78d7d29d659a72dc7a9bd36aa7737f9962",
+            "timeseries.csv": "238185813d3d86835971bc294a35c035d6283c41628ceb87365713b53a325be2"
+          },
+          "world": 0
+        },
+        {
+          "arm": "dams-witness",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": true,
+          "final_state_differing_fields": [],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "66e2fdc817864c397a1b7fff68c1a64ecd3c00de462306e9326bfcfed902bebe",
+          "state_semantic_sha256_equal": true,
+          "summary.json_equal": true,
+          "summary_differing_fields": [],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "24489c9a9a491568cc213b6efdb4f5424e7923942f68c71bdd717c1e0f16425b",
+            "final_state.json": "a989be58edeb92ff9285f90abfdbd7f770c978d434108a19e860da3bea76b337",
+            "summary.json": "e84a2ef398e3bd7099a7c8c851d9885ad594e7d38d1a491eda6d8bf5f90ae35d",
+            "timeseries.csv": "b9be42d020e554f17efdab1eb9acfb78f66d32787bb0d2784f272a2aee1b4327"
+          },
+          "world": 0
+        },
+        {
+          "arm": "control-hierarchy",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": true,
+          "final_state_differing_fields": [],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "6d65fac739d1b3c0c15cf91404f54fde4fa5a47637453697678c30b373660ef5",
+          "state_semantic_sha256_equal": true,
+          "summary.json_equal": true,
+          "summary_differing_fields": [],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "64e01fa74860ad03e827bede1d397535b51ffde12d172cb65fbccbae36f8a137",
+            "final_state.json": "02f6dce0626e0687233f875dcd4f8ab67cf5a3016b7135e6f867092ba6443616",
+            "summary.json": "c25b81b5981b354d4ff66df35202e52316b0fb68306e62337979b5a4998394dc",
+            "timeseries.csv": "1701982edad8df9606aab98190d7093b4f590d9d456839e6be5380afcc5104be"
+          },
+          "world": 1
+        },
+        {
+          "arm": "dams-witness",
+          "final_state.compact.sqlite_equal": true,
+          "final_state.json_equal": true,
+          "final_state_differing_fields": [],
+          "recorded_arm_config_equal": true,
+          "state_semantic_sha256": "33260d975fd9cec31976a50a3b899a29bcd1205c8b668a54e9da3550cea3d581",
+          "state_semantic_sha256_equal": true,
+          "summary.json_equal": true,
+          "summary_differing_fields": [],
+          "timeseries.csv_equal": true,
+          "verified_comparison_file_sha256": {
+            "final_state.compact.sqlite": "4f4c04f5c5a266077bfc13b7de2e0035a4505a4d361e2ad07866ee191a262e0a",
+            "final_state.json": "0c404c1ed53ea19b0f21c2a6f179c85cd1351af42d6c6ab26fbbcbba403aa8cd",
+            "summary.json": "00c5b8455beb20ddf53d24619cddc7e5660a04e6d7720399e58d0d2ba3b7d773",
+            "timeseries.csv": "9c579af31fb590d01a48b866ffd3b416c4597ba1317c5d4c243eda66e0a8e2d0"
+          },
+          "world": 1
+        }
+      ],
+      "batch_complete_event_utc": "2026-10-19T08:00:17.496567+00:00",
+      "engine_sha256": "487ab3fdf1afbf904a940a6a9b871967a805ac646d162632466e52ace3adac7e",
+      "equal_arm_count_by_check": {
+        "final_state.compact.sqlite_equal": 4,
+        "final_state.json_equal": 4,
+        "recorded_arm_config_equal": 4,
+        "state_semantic_sha256_equal": 4,
+        "summary.json_equal": 4,
+        "timeseries.csv_equal": 4
+      },
+      "events_sha256": "549ff8d5ef6e8ac9f22398beaea696d51c1a9b3745bcb4ef13488a00263953da",
+      "fields_differing_in_saved_plan": [
+        "executable"
+      ],
+      "first_saved_stage_event_utc": "2026-10-19T07:59:51.549530+00:00",
+      "plan_sha256": "7c52ced41ba184ef894fac1303faaaec79e6dec1ae4a7bb318dc00655c310b84"
+    }
+  },
+  "historical_execution": {
+    "argv": [
+      "./run.sh",
+      "--spec",
+      "enterprise-r11",
+      "--scale",
+      "30",
+      "--context",
+      "startup",
+      "--pre-years",
+      "0",
+      "--post-years",
+      "1",
+      "--worlds",
+      "0,1",
+      "--arms",
+      "control-hierarchy,dams-witness",
+      "--jobs",
+      "2",
+      "--output",
+      "runs/clean-n30"
+    ],
+    "argv_evidence": "Options reconstructed from the contemporaneous run note, saved plan and launcher log. This is not an OS argv capture.",
+    "arms": [
+      {
+        "arm": "control-hierarchy",
+        "arm_receipt_sha256": "c15e0c6922e99fd7fce4743c915b8caa4246c3655216ef2a856e57932ddc6b09",
+        "output_sha256": {
+          "final_state.compact.sqlite": "3066460ed0a53c3016cdda6fc09c024142d56cc640121ea37c9dc6409febac99",
+          "final_state.json": "1ac56e7a41a4f92a48c03575fff22a2bd48f312f881f942050e6601b8895939f",
+          "summary.json": "332b333510e3aaf300fa9e3057326d78d7d29d659a72dc7a9bd36aa7737f9962",
+          "timeseries.csv": "238185813d3d86835971bc294a35c035d6283c41628ceb87365713b53a325be2"
+        },
+        "parent_receipt_sha256": "13c4cf90c15fd9b432efc754c608ba74f6da21340320547ff6268bbb599f44c8",
+        "producer_validator_status": {
+          "longitudinal": "pass",
+          "organization": "pass",
+          "summary": "pass"
+        },
+        "retention": "compact",
+        "state_semantic_sha256": "6ce7c50e1b480791a1b3dc91e4bdd655b458920db425221456d229ae07cb50e3",
+        "world": 0
+      },
+      {
+        "arm": "dams-witness",
+        "arm_receipt_sha256": "d89939093fd91dc45b783a3d48dd5e13131ba6a1b1faa393f08a846299572f08",
+        "output_sha256": {
+          "final_state.compact.sqlite": "24489c9a9a491568cc213b6efdb4f5424e7923942f68c71bdd717c1e0f16425b",
+          "final_state.json": "a989be58edeb92ff9285f90abfdbd7f770c978d434108a19e860da3bea76b337",
+          "summary.json": "e84a2ef398e3bd7099a7c8c851d9885ad594e7d38d1a491eda6d8bf5f90ae35d",
+          "timeseries.csv": "b9be42d020e554f17efdab1eb9acfb78f66d32787bb0d2784f272a2aee1b4327"
+        },
+        "parent_receipt_sha256": "13c4cf90c15fd9b432efc754c608ba74f6da21340320547ff6268bbb599f44c8",
+        "producer_validator_status": {
+          "longitudinal": "pass",
+          "organization": "pass",
+          "summary": "pass"
+        },
+        "retention": "compact",
+        "state_semantic_sha256": "66e2fdc817864c397a1b7fff68c1a64ecd3c00de462306e9326bfcfed902bebe",
+        "world": 0
+      },
+      {
+        "arm": "control-hierarchy",
+        "arm_receipt_sha256": "0590bcbaa92ed66f130d79bdea481a1cad34ce96a06e172ae079177ec92fc120",
+        "output_sha256": {
+          "final_state.compact.sqlite": "64e01fa74860ad03e827bede1d397535b51ffde12d172cb65fbccbae36f8a137",
+          "final_state.json": "02f6dce0626e0687233f875dcd4f8ab67cf5a3016b7135e6f867092ba6443616",
+          "summary.json": "c25b81b5981b354d4ff66df35202e52316b0fb68306e62337979b5a4998394dc",
+          "timeseries.csv": "1701982edad8df9606aab98190d7093b4f590d9d456839e6be5380afcc5104be"
+        },
+        "parent_receipt_sha256": "a3fdef22bce5d56092961b4174984cbab6d9a3dcc46354721f6c5c87a63a8e15",
+        "producer_validator_status": {
+          "longitudinal": "pass",
+          "organization": "pass",
+          "summary": "pass"
+        },
+        "retention": "compact",
+        "state_semantic_sha256": "6d65fac739d1b3c0c15cf91404f54fde4fa5a47637453697678c30b373660ef5",
+        "world": 1
+      },
+      {
+        "arm": "dams-witness",
+        "arm_receipt_sha256": "a2a8772a5f413f4d9c3d2be483846500dd676cc32b5a015bdf1eb28b98ea13b2",
+        "output_sha256": {
+          "final_state.compact.sqlite": "4f4c04f5c5a266077bfc13b7de2e0035a4505a4d361e2ad07866ee191a262e0a",
+          "final_state.json": "0c404c1ed53ea19b0f21c2a6f179c85cd1351af42d6c6ab26fbbcbba403aa8cd",
+          "summary.json": "00c5b8455beb20ddf53d24619cddc7e5660a04e6d7720399e58d0d2ba3b7d773",
+          "timeseries.csv": "9c579af31fb590d01a48b866ffd3b416c4597ba1317c5d4c243eda66e0a8e2d0"
+        },
+        "parent_receipt_sha256": "a3fdef22bce5d56092961b4174984cbab6d9a3dcc46354721f6c5c87a63a8e15",
+        "producer_validator_status": {
+          "longitudinal": "pass",
+          "organization": "pass",
+          "summary": "pass"
+        },
+        "retention": "compact",
+        "state_semantic_sha256": "33260d975fd9cec31976a50a3b899a29bcd1205c8b668a54e9da3550cea3d581",
+        "world": 1
+      }
+    ],
+    "batch_complete_event_utc": "2026-10-19T07:59:37.920293+00:00",
+    "environment": "macOS ARM64. The contemporaneous note records a fresh checkout, cleared environment and empty initial cache. The saved log shows uv download, managed CPython download and fresh virtual environment creation.",
+    "events_sha256": "f8c557853a2c0df8e6bb8bf4438aa73eb60838c2c6af7f7d938d398f8912317a",
+    "first_saved_stage_event_utc": "2026-10-19T07:59:14.059924+00:00",
+    "inference_reported_failures": 0,
+    "inference_sha256": "5fabb0092d140e86b2fea971d3454f18a58efdc3d8db702c59b8d4c67b25a90a",
+    "inference_worlds_with_reference": 2,
+    "installed_versions_from_log": [
+      "contourpy==1.4.0",
+      "cycler==0.12.1",
+      "dams-simulation==0.1.0",
+      "fonttools==4.66.1",
+      "kiwisolver==1.5.1",
+      "matplotlib==3.11.2",
+      "numpy==2.5.3",
+      "packaging==26.3",
+      "pillow==12.3.0",
+      "pyparsing==3.3.3",
+      "python-dateutil==2.9.0.post0",
+      "six==1.17.0"
+    ],
+    "paired_outcomes_sha256": "bdebad964eef17a976a1e085c015f269c1766dd20f8f02cc272aaee3bc75f915",
+    "plan_sha256": "7ff7b147188f53779ad0b106496c75c9d05f955ed22b5e647df8763fbc1dda7b",
+    "python_version": "3.14.2",
+    "run_log_sha256": "55f8cd10f0b8f81c915270da0cef0ee3eefb73aa9f1aea091c81ecfd56d2defa",
+    "saved_plan_effective_values": {
+      "arms": [
+        "control-hierarchy",
+        "dams-witness"
+      ],
+      "audit_worlds": [],
+      "context": "startup",
+      "growth": "organic",
+      "jobs": 2,
+      "post_years": 1,
+      "pre_years": 0,
+      "scale": 30,
+      "seed": 20261017,
+      "source_sha256": "487ab3fdf1afbf904a940a6a9b871967a805ac646d162632466e52ace3adac7e",
+      "variant": "baseline",
+      "worlds": [
+        0,
+        1
+      ]
+    },
+    "uv_revision": "ee4f00362",
+    "uv_version": "0.9.26"
+  },
+  "schema": "dams-clean-small-launch-proof-v1",
+  "source": {
+    "commit": "ee214679e42e9281423718fcba7ea1130c092c1c",
+    "engine_sha256": "487ab3fdf1afbf904a940a6a9b871967a805ac646d162632466e52ace3adac7e",
+    "sha256": {
+      "pyproject.toml": "c8b2d35910153137f9bfdfea127c9b43675b6f46e9c088f28dc05ccaf7f1d515",
+      "research_tools/r11_design.py": "ffbb115f0a93bdad50db26f0671125ef0b96a62f6efbbc9854177e8181c02513",
+      "research_tools/r11_inference.py": "feb673a901e01e559c886c58190f8e79c79f9a92d9df754d446118563b30fbff",
+      "research_tools/r11_study.py": "4f73c9a213edd60d81cad6530b4200450a7e2cb12bd108c7e10467cf876ce282",
+      "run.sh": "6e489faba451ec4e0d3b967e2fed3d0dcc3245a34174a5e870ae6b026302749f",
+      "uv.lock": "ba061682fb1b67f1c91beeccf9f36352dd68a912020662d9b74b376f4239e00c"
+    },
+    "tree": "55c118d2ea7183b42b7c19b069f77a71af6e8dfb"
+  }
+}
