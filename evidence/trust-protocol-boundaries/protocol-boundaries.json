@@ -1,0 +1,36 @@
+{
+  "scope": "Local negative cases against an exact public research harness. No deployment or organizational simulation.",
+  "public_commit": "968ecadacedd88ad815a5f19de51de2011e853d0",
+  "sha256": {
+    "contracts/trust-protocol-test.cjs": "56327de92c7b8bec313db46e535464d045818d6b66780b70ffae113d1c84061b",
+    "contracts/trust-protocol-result.json": "2497407c323597f65ea8177ae6d2be9ee6000c559585b3533d4b34458e7f494e",
+    "contracts/package.json": "ffc4375c6ab74326fddc0700ec9472c065fcdd84475c06283e7f07ac7f416ad6",
+    "contracts/package-lock.json": "79e55c72b6a07414c6b2f43f205d3717da90b975432f866a8d8a8a4330d9dc15",
+    "contracts/DAMSGovernance.sol": "449835834708d5bd8a91f43d8ce29dce671ca0f603239bc6b87ae77d9163c16a",
+    "contracts/validation-result.json": "b1b39e691402766bbb77794a05d23d04edba0d2703a43dfc22782478eea2e1b5"
+  },
+  "runtime": {
+    "node": "v23.11.0",
+    "ethers": "6.13.5"
+  },
+  "official_control": {
+    "status": "passed",
+    "groups": 17,
+    "quorum_intersection_cases": 64,
+    "matches_stored_receipt": true
+  },
+  "checks": {
+    "same_slot_replay_within_accepted_instance_rejected": true,
+    "same_namespace_record_accepted_by_second_fresh_instance": true,
+    "wrong_scope_still_rejected": true,
+    "duplicate_signatures_have_no_weight_but_are_tolerated_as_extras": true,
+    "whole_snapshot_roster_substitution_restored": true,
+    "threshold_downgrade_with_unchanged_roster_restored": true,
+    "both_restore_cases_rejected_under_trusted_original_configuration": true,
+    "honest_two_plus_two_slot_locks_block_both_proposals_with_all_signers_online": true,
+    "shared_signer_objects_block_distinct_scopes_at_same_epoch_and_sequence": true,
+    "one_equivocator_and_one_lost_honest_lock_allow_conflicting_heads": true,
+    "valid_prefix_truncation_restores_without_external_checkpoint": true,
+    "invalid_extra_signature_rejects_otherwise_sufficient_aggregate": true
+  }
+}
