@@ -8,6 +8,6 @@ With Python 3.10 or later, run:
 python3 verify_ma.py
 ```
 
-The checker calculates the original within-mode differences as witnessed DAMS minus the retained hierarchy. It then subtracts the preserved-autonomy difference from the centralized-integration difference, using the same world in both modes. The 95% Student-t intervals are paired and unadjusted. The mode comparison is retrospective and describes Monte Carlo variation within the synthetic design. Coordination, learning and memory retention, and the scope of policy and record processing vary together across the integration packages.
+The checker calculates the original within-mode differences as witnessed DAMS minus the retained hierarchy. It then subtracts the preserved-autonomy difference from the centralized-integration difference, using the same world in both modes. It also reports the centralized-minus-autonomous difference for each policy separately. The 95% Student-t intervals are paired and unadjusted. The mode comparison is retrospective and describes Monte Carlo variation within the synthetic design. Coordination, learning and memory retention, and the scope of policy and record processing vary together across the integration packages.
 
 The aggregate file contains world identifiers and arm-level outcomes. The extraction checked the retained arm receipts, summary and time-series hashes, and matched pre-adoption rows and target inputs. The original event ledgers are separate from this release. The checker reproduces the displayed arithmetic without running the model.

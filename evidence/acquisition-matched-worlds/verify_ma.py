@@ -56,6 +56,7 @@ def recompute(data):
     worlds = validate(data)
     within_mode = {mode: {} for mode in MODES}
     interaction = {}
+    mode_effects = {arm: {} for arm in ARMS}
     for i, (endpoint, factor) in enumerate(zip(ENDPOINTS, TABLE_SCALES)):
         ds = {
             mode: [w[mode]["dams"][i] - w[mode]["hierarchy"][i] for w in worlds]
@@ -64,12 +65,16 @@ def recompute(data):
         for mode in MODES:
             within_mode[mode][endpoint] = estimates(ds[mode])
         diff = [b - a for a, b in zip(ds["preserve"], ds["centralize"])]
+        interaction_estimate = estimates(diff)
         interaction[endpoint] = {
-            "native_units": estimates(diff),
-            "table_units": scaled(estimates(diff), factor),
+            "native_units": interaction_estimate,
+            "table_units": scaled(interaction_estimate, factor),
             "within_mode_differences_correlation": correlation(ds["preserve"], ds["centralize"]),
         }
-    return within_mode, interaction
+        for arm in ARMS:
+            changes = [w["centralize"][arm][i] - w["preserve"][arm][i] for w in worlds]
+            mode_effects[arm][endpoint] = scaled(estimates(changes), factor)
+    return within_mode, interaction, mode_effects
 
 def compare_frozen(rows, r11):
     """Optionally validate the retained within-mode estimates against thesis inputs."""
@@ -100,7 +105,7 @@ def main():
     args = p.parse_args()
     raw = args.data.read_bytes()
     data = json.loads(raw)
-    within_mode, interaction = recompute(data)
+    within_mode, interaction, mode_effects = recompute(data)
     report = {
         "aggregate_payload_sha256": sha256(raw).hexdigest(),
         "independent_world_id_count": len(WORLDS),
@@ -110,6 +115,7 @@ def main():
         "interval": "paired Student-t 95%, unadjusted; Monte Carlo variation under the simulated design",
         "within_mode_in_native_units": within_mode,
         "retrospective_package_interaction": interaction,
+        "retrospective_centralize_minus_preserve_by_arm_in_table_units": mode_effects,
     }
     if args.r11:
         report["frozen_summary_check"] = compare_frozen(within_mode, args.r11)
