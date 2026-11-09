@@ -1,0 +1,83 @@
+name: Retained thesis verifier platform check
+
+'on':
+  push:
+    branches:
+      - evidence/retained-verifier-platform-check-20261109
+    paths:
+      - .github/workflows/retained-verifier-platform.yml
+
+permissions: {}
+
+jobs:
+  verify:
+    name: Verify on ${{ matrix.system }}
+    if: github.repository == 'rui-h-a/dams-simulation'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: Linux
+          - runner: windows-2022
+            system: Windows
+    steps:
+      - name: Recompute nine retained analyses online and offline
+        shell: python
+        env:
+          EXPECTED_PLATFORM: ${{ matrix.system }}
+        run: |
+          import hashlib
+          import os
+          from pathlib import Path
+          import platform
+          import subprocess
+          import sys
+          from tempfile import TemporaryDirectory
+          from urllib.request import urlopen
+
+          source = (
+              "https://raw.githubusercontent.com/rui-h-a/dams-simulation/"
+              "03f5fe5320bf5b5fa6cec898d2cf6699f9bd0969/evidence/thesis-verification/verify.py"
+          )
+          digest = "4b7c2a9a796900eef1fca4a65037873cb26f556511cfcc0d026c205c036d9eed"
+          size = 13032
+          system = platform.system()
+          if system != os.environ["EXPECTED_PLATFORM"] or sys.version_info < (3, 11):
+              raise RuntimeError(f"Unexpected execution platform: {system}, Python {platform.python_version()}")
+          print(f"Platform: {system} {platform.machine()}, Python {platform.python_version()}", flush=True)
+
+          with TemporaryDirectory(prefix="dams-platform-check-") as directory:
+              folder = Path(directory)
+              with urlopen(source, timeout=20) as response:
+                  launcher = response.read(size + 1)
+              if len(launcher) != size or hashlib.sha256(launcher).hexdigest() != digest:
+                  raise RuntimeError("Published verifier byte count or SHA-256 differs")
+              (folder / "verify.py").write_bytes(launcher)
+              print(f"Pinned verifier SHA-256: {digest}", flush=True)
+
+              cache = folder / "cache"
+              if cache.exists():
+                  raise RuntimeError("Expected an empty cache")
+              command = [sys.executable, "-I", "-S", "-B", "verify.py", "--cache", str(cache)]
+              online = subprocess.check_output(command, cwd=folder, timeout=150)
+              if online.splitlines()[-1:] != [b"Passed all nine retained-result checks."]:
+                  raise RuntimeError("Online verification did not report all nine checks")
+              cached = list(cache.iterdir())
+              if len(cached) != 32 or sum(entry.stat().st_size for entry in cached) != 698529:
+                  raise RuntimeError("Unexpected online cache inventory")
+              print(online.decode("ascii").rstrip(), flush=True)
+
+              offline_environment = os.environ.copy()
+              for name in ("http_proxy", "https_proxy", "all_proxy", "no_proxy"):
+                  value = "" if name == "no_proxy" else "http://127.0.0.1:1"
+                  offline_environment[name] = value
+                  offline_environment[name.upper()] = value
+              offline = subprocess.check_output(
+                  [*command, "--offline"], cwd=folder, env=offline_environment, timeout=30,
+              )
+              if offline != online:
+                  raise RuntimeError("Offline and online verification outputs differ")
+              print("Empty-cache online and offline output matched byte for byte.", flush=True)
