@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "purpose": "Retrospective operating-total and break-even analysis of ten synthetic 10000-initial-member multinational worlds",
+  "inputs_sha256": "0fb221775fe439e73e47a2186a6fb2598388fabbac37470124c7022f73af8335",
+  "analysis_sha256": {
+    "candidate-manifest.json": "db336e9eab11e90a736ccd3796943c6cf73b26f9d91f7dd86dce95360ba41b4e",
+    "input-manifest.json": "32c3bb2bb0bcca98bfdcb0990924e22143a0bf718e6d788a00f651327f33e849",
+    "independent-net-candidate.json": "71eca7404c9a3d31310ed63250742009503708fbbdcd12154f02e3f649cd7e76",
+    "projections.json": "6dacd8329c85ec557e8930faa9eef97e5c171fef52aaa623c45755c6e459ac57",
+    "verification.json": "ba7eb55c21bc9259d6cce8d2af0693a9b9ed866b35a1b28ce7b01389b35819ce"
+  },
+  "analysis_dependencies_revision": "e42eb623d9a9e5e3d959379496094d7ed2182a72",
+  "post_adoption_boundaries": {
+    "first_post_day": 731,
+    "last_5y_day": 2556,
+    "last_10y_day": 4382,
+    "annualization_days": 365.25
+  },
+  "worlds": {
+    "1000": {
+      "archive_sha256": "833c809b1735974f3e491d71da0e13ebc4d0d570befbcd5b7bb948516c7a8f88",
+      "prehistory_sha256": "3a8e38dd19cce6028cbe5679d64410ddfd6c384725cf4ef0e7e669c786f9cf8d",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "2b03ff4e568eca156b56bbb19ed6c8c9626170b5d90de3b76febfcab01832992",
+          "timeseries_csv_sha256": "c70083a82c8c117f9b3bde6073ada0f17a188ba3afe9d6d75a22ba2ad3237b8e",
+          "summary_json_sha256": "58cc514d48816f87f56dddcf22d1b0aad4fdf1cb6d8d93bca16a966c901fe1a4"
+        },
+        "dams-witness": {
+          "receipt_sha256": "9aa14dee957ceaedb4aa356929d3cdff8f1865ec434f13cb0c553740fa53e579",
+          "timeseries_csv_sha256": "f0bd498246fed73c7b47fdacb50f68b9382e0ef7d9f20060b9cc0bef60492b3a",
+          "summary_json_sha256": "c6da698ab94f9b05c540ce4bc578e414e9c237beb3aad411a8d5136040ac4018"
+        }
+      }
+    },
+    "1001": {
+      "archive_sha256": "158a5a463ad2bde6d6774bc477b427c37ac69be622e923cdf887fd972943b94d",
+      "prehistory_sha256": "5fb2c3a04071fac05bd0116a108984e441ef0ed454b6973f56e119cc5f0227d9",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "dce90e885118b53f1485480119a7eb50f6512fb24fa3823f963263a713bc5d3c",
+          "timeseries_csv_sha256": "43d942e75bf458a56da77970043f342d80f2290d8d951268485b7b15a917528b",
+          "summary_json_sha256": "edd08d6777e559a5068ddac737d95a8fc07dc90182f1ba4c12248d6833422be5"
+        },
+        "dams-witness": {
+          "receipt_sha256": "0d1b28a5f57b91e00152a422b0b24a8b28ab7c879a6e836533a3e0fa786bee99",
+          "timeseries_csv_sha256": "ca92dd9433b53baf9417e06e760b9d4197143f8d0d8c34f77619380189e3d272",
+          "summary_json_sha256": "852e245302347641e5f37ff202465fc4243a9fe26a6f8a7363d2744c33ca7d5b"
+        }
+      }
+    },
+    "1002": {
+      "archive_sha256": "9f582356a6121c2e9c9e716b982b2245a7f436a61e98cceadf8eb1b2605756ca",
+      "prehistory_sha256": "5ad23e7978aa8b8bb5ecdb01679f7bc0a3f965bfe5f97d26aeaf3b13c5264c7f",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "58730649a8a71c88106036355b8f4346dcfa1626c7def581a28769a18c578b3a",
+          "timeseries_csv_sha256": "bce2b07b1626073dad73218774052bc3d2b57c88f026ec5f5a7be7a84a952373",
+          "summary_json_sha256": "c0c6bc94e16cf0ca5e049cfc693bb7647f84c9dc88df0f7e9c0338c9bde1fd1b"
+        },
+        "dams-witness": {
+          "receipt_sha256": "74a09d84a16375401ef5ec8e342adb6ae597cf1d7b63cf711e2ee27aa8989486",
+          "timeseries_csv_sha256": "fa0931058decda7616a12426d4fed4207eb9fabb045052dc4636d6d47815f514",
+          "summary_json_sha256": "2d864953d3c5324fd481bfe19f2c17c0d8a9b03d50bca3b5182a2e76f01b1486"
+        }
+      }
+    },
+    "1003": {
+      "archive_sha256": "e0fd833f288e6e6147aeffc49865ccade78a4c7b0d6cea0b2d2e5d76f21a36d0",
+      "prehistory_sha256": "4ebd9d03eed967551d0ac21d40cfddd82a840941f3cbb92c8423fb159891e1e1",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "fd734211ced68d0eb499b87edc9a914cbc96d3ef447f378bc638f4695a375e94",
+          "timeseries_csv_sha256": "60a23b63dd969253eda04a07132b2f32ccc9247994478f370f6ee1c522196a30",
+          "summary_json_sha256": "082388e97b2cde8634fb6af0b879b93db17ba75364bef1f9d434aeab8340fd6d"
+        },
+        "dams-witness": {
+          "receipt_sha256": "b69f425f776e9b7798ba4649aa32139e34941b2d8ba74a56f8f83be33ae0ca99",
+          "timeseries_csv_sha256": "124560d88073fcc40d8360f0274e493634abc6e4f6248855aa9451a3cc2b99f8",
+          "summary_json_sha256": "9415b4135c93eaf3ada24b5b84cd1ef640910635f08572eeea6389758381866c"
+        }
+      }
+    },
+    "1004": {
+      "archive_sha256": "459084e8ff9fdc41b4822bb3c0de59a41141c7af659cd8a3093e8664d3a6510a",
+      "prehistory_sha256": "6f8df8364fe14bcdd6c116f567c5509f0ba7ec6bc70a02122880bcb08a8b9247",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "5a89f7358c5b0a78c611f7610d9a7acde9b905207562e6280c775ddd0c5c0260",
+          "timeseries_csv_sha256": "423f366d7715cbc6a1d670aa2e9b576d908cd3d74c675ae659b70f9d32d23ee9",
+          "summary_json_sha256": "98447e1737f1ebeb4dcef7f1c1788685a0f783ae344412b21a761859d561c5d0"
+        },
+        "dams-witness": {
+          "receipt_sha256": "b87d82ecfe887251159752dae0ba121d724d5a4acc16e73c1db142e533522a2e",
+          "timeseries_csv_sha256": "ae9004d51f042ad0379aa3ee7b987d5071a2cff57efa17f96c474235b4c4b8b0",
+          "summary_json_sha256": "27c2060da1bd2352726b7a3f8151d6cd16836a3ca8beb7805f21c528d6c4226c"
+        }
+      }
+    },
+    "1005": {
+      "archive_sha256": "5d42b6c1ad4826f26656e4d1e070e9d07ef5d41570d1120aaa6c24ad6441e11d",
+      "prehistory_sha256": "d8c1faeb847ae36e435f7667247bde694c425982d2c26a188fd5c5046cea7bb0",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "a0b4fa429893b2df6f9298ce2bc7c0450d13b5f62eb6f1f97b1f54eb7c6dad4a",
+          "timeseries_csv_sha256": "4153073d4a72a46e4b5b9a8f255f2ef859e6bde25c69d44996f2606e2ef2859d",
+          "summary_json_sha256": "5deb0704e1dd010a1f53af28629d5a6227bdb675958fc897885e3741f5ff6c26"
+        },
+        "dams-witness": {
+          "receipt_sha256": "e9d16411d7cb1f5b1639159ec4e0b79676b41192789972cdfb133760d8b42cc2",
+          "timeseries_csv_sha256": "968c55dfb467dcfdb7dc40e16d49cdeaa710f84dfd476c4302ec2bf660b6d591",
+          "summary_json_sha256": "9ac166d72865bd762088ecff5768c16735de53cff504d72ab4ab1090400bac29"
+        }
+      }
+    },
+    "1006": {
+      "archive_sha256": "a8e39fdeb3218c1dc3c47048d011b7d4c8348391077ac1ee12659cf6c34db0ae",
+      "prehistory_sha256": "2b78017ef3647d576ad17e6bd8883c078a9148da00a95c18cc98801cedb045dc",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "6f04e51aaf84ab7f313bbf6ac09451bb6c1a45daedaa38ba40f75951c6d3f6ec",
+          "timeseries_csv_sha256": "09eab643ae5243a37039e0484e660de6cbc1cc9026381aea8e36b27fa5e1159c",
+          "summary_json_sha256": "c16d9cd467674fb1d338e73456521a2cbba6d3e9b3d7e29529dd3322e4a2f88a"
+        },
+        "dams-witness": {
+          "receipt_sha256": "44d2d74f3a1b95d2e51b99b3fe499107bb39aabdc8c7781ffcd311b978585952",
+          "timeseries_csv_sha256": "3dc7bebe71d9670918aa1d66dc24f1e44710a048c0b40e9b89797a4bf59ed804",
+          "summary_json_sha256": "88e28c145d68f0bed96686ae43cbaf3d6e2727891350c31f1031b1d33062feb5"
+        }
+      }
+    },
+    "1007": {
+      "archive_sha256": "aad8dc49b64072bc8f90544b38ff63eb862748702900e4ab7be0d54fb1290657",
+      "prehistory_sha256": "c8e003a5eb0368190fda6640e9662fcccbf49bad4b90ef477af07a75ece74edb",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "366f5b168c14c530891b1efd52c80e53c4840686a7cc4a427265930f82a7186f",
+          "timeseries_csv_sha256": "ac1c7daee415c2628ce47b7f8cb6b4d576860af6a9911474b4aedb36ab84f182",
+          "summary_json_sha256": "8e3143094784ca67193c85ee1c08eccf752f0e1d2f338c626fd0ec341fe1c232"
+        },
+        "dams-witness": {
+          "receipt_sha256": "4609b26b9faf8b8d1ee53084bbbb66fd5525d010ef14caf56950273406b5b72e",
+          "timeseries_csv_sha256": "e2b9e7892a2a2cf8e55aa752a2801fe98ae7d17cb7584bcdbcadbb0e2b9d8180",
+          "summary_json_sha256": "24447ae0cbd61a3d0760e18092b89e2d05063db9dce1b9f2dbe755d00cf38f9c"
+        }
+      }
+    },
+    "1008": {
+      "archive_sha256": "dfa5bf8226fbddbca2ac2d84e9fcad2dc7041d05c583cd9a5d90a568970e14ac",
+      "prehistory_sha256": "786600fb92af4f677adf81459c72918f6808ee5a730cdbf97a858b7a6a67be97",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "228a22fa00d6e9ab0a4ba33412f6d3cfb81621a69f576a0c86e2fe124ee1676f",
+          "timeseries_csv_sha256": "82c1ebb95ad311be7030e805c09cf228f84771d14c2d31397b6fa3aa6c5278c6",
+          "summary_json_sha256": "bd748392d3ab71a36c7b3ac8f99d1354dcc468040eab2537e78b6c37368986b6"
+        },
+        "dams-witness": {
+          "receipt_sha256": "8d4b8bf2e66deed69932a3b1097fdad71c5469697555ba5c5d2feff308dcb37d",
+          "timeseries_csv_sha256": "aa78b3c0a8a9e32061c94e429722000b7fb0ee33b5f72a54f6b94328217c40b1",
+          "summary_json_sha256": "1af8bd89f7f6659256b21bdf14b8029d956d082f7ab97a8eb542206206c4e526"
+        }
+      }
+    },
+    "1009": {
+      "archive_sha256": "771d9064d64f2f415e78112dd72b20ccdf68aa95615af529f23539c73826f915",
+      "prehistory_sha256": "9bf8273047cef2606a2ef1f7141dee36f1864e0f0408c781b4de54d203d47ebf",
+      "branch_day": 731,
+      "scientific_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+      "simulated_days": 2557,
+      "arms": {
+        "control-hierarchy": {
+          "receipt_sha256": "e875ec5a92c6f295d62b2998d52d547d89444a8264ad165eb0cfbbb22b0d3c3f",
+          "timeseries_csv_sha256": "3cfc9b6a146b3ad72cf20a195d4bc64a7e4c3ce5a3e554e668d9c8a0c79b0302",
+          "summary_json_sha256": "75e8d8c86e21841055c6bc3ddc4dd61beb20fe099a9937d9cc1eda5bf0b1d1fb"
+        },
+        "dams-witness": {
+          "receipt_sha256": "f9612c45104126f7d0c0e4556ce65ceae7a2196168d36da36228227102022dcf",
+          "timeseries_csv_sha256": "fec51b2cea07a4f3f838a0dcf0d1bcaf17f7738ab415885e2fa81b78c786993d",
+          "summary_json_sha256": "c13598c47f8d946ee83e36ef3eadc63e2a5ea1d8752b1c770ee2ca65d12ba633"
+        }
+      }
+    }
+  }
+}

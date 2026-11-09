@@ -1,0 +1,151 @@
+{
+  "summary": {
+    "world_count": 10,
+    "years_1_to_5_total_difference": {
+      "mean": -1685478.078942942,
+      "paired_world_t95": [
+        -1713865.3040479838,
+        -1657090.8538379
+      ]
+    },
+    "years_6_to_10_projected_total_difference": {
+      "mean": -564180.8294818528,
+      "paired_world_t95": [
+        -602238.7900460111,
+        -526122.8689176945
+      ]
+    },
+    "years_1_to_10_projected_total_difference": {
+      "mean": -2249658.9084247947,
+      "paired_world_t95": [
+        -2315184.595810488,
+        -2184133.2210391015
+      ]
+    },
+    "years_1_to_5_mean_rate_difference": -35.20171236963664,
+    "years_1_to_10_mean_projected_rate_difference": -23.890595002270345,
+    "years_6_to_10_dams_mean_projected_member_years": 47501.67693360712,
+    "years_6_to_10_dams_mean_projected_rate": 623.8540898485761,
+    "common_dams_rate_uplift_required_to_close_mean_total_gap": 47.35956820154229,
+    "common_uplift_percent_of_mean_dams_projected_rate": 7.591449502725478,
+    "world_specific_dams_uplifts": {
+      "mean": 47.35973164759255,
+      "paired_world_t95": [
+        45.976984430009225,
+        48.74247886517587
+      ]
+    }
+  },
+  "worlds": [
+    {
+      "world": "1000",
+      "years_1_to_5_total_difference": -1658750.5156903379,
+      "years_6_to_10_projected_total_difference": -551503.7273285314,
+      "years_1_to_10_projected_total_difference": -2210254.2430188693,
+      "years_1_to_5_rate_difference": -34.53627601344772,
+      "years_1_to_10_projected_rate_difference": -23.23316187052535,
+      "years_6_to_10_dams_projected_member_years": 47497.275838466805,
+      "years_6_to_10_dams_projected_rate": 621.6048331591826,
+      "dams_rate_uplift_required_to_close_world_total_gap": 46.534337054102
+    },
+    {
+      "world": "1001",
+      "years_1_to_5_total_difference": -1692702.1716780253,
+      "years_6_to_10_projected_total_difference": -574152.4157303944,
+      "years_1_to_10_projected_total_difference": -2266854.5874084197,
+      "years_1_to_5_rate_difference": -35.294623547414176,
+      "years_1_to_10_projected_rate_difference": -24.160279504263713,
+      "years_6_to_10_dams_projected_member_years": 47501.040383299114,
+      "years_6_to_10_dams_projected_rate": 614.5605086146907,
+      "dams_rate_uplift_required_to_close_world_total_gap": 47.72220922145156
+    },
+    {
+      "world": "1002",
+      "years_1_to_5_total_difference": -1653678.9977044426,
+      "years_6_to_10_projected_total_difference": -519155.0349535234,
+      "years_1_to_10_projected_total_difference": -2172834.032657966,
+      "years_1_to_5_rate_difference": -34.500613380306504,
+      "years_1_to_10_projected_rate_difference": -23.20709600740736,
+      "years_6_to_10_dams_projected_member_years": 47497.50855578371,
+      "years_6_to_10_dams_projected_rate": 621.4530459445882,
+      "dams_rate_uplift_required_to_close_world_total_gap": 45.746273830469846
+    },
+    {
+      "world": "1003",
+      "years_1_to_5_total_difference": -1672120.0838780478,
+      "years_6_to_10_projected_total_difference": -541290.5998900682,
+      "years_1_to_10_projected_total_difference": -2213410.683768116,
+      "years_1_to_5_rate_difference": -34.98237162863279,
+      "years_1_to_10_projected_rate_difference": -23.471093848267287,
+      "years_6_to_10_dams_projected_member_years": 47444.9144421629,
+      "years_6_to_10_dams_projected_rate": 629.4560674195681,
+      "dams_rate_uplift_required_to_close_world_total_gap": 46.652222051456015
+    },
+    {
+      "world": "1004",
+      "years_1_to_5_total_difference": -1649244.1025929302,
+      "years_6_to_10_projected_total_difference": -520237.3485752605,
+      "years_1_to_10_projected_total_difference": -2169481.4511681907,
+      "years_1_to_5_rate_difference": -34.55477533198086,
+      "years_1_to_10_projected_rate_difference": -23.185496704784214,
+      "years_6_to_10_dams_projected_member_years": 47507.44695414099,
+      "years_6_to_10_dams_projected_rate": 620.3484850462037,
+      "dams_rate_uplift_required_to_close_world_total_gap": 45.666134264432145
+    },
+    {
+      "world": "1005",
+      "years_1_to_5_total_difference": -1717468.3698562048,
+      "years_6_to_10_projected_total_difference": -585248.1157570444,
+      "years_1_to_10_projected_total_difference": -2302716.4856132492,
+      "years_1_to_5_rate_difference": -36.053729258986095,
+      "years_1_to_10_projected_rate_difference": -24.714419370915493,
+      "years_6_to_10_dams_projected_member_years": 47494.15468856947,
+      "years_6_to_10_dams_projected_rate": 630.5499914996824,
+      "dams_rate_uplift_required_to_close_world_total_gap": 48.484208229680306
+    },
+    {
+      "world": "1006",
+      "years_1_to_5_total_difference": -1687465.163006518,
+      "years_6_to_10_projected_total_difference": -546954.2503345981,
+      "years_1_to_10_projected_total_difference": -2234419.413341116,
+      "years_1_to_5_rate_difference": -35.31552519918489,
+      "years_1_to_10_projected_rate_difference": -23.910709173894475,
+      "years_6_to_10_dams_projected_member_years": 47521.724845995894,
+      "years_6_to_10_dams_projected_rate": 628.2373464470033,
+      "dams_rate_uplift_required_to_close_world_total_gap": 47.018903892529586
+    },
+    {
+      "world": "1007",
+      "years_1_to_5_total_difference": -1673803.6717126407,
+      "years_6_to_10_projected_total_difference": -581889.2948146276,
+      "years_1_to_10_projected_total_difference": -2255692.9665272683,
+      "years_1_to_5_rate_difference": -34.80575863605873,
+      "years_1_to_10_projected_rate_difference": -23.501085600294914,
+      "years_6_to_10_dams_projected_member_years": 47527.15947980835,
+      "years_6_to_10_dams_projected_rate": 617.1307857877415,
+      "dams_rate_uplift_required_to_close_world_total_gap": 47.46113572147283
+    },
+    {
+      "world": "1008",
+      "years_1_to_5_total_difference": -1782442.642584581,
+      "years_6_to_10_projected_total_difference": -698298.2783760205,
+      "years_1_to_10_projected_total_difference": -2480740.9209606014,
+      "years_1_to_5_rate_difference": -37.19402355506713,
+      "years_1_to_10_projected_rate_difference": -26.149302177125605,
+      "years_6_to_10_dams_projected_member_years": 47489.19917864477,
+      "years_6_to_10_dams_projected_rate": 628.6936331852444,
+      "dams_rate_uplift_required_to_close_world_total_gap": 52.23800282730723
+    },
+    {
+      "world": "1009",
+      "years_1_to_5_total_difference": -1667105.0707256906,
+      "years_6_to_10_projected_total_difference": -523079.2290584594,
+      "years_1_to_10_projected_total_difference": -2190184.29978415,
+      "years_1_to_5_rate_difference": -34.779427145287514,
+      "years_1_to_10_projected_rate_difference": -23.37330576522504,
+      "years_6_to_10_dams_projected_member_years": 47536.344969199185,
+      "years_6_to_10_dams_projected_rate": 626.5062013818564,
+      "dams_rate_uplift_required_to_close_world_total_gap": 46.073889383023946
+    }
+  ]
+}
