@@ -1,0 +1,155 @@
+{
+  "statistic": "12 times equally weighted monthly quits per 100 roster or payroll positions",
+  "bls": {
+    "all_private": {
+      "2021–2023": "34.900000",
+      "2024": "27.700000",
+      "2022–2023": "34.150000",
+      "2024–2025": "27.150000"
+    },
+    "establishments_250_to_999": {
+      "2021–2023": "34.933333",
+      "2024": "24.900000",
+      "2022–2023": "33.750000",
+      "2024–2025": "24.700000"
+    },
+    "establishments_5000_or_more": {
+      "2021–2023": "12.866667",
+      "2024": "10.700000",
+      "2022–2023": "12.500000",
+      "2024–2025": "10.250000"
+    }
+  },
+  "300_founders": {
+    "control-hierarchy": {
+      "2021–2023": {
+        "annualized_quits_per_100": "27.496953",
+        "voluntary_quits": 13404,
+        "world_months": 2052,
+        "min_active_on_twelfth": 264,
+        "max_active_on_twelfth": 297
+      },
+      "2024": {
+        "annualized_quits_per_100": "25.092242",
+        "voluntary_quits": 4091,
+        "world_months": 684,
+        "min_active_on_twelfth": 273,
+        "max_active_on_twelfth": 296
+      }
+    },
+    "control-process": {
+      "2021–2023": {
+        "annualized_quits_per_100": "28.088972",
+        "voluntary_quits": 13678,
+        "world_months": 2052,
+        "min_active_on_twelfth": 269,
+        "max_active_on_twelfth": 297
+      },
+      "2024": {
+        "annualized_quits_per_100": "25.164763",
+        "voluntary_quits": 4103,
+        "world_months": 684,
+        "min_active_on_twelfth": 270,
+        "max_active_on_twelfth": 296
+      }
+    },
+    "dams-witness": {
+      "2021–2023": {
+        "annualized_quits_per_100": "28.283850",
+        "voluntary_quits": 13759,
+        "world_months": 2052,
+        "min_active_on_twelfth": 271,
+        "max_active_on_twelfth": 296
+      },
+      "2024": {
+        "annualized_quits_per_100": "25.066501",
+        "voluntary_quits": 4089,
+        "world_months": 684,
+        "min_active_on_twelfth": 273,
+        "max_active_on_twelfth": 296
+      }
+    },
+    "linear-witness": {
+      "2021–2023": {
+        "annualized_quits_per_100": "28.009020",
+        "voluntary_quits": 13635,
+        "world_months": 2052,
+        "min_active_on_twelfth": 271,
+        "max_active_on_twelfth": 296
+      },
+      "2024": {
+        "annualized_quits_per_100": "24.948636",
+        "voluntary_quits": 4071,
+        "world_months": 684,
+        "min_active_on_twelfth": 272,
+        "max_active_on_twelfth": 296
+      }
+    }
+  },
+  "10000_adoption": {
+    "control-hierarchy": {
+      "2022–2023": {
+        "annualized_quits_per_100": "30.589734",
+        "voluntary_quits": 57914,
+        "world_months": 240,
+        "min_active_on_twelfth": 9408,
+        "max_active_on_twelfth": 9545
+      },
+      "2024–2025": {
+        "annualized_quits_per_100": "28.349036",
+        "voluntary_quits": 53833,
+        "world_months": 240,
+        "min_active_on_twelfth": 9413,
+        "max_active_on_twelfth": 9564
+      }
+    },
+    "control-process": {
+      "2022–2023": {
+        "annualized_quits_per_100": "32.308982",
+        "voluntary_quits": 60992,
+        "world_months": 240,
+        "min_active_on_twelfth": 9371,
+        "max_active_on_twelfth": 9519
+      },
+      "2024–2025": {
+        "annualized_quits_per_100": "28.649131",
+        "voluntary_quits": 54376,
+        "world_months": 240,
+        "min_active_on_twelfth": 9394,
+        "max_active_on_twelfth": 9559
+      }
+    },
+    "dams-witness": {
+      "2022–2023": {
+        "annualized_quits_per_100": "32.069541",
+        "voluntary_quits": 60567,
+        "world_months": 240,
+        "min_active_on_twelfth": 9369,
+        "max_active_on_twelfth": 9513
+      },
+      "2024–2025": {
+        "annualized_quits_per_100": "28.081092",
+        "voluntary_quits": 53346,
+        "world_months": 240,
+        "min_active_on_twelfth": 9426,
+        "max_active_on_twelfth": 9571
+      }
+    },
+    "linear-witness": {
+      "2022–2023": {
+        "annualized_quits_per_100": "31.890776",
+        "voluntary_quits": 60245,
+        "world_months": 240,
+        "min_active_on_twelfth": 9378,
+        "max_active_on_twelfth": 9518
+      },
+      "2024–2025": {
+        "annualized_quits_per_100": "27.877067",
+        "voluntary_quits": 52984,
+        "world_months": 240,
+        "min_active_on_twelfth": 9423,
+        "max_active_on_twelfth": 9572
+      }
+    }
+  }
+}

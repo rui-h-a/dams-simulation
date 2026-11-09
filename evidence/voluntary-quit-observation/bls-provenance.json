@@ -1,0 +1,23 @@
+{
+  "retrieval_date": "2026-11-09",
+  "sources": [
+    {
+      "series": "JTS100000000000000QUR",
+      "establishment_size": "all private",
+      "source": "https://api.bls.gov/publicAPI/v2/timeseries/data/JTS100000000000000QUR?startyear=2021&endyear=2025",
+      "response_sha256": "88fd15490da85ea23b5f422a2f7f4a1ff98c6d9912b6161f61365108d8489da9"
+    },
+    {
+      "series": "JTS100000000000004QUR",
+      "establishment_size": "250–999 employees",
+      "source": "https://api.bls.gov/publicAPI/v2/timeseries/data/JTS100000000000004QUR?startyear=2021&endyear=2025",
+      "response_sha256": "1cfe69b0255b78d24dc43320816e779e3d06a366184315ae7b0f26c888186cb6"
+    },
+    {
+      "series": "JTS100000000000006QUR",
+      "establishment_size": "5,000 or more employees",
+      "source": "https://api.bls.gov/publicAPI/v2/timeseries/data/JTS100000000000006QUR?startyear=2021&endyear=2025",
+      "response_sha256": "95786d2fcb0e153462786d1e68fb74a8ba8c5ba825f9c7b02efd670f6f883930"
+    }
+  ]
+}
