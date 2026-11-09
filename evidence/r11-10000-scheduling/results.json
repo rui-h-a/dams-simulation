@@ -1,0 +1,56 @@
+{
+  "roster": {
+    "worlds": 10,
+    "arms": 40
+  },
+  "source_csv_sha256": "ecfe2af861458f9421043744a522c567c73e7e0f1955c18f943071013fc315b3",
+  "source_prehistory_csv_sha256": "72acfacf045d81cd90de467e7b39864b44c697b5976e8d927b7438a507c6df20",
+  "prehistory_wall_hours_sum": 38.65962789841028,
+  "one_host_fixed_worlds_with_prehistory_hours": 397.4866511986722,
+  "two_fastest_whole_world_hours": 76.29956352163971,
+  "simulation_hours_sum": 797.4019989417455,
+  "validation_hours_sum": 594.5493033865897,
+  "validation_fraction_of_timed_hours": 0.4271336952608035,
+  "median_simulation_hours_per_arm": 19.905866343882224,
+  "median_validation_hours_per_arm": 14.72590546447889,
+  "one_host_workload_floor_hours": 347.9878255820838,
+  "one_host_fixed_worlds_hours": 358.82702330026194,
+  "peak_worker_rss_mib": 706.40234375,
+  "max_four_worker_rss_gib_allowance": 2.7593841552734375,
+  "journal_bytes_sum": 287586971648,
+  "max_four_final_journals_bytes_allowance": 29113221120,
+  "fixed_worlds_and_movable_arms": [
+    {
+      "hosts": 5,
+      "fixed_world_with_prehistory_hours": 80.11812608893806,
+      "fixed_world_hours": 72.37708126318056,
+      "movable_arms_hours": 70.35013877165194,
+      "fixed_world_headroom_hours_at_72": -0.3770812631805569,
+      "movable_arms_headroom_hours_at_72": 1.6498612283480583
+    },
+    {
+      "hosts": 6,
+      "fixed_world_with_prehistory_hours": 78.82802330785721,
+      "fixed_world_hours": 71.09521886647916,
+      "movable_arms_hours": 68.77147946975194,
+      "fixed_world_headroom_hours_at_72": 0.9047811335208422,
+      "movable_arms_headroom_hours_at_72": 3.228520530248062
+    },
+    {
+      "hosts": 8,
+      "fixed_world_with_prehistory_hours": 76.92182380322916,
+      "fixed_world_hours": 69.22077694007444,
+      "movable_arms_hours": 66.7906443353989,
+      "fixed_world_headroom_hours_at_72": 2.779223059925556,
+      "movable_arms_headroom_hours_at_72": 5.209355664601105
+    },
+    {
+      "hosts": 10,
+      "fixed_world_with_prehistory_hours": 42.141987313255285,
+      "fixed_world_hours": 38.242488927816396,
+      "movable_arms_hours": 38.242488927816396,
+      "fixed_world_headroom_hours_at_72": 33.757511072183604,
+      "movable_arms_headroom_hours_at_72": 33.757511072183604
+    }
+  ]
+}
