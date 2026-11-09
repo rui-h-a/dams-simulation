@@ -1,0 +1,11 @@
+{
+  "odata.metadata":"https://opendata.cbs.nl/ODataApi/OData/85204ENG/$metadata#Cbs.OData.WebAPI.SIC2008","value":[
+    {
+      "Key":"307500 ","Title":"C Manufacturing","Description":"Manufacturing","CategoryGroupID":1
+    },{
+      "Key":"354200 ","Title":"G Wholesale and retail trade","Description":"Wholesale and retail trade; repair of motor vehicles and motorcycles","CategoryGroupID":1
+    },{
+      "Key":"391600 ","Title":"J Information and communication","Description":"Information and communication","CategoryGroupID":1
+    }
+  ]
+}

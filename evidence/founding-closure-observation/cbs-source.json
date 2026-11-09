@@ -1,0 +1,26 @@
+{
+  "cbs-cells.json": {
+    "url": "https://opendata.cbs.nl/ODataApi/odata/85204ENG/TypedDataSet?%24format=json&%24select=ID%2CSIC2008%2CPersonsEmployed%2CPeriods%2CEmployerEnterpriseBirths_2%2Ck_5YearSurvival_8&%24filter=PersonsEmployed+eq+%27A050858%27+and+%28SIC2008+eq+%27307500+%27+or+SIC2008+eq+%27354200+%27+or+SIC2008+eq+%27391600+%27%29+and+%28Periods+eq+%272018JJ00%27+or+Periods+eq+%272019JJ00%27+or+Periods+eq+%272023JJ00%27+or+Periods+eq+%272024JJ00%27%29&%24orderby=SIC2008%2CPeriods",
+    "sha256": "868d25e62761362e3a924996bbdddd1c2effb7b3f48ebcb59fdb2d251ddb304e"
+  },
+  "cbs-periods.json": {
+    "url": "https://opendata.cbs.nl/ODataApi/odata/85204ENG/Periods?%24format=json&%24filter=Key+eq+%272018JJ00%27+or+Key+eq+%272019JJ00%27+or+Key+eq+%272023JJ00%27+or+Key+eq+%272024JJ00%27",
+    "sha256": "7c49ec6c3d88d373a365d9e59d5ff050f35fdcb085cbe44f8cac9b57a5720241"
+  },
+  "cbs-table.json": {
+    "url": "https://opendata.cbs.nl/ODataApi/odata/85204ENG/TableInfos?%24format=json",
+    "sha256": "5b001ec7dc9add31f98e1118ccc1195322fde74f4663c87f0d4f006106e28072"
+  },
+  "cbs-topics.json": {
+    "url": "https://opendata.cbs.nl/ODataApi/odata/85204ENG/DataProperties?%24format=json&%24filter=Key+eq+%27EmployerEnterpriseBirths_2%27+or+Key+eq+%27k_5YearSurvival_8%27",
+    "sha256": "44c8c17c576431c4633ac22dc732ab0df2a9f2d004f667a94339d746429d6b93"
+  },
+  "cbs-size.json": {
+    "url": "https://opendata.cbs.nl/ODataApi/odata/85204ENG/PersonsEmployed?%24format=json&%24filter=Key+eq+%27A050858%27",
+    "sha256": "9a01a95d356c80f5858ec2a8496aa0e2e4c9dab00287121dd251471c6a98ce8c"
+  },
+  "cbs-sectors.json": {
+    "url": "https://opendata.cbs.nl/ODataApi/odata/85204ENG/SIC2008?%24format=json&%24filter=Key+eq+%27307500+%27+or+Key+eq+%27354200+%27+or+Key+eq+%27391600+%27",
+    "sha256": "bda44db8e8a3b58b121679784d6a146b9572bf161d6326e09e10731b99816db7"
+  }
+}

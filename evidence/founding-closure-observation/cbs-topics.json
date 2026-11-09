@@ -1,0 +1,9 @@
+{
+  "odata.metadata":"https://opendata.cbs.nl/ODataApi/OData/85204ENG/$metadata#Cbs.OData.WebAPI.DataProperties","value":[
+    {
+      "odata.type":"Cbs.OData.Topic","ID":5,"Position":4,"ParentID":3,"Type":"Topic","Key":"EmployerEnterpriseBirths_2","Title":"Employer enterprise births","Description":"Employer enterprise births concern enterprises with at least 0.5 FTE of labour on the payroll over a whole year for the first time (excl. the managing director). This does not necessarily coincide with the birth of this enterprise; it is possible that the enterprise has existed for a longer period of time, but starts employing workers at at later stage.","Datatype":"Long","Unit":"number","Decimals":0,"Default":"Missing"
+    },{
+      "odata.type":"Cbs.OData.Topic","ID":12,"Position":10,"ParentID":7,"Type":"Topic","Key":"k_5YearSurvival_8","Title":"5 year survival","Description":"Employer enterprise births that took place five years prior to the reporting year of enterprises and are still active.","Datatype":"Long","Unit":"number","Decimals":0,"Default":"Missing"
+    }
+  ]
+}

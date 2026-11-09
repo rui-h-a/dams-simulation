@@ -1,0 +1,29 @@
+{
+  "odata.metadata":"https://opendata.cbs.nl/ODataApi/OData/85204ENG/$metadata#Cbs.OData.WebAPI.TypedDataSet&$select=ID,SIC2008,PersonsEmployed,Periods,EmployerEnterpriseBirths_2,k_5YearSurvival_8","value":[
+    {
+      "ID":773,"SIC2008":"307500 ","PersonsEmployed":"A050858","Periods":"2018JJ00","EmployerEnterpriseBirths_2":74,"k_5YearSurvival_8":77
+    },{
+      "ID":774,"SIC2008":"307500 ","PersonsEmployed":"A050858","Periods":"2019JJ00","EmployerEnterpriseBirths_2":104,"k_5YearSurvival_8":71
+    },{
+      "ID":778,"SIC2008":"307500 ","PersonsEmployed":"A050858","Periods":"2023JJ00","EmployerEnterpriseBirths_2":17,"k_5YearSurvival_8":49
+    },{
+      "ID":779,"SIC2008":"307500 ","PersonsEmployed":"A050858","Periods":"2024JJ00","EmployerEnterpriseBirths_2":13,"k_5YearSurvival_8":71
+    },{
+      "ID":10253,"SIC2008":"354200 ","PersonsEmployed":"A050858","Periods":"2018JJ00","EmployerEnterpriseBirths_2":170,"k_5YearSurvival_8":176
+    },{
+      "ID":10254,"SIC2008":"354200 ","PersonsEmployed":"A050858","Periods":"2019JJ00","EmployerEnterpriseBirths_2":168,"k_5YearSurvival_8":220
+    },{
+      "ID":10258,"SIC2008":"354200 ","PersonsEmployed":"A050858","Periods":"2023JJ00","EmployerEnterpriseBirths_2":37,"k_5YearSurvival_8":124
+    },{
+      "ID":10259,"SIC2008":"354200 ","PersonsEmployed":"A050858","Periods":"2024JJ00","EmployerEnterpriseBirths_2":41,"k_5YearSurvival_8":125
+    },{
+      "ID":13613,"SIC2008":"391600 ","PersonsEmployed":"A050858","Periods":"2018JJ00","EmployerEnterpriseBirths_2":57,"k_5YearSurvival_8":49
+    },{
+      "ID":13614,"SIC2008":"391600 ","PersonsEmployed":"A050858","Periods":"2019JJ00","EmployerEnterpriseBirths_2":79,"k_5YearSurvival_8":58
+    },{
+      "ID":13618,"SIC2008":"391600 ","PersonsEmployed":"A050858","Periods":"2023JJ00","EmployerEnterpriseBirths_2":17,"k_5YearSurvival_8":44
+    },{
+      "ID":13619,"SIC2008":"391600 ","PersonsEmployed":"A050858","Periods":"2024JJ00","EmployerEnterpriseBirths_2":16,"k_5YearSurvival_8":45
+    }
+  ]
+}

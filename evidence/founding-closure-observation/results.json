@@ -1,0 +1,589 @@
+{
+  "cbs": {
+    "cells_sha256": "868d25e62761362e3a924996bbdddd1c2effb7b3f48ebcb59fdb2d251ddb304e",
+    "last_modified": "2026-09-30T02:00:00",
+    "rows": [
+      {
+        "birth_row_id": 773,
+        "birth_year": 2018,
+        "employer_births": 74,
+        "five_year_reporting_year": 2023,
+        "five_year_survival_percentage": 66.21621621621621,
+        "five_year_survivors": 49,
+        "reporting_status": "final",
+        "sector": "C Manufacturing",
+        "survival_row_id": 778
+      },
+      {
+        "birth_row_id": 774,
+        "birth_year": 2019,
+        "employer_births": 104,
+        "five_year_reporting_year": 2024,
+        "five_year_survival_percentage": 68.26923076923077,
+        "five_year_survivors": 71,
+        "reporting_status": "provisional",
+        "sector": "C Manufacturing",
+        "survival_row_id": 779
+      },
+      {
+        "birth_row_id": 10253,
+        "birth_year": 2018,
+        "employer_births": 170,
+        "five_year_reporting_year": 2023,
+        "five_year_survival_percentage": 72.94117647058823,
+        "five_year_survivors": 124,
+        "reporting_status": "final",
+        "sector": "G Wholesale and retail trade",
+        "survival_row_id": 10258
+      },
+      {
+        "birth_row_id": 10254,
+        "birth_year": 2019,
+        "employer_births": 168,
+        "five_year_reporting_year": 2024,
+        "five_year_survival_percentage": 74.4047619047619,
+        "five_year_survivors": 125,
+        "reporting_status": "provisional",
+        "sector": "G Wholesale and retail trade",
+        "survival_row_id": 10259
+      },
+      {
+        "birth_row_id": 13613,
+        "birth_year": 2018,
+        "employer_births": 57,
+        "five_year_reporting_year": 2023,
+        "five_year_survival_percentage": 77.19298245614036,
+        "five_year_survivors": 44,
+        "reporting_status": "final",
+        "sector": "J Information and communication",
+        "survival_row_id": 13618
+      },
+      {
+        "birth_row_id": 13614,
+        "birth_year": 2019,
+        "employer_births": 79,
+        "five_year_reporting_year": 2024,
+        "five_year_survival_percentage": 56.962025316455694,
+        "five_year_survivors": 45,
+        "reporting_status": "provisional",
+        "sector": "J Information and communication",
+        "survival_row_id": 13619
+      }
+    ],
+    "table": "85204ENG"
+  },
+  "native": {
+    "by_initial_size": {
+      "120": {
+        "arm_counts": {
+          "startup-existing": {
+            "complete_five_year_windows": 66,
+            "no_closure_in_full_1917_days": 66,
+            "no_suspension_in_full_1917_days": 66,
+            "zero_unfunded_operating_units": 66
+          },
+          "startup-founding": {
+            "complete_five_year_windows": 66,
+            "no_closure_in_full_1917_days": 66,
+            "no_suspension_in_full_1917_days": 66,
+            "zero_unfunded_operating_units": 66
+          }
+        },
+        "constant_config_by_arm": {
+          "startup-existing": {
+            "backend": "central",
+            "closure_after_unfunded_workdays": 20,
+            "closure_day": null,
+            "demand_schedule": [
+              [
+                0,
+                1.0
+              ],
+              [
+                91,
+                0.9
+              ],
+              [
+                182,
+                1.1
+              ],
+              [
+                274,
+                1.0
+              ],
+              [
+                366,
+                1.0
+              ],
+              [
+                456,
+                0.9
+              ],
+              [
+                547,
+                1.1
+              ],
+              [
+                639,
+                1.0
+              ],
+              [
+                731,
+                1.0
+              ],
+              [
+                821,
+                0.9
+              ],
+              [
+                912,
+                1.1
+              ],
+              [
+                1004,
+                1.0
+              ],
+              [
+                1096,
+                1.0
+              ],
+              [
+                1186,
+                0.9
+              ],
+              [
+                1277,
+                1.1
+              ],
+              [
+                1369,
+                1.0
+              ],
+              [
+                1461,
+                1.0
+              ],
+              [
+                1552,
+                0.9
+              ],
+              [
+                1643,
+                1.1
+              ],
+              [
+                1735,
+                1.0
+              ],
+              [
+                1827,
+                1.0
+              ]
+            ],
+            "fault_start_day": 25,
+            "fault_stop_day": 30,
+            "initial_cash_per_member": 200.0,
+            "maintenance_resource_units_per_member_workday": 0.01,
+            "payroll_resource_units_per_member_workday": 0.5,
+            "regime": "hierarchy",
+            "revenue_resource_units_per_work_unit": 1.0,
+            "suspension_day": null,
+            "workforce_targets": [
+              [
+                0,
+                120
+              ],
+              [
+                366,
+                150
+              ],
+              [
+                1096,
+                180
+              ],
+              [
+                1827,
+                180
+              ]
+            ]
+          },
+          "startup-founding": {
+            "backend": "central",
+            "closure_after_unfunded_workdays": 20,
+            "closure_day": null,
+            "demand_schedule": [
+              [
+                0,
+                1.0
+              ],
+              [
+                91,
+                0.9
+              ],
+              [
+                182,
+                1.1
+              ],
+              [
+                274,
+                1.0
+              ],
+              [
+                366,
+                1.0
+              ],
+              [
+                456,
+                0.9
+              ],
+              [
+                547,
+                1.1
+              ],
+              [
+                639,
+                1.0
+              ],
+              [
+                731,
+                1.0
+              ],
+              [
+                821,
+                0.9
+              ],
+              [
+                912,
+                1.1
+              ],
+              [
+                1004,
+                1.0
+              ],
+              [
+                1096,
+                1.0
+              ],
+              [
+                1186,
+                0.9
+              ],
+              [
+                1277,
+                1.1
+              ],
+              [
+                1369,
+                1.0
+              ],
+              [
+                1461,
+                1.0
+              ],
+              [
+                1552,
+                0.9
+              ],
+              [
+                1643,
+                1.1
+              ],
+              [
+                1735,
+                1.0
+              ],
+              [
+                1827,
+                1.0
+              ]
+            ],
+            "fault_start_day": 25,
+            "fault_stop_day": 30,
+            "initial_cash_per_member": 200.0,
+            "maintenance_resource_units_per_member_workday": 0.01,
+            "payroll_resource_units_per_member_workday": 0.5,
+            "regime": "sublinear",
+            "revenue_resource_units_per_work_unit": 1.0,
+            "suspension_day": null,
+            "workforce_targets": [
+              [
+                0,
+                120
+              ],
+              [
+                366,
+                150
+              ],
+              [
+                1096,
+                180
+              ],
+              [
+                1827,
+                180
+              ]
+            ]
+          }
+        },
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "world_pairs": 66
+      },
+      "30": {
+        "arm_counts": {
+          "startup-existing": {
+            "complete_five_year_windows": 66,
+            "no_closure_in_full_1917_days": 66,
+            "no_suspension_in_full_1917_days": 66,
+            "zero_unfunded_operating_units": 66
+          },
+          "startup-founding": {
+            "complete_five_year_windows": 66,
+            "no_closure_in_full_1917_days": 66,
+            "no_suspension_in_full_1917_days": 66,
+            "zero_unfunded_operating_units": 66
+          }
+        },
+        "constant_config_by_arm": {
+          "startup-existing": {
+            "backend": "central",
+            "closure_after_unfunded_workdays": 20,
+            "closure_day": null,
+            "demand_schedule": [
+              [
+                0,
+                1.0
+              ],
+              [
+                91,
+                0.9
+              ],
+              [
+                182,
+                1.1
+              ],
+              [
+                274,
+                1.0
+              ],
+              [
+                366,
+                1.0
+              ],
+              [
+                456,
+                0.9
+              ],
+              [
+                547,
+                1.1
+              ],
+              [
+                639,
+                1.0
+              ],
+              [
+                731,
+                1.0
+              ],
+              [
+                821,
+                0.9
+              ],
+              [
+                912,
+                1.1
+              ],
+              [
+                1004,
+                1.0
+              ],
+              [
+                1096,
+                1.0
+              ],
+              [
+                1186,
+                0.9
+              ],
+              [
+                1277,
+                1.1
+              ],
+              [
+                1369,
+                1.0
+              ],
+              [
+                1461,
+                1.0
+              ],
+              [
+                1552,
+                0.9
+              ],
+              [
+                1643,
+                1.1
+              ],
+              [
+                1735,
+                1.0
+              ],
+              [
+                1827,
+                1.0
+              ]
+            ],
+            "fault_start_day": 25,
+            "fault_stop_day": 30,
+            "initial_cash_per_member": 200.0,
+            "maintenance_resource_units_per_member_workday": 0.01,
+            "payroll_resource_units_per_member_workday": 0.5,
+            "regime": "hierarchy",
+            "revenue_resource_units_per_work_unit": 1.0,
+            "suspension_day": null,
+            "workforce_targets": [
+              [
+                0,
+                30
+              ],
+              [
+                366,
+                38
+              ],
+              [
+                1096,
+                45
+              ],
+              [
+                1827,
+                45
+              ]
+            ]
+          },
+          "startup-founding": {
+            "backend": "central",
+            "closure_after_unfunded_workdays": 20,
+            "closure_day": null,
+            "demand_schedule": [
+              [
+                0,
+                1.0
+              ],
+              [
+                91,
+                0.9
+              ],
+              [
+                182,
+                1.1
+              ],
+              [
+                274,
+                1.0
+              ],
+              [
+                366,
+                1.0
+              ],
+              [
+                456,
+                0.9
+              ],
+              [
+                547,
+                1.1
+              ],
+              [
+                639,
+                1.0
+              ],
+              [
+                731,
+                1.0
+              ],
+              [
+                821,
+                0.9
+              ],
+              [
+                912,
+                1.1
+              ],
+              [
+                1004,
+                1.0
+              ],
+              [
+                1096,
+                1.0
+              ],
+              [
+                1186,
+                0.9
+              ],
+              [
+                1277,
+                1.1
+              ],
+              [
+                1369,
+                1.0
+              ],
+              [
+                1461,
+                1.0
+              ],
+              [
+                1552,
+                0.9
+              ],
+              [
+                1643,
+                1.1
+              ],
+              [
+                1735,
+                1.0
+              ],
+              [
+                1827,
+                1.0
+              ]
+            ],
+            "fault_start_day": 25,
+            "fault_stop_day": 30,
+            "initial_cash_per_member": 200.0,
+            "maintenance_resource_units_per_member_workday": 0.01,
+            "payroll_resource_units_per_member_workday": 0.5,
+            "regime": "sublinear",
+            "revenue_resource_units_per_work_unit": 1.0,
+            "suspension_day": null,
+            "workforce_targets": [
+              [
+                0,
+                30
+              ],
+              [
+                366,
+                38
+              ],
+              [
+                1096,
+                45
+              ],
+              [
+                1827,
+                45
+              ]
+            ]
+          }
+        },
+        "source_sha256": "b763b85e34164095911ae1cb85efca123b11205f305cd47e950cf9e0493e0b36",
+        "world_pairs": 66
+      }
+    },
+    "complete_five_year_arm_windows": 264,
+    "receipt_bindings_sha256": "c6f66f019806e60e07634aef66c96c059f6981f004dd411595476c0d02ec4a7b"
+  }
+}

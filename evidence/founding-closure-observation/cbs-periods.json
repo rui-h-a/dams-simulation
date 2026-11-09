@@ -1,0 +1,13 @@
+{
+  "odata.metadata":"https://opendata.cbs.nl/ODataApi/OData/85204ENG/$metadata#Cbs.OData.WebAPI.Periods","value":[
+    {
+      "Key":"2018JJ00","Title":"2018","Description":"","Status":"Definitief"
+    },{
+      "Key":"2019JJ00","Title":"2019","Description":"","Status":"Definitief"
+    },{
+      "Key":"2023JJ00","Title":"2023","Description":"","Status":"Definitief"
+    },{
+      "Key":"2024JJ00","Title":"2024","Description":"Provisional figures","Status":"Voorlopig"
+    }
+  ]
+}

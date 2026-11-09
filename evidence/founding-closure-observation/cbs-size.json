@@ -1,0 +1,7 @@
+{
+  "odata.metadata":"https://opendata.cbs.nl/ODataApi/OData/85204ENG/$metadata#Cbs.OData.WebAPI.PersonsEmployed","value":[
+    {
+      "Key":"A050858","Title":"10 employees or more","Description":"Classification of enterprises according to the number of employees. The number of employees is based on wages tax records. Directeur-grootaandeelhouders are excluded.","CategoryGroupID":null
+    }
+  ]
+}
