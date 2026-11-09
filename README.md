@@ -1,12 +1,24 @@
 # DAMS research reference implementation
 
-## Current enterprise research — 22 October 2026
+## Verify the retained thesis results
 
-The [complete latest enterprise snapshot](research-candidates/enterprise-current/README.md) is included in this default-branch checkout. It preserves the entire source tree, tests, protocols, measurement tools and compact original engineering fixtures, with a per-file manifest. [Its current evidence index](research-candidates/enterprise-current/source/docs/CURRENT_RESEARCH.md) links the full raw release assets and states the remaining gaps.
+Download [verify.py](https://raw.githubusercontent.com/rui-h-a/dams-simulation/03f5fe5320bf5b5fa6cec898d2cf6699f9bd0969/evidence/thesis-verification/verify.py) into an empty folder. With Python 3.11 or later, open a terminal there and run:
 
-The current candidate adds complete-retention evidence admission, full-history two-firm counterfactuals, measured ACS joint-population diagnostics, a deterministic temporal allocation experiment and an observed-population data provider. The provider is not integrated into the enterprise engine. Complete 10,000- and 50,000-person formal studies remain unaccepted; these changes add no formal worlds.
+```sh
+python3 -I -S -B verify.py
+```
 
-The root commands and historical results below keep their original implementation. To inspect or use the latest enterprise command, enter `research-candidates/enterprise-current/source/` and follow its README. The two implementations retain separate source histories and are not silently substituted for one another. No historical result is relabelled under a new model.
+This command recomputes nine analyses from fixed public inputs, including the main study of ten paired worlds with 10,000 initial members. It uses Python's standard library. After the first download, add `--offline` to reuse the verified local cache. The checks reproduce calculations on retained synthetic data. Independent validation of original events requires their event journals. [Verification guide](https://github.com/rui-h-a/dams-simulation/tree/03f5fe5320bf5b5fa6cec898d2cf6699f9bd0969/evidence/thesis-verification)
+
+The [main-study results](https://github.com/rui-h-a/dams-simulation/tree/2c921307a0aad405b515426c43c8ab156762fcd0/evidence/r11-10000-paired-results) preserve the roster, paired outcomes and uncertainty intervals. The 50,000-member pilot provides partial checkpoint and storage measurements. The 50,000- and 100,000-member operating results in the thesis are conditional projections. The [operating totals supplement](https://github.com/rui-h-a/dams-simulation/tree/c95da559a98f7874c10a4c15934027ae6d567201/evidence/r11-10000-operating-payback) recomputes whole-firm totals and the conditional ten-year break-even requirement. The [study reproduction guide](https://github.com/rui-h-a/dams-simulation/blob/bffe007794a022a2efb9dc9ce9d2c5c69d2e7c6a/docs/thesis-reproduction.md) identifies the source, protocol and launcher used to generate new worlds.
+
+## Enterprise source snapshot — 22 October 2026
+
+The [enterprise source snapshot](research-candidates/enterprise-current/README.md) is included in this default-branch checkout. It preserves the entire source tree, tests, protocols, measurement tools and compact original engineering fixtures, with a per-file manifest. [Its current evidence index](research-candidates/enterprise-current/source/docs/CURRENT_RESEARCH.md) links the full raw release assets and states the remaining gaps.
+
+The current candidate adds complete-retention evidence admission, full-history two-firm counterfactuals, measured ACS joint-population diagnostics, a deterministic temporal allocation experiment and an observed-population data provider. The provider is not integrated into the enterprise engine. This candidate has no accepted complete 10,000- or 50,000-member study. The retained 10,000-member comparison above uses its separately pinned as-run revision.
+
+The root commands and historical results below keep their original implementation. To inspect or use the command in that snapshot, enter `research-candidates/enterprise-current/source/` and follow its README. The two implementations retain separate source histories and are not silently substituted for one another. No historical result is relabelled under a new model.
 
 
 This repository makes the DAMS research model, synthetic experiment design, analysis and resource measurements inspectable. It studies contribution-contingent **formal** authority, bounded observation, guild coordination, procedural capacity and conditional evidence-substrate costs. Parameters and populations are design or stress assumptions. Synthetic work, concentration and completed-record delay do not establish field effectiveness, fairness, organizational efficiency or real consensus performance.
