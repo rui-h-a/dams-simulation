@@ -1,0 +1,45 @@
+{
+  "study": "R11 exploratory default founding-startup design with organic growth",
+  "source_snapshot_sha256": "80d7a13cb41d62173fa991876443aaa1f29eec728806be46f99d1316d56435dc",
+  "source_seed": 20261017,
+  "calendar_days_observed": 366,
+  "retained_arm_summaries": 60,
+  "retained_prehistory_receipts": 30,
+  "world_endpoints_csv_sha256": "f8a2725ca6a294f8931db90c1e1ab8f7af4346d2f00ff28da164d01a9a8dca44",
+  "frozen_public_scale_study": {
+    "path": "04_evaluation/r11/scale-study.json",
+    "sha256": "c2e93b2ac343f27e4b5df205d491528e2aa4f23b08a931a27ed342df677fb268",
+    "baseline_rate_contrast_mean_low_high": {
+      "1000": [
+        -88.2612437475723,
+        -90.71860340048886,
+        -85.80388409465573
+      ],
+      "120": [
+        -92.73210830057806,
+        -101.17629546025826,
+        -84.28792114089786
+      ],
+      "30": [
+        -93.43343456726207,
+        -103.87605325426915,
+        -82.99081588025498
+      ],
+      "300": [
+        -91.01801368411266,
+        -96.67926103076228,
+        -85.35676633746304
+      ],
+      "60": [
+        -89.71946788086298,
+        -101.10488819624034,
+        -78.33404756548562
+      ],
+      "600": [
+        -90.33765610778362,
+        -93.44026676630945,
+        -87.23504544925778
+      ]
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "scope": "Retrospective analysis of frozen default startup simulations",
+  "gap": "DAMS with witnessed record minus retained performance-tier hierarchy",
+  "matched_worlds_per_step": 5,
+  "t_degrees_of_freedom": 4,
+  "bonferroni_family_size": 10,
+  "rate_units": "resource units per member-year per 100 added initial members",
+  "total_units": "first-year resource units per added initial member",
+  "all_six_frozen_public_baseline_rate_contrasts_reproduced": true,
+  "contrasts": [
+    {
+      "initial_members_from": 30,
+      "initial_members_to": 60,
+      "rate_gap_change_per_100_added_initial_members": {
+        "mean": 12.379888954663633,
+        "sample_sd": 35.92380791685699,
+        "pointwise_95_interval": [
+          -32.225410014085064,
+          56.98518792341233
+        ],
+        "familywise_95_interval": [
+          -77.54849106047949,
+          102.30826896980675
+        ]
+      },
+      "whole_firm_first_year_total_gap_change_per_added_initial_member": {
+        "mean": -83.34662110942566,
+        "sample_sd": 17.325582369626897,
+        "pointwise_95_interval": [
+          -104.85917298570524,
+          -61.83406923314607
+        ],
+        "familywise_95_interval": [
+          -126.71790176334437,
+          -39.97534045550694
+        ]
+      }
+    },
+    {
+      "initial_members_from": 60,
+      "initial_members_to": 120,
+      "rate_gap_change_per_100_added_initial_members": {
+        "mean": -5.021067366191802,
+        "sample_sd": 12.276755822471722,
+        "pointwise_95_interval": [
+          -20.264673085693385,
+          10.222538353309783
+        ],
+        "familywise_95_interval": [
+          -35.753576723539204,
+          25.711441991155603
+        ]
+      },
+      "whole_firm_first_year_total_gap_change_per_added_initial_member": {
+        "mean": -93.85552414856376,
+        "sample_sd": 13.555897408638197,
+        "pointwise_95_interval": [
+          -110.68739392421351,
+          -77.02365437291401
+        ],
+        "familywise_95_interval": [
+          -127.79011973575024,
+          -59.92092856137728
+        ]
+      }
+    },
+    {
+      "initial_members_from": 120,
+      "initial_members_to": 300,
+      "rate_gap_change_per_100_added_initial_members": {
+        "mean": 0.9522747869252219,
+        "sample_sd": 1.7020908327116524,
+        "pointwise_95_interval": [
+          -1.1611501217255031,
+          3.065699695575947
+        ],
+        "familywise_95_interval": [
+          -3.308583961085165,
+          5.213133534935609
+        ]
+      },
+      "whole_firm_first_year_total_gap_change_per_added_initial_member": {
+        "mean": -86.86273600740378,
+        "sample_sd": 5.57881730387694,
+        "pointwise_95_interval": [
+          -93.78975260618397,
+          -79.9357194086236
+        ],
+        "familywise_95_interval": [
+          -100.82823776320973,
+          -72.89723425159784
+        ]
+      }
+    },
+    {
+      "initial_members_from": 300,
+      "initial_members_to": 600,
+      "rate_gap_change_per_100_added_initial_members": {
+        "mean": 0.22678585877634613,
+        "sample_sd": 1.2100242361588651,
+        "pointwise_95_interval": [
+          -1.2756576722161266,
+          1.7292293897688187
+        ],
+        "familywise_95_interval": [
+          -2.8022783091613412,
+          3.2558500267140333
+        ]
+      },
+      "whole_firm_first_year_total_gap_change_per_added_initial_member": {
+        "mean": -87.26708307557053,
+        "sample_sd": 4.013977847706459,
+        "pointwise_95_interval": [
+          -92.25109485865507,
+          -82.28307129248599
+        ],
+        "familywise_95_interval": [
+          -97.31530864498545,
+          -77.2188575061556
+        ]
+      }
+    },
+    {
+      "initial_members_from": 600,
+      "initial_members_to": 1000,
+      "rate_gap_change_per_100_added_initial_members": {
+        "mean": 0.5191030900528318,
+        "sample_sd": 0.24389552421988828,
+        "pointwise_95_interval": [
+          0.2162667983059623,
+          0.8219393817997014
+        ],
+        "familywise_95_interval": [
+          -0.09144269164161634,
+          1.1296488717472801
+        ]
+      },
+      "whole_firm_first_year_total_gap_change_per_added_initial_member": {
+        "mean": -82.68934848268357,
+        "sample_sd": 3.4028863294119436,
+        "pointwise_95_interval": [
+          -86.91458992789414,
+          -78.464107037473
+        ],
+        "familywise_95_interval": [
+          -91.20782335282942,
+          -74.17087361253772
+        ]
+      }
+    }
+  ]
+}
