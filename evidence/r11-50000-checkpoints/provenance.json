@@ -1,0 +1,53 @@
+{
+  "study": "Partial 50,000-member multinational organic-growth pilot",
+  "plan": {
+    "scale": 50000,
+    "context": "multinational",
+    "growth": "organic",
+    "seed": 20261017,
+    "worlds": [
+      0,
+      1
+    ],
+    "arms": [
+      "control-hierarchy",
+      "dams-witness"
+    ],
+    "jobs": 4,
+    "pre_years": 2,
+    "post_years": 5,
+    "retention_policy": "full-original-journal-v1"
+  },
+  "hardware": {
+    "machine_type": "c4d-highcpu-16",
+    "vcpus": 16,
+    "allocation": "Spot",
+    "source": "Pinned study measurement note"
+  },
+  "source": {
+    "engine_git_commit": "3b4d44676872fff8d602cafbc47b49f0df6f79b9",
+    "engine_git_signature_status": "unsigned",
+    "engine_source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+    "engine_python_files": 36,
+    "measurement_note_git_commit": "d79a74eb18dbb6ab29559dccea1b0f12faafa863",
+    "retained_plan_sha256": "1985211553f8443cbc3f9d9ba7f5fcf2038304eacace5d4eb51a918134995691",
+    "retained_plan_bytes": 6183,
+    "retained_inventory_sha256": "14fd8b84be9ba8ab1175df3e9f3b6422c5f6d78cab01f75f6c7e8cda4ddd9514",
+    "retained_inventory_file_count": 2732,
+    "retained_inventory_batch_bytes": 455502065385,
+    "retained_inventory_all_bytes": 455731206463,
+    "extraction_cross_check_receipt_sha256": "2fa6206f9946948f7e76776b73a105441e6b36eb9101fe64b99c05fa13ae2282"
+  },
+  "data_sha256": {
+    "checkpoint-files.csv": "c1cf4966137264e708e490e8c9d1891aa34f5eadad5244387f160e3b5af3af27",
+    "inventory-sizes.csv": "80956daaa973f02ca4012d83cddcd5127d6a786094f841740e145f19f18d1f55"
+  },
+  "calendar_start": "2020-01-01",
+  "adoption_model_day": 731,
+  "timing_checkpoints": [
+    1096,
+    1461
+  ],
+  "temporary_checkpoint_day": 1826,
+  "validated_completed_arm_receipts_in_inventory": 0
+}

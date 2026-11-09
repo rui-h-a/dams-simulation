@@ -1,0 +1,65 @@
+{
+  "worlds": [
+    0,
+    1
+  ],
+  "case_count": 4,
+  "cases": [
+    {
+      "world": 0,
+      "arm": "control-hierarchy",
+      "last_finalized_checkpoint_day": 1461,
+      "elapsed_seconds": 35806,
+      "simulated_days_between_checkpoints": 365,
+      "elapsed_seconds_per_simulated_day": 98.0986301369863
+    },
+    {
+      "world": 0,
+      "arm": "dams-witness",
+      "last_finalized_checkpoint_day": 1461,
+      "elapsed_seconds": 35549,
+      "simulated_days_between_checkpoints": 365,
+      "elapsed_seconds_per_simulated_day": 97.3945205479452
+    },
+    {
+      "world": 1,
+      "arm": "control-hierarchy",
+      "last_finalized_checkpoint_day": 1461,
+      "elapsed_seconds": 35748,
+      "simulated_days_between_checkpoints": 365,
+      "elapsed_seconds_per_simulated_day": 97.93972602739726
+    },
+    {
+      "world": 1,
+      "arm": "dams-witness",
+      "last_finalized_checkpoint_day": 1461,
+      "elapsed_seconds": 35524,
+      "simulated_days_between_checkpoints": 365,
+      "elapsed_seconds_per_simulated_day": 97.32602739726028
+    }
+  ],
+  "elapsed_seconds_per_simulated_day_range": [
+    97.32602739726028,
+    98.0986301369863
+  ],
+  "elapsed_seconds_per_simulated_day_median": 97.66712328767123,
+  "storage_inventory": {
+    "all_files": 2732,
+    "all_bytes": 455731206463,
+    "batch_bytes": 455502065385,
+    "by_scope": {
+      "comparison_arms": {
+        "files": 28,
+        "bytes": 385407962723
+      },
+      "batch_shared_or_metadata": {
+        "files": 18,
+        "bytes": 70094102662
+      },
+      "outside_batch": {
+        "files": 2686,
+        "bytes": 229141078
+      }
+    }
+  }
+}

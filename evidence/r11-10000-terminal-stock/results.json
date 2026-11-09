@@ -1,0 +1,190 @@
+{
+  "schema": "dams-r11-terminal-stock-1",
+  "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+  "worlds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "arms": [
+    "control-hierarchy",
+    "control-process",
+    "dams-witness",
+    "linear-witness"
+  ],
+  "rows": 40,
+  "daily_rows_per_arm": 2557,
+  "last_day": 2556,
+  "interval_method": "exploratory unadjusted paired Student t, df=9",
+  "estimates": {
+    "unfinished_records": {
+      "arm_means": {
+        "control-hierarchy": 4887985.1,
+        "control-process": 4888082.3,
+        "dams-witness": 5706813.2,
+        "linear-witness": 5706218.8
+      },
+      "comparisons": {
+        "control-process_minus_control-hierarchy": {
+          "mean": 97.2,
+          "paired_interval_95": [
+            -6706.557588164442,
+            6900.957588164441
+          ],
+          "mean_relative_to_reference": 1.9885494331805555e-05,
+          "positive_worlds": 4,
+          "zero_worlds": 0,
+          "negative_worlds": 6
+        },
+        "dams-witness_minus_control-hierarchy": {
+          "mean": 818828.1,
+          "paired_interval_95": [
+            813268.4958368551,
+            824387.7041631448
+          ],
+          "mean_relative_to_reference": 0.16751853437523778,
+          "positive_worlds": 10,
+          "zero_worlds": 0,
+          "negative_worlds": 0
+        },
+        "linear-witness_minus_control-hierarchy": {
+          "mean": 818233.7,
+          "paired_interval_95": [
+            812951.1676162932,
+            823516.2323837067
+          ],
+          "mean_relative_to_reference": 0.16739693007656672,
+          "positive_worlds": 10,
+          "zero_worlds": 0,
+          "negative_worlds": 0
+        },
+        "dams-witness_minus_linear-witness": {
+          "mean": 594.4,
+          "paired_interval_95": [
+            -1568.6837058606006,
+            2757.483705860601
+          ],
+          "mean_relative_to_reference": 0.00010416705367133836,
+          "positive_worlds": 7,
+          "zero_worlds": 0,
+          "negative_worlds": 3
+        }
+      }
+    },
+    "confirmed_records": {
+      "arm_means": {
+        "control-hierarchy": 4574774.4,
+        "control-process": 4418334.7,
+        "dams-witness": 4026626.8,
+        "linear-witness": 4075384.9
+      },
+      "comparisons": {
+        "control-process_minus_control-hierarchy": {
+          "mean": -156439.7,
+          "paired_interval_95": [
+            -162826.1213033127,
+            -150053.2786966873
+          ],
+          "mean_relative_to_reference": -0.03419615620827117,
+          "positive_worlds": 0,
+          "zero_worlds": 0,
+          "negative_worlds": 10
+        },
+        "dams-witness_minus_control-hierarchy": {
+          "mean": -548147.6,
+          "paired_interval_95": [
+            -553899.1864575146,
+            -542396.0135424853
+          ],
+          "mean_relative_to_reference": -0.11981959154095116,
+          "positive_worlds": 0,
+          "zero_worlds": 0,
+          "negative_worlds": 10
+        },
+        "linear-witness_minus_control-hierarchy": {
+          "mean": -499389.5,
+          "paired_interval_95": [
+            -504207.4831877752,
+            -494571.5168122248
+          ],
+          "mean_relative_to_reference": -0.10916155778086017,
+          "positive_worlds": 0,
+          "zero_worlds": 0,
+          "negative_worlds": 10
+        },
+        "dams-witness_minus_linear-witness": {
+          "mean": -48758.1,
+          "paired_interval_95": [
+            -52030.01542999768,
+            -45486.18457000232
+          ],
+          "mean_relative_to_reference": -0.011964047862080463,
+          "positive_worlds": 0,
+          "zero_worlds": 0,
+          "negative_worlds": 10
+        }
+      }
+    },
+    "confirmation_p95_days": {
+      "arm_means": {
+        "control-hierarchy": 816.3,
+        "control-process": 819.6,
+        "dams-witness": 877.9,
+        "linear-witness": 879
+      },
+      "comparisons": {
+        "control-process_minus_control-hierarchy": {
+          "mean": 3.3,
+          "paired_interval_95": [
+            2.4705423736201633,
+            4.129457626379836
+          ],
+          "mean_relative_to_reference": 0.00404263138552003,
+          "positive_worlds": 10,
+          "zero_worlds": 0,
+          "negative_worlds": 0
+        },
+        "dams-witness_minus_control-hierarchy": {
+          "mean": 61.6,
+          "paired_interval_95": [
+            58.656296915469866,
+            64.54370308453014
+          ],
+          "mean_relative_to_reference": 0.07546245252970722,
+          "positive_worlds": 10,
+          "zero_worlds": 0,
+          "negative_worlds": 0
+        },
+        "linear-witness_minus_control-hierarchy": {
+          "mean": 62.7,
+          "paired_interval_95": [
+            59.8775868488389,
+            65.5224131511611
+          ],
+          "mean_relative_to_reference": 0.07680999632488057,
+          "positive_worlds": 10,
+          "zero_worlds": 0,
+          "negative_worlds": 0
+        },
+        "dams-witness_minus_linear-witness": {
+          "mean": -1.1,
+          "paired_interval_95": [
+            -1.5060696380536378,
+            -0.6939303619463624
+          ],
+          "mean_relative_to_reference": -0.0012514220705346986,
+          "positive_worlds": 0,
+          "zero_worlds": 1,
+          "negative_worlds": 9
+        }
+      }
+    }
+  }
+}
