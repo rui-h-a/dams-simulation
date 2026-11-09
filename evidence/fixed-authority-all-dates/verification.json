@@ -1,0 +1,184 @@
+{
+  "comparisons_which_round_to_identical_binary64": {
+    "credit": 108833,
+    "formal_share_gini": 49,
+    "share": 503105,
+    "share_sum": 58,
+    "tv_from_linear": 47
+  },
+  "eligible_rows_with_exact_ids_and_appointment_values": 119700,
+  "input_and_result": {
+    "input.json": {
+      "bytes": 3519114,
+      "gzip_asset": "input.json.gz",
+      "gzip_bytes": 286447,
+      "gzip_sha256": "2de61cc62b060a1ac2272b042d2f7d0d4ab7beabc81bceb18dd676f2bd5ef2d5",
+      "sha256": "8b4eb0b688650765590b05f9942f22eb223892f8189d6f27e7a1d47775909104",
+      "url": "https://github.com/rui-h-a/dams-simulation/releases/download/fixed-authority-replay-20261022/input.json.gz"
+    },
+    "result.json": {
+      "bytes": 18342141,
+      "gzip_asset": "result.json.gz",
+      "gzip_bytes": 2545011,
+      "gzip_sha256": "2de3ce4327fd8a8de4af2acdd54f001095d8cb44d9fa3c6c4c7d5b017b107e49",
+      "sha256": "981d511108ebd0147f2bb3fb0b333d6980b52c20b996906fc3b14352b87da654",
+      "url": "https://github.com/rui-h-a/dams-simulation/releases/download/fixed-authority-replay-20261022/result.json.gz"
+    }
+  },
+  "max_absolute_errors": {
+    "credit": "1.205838668002093038780893255341047964443538883443E-12",
+    "formal_share_gini": "1.598405209788596659507712608007897910434870756538E-16",
+    "share": "1.210618445806026659842959972326078406285392055120E-17",
+    "share_sum": "8.298E-17",
+    "tv_from_linear": "9.48474387106311322770386901238496804879707024122E-17"
+  },
+  "method": "independent event index with end-of-day queries, exact fractional attribution and tiers, 64-digit Decimal earned-day decay, square roots, normalized shares, Gini and TV",
+  "model_or_producer_imports": [],
+  "new_formal_abm_worlds": 0,
+  "numerical_comparison_counts": {
+    "credit": 119700,
+    "formal_share_gini": 60,
+    "share": 598500,
+    "share_sum": 60,
+    "tv_from_linear": 60
+  },
+  "observations": [
+    {
+      "day": 0,
+      "domain": "d0",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 0,
+        "pending": 10000,
+        "revoked": 0
+      }
+    },
+    {
+      "day": 0,
+      "domain": "d1",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 0,
+        "pending": 10000,
+        "revoked": 0
+      }
+    },
+    {
+      "day": 1,
+      "domain": "d0",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 323,
+        "pending": 9677,
+        "revoked": 0
+      }
+    },
+    {
+      "day": 1,
+      "domain": "d1",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 323,
+        "pending": 9677,
+        "revoked": 0
+      }
+    },
+    {
+      "day": 30,
+      "domain": "d0",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 9678,
+        "pending": 322,
+        "revoked": 0
+      }
+    },
+    {
+      "day": 30,
+      "domain": "d1",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 9678,
+        "pending": 322,
+        "revoked": 0
+      }
+    },
+    {
+      "day": 90,
+      "domain": "d0",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    },
+    {
+      "day": 90,
+      "domain": "d1",
+      "eligible_members": 10000,
+      "global_record_counts": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    },
+    {
+      "day": 180,
+      "domain": "d0",
+      "eligible_members": 9950,
+      "global_record_counts": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    },
+    {
+      "day": 180,
+      "domain": "d1",
+      "eligible_members": 9950,
+      "global_record_counts": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    },
+    {
+      "day": 365,
+      "domain": "d0",
+      "eligible_members": 9900,
+      "global_record_counts": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    },
+    {
+      "day": 365,
+      "domain": "d1",
+      "eligible_members": 9900,
+      "global_record_counts": {
+        "confirmed": 9896,
+        "pending": 0,
+        "revoked": 104
+      }
+    }
+  ],
+  "public_commit": "ed82a5817158d735b4878998e55cb312b1576b40",
+  "release": "fixed-authority-replay-20261022",
+  "source_pins": {
+    "dams_sim/authority.py": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b",
+    "docs/fixed-contribution-replay.md": "40c47054856a6ac3e279e2c4800a0be1d0cdb3751343ac4725fb5f3bdc3aeedb",
+    "research_tools/fixed_contribution_replay.py": "22fdf5aeda6faa4f8315e7b4f17b8e59c7e95bda867ecc63934c8bc9e95fa5c5",
+    "research_tools/fixed_replay_fixture.py": "c346840b6e827dfee54e95fa3adcb80a6da16fb31935962e657c30fc4020dda0",
+    "tests/test_fixed_contribution_replay.py": "ab93cb1665a19755472cf2207613e0313ca3210cfbb761ffa3b1b6c4401f0f41"
+  },
+  "status": "passed",
+  "tolerances": {
+    "credit_relative": "2E-15",
+    "share_relative": "1E-14",
+    "share_sum_absolute": "1E-14",
+    "summary_absolute": "2E-14",
+    "zero_expected_member_credit_and_share": "exact"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "commit": "ed82a5817158d735b4878998e55cb312b1576b40",
+  "git_objects": [
+    {
+      "bytes": 2525,
+      "path": "candidate-evidence/fixed-replay-n10000/README.md",
+      "sha1": "16959629456cb4a4d4e1c75ef03c1c3fc5bd98ce",
+      "sha256": "b6c7b653b93fae78b919750f25e3f2319a4bdb1692a6815faffc5dfd24748b99"
+    },
+    {
+      "bytes": 2348,
+      "path": "candidate-evidence/fixed-replay-n10000/manifest.json",
+      "sha1": "a5b56b7f4b6d2c8e883c90f40d32997b70df0639",
+      "sha256": "49c350722765a5c42845c7339a23000454561b2886a3a413eaa1e95b991b92c3"
+    },
+    {
+      "bytes": 2165,
+      "path": "candidate-evidence/fixed-replay-n10000/protocol.json",
+      "sha1": "5572cf87a8f55319911bce03dfdfc710429c3cb0",
+      "sha256": "5f64e83c1782d823343bbe7acd90c33fcdd64629844862f958ab189c49f2d68f"
+    },
+    {
+      "bytes": 6432,
+      "path": "candidate-evidence/fixed-replay-n10000/summary.json",
+      "sha1": "bd0dc0671497888f3ae5c9119511428a9161da0b",
+      "sha256": "c9c357ca117a80a32f534368233756384c4465373761e05b86314bef8a47820b"
+    },
+    {
+      "bytes": 14574,
+      "path": "research_tools/fixed_contribution_replay.py",
+      "sha1": "983babdc7cdfae4a59b9c658691c3f1893be1c56",
+      "sha256": "22fdf5aeda6faa4f8315e7b4f17b8e59c7e95bda867ecc63934c8bc9e95fa5c5"
+    },
+    {
+      "bytes": 8634,
+      "path": "tests/test_fixed_contribution_replay.py",
+      "sha1": "fb5a954d53073718fd1cb7abad0c10d468e2ca7b",
+      "sha256": "ab93cb1665a19755472cf2207613e0313ca3210cfbb761ffa3b1b6c4401f0f41"
+    },
+    {
+      "bytes": 7059,
+      "path": "docs/fixed-contribution-replay.md",
+      "sha1": "7a7c2deeb33389bd7d6caddb6fe04f5a47f422b4",
+      "sha256": "40c47054856a6ac3e279e2c4800a0be1d0cdb3751343ac4725fb5f3bdc3aeedb"
+    },
+    {
+      "bytes": 4951,
+      "path": "dams_sim/authority.py",
+      "sha1": "1b7655cb18126288991f1cd4b6f9dff02dbd47d7",
+      "sha256": "aef0367b2991fdaec5ddeb4c41feb27e7e3dbde5af6d8ff2d989b29079017f6b"
+    },
+    {
+      "bytes": 3014,
+      "path": "research_tools/fixed_replay_fixture.py",
+      "sha1": "20718552036b6181aa3e992cd8407b30cee73838",
+      "sha256": "c346840b6e827dfee54e95fa3adcb80a6da16fb31935962e657c30fc4020dda0"
+    }
+  ],
+  "release": {
+    "assets": [
+      {
+        "digest": "sha256:2de61cc62b060a1ac2272b042d2f7d0d4ab7beabc81bceb18dd676f2bd5ef2d5",
+        "name": "input.json.gz",
+        "size": 286447,
+        "url": "https://github.com/rui-h-a/dams-simulation/releases/download/fixed-authority-replay-20261022/input.json.gz"
+      },
+      {
+        "digest": "sha256:2de3ce4327fd8a8de4af2acdd54f001095d8cb44d9fa3c6c4c7d5b017b107e49",
+        "name": "result.json.gz",
+        "size": 2545011,
+        "url": "https://github.com/rui-h-a/dams-simulation/releases/download/fixed-authority-replay-20261022/result.json.gz"
+      }
+    ],
+    "tagName": "fixed-authority-replay-20261022",
+    "targetCommitish": "ed82a5817158d735b4878998e55cb312b1576b40"
+  }
+}
