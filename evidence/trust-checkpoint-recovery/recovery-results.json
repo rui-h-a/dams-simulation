@@ -1,0 +1,62 @@
+{
+  "scope": "Deterministic local recovery against an authenticated external configuration and exact checkpoint",
+  "source_commit": "968ecadacedd88ad815a5f19de51de2011e853d0",
+  "source_harness_sha256": "56327de92c7b8bec313db46e535464d045818d6b66780b70ffae113d1c84061b",
+  "ethers": "6.13.5",
+  "checkpoint": {
+    "scope": "guild:recovery",
+    "epoch": 0,
+    "threshold": 3,
+    "sequence": 2,
+    "head": "0x43080a0423c6b8fffc36fc144a7cad6b136d94444b02554bc6962a7ea51d968d"
+  },
+  "case_count": 9,
+  "previously_accepted_variants_now_rejected": 6,
+  "cases": [
+    {
+      "case": "legitimate_two_record_history",
+      "original": "accepted",
+      "anchored": "accepted"
+    },
+    {
+      "case": "snapshot_supplies_substituted_roster",
+      "original": "accepted",
+      "anchored": "rejected"
+    },
+    {
+      "case": "snapshot_lowers_threshold",
+      "original": "accepted",
+      "anchored": "rejected"
+    },
+    {
+      "case": "valid_prefix_truncation",
+      "original": "accepted",
+      "anchored": "rejected"
+    },
+    {
+      "case": "unsigned_history_alteration",
+      "original": "rejected",
+      "anchored": "rejected"
+    },
+    {
+      "case": "fully_signed_alternate_at_same_height",
+      "original": "accepted",
+      "anchored": "rejected"
+    },
+    {
+      "case": "signed_wrong_scope_history",
+      "original": "accepted",
+      "anchored": "rejected"
+    },
+    {
+      "case": "signed_wrong_epoch_history",
+      "original": "accepted",
+      "anchored": "rejected"
+    },
+    {
+      "case": "fresh_instance_with_same_configuration_and_checkpoint",
+      "original": "accepted",
+      "anchored": "accepted"
+    }
+  ]
+}

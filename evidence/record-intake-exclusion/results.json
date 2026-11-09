@@ -1,0 +1,164 @@
+{
+  "worlds_per_backend": 8,
+  "matched_backend_world_pairs": 24,
+  "original_claim_opportunities_per_world": 7200,
+  "pairs_with_lower_unfinished_stock_and_lower_mean_confirmation_delay": 24,
+  "comparisons": {
+    "central": {
+      "means_by_exposure": {
+        "0": {
+          "censored_records": 0.0,
+          "unfinished_records": 913.0,
+          "confirmed_records": 4802.0,
+          "confirmation_mean_days": 4.904600784514736,
+          "produced_work_units": 3691.5401548182476
+        },
+        "1": {
+          "censored_records": 41.875,
+          "unfinished_records": 871.625,
+          "confirmed_records": 4811.625,
+          "confirmation_mean_days": 4.70203259192463,
+          "produced_work_units": 3704.6259782583534
+        }
+      },
+      "paired_exposure_one_minus_zero": {
+        "censored_records": {
+          "mean": 41.875,
+          "lower_in_exposure_one": 0,
+          "equal": 0,
+          "higher_in_exposure_one": 8
+        },
+        "unfinished_records": {
+          "mean": -41.375,
+          "lower_in_exposure_one": 8,
+          "equal": 0,
+          "higher_in_exposure_one": 0
+        },
+        "confirmed_records": {
+          "mean": 9.625,
+          "lower_in_exposure_one": 1,
+          "equal": 0,
+          "higher_in_exposure_one": 7
+        },
+        "confirmation_mean_days": {
+          "mean": -0.20256819259010617,
+          "lower_in_exposure_one": 8,
+          "equal": 0,
+          "higher_in_exposure_one": 0
+        },
+        "produced_work_units": {
+          "mean": 13.085823440105855,
+          "lower_in_exposure_one": 0,
+          "equal": 0,
+          "higher_in_exposure_one": 8
+        }
+      },
+      "exposure_one_share_of_original_claim_opportunities_confirmed_percent": 66.828125,
+      "exposure_one_minus_zero_work_units_per_1000_member_days": 1.8174754777924798
+    },
+    "witness": {
+      "means_by_exposure": {
+        "0": {
+          "censored_records": 0.0,
+          "unfinished_records": 2142.125,
+          "confirmed_records": 3823.125,
+          "confirmation_mean_days": 10.379363355365482,
+          "produced_work_units": 3709.1262181536345
+        },
+        "1": {
+          "censored_records": 41.875,
+          "unfinished_records": 2099.0,
+          "confirmed_records": 3827.5,
+          "confirmation_mean_days": 10.223119297107086,
+          "produced_work_units": 3725.827515118436
+        }
+      },
+      "paired_exposure_one_minus_zero": {
+        "censored_records": {
+          "mean": 41.875,
+          "lower_in_exposure_one": 0,
+          "equal": 0,
+          "higher_in_exposure_one": 8
+        },
+        "unfinished_records": {
+          "mean": -43.125,
+          "lower_in_exposure_one": 8,
+          "equal": 0,
+          "higher_in_exposure_one": 0
+        },
+        "confirmed_records": {
+          "mean": 4.375,
+          "lower_in_exposure_one": 1,
+          "equal": 0,
+          "higher_in_exposure_one": 7
+        },
+        "confirmation_mean_days": {
+          "mean": -0.15624405825839682,
+          "lower_in_exposure_one": 8,
+          "equal": 0,
+          "higher_in_exposure_one": 0
+        },
+        "produced_work_units": {
+          "mean": 16.701296964801884,
+          "lower_in_exposure_one": 0,
+          "equal": 0,
+          "higher_in_exposure_one": 8
+        }
+      },
+      "exposure_one_share_of_original_claim_opportunities_confirmed_percent": 53.15972222222222,
+      "exposure_one_minus_zero_work_units_per_1000_member_days": 2.319624578444706
+    },
+    "consensus": {
+      "means_by_exposure": {
+        "0": {
+          "censored_records": 0.0,
+          "unfinished_records": 3111.375,
+          "confirmed_records": 3098.75,
+          "confirmation_mean_days": 14.70794706761873,
+          "produced_work_units": 3735.2693862171996
+        },
+        "1": {
+          "censored_records": 41.875,
+          "unfinished_records": 3072.5,
+          "confirmed_records": 3098.25,
+          "confirmation_mean_days": 14.591858758997018,
+          "produced_work_units": 3752.939131909407
+        }
+      },
+      "paired_exposure_one_minus_zero": {
+        "censored_records": {
+          "mean": 41.875,
+          "lower_in_exposure_one": 0,
+          "equal": 0,
+          "higher_in_exposure_one": 8
+        },
+        "unfinished_records": {
+          "mean": -38.875,
+          "lower_in_exposure_one": 8,
+          "equal": 0,
+          "higher_in_exposure_one": 0
+        },
+        "confirmed_records": {
+          "mean": -0.5,
+          "lower_in_exposure_one": 5,
+          "equal": 2,
+          "higher_in_exposure_one": 1
+        },
+        "confirmation_mean_days": {
+          "mean": -0.11608830862171038,
+          "lower_in_exposure_one": 8,
+          "equal": 0,
+          "higher_in_exposure_one": 0
+        },
+        "produced_work_units": {
+          "mean": 17.669745692207528,
+          "lower_in_exposure_one": 0,
+          "equal": 0,
+          "higher_in_exposure_one": 8
+        }
+      },
+      "exposure_one_share_of_original_claim_opportunities_confirmed_percent": 43.03125,
+      "exposure_one_minus_zero_work_units_per_1000_member_days": 2.4541313461399348
+    }
+  }
+}
