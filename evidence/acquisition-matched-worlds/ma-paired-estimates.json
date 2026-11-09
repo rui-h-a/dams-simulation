@@ -1,0 +1,328 @@
+{
+  "aggregate_payload_sha256": "4aab653eeb21e454cbcf6f665e7d96137c4c46971c11c02d6ad3dcaf58829023",
+  "independent_world_id_count": 120,
+  "arm_aggregate_count": 480,
+  "status": "retained synthetic analysis; cross-mode interaction is retrospective",
+  "interaction_sign": "(centralize DAMS - centralize hierarchy) - (preserve DAMS - preserve hierarchy)",
+  "interval": "paired Student-t 95%, unadjusted; Monte Carlo variation under the simulated design",
+  "within_mode_in_native_units": {
+    "preserve": {
+      "net_operating_result_per_member_year": {
+        "pairs": 120,
+        "mean_difference": -25.20308001036987,
+        "sd_difference": 7.262821670872669,
+        "ci95": [
+          -26.51588994451828,
+          -23.890270076221462
+        ]
+      },
+      "governance_cost_per_member_year": {
+        "pairs": 120,
+        "mean_difference": 14.405273830003761,
+        "sd_difference": 0.16971678450962988,
+        "ci95": [
+          14.374596237906253,
+          14.435951422101269
+        ]
+      },
+      "decision_regret_per_available_member_hour": {
+        "pairs": 120,
+        "mean_difference": 3.580870246185188e-07,
+        "sd_difference": 3.642766783840431e-06,
+        "ci95": [
+          -3.003706159966538e-07,
+          1.0165446652336914e-06
+        ]
+      },
+      "confirmation_mean_days": {
+        "pairs": 120,
+        "mean_difference": 35.745363139414096,
+        "sd_difference": 2.381971740812472,
+        "ci95": [
+          35.31480373620853,
+          36.17592254261966
+        ]
+      },
+      "honest_rejection_share": {
+        "pairs": 120,
+        "mean_difference": 0.018559034612733907,
+        "sd_difference": 0.0032017618735664683,
+        "ci95": [
+          0.017980291944267614,
+          0.0191377772812002
+        ]
+      },
+      "gini_formal_authority": {
+        "pairs": 120,
+        "mean_difference": 0.041643076217239845,
+        "sd_difference": 0.020099141828812832,
+        "ci95": [
+          0.03801000435392466,
+          0.04527614808055503
+        ]
+      },
+      "voluntary_and_other_exits_per_member_year": {
+        "pairs": 120,
+        "mean_difference": 0.004550664120281464,
+        "sd_difference": 0.004415932252979154,
+        "ci95": [
+          0.003752450974902002,
+          0.005348877265660926
+        ]
+      },
+      "final_active_members": {
+        "pairs": 120,
+        "mean_difference": 0.675,
+        "sd_difference": 2.348475278655022,
+        "ci95": [
+          0.25049533560971904,
+          1.099504664390281
+        ]
+      }
+    },
+    "centralize": {
+      "net_operating_result_per_member_year": {
+        "pairs": 120,
+        "mean_difference": -28.86731728622415,
+        "sd_difference": 6.883268151213974,
+        "ci95": [
+          -30.11152005173626,
+          -27.62311452071204
+        ]
+      },
+      "governance_cost_per_member_year": {
+        "pairs": 120,
+        "mean_difference": 19.557575957682115,
+        "sd_difference": 0.159700011916332,
+        "ci95": [
+          19.528708972971724,
+          19.586442942392505
+        ]
+      },
+      "decision_regret_per_available_member_hour": {
+        "pairs": 120,
+        "mean_difference": 1.6517618865167937e-06,
+        "sd_difference": 3.6794287090074053e-06,
+        "ci95": [
+          9.86677325712016e-07,
+          2.3168464473215714e-06
+        ]
+      },
+      "confirmation_mean_days": {
+        "pairs": 120,
+        "mean_difference": 51.62819385991815,
+        "sd_difference": 2.015817517770225,
+        "ci95": [
+          51.263819601167945,
+          51.99256811866835
+        ]
+      },
+      "honest_rejection_share": {
+        "pairs": 120,
+        "mean_difference": 0.021793400687458064,
+        "sd_difference": 0.0033193086659478476,
+        "ci95": [
+          0.021193410547449897,
+          0.02239339082746623
+        ]
+      },
+      "gini_formal_authority": {
+        "pairs": 120,
+        "mean_difference": 0.039526347308153305,
+        "sd_difference": 0.021454439346988503,
+        "ci95": [
+          0.03564829517047405,
+          0.04340439944583256
+        ]
+      },
+      "voluntary_and_other_exits_per_member_year": {
+        "pairs": 120,
+        "mean_difference": 0.00588598828967891,
+        "sd_difference": 0.004454007435782997,
+        "ci95": [
+          0.005080892767105765,
+          0.006691083812252055
+        ]
+      },
+      "final_active_members": {
+        "pairs": 120,
+        "mean_difference": 0.7416666666666667,
+        "sd_difference": 2.5585442070411357,
+        "ci95": [
+          0.2791904550542901,
+          1.2041428782790433
+        ]
+      }
+    }
+  },
+  "retrospective_package_interaction": {
+    "net_operating_result_per_member_year": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": -3.664237275854283,
+        "sd_difference": 3.4043326936421003,
+        "ci95": [
+          -4.279596151769317,
+          -3.0488783999392486
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": -3.664237275854283,
+        "sd_difference": 3.4043326936421003,
+        "ci95": [
+          -4.279596151769317,
+          -3.0488783999392486
+        ]
+      },
+      "within_mode_differences_correlation": 0.8855273656869168
+    },
+    "governance_cost_per_member_year": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": 5.152302127678354,
+        "sd_difference": 0.09911455934678817,
+        "ci95": [
+          5.134386421631069,
+          5.170217833725639
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": 5.152302127678354,
+        "sd_difference": 0.09911455934678817,
+        "ci95": [
+          5.134386421631069,
+          5.170217833725639
+        ]
+      },
+      "within_mode_differences_correlation": 0.8206271813593342
+    },
+    "decision_regret_per_available_member_hour": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": 1.2936748618982748e-06,
+        "sd_difference": 3.5888442460134475e-06,
+        "ci95": [
+          6.44964127725492e-07,
+          1.9423855960710577e-06
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": 1.2936748618982747,
+        "sd_difference": 3.5888442460134478,
+        "ci95": [
+          0.644964127725492,
+          1.9423855960710577
+        ]
+      },
+      "within_mode_differences_correlation": 0.5195788250835119
+    },
+    "confirmation_mean_days": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": 15.882830720504048,
+        "sd_difference": 1.2350718431595213,
+        "ci95": [
+          15.6595821459742,
+          16.106079295033894
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": 15.882830720504048,
+        "sd_difference": 1.2350718431595213,
+        "ci95": [
+          15.6595821459742,
+          16.106079295033894
+        ]
+      },
+      "within_mode_differences_correlation": 0.8551183311226151
+    },
+    "honest_rejection_share": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": 0.0032343660747241572,
+        "sd_difference": 0.0017910117402017117,
+        "ci95": [
+          0.0029106271601170583,
+          0.003558104989331256
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": 0.3234366074724157,
+        "sd_difference": 0.17910117402017117,
+        "ci95": [
+          0.29106271601170586,
+          0.3558104989331256
+        ]
+      },
+      "within_mode_differences_correlation": 0.8497358290589125
+    },
+    "gini_formal_authority": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": -0.0021167289090865435,
+        "sd_difference": 0.009854446661441611,
+        "ci95": [
+          -0.00389799465660719,
+          -0.00033546316156589677
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": -0.0021167289090865435,
+        "sd_difference": 0.009854446661441611,
+        "ci95": [
+          -0.00389799465660719,
+          -0.00033546316156589677
+        ]
+      },
+      "within_mode_differences_correlation": 0.8895294613765823
+    },
+    "voluntary_and_other_exits_per_member_year": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": 0.001335324169397446,
+        "sd_difference": 0.0034266975878386053,
+        "ci95": [
+          0.0007159226697463643,
+          0.001954725669048528
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": 1.335324169397446,
+        "sd_difference": 3.4266975878386052,
+        "ci95": [
+          0.7159226697463643,
+          1.954725669048528
+        ]
+      },
+      "within_mode_differences_correlation": 0.7015341821614165
+    },
+    "final_active_members": {
+      "native_units": {
+        "pairs": 120,
+        "mean_difference": 0.06666666666666667,
+        "sd_difference": 1.7476675132000017,
+        "ci95": [
+          -0.24923745116660595,
+          0.38257078449993925
+        ]
+      },
+      "table_units": {
+        "pairs": 120,
+        "mean_difference": 0.06666666666666667,
+        "sd_difference": 1.7476675132000017,
+        "ci95": [
+          -0.24923745116660595,
+          0.38257078449993925
+        ]
+      },
+      "within_mode_differences_correlation": 0.7495112175750891
+    }
+  }
+}
