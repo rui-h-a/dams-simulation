@@ -3,11 +3,30 @@
 set -euo pipefail
 task_root=$(cd "$(dirname "$0")" && pwd)
 cd "$task_root"
+# The enterprise model keeps its own source tree and launcher. Forward its spec there, so that
+# `./run.sh --spec enterprise-r11 ...` works from the repository root. A relative --output stays
+# relative to the repository root, as for every other spec.
+task_forward=false; task_prev=
+for task_arg in "$@"; do
+  if [[ "$task_prev" == --spec && "$task_arg" == enterprise-r11 ]]; then task_forward=true; fi
+  task_prev=$task_arg
+done
+if $task_forward; then
+  task_forwarded=(); task_prev=
+  for task_arg in "$@"; do
+    if [[ ( "$task_prev" == --output || "$task_prev" == --recovery-output ) && "$task_arg" != /* ]]; then
+      task_arg="$task_root/$task_arg"
+    fi
+    task_forwarded+=("$task_arg"); task_prev=$task_arg
+  done
+  exec "$task_root/research-candidates/enterprise-current/source/run.sh" "${task_forwarded[@]}"
+fi
 case "$(uname -s)" in Darwin|Linux) ;; *) echo 'Use a POSIX Linux/macOS terminal or WSL2; native Windows is not verified.' >&2; exit 2;; esac
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   cat <<'HELP'
 Usage: ./run.sh [--spec validation|historical-full-study|full-study|governance-scale|scale-confirmation|longitudinal-adoption-5y|longitudinal-adoption-10y] [--scale PEOPLE]
                 [--output DIRECTORY] [--runtime-limits JSON]
+       --spec enterprise-r11 [enterprise options] is forwarded to research-candidates/enterprise-current/source/run.sh
 Defaults: bounded local validation, 120 people, runs/validation-n120.
 Full research runs use the same versioned pipeline and automatic resource scheduler.
 Advanced, explicitly authorized coordinator: set DAMS_CLOUD_PRIVATE_CONFIG to a
