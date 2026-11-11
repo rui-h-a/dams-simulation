@@ -94,7 +94,7 @@ The reference keeps explicit Python agents, claims, delays and full restart stat
 
 Completed cases retain source/config/output hashes and atomic writes. Caught failures and explicit partial horizons remain distinct from completed worlds. An abrupt process kill can leave a core manifest at `running`; the external watchdog, if used, is the terminal evidence. An RSS/OOM failure may lack a new checkpoint. Restart creates a new directory, verifies source/output integrity, and retains its parent chain; it does not overwrite the original. Exact state reproduction is tested on the measured platform; cross-platform bitwise equality is untested.
 
-`contracts/` contains a separately compiled Solidity/local-EVM research prototype and regressions. Its gas/storage results are not agent-scale CPU results or an implemented ABM consensus backend. Product code, customer data, credentials, private Git history and restricted literature are outside this research release.
+`contracts/` contains a separately compiled Solidity/local-EVM research prototype and regressions. Its gas/storage results are not agent-scale CPU results or an implemented ABM consensus backend. The release consists of the research implementation, its tests and synthetic data.
 
 ## Packaging and citation
 
