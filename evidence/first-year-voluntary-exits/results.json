@@ -1,0 +1,89 @@
+{
+  "arm_counts_sha256": "87e4886ccc3052d0fcd6a00c4e839e86493d2092d0b501150a8c5536e2b08b19",
+  "arm_count": 268,
+  "window_days": 365,
+  "summaries": {
+    "founding-300": {
+      "control-hierarchy": {
+        "voluntary_exits": 22783,
+        "early_voluntary_exits": 9870,
+        "eligible_recruits": 17992,
+        "early_recruit_quits": 4567,
+        "early_quits_share_percent": "43.3",
+        "eligible_recruit_quit_percent": "25.4"
+      },
+      "control-process": {
+        "voluntary_exits": 23671,
+        "early_voluntary_exits": 10674,
+        "eligible_recruits": 18837,
+        "early_recruit_quits": 4839,
+        "early_quits_share_percent": "45.1",
+        "eligible_recruit_quit_percent": "25.7"
+      },
+      "dams-witness": {
+        "voluntary_exits": 23761,
+        "early_voluntary_exits": 10678,
+        "eligible_recruits": 18981,
+        "early_recruit_quits": 4794,
+        "early_quits_share_percent": "44.9",
+        "eligible_recruit_quit_percent": "25.3"
+      },
+      "linear-witness": {
+        "voluntary_exits": 23587,
+        "early_voluntary_exits": 10586,
+        "eligible_recruits": 18822,
+        "early_recruit_quits": 4749,
+        "early_quits_share_percent": "44.9",
+        "eligible_recruit_quit_percent": "25.2"
+      }
+    },
+    "main-10000": {
+      "control-hierarchy": {
+        "voluntary_exits": 202949,
+        "early_voluntary_exits": 76853,
+        "eligible_recruits": 114526,
+        "early_recruit_quits": 26962,
+        "early_quits_share_percent": "37.9",
+        "eligible_recruit_quit_percent": "23.5"
+      },
+      "control-process": {
+        "voluntary_exits": 206704,
+        "early_voluntary_exits": 77886,
+        "eligible_recruits": 118072,
+        "early_recruit_quits": 27895,
+        "early_quits_share_percent": "37.7",
+        "eligible_recruit_quit_percent": "23.6"
+      },
+      "dams-witness": {
+        "voluntary_exits": 204505,
+        "early_voluntary_exits": 76517,
+        "eligible_recruits": 116711,
+        "early_recruit_quits": 26820,
+        "early_quits_share_percent": "37.4",
+        "eligible_recruit_quit_percent": "23.0"
+      },
+      "linear-witness": {
+        "voluntary_exits": 203688,
+        "early_voluntary_exits": 76450,
+        "eligible_recruits": 116101,
+        "early_recruit_quits": 26762,
+        "early_quits_share_percent": "37.5",
+        "eligible_recruit_quit_percent": "23.1"
+      }
+    }
+  },
+  "displayed_percent_ranges": {
+    "founding_share_of_quits": [
+      "43.3",
+      "45.1"
+    ],
+    "founding_incidence_among_eligible_entrants": [
+      "25.2",
+      "25.7"
+    ],
+    "main_incidence_among_eligible_post_branch_entrants": [
+      "23.0",
+      "23.6"
+    ]
+  }
+}
