@@ -1,0 +1,382 @@
+{
+  "slope_refits": {
+    "all_sizes": {
+      "slopes_by_world": {
+        "3000": 10.12547874,
+        "3001": 6.17128218,
+        "3002": 0.17871918,
+        "3003": 4.02875233,
+        "3004": -3.4536915
+      },
+      "mean_slope": 3.41010819,
+      "paired_t95": [
+        -3.12063797,
+        9.94085434
+      ]
+    },
+    "30": {
+      "slopes_by_world": {
+        "3000": 9.65724616,
+        "3001": 6.68647261,
+        "3002": 4.37462693,
+        "3003": 5.07026685,
+        "3004": -7.48338666
+      },
+      "mean_slope": 3.66104518,
+      "paired_t95": [
+        -4.4763811,
+        11.79847146
+      ]
+    },
+    "60": {
+      "slopes_by_world": {
+        "3000": 10.17736973,
+        "3001": 8.3525184,
+        "3002": -0.12178571,
+        "3003": 3.47129056,
+        "3004": -1.04551268
+      },
+      "mean_slope": 4.16677606,
+      "paired_t95": [
+        -2.03194749,
+        10.36549961
+      ]
+    },
+    "120": {
+      "slopes_by_world": {
+        "3000": 10.82925702,
+        "3001": 4.60643552,
+        "3002": -0.68235498,
+        "3003": 3.62473999,
+        "3004": -2.5689465
+      },
+      "mean_slope": 3.16182621,
+      "paired_t95": [
+        -3.31122691,
+        9.63487934
+      ]
+    },
+    "300": {
+      "slopes_by_world": {
+        "3000": 9.88651578,
+        "3001": 5.5518223,
+        "3002": -0.22324152,
+        "3003": 4.21343224,
+        "3004": -3.01250318
+      },
+      "mean_slope": 3.28320512,
+      "paired_t95": [
+        -2.97294481,
+        9.53935505
+      ]
+    },
+    "600": {
+      "slopes_by_world": {
+        "3000": 10.12996449,
+        "3001": 6.16752948,
+        "3002": 0.226614,
+        "3003": 4.03037519,
+        "3004": -3.40791276
+      },
+      "mean_slope": 3.42931408,
+      "paired_t95": [
+        -3.07500185,
+        9.93363001
+      ]
+    },
+    "1000": {
+      "slopes_by_world": {
+        "3000": 9.70510692,
+        "3001": 5.24628116,
+        "3002": -4.23627435,
+        "3003": 3.9695865,
+        "3004": -5.51955078
+      },
+      "mean_slope": 1.83302989,
+      "paired_t95": [
+        -6.23973555,
+        9.90579533
+      ]
+    }
+  },
+  "operating_total_components": {
+    "family_size": 15,
+    "size_steps": [
+      {
+        "initial_members_from": 30,
+        "initial_members_to": 60,
+        "total_change": -83.34662111,
+        "components": {
+          "change_in_rate_gap": {
+            "mean": 5.63855424,
+            "adjusted_95": [
+              -39.62263298,
+              50.89974146
+            ]
+          },
+          "change_in_mean_exposure": {
+            "mean": -84.96427568,
+            "adjusted_95": [
+              -108.48776485,
+              -61.44078652
+            ]
+          },
+          "change_in_between_arm_exposure_term": {
+            "mean": -4.02089967,
+            "adjusted_95": [
+              -19.20124386,
+              11.15944453
+            ]
+          }
+        },
+        "by_world": {
+          "3000": {
+            "change_in_rate_gap": 6.40435606,
+            "change_in_mean_exposure": -98.40007871,
+            "change_in_between_arm_exposure_term": -8.61398299
+          },
+          "3001": {
+            "change_in_rate_gap": 15.06141619,
+            "change_in_mean_exposure": -87.05515464,
+            "change_in_between_arm_exposure_term": 1.99543963
+          },
+          "3002": {
+            "change_in_rate_gap": -14.82286072,
+            "change_in_mean_exposure": -82.48587544,
+            "change_in_between_arm_exposure_term": 0.0
+          },
+          "3003": {
+            "change_in_rate_gap": -4.82466239,
+            "change_in_mean_exposure": -80.28200512,
+            "change_in_between_arm_exposure_term": -2.89893005
+          },
+          "3004": {
+            "change_in_rate_gap": 26.37452206,
+            "change_in_mean_exposure": -76.59826451,
+            "change_in_between_arm_exposure_term": -10.58702491
+          }
+        }
+      },
+      {
+        "initial_members_from": 60,
+        "initial_members_to": 120,
+        "total_change": -93.85552415,
+        "components": {
+          "change_in_rate_gap": {
+            "mean": -4.36679557,
+            "adjusted_95": [
+              -34.3279036,
+              25.59431246
+            ]
+          },
+          "change_in_mean_exposure": {
+            "mean": -84.79199844,
+            "adjusted_95": [
+              -106.65308506,
+              -62.93091182
+            ]
+          },
+          "change_in_between_arm_exposure_term": {
+            "mean": -4.69673014,
+            "adjusted_95": [
+              -18.93462603,
+              9.54116575
+            ]
+          }
+        },
+        "by_world": {
+          "3000": {
+            "change_in_rate_gap": 7.57391745,
+            "change_in_mean_exposure": -89.62279338,
+            "change_in_between_arm_exposure_term": -3.08713305
+          },
+          "3001": {
+            "change_in_rate_gap": -18.44196612,
+            "change_in_mean_exposure": -91.35286748,
+            "change_in_between_arm_exposure_term": -6.09526309
+          },
+          "3002": {
+            "change_in_rate_gap": -2.23500279,
+            "change_in_mean_exposure": -82.93740345,
+            "change_in_between_arm_exposure_term": -5.15093802
+          },
+          "3003": {
+            "change_in_rate_gap": 3.17682867,
+            "change_in_mean_exposure": -88.05686547,
+            "change_in_between_arm_exposure_term": -11.60629712
+          },
+          "3004": {
+            "change_in_rate_gap": -11.90775505,
+            "change_in_mean_exposure": -71.99006241,
+            "change_in_between_arm_exposure_term": 2.45598059
+          }
+        }
+      },
+      {
+        "initial_members_from": 120,
+        "initial_members_to": 300,
+        "total_change": -86.86273601,
+        "components": {
+          "change_in_rate_gap": {
+            "mean": 1.90748211,
+            "adjusted_95": [
+              -7.60259215,
+              11.41755638
+            ]
+          },
+          "change_in_mean_exposure": {
+            "mean": -86.78216248,
+            "adjusted_95": [
+              -101.25983587,
+              -72.30448909
+            ]
+          },
+          "change_in_between_arm_exposure_term": {
+            "mean": -1.98805564,
+            "adjusted_95": [
+              -8.8164961,
+              4.84038481
+            ]
+          }
+        },
+        "by_world": {
+          "3000": {
+            "change_in_rate_gap": 0.86066052,
+            "change_in_mean_exposure": -89.20663819,
+            "change_in_between_arm_exposure_term": -2.10446938
+          },
+          "3001": {
+            "change_in_rate_gap": 5.99729545,
+            "change_in_mean_exposure": -92.84376875,
+            "change_in_between_arm_exposure_term": -5.08486365
+          },
+          "3002": {
+            "change_in_rate_gap": 1.60081417,
+            "change_in_mean_exposure": -88.67175612,
+            "change_in_between_arm_exposure_term": -1.42253855
+          },
+          "3003": {
+            "change_in_rate_gap": 4.0454298,
+            "change_in_mean_exposure": -83.48615707,
+            "change_in_between_arm_exposure_term": 1.61762851
+          },
+          "3004": {
+            "change_in_rate_gap": -2.96678937,
+            "change_in_mean_exposure": -79.70249228,
+            "change_in_between_arm_exposure_term": -2.94603513
+          }
+        }
+      },
+      {
+        "initial_members_from": 300,
+        "initial_members_to": 600,
+        "total_change": -87.26708308,
+        "components": {
+          "change_in_rate_gap": {
+            "mean": 0.97470432,
+            "adjusted_95": [
+              -13.4785303,
+              15.42793894
+            ]
+          },
+          "change_in_mean_exposure": {
+            "mean": -86.24737272,
+            "adjusted_95": [
+              -94.87465277,
+              -77.62009267
+            ]
+          },
+          "change_in_between_arm_exposure_term": {
+            "mean": -1.99441468,
+            "adjusted_95": [
+              -5.29979861,
+              1.31096926
+            ]
+          }
+        },
+        "by_world": {
+          "3000": {
+            "change_in_rate_gap": 5.34169448,
+            "change_in_mean_exposure": -86.33646264,
+            "change_in_between_arm_exposure_term": -2.09632512
+          },
+          "3001": {
+            "change_in_rate_gap": 6.19790927,
+            "change_in_mean_exposure": -90.17242664,
+            "change_in_between_arm_exposure_term": -0.65639424
+          },
+          "3002": {
+            "change_in_rate_gap": -0.6960081,
+            "change_in_mean_exposure": -88.2467516,
+            "change_in_between_arm_exposure_term": -1.15923307
+          },
+          "3003": {
+            "change_in_rate_gap": 0.64213209,
+            "change_in_mean_exposure": -82.70871797,
+            "change_in_between_arm_exposure_term": -3.71681799
+          },
+          "3004": {
+            "change_in_rate_gap": -6.61220615,
+            "change_in_mean_exposure": -83.77250474,
+            "change_in_between_arm_exposure_term": -2.34330297
+          }
+        }
+      },
+      {
+        "initial_members_from": 600,
+        "initial_members_to": 1000,
+        "total_change": -82.68934848,
+        "components": {
+          "change_in_rate_gap": {
+            "mean": 3.93820384,
+            "adjusted_95": [
+              -1.23489566,
+              9.11130334
+            ]
+          },
+          "change_in_mean_exposure": {
+            "mean": -84.37712841,
+            "adjusted_95": [
+              -90.30492598,
+              -78.44933084
+            ]
+          },
+          "change_in_between_arm_exposure_term": {
+            "mean": -2.25042391,
+            "adjusted_95": [
+              -6.71982439,
+              2.21897658
+            ]
+          }
+        },
+        "by_world": {
+          "3000": {
+            "change_in_rate_gap": 4.87181709,
+            "change_in_mean_exposure": -84.10398633,
+            "change_in_between_arm_exposure_term": -0.35555857
+          },
+          "3001": {
+            "change_in_rate_gap": 2.85677261,
+            "change_in_mean_exposure": -86.71150462,
+            "change_in_between_arm_exposure_term": -4.64661756
+          },
+          "3002": {
+            "change_in_rate_gap": 6.61095551,
+            "change_in_mean_exposure": -86.12538064,
+            "change_in_between_arm_exposure_term": -1.95320901
+          },
+          "3003": {
+            "change_in_rate_gap": 1.86598174,
+            "change_in_mean_exposure": -81.4400946,
+            "change_in_between_arm_exposure_term": -2.76995442
+          },
+          "3004": {
+            "change_in_rate_gap": 3.48549224,
+            "change_in_mean_exposure": -83.50467589,
+            "change_in_between_arm_exposure_term": -1.52677998
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "daily_records": 102280,
+  "tail_days": 60,
+  "shared_pre_adoption_mean": 1224489.4,
+  "dams_minus_hierarchy_mean": {
+    "year_one": 169852.1,
+    "year_three": 496072,
+    "end": 818828.1
+  },
+  "mean_tail_decline_percent": {
+    "control-hierarchy": 4.4323,
+    "control-process": 4.447889,
+    "dams-witness": 3.360108,
+    "linear-witness": 3.359676
+  },
+  "terminal_means": {
+    "control-hierarchy": 4887985.1,
+    "control-process": 4888082.3,
+    "dams-witness": 5706813.2,
+    "linear-witness": 5706218.8
+  },
+  "dams_minus_hierarchy_terminal_interval_95": [
+    813268.495837,
+    824387.704163
+  ],
+  "dams_minus_linear_terminal_range": [
+    -5322,
+    6633
+  ]
+}

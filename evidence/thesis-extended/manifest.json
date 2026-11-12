@@ -1,0 +1,28 @@
+{
+  "files_sha256": {
+    "README.md": "3beae504370ed5d06a99bac3fe05a75cb393cb13e551c386f70ad5809504378f",
+    "backlog-history/README.md": "a307d441c15c8e6203742a86e65749585aef6bd2a7e845b7fbed691926976dc0",
+    "backlog-history/SHA256SUMS": "7c36af16914b9aac6107a2d802139ce1de83fb0b2f29114801382166ee662648",
+    "backlog-history/daily.csv.gz": "67469933d0d329a05d909ec6649f5d033fa4cb9f7c6dcd12dd1492c164790257",
+    "backlog-history/results.json": "894b63ef3b600f784330efbbbe0eea5faf1c12f099a4ff9bd6cd388b401451c2",
+    "backlog-history/terminal.csv": "eaff24a4232c6c03558a275900dcfc7d7a3e1083451c228c304863d15812ed46",
+    "backlog-history/verify.py": "2db354855182a263e93634f9578babe1f0e735ea02fe8d2cfcd7bfe6eab917c0",
+    "record-procedure-three-arm/README.md": "6ce8fbc83e8249105873a03901b13a0372f5db0fb973d56b01c3e5c13ce7eea0",
+    "record-procedure-three-arm/manifest.json": "2814c3a0f9969af586d2eb4ff52257192981764f787625833715888de8a52917",
+    "record-procedure-three-arm/retained-summary-rows.csv": "d79c1612615f876eeaae799685955cfa506cedd12f2cea39eab51e27f4369c9b",
+    "record-procedure-three-arm/verify.py": "e7bfbd152cb789f121b9d1308233a61bcd3973d181d84803bb63fad6ab24f05f",
+    "startup-marginal-extension/README.md": "fb61daf56ea99884f5bdc45d055a1f7233f000d3d4963d2531760a0eaaba4291",
+    "startup-marginal-extension/expected-results.json": "e75ce9b5075c33b638ecf56b952dc61ed7d10068ceea072ae4f3abf28d547f1e",
+    "startup-marginal-extension/provenance.json": "27b041747d86dbaf19d3e12a8da41edb2a752b72aa0cdf9ad4c0ae4daac717fd",
+    "startup-marginal-extension/verify.py": "60c51bd2b2babfa13d9ecd59523775c8b49f4e7e8d7af32dbafc13f48ce2f57f",
+    "startup-marginal-extension/verify_extensions.py": "2b7d7e3c0f66a20a5641498f086643c31db1c95988984cbce35c3419b4eae1cd",
+    "startup-marginal-extension/world-endpoints.csv": "f8a2725ca6a294f8931db90c1e1ab8f7af4346d2f00ff28da164d01a9a8dca44",
+    "verify.py": "5f5cb31ccd4ea6c993796a0a3d1668733db4db58a30a0d88d3c1306747639e04"
+  },
+  "result_sha256": {
+    "record-procedure-three-arm/verify.py": "95a2b49b4f99466b71762803bb1d968a273ec1334caf0ede1fd6672197fbae99",
+    "startup-marginal-extension/verify.py": "6b214c54dd2dcdfb5964e4dcb65c311649d5b0496daaa7f6aa214376fdb1ed05",
+    "startup-marginal-extension/verify_extensions.py": "e75ce9b5075c33b638ecf56b952dc61ed7d10068ceea072ae4f3abf28d547f1e",
+    "backlog-history/verify.py": "894b63ef3b600f784330efbbbe0eea5faf1c12f099a4ff9bd6cd388b401451c2"
+  }
+}
