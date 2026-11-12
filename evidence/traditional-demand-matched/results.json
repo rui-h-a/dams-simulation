@@ -1,0 +1,498 @@
+{
+  "input_sha256": "e452b2c313fbdae91ccb4e725b5df0d48002c353b0f3e9a8b7bb2d58587d8457",
+  "results": {
+    "assigned": 65,
+    "retained_pairs": 33,
+    "missing_pairs": 32,
+    "outcomes": {
+      "operating_margin_ratio": {
+        "unit": "ratio of revenue",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": -0.0011736242476574545,
+          "ci95": [
+            -0.0011765759772372104,
+            -0.0011706725180776986
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": -0.00012739218576730447,
+          "ci95": [
+            -0.00014725107835000855,
+            -0.00010753329318460039
+          ]
+        }
+      },
+      "net_operating_result_per_member_year": {
+        "unit": "resource units / member-year",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": -0.5773450886256617,
+          "ci95": [
+            -0.8490065688069832,
+            -0.3056836084443401
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 23.20906883714168,
+          "ci95": [
+            21.133884222372536,
+            25.28425345191082
+          ]
+        }
+      },
+      "operating_cost_per_delivered_unit": {
+        "unit": "resource units / product unit",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.011736242476574494,
+          "ci95": [
+            0.011706725180776862,
+            0.011765759772372127
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.0012739218576727593,
+          "ci95": [
+            0.001075332931845849,
+            0.0014725107834996697
+          ]
+        }
+      },
+      "governance_cost_per_member_year": {
+        "unit": "resource units / member-year",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 17.15192459984912,
+          "ci95": [
+            17.079065883113902,
+            17.22478331658434
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.07515861472105995,
+          "ci95": [
+            -0.0021398870655844476,
+            0.15245711650770433
+          ]
+        }
+      },
+      "output_per_available_member_hour": {
+        "unit": "work units / member-hour",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.0005172592676475226,
+          "ci95": [
+            0.00038387900963284276,
+            0.0006506395256622024
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.010160200208781344,
+          "ci95": [
+            0.00925200707563937,
+            0.011068393341923319
+          ]
+        }
+      },
+      "delivered_share_of_orders": {
+        "unit": "ratio",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": -9.661849033323311e-05,
+          "ci95": [
+            -0.0002503706756142151,
+            5.713369494774888e-05
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.009005035594468414,
+          "ci95": [
+            0.008190035703585292,
+            0.009820035485351535
+          ]
+        }
+      },
+      "expired_share_of_orders": {
+        "unit": "ratio",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 9.661849032998514e-05,
+          "ci95": [
+            -5.713369495035075e-05,
+            0.00025037067561032103
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": -0.009005035594471545,
+          "ci95": [
+            -0.009820035485354815,
+            -0.008190035703588274
+          ]
+        }
+      },
+      "confirmation_mean_days": {
+        "unit": "calendar days",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 39.52598555655554,
+          "ci95": [
+            38.23796012376154,
+            40.81401098934954
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": -3.3451770196807424,
+          "ci95": [
+            -4.821271444304612,
+            -1.8690825950568724
+          ]
+        }
+      },
+      "honest_rejection_share": {
+        "unit": "ratio of reviews",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.011499832401052791,
+          "ci95": [
+            0.009166995471110242,
+            0.013832669330995341
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": -0.007522432551300796,
+          "ci95": [
+            -0.009945328421262292,
+            -0.005099536681339299
+          ]
+        }
+      },
+      "fraud_acceptance_share": {
+        "unit": "ratio of fraudulent records",
+        "variant_contrast": null,
+        "change_from_baseline": null
+      },
+      "decision_regret_per_available_member_hour": {
+        "unit": "regret units / member-hour",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 2.182209194185453e-06,
+          "ci95": [
+            9.465763982536028e-07,
+            3.417841990117303e-06
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 1.7403654944739504e-06,
+          "ci95": [
+            3.4072933828627923e-07,
+            3.1400016506616215e-06
+          ]
+        }
+      },
+      "learning_hours_per_member_year": {
+        "unit": "hours / member-year",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": -0.1835612816531796,
+          "ci95": [
+            -0.2124174984818736,
+            -0.15470506482448557
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.004452469086430172,
+          "ci95": [
+            -0.03881158332640039,
+            0.04771652149926073
+          ]
+        }
+      },
+      "memory_loss_per_member_year": {
+        "unit": "memory units / member-year",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 4.2104329840217356e-05,
+          "ci95": [
+            3.457162846775125e-05,
+            4.9637031212683465e-05
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 3.3202151627915185e-05,
+          "ci95": [
+            2.514452826728405e-05,
+            4.125977498854632e-05
+          ]
+        }
+      },
+      "voluntary_and_other_exits_per_member_year": {
+        "unit": "exits / member-year",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.0038247832241334887,
+          "ci95": [
+            0.002145532344960125,
+            0.005504034103306852
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": -0.00082710860990544,
+          "ci95": [
+            -0.0028823766947339707,
+            0.0012281594749230908
+          ]
+        }
+      },
+      "sick_absence_per_member_year": {
+        "unit": "workdays / member-year",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.04092094644808845,
+          "ci95": [
+            0.01807209187321425,
+            0.06376980102296265
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.030211276939402672,
+          "ci95": [
+            0.0063209305494634355,
+            0.05410162332934191
+          ]
+        }
+      },
+      "material_logistics_per_delivered_unit": {
+        "unit": "resource units / product unit",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 1.166995792929852e-15,
+          "ci95": [
+            8.998006735326957e-16,
+            1.4341909123270085e-15
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 1.1232597343840125e-15,
+          "ci95": [
+            8.378426652468341e-16,
+            1.408676803521191e-15
+          ]
+        }
+      },
+      "share_gap_female_minus_male": {
+        "unit": "formal-share difference",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.0002660505544599398,
+          "ci95": [
+            6.323944038288921e-05,
+            0.0004688616685369904
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.0002692086446668589,
+          "ci95": [
+            5.562568854456252e-05,
+            0.0004827916007891553
+          ]
+        }
+      },
+      "share_gap_migrant_minus_local": {
+        "unit": "formal-share difference",
+        "variant_contrast": null,
+        "change_from_baseline": null
+      },
+      "share_gap_caregiver_minus_other": {
+        "unit": "formal-share difference",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.0015057429788422289,
+          "ci95": [
+            0.0012052552715940987,
+            0.001806230686090359
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.0014331009357590276,
+          "ci95": [
+            0.0011519932278390111,
+            0.0017142086436790441
+          ]
+        }
+      },
+      "share_gap_minority_minus_majority": {
+        "unit": "formal-share difference",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.0001534611689173433,
+          "ci95": [
+            -5.959075860899359e-05,
+            0.0003665130964436802
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.0003133267092430342,
+          "ci95": [
+            0.00010054656256577909,
+            0.0005261068559202893
+          ]
+        }
+      },
+      "gini_formal_authority": {
+        "unit": "Gini of formal shares",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.08544088052419094,
+          "ci95": [
+            0.07877044419925157,
+            0.0921113168491303
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.0034759748123625537,
+          "ci95": [
+            -0.003102638865292779,
+            0.010054588490017887
+          ]
+        }
+      },
+      "participation_fraction": {
+        "unit": "ratio of eligible members",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": -0.009441741876231102,
+          "ci95": [
+            -0.015787339799077794,
+            -0.003096143953384408
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": -0.009579826263062514,
+          "ci95": [
+            -0.016843250434703468,
+            -0.002316402091421561
+          ]
+        }
+      },
+      "final_active_members": {
+        "unit": "people",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.6060606060606061,
+          "ci95": [
+            -0.1082942012698207,
+            1.3204154133910329
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 1.1515151515151516,
+          "ci95": [
+            0.35310312195441385,
+            1.9499271810758894
+          ]
+        }
+      },
+      "closed": {
+        "unit": "indicator",
+        "variant_contrast": {
+          "worlds": 33,
+          "mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        },
+        "change_from_baseline": {
+          "worlds": 33,
+          "mean": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "diagnostics": {
+      "net_operating_result_per_member_year": {
+        "baseline_retained": {
+          "worlds": 33,
+          "mean": -23.78641392576734,
+          "ci95": [
+            -25.901740830175818,
+            -21.671087021358865
+          ]
+        },
+        "baseline_missing": {
+          "worlds": 32,
+          "mean": -25.413727871196965,
+          "ci95": [
+            -27.810459047532643,
+            -23.016996694861287
+          ]
+        },
+        "missing_world_mean_at_zero_full_mean": 0.5953871226452137,
+        "retained_sign_counts": {
+          "negative": 24,
+          "zero": 0,
+          "positive": 9
+        }
+      },
+      "decision_regret_per_available_member_hour": {
+        "baseline_retained": {
+          "worlds": 33,
+          "mean": 4.4184369971150245e-07,
+          "ci95": [
+            -4.889338443529835e-07,
+            1.3726212437759884e-06
+          ]
+        },
+        "baseline_missing": {
+          "worlds": 32,
+          "mean": 1.3702592829752101e-06,
+          "ci95": [
+            3.804463184592063e-07,
+            2.360072247491214e-06
+          ]
+        },
+        "missing_world_mean_at_zero_full_mean": -2.2504032315037483e-06,
+        "retained_sign_counts": {
+          "negative": 9,
+          "zero": 0,
+          "positive": 24
+        }
+      }
+    },
+    "delivery": {
+      "control-hierarchy": {
+        "relative_to_own_baseline": 0.7880293140134577,
+        "fraction_of_orders": 1.0
+      },
+      "dams-witness": {
+        "relative_to_own_baseline": 0.8101979102810436,
+        "fraction_of_orders": 0.9999033815096667
+      }
+    }
+  }
+}

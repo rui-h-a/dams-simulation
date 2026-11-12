@@ -1,0 +1,9 @@
+# Traditional-firm demand-matched study
+
+Run `python3 -I -S -B verify.py` in this directory. The standard-library calculation uses frozen arm-level outcomes and runs offline.
+
+[Amendment 6](https://github.com/rui-h-a/dams-simulation/blob/956725516ddac7f7c2336b0ccc23a69c5d7a27c5/docs/r11-formal-protocol.md#L216-L254) assigned 65 worlds to the traditional firm's demand-matched comparison. The retained outputs contain 33 complete pairs and three prehistory failure receipts. Two of the three affected worlds also have a complete pair. All 65 worlds have paired baseline results.
+
+The analysis keeps each complete pair and reports all 24 protocol outcomes. The arm difference is witnessed DAMS minus the hierarchy. The baseline change subtracts the baseline difference for the same world. Intervals are two-sided paired Student-t intervals for the observed worlds. Empty results indicate an undefined paired metric. Unobserved demand-matched worlds have no substituted results. The reported estimates describe the 33 retained pairs, and inference for the assigned cohort would require assumptions about the missing outcomes.
+
+`arm-outcomes.json` contains the assignment, completion and failure inventory, metric units, aggregate outcomes and checksums. The input was extracted with the published [R11 outcome definitions](https://github.com/rui-h-a/dams-simulation/blob/4347ccbc687ea93a0bec4fbc19e052d6c733c968/research_tools/r11_outcomes.py), after matching each summary and daily series to its execution receipt. The outcome table records the interval and mean for each complete-case contrast and its change from baseline. The delivery ratios use mean within-world ratios. Each arm's baseline delivery denominator comes from the same world and arm. The diagnostics also give baseline contrasts in worlds with and without retained variant pairs, and the missing-group mean required to make the full-cohort contrast exactly zero. The latter is an algebraic threshold.
