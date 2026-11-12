@@ -1,0 +1,7 @@
+# Output recovery after a scheduled workplace disruption
+
+This packet checks the retained 60-day short-model ensemble. It covers five allocation rules and eight shared worlds, each run with and without a temporary 0.7 output multiplier at one of two workplaces. The multiplier applies on model days 25–29. Days are indexed from zero.
+
+`paired-work.csv` gives the two organizational output values per world, rule and day. `provenance.json` records the retained engine and ensemble identities and the input digests for all 80 cases. The extraction checked case and ensemble manifests, matched all daily fields to final-state histories, and verified that paired configurations differ only in the dates of the intervention. These are synthetic model observations.
+
+Run `python3 -I -S -B verify.py` with Python 3.10 or later and no additional packages. The program uses only the files in this directory. Recovery is the first three-day window from day 30 in which each disrupted day's output reaches the stated fraction of that same policy and world's uninterrupted output. Starts after day 57 cannot be verified within the observed horizon. The 99% criterion reproduces the earlier result. The 99.5% and 100% cutoffs are retrospective sensitivity checks. Cumulative differences sum work units per organization over days 25–59 inclusive. The five rule-specific sets reuse the same eight world identifiers.
