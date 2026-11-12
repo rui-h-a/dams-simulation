@@ -381,6 +381,22 @@ PACKAGES = (
              "fc731b167b61e7fb298f5d059286d7bf64a5f55338b197978dd51c5d52dbfcda"),
         ),
     ),
+    (
+        "r11-50000-formal-disposition", "900a940ac73f6a3e2d8e60f7d02b72d286eb867f", (
+            ("evidence.json", 10105,
+             "bee004245bcfa497b417321d85180ce83e4c27aa553fb79e93c80a8c3425eadb"),
+            ("verify.py", 1781,
+             "92fe2e7047d50f1aa9320152e1a9b8958c7be70a553b4bab1396fde90f38a5c1"),
+        ),
+    ),
+    (
+        "r11-decision-execution", "5a8b61f7af9fa71b76604b76c97d22e2b39d5ce8", (
+            ("verify.py", 1807,
+             "5caaa4cbf92ce198c7b7645fb0d16911653cf642f2f31faf67e2b0f4771d6590"),
+            ("world-pairs.json", 25767,
+             "f897b26ce301e49ebae31280c94bd280230139886724bf612905f68ea8b4695a"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -419,6 +435,8 @@ PINNED_REPORTS = {
     "short-model-quorum-outage-stocks": ("55dd756e290afd721baa0739b5c68fc8dec0812fd63e1a4c8a6c5f5a0946e26f", ()),
     "r11-100000-scale-check": ("8bc6fc384b6bea503925810612161972a397534214453bc65f759b944c9575a7", ()),
     "short-model-workplace-disruption": ("0786923bc52da008f3b3c93e55fb9d098a110f35fce4608a5a1b58bd83cae3d4", ()),
+    "r11-50000-formal-disposition": ("898346c5207c6872ca44050d40ccf417aaecaf952187b641bbc6e2d0a2250c40", ()),
+    "r11-decision-execution": ("224bf8e70473bea8a2d74c4d9872c7a66efbf1abd76ec2e2a934ce6e8ef0296a", ()),
 }
 
 CORE_REPORT = [
@@ -582,7 +600,7 @@ def verify(workspace):
         print(f"Verified {package}.")
     for package in PINNED_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 31 retained-result checks.")
+    print("Passed all 33 retained-result checks.")
 
 
 def main():
