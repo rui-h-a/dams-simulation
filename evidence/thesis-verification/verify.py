@@ -363,6 +363,24 @@ PACKAGES = (
              "d741c830a4646615c349ecc3dd00982bc97bc3c184792646bbf033422b392eea"),
         ),
     ),
+    (
+        "r11-100000-scale-check", "bc27d8a6a5db83c9d48f734a9ce4275d55b64c98", (
+            ("evidence.json", 1663,
+             "d4ff7f8129487e2e71c20ec571ff002c7fe9ac67d93842bb30a041384625fd36"),
+            ("verify.py", 1754,
+             "d208ccdaeb91cf00326375ce5c8d3bf69b55a60be315057a9dd1dbe5b0a1dd0b"),
+        ),
+    ),
+    (
+        "short-model-workplace-disruption", "a6a0b04b9bc0c38cf2d3d993645ba33db66bd7c8", (
+            ("paired-work.csv", 129297,
+             "b751ba74a20b0eb610d292941e05fce776ef9ca376cdd549340cbb19f64dcd9f"),
+            ("provenance.json", 48294,
+             "9e7aba95763c0dd05e234b7f1e2b40c6ebe28bfdc2bffbcebafa6e1c31c685f0"),
+            ("verify.py", 2937,
+             "fc731b167b61e7fb298f5d059286d7bf64a5f55338b197978dd51c5d52dbfcda"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -399,6 +417,8 @@ PINNED_REPORTS = {
     "short-model-voting-weight": ("20ca4295cf1071d80852d89e0c9241d8e696476d796bb24dc3758131d17d90a3", ()),
     "short-model-work-contrasts": ("b546a63cd1ed2c0e2adca3267b4256c0879b0bbde7198f43d2f3bb11090a8c77", ()),
     "short-model-quorum-outage-stocks": ("55dd756e290afd721baa0739b5c68fc8dec0812fd63e1a4c8a6c5f5a0946e26f", ()),
+    "r11-100000-scale-check": ("8bc6fc384b6bea503925810612161972a397534214453bc65f759b944c9575a7", ()),
+    "short-model-workplace-disruption": ("0786923bc52da008f3b3c93e55fb9d098a110f35fce4608a5a1b58bd83cae3d4", ()),
 }
 
 CORE_REPORT = [
@@ -562,7 +582,7 @@ def verify(workspace):
         print(f"Verified {package}.")
     for package in PINNED_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 29 retained-result checks.")
+    print("Passed all 31 retained-result checks.")
 
 
 def main():

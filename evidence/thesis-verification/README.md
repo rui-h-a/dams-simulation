@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values or with the digest of its rounded output.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all 29 retained-result checks.`
+printing `Passed all 31 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -58,6 +58,8 @@ copies for execution and leaves the checkout untouched.
 | Short-model turnout | Attendance and unexercised formal weight from 9,600 daily observations |
 | Short-model work | Paired work differences, Monte Carlo intervals and the prespecified primary criterion |
 | Short-model quorum outage | Initial-review and settlement stocks in 24 retained cases |
+| 100,000-member scale check | Three assigned worlds, two completed prehistories and the count of complete five-year pairs |
+| Short-model workplace disruption | Three output recovery cutoffs and cumulative deficits in 40 retained pairs |
 
 The checks recompute published estimates from retained aggregates and daily series. The exit and founding-closure comparisons also use public statistical data. The 50,000-member checkpoint check covers a partial pilot. Revalidating original events requires the event journals. Generating new worlds
 uses the separate [versioned research launcher and protocol](https://github.com/rui-h-a/dams-simulation/blob/bffe007794a022a2efb9dc9ce9d2c5c69d2e7c6a/docs/thesis-reproduction.md).
