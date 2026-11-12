@@ -1,0 +1,824 @@
+{
+  "daily_history_sha256": "67469933d0d329a05d909ec6649f5d033fa4cb9f7c6dcd12dd1492c164790257",
+  "year_start_days": [
+    731,
+    1096,
+    1461,
+    1827,
+    2192,
+    2557
+  ],
+  "retained_rows": 102280,
+  "worlds": [
+    {
+      "world": 1000,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "c70083a82c8c117f9b3bde6073ada0f17a188ba3afe9d6d75a22ba2ad3237b8e",
+          "annual_record_days": [
+            580506481,
+            864081041,
+            1161121530,
+            1458509024,
+            1751814335
+          ],
+          "year_end_records": [
+            1969330,
+            2761520,
+            3581378,
+            4411888,
+            4879036
+          ],
+          "last_60_record_days": 299413880,
+          "before_last_60_records": 5106853
+        },
+        "control-process": {
+          "daily_source_sha256": "106521086471a2deefd96b6fbda9dd156bf9df4262c08edfc7d726ec0a7629ec",
+          "annual_record_days": [
+            580415550,
+            864983854,
+            1163408780,
+            1458791641,
+            1748118950
+          ],
+          "year_end_records": [
+            1969646,
+            2766751,
+            3586729,
+            4407277,
+            4864892
+          ],
+          "last_60_record_days": 298588470,
+          "before_last_60_records": 5093537
+        },
+        "dams-witness": {
+          "daily_source_sha256": "f0bd498246fed73c7b47fdacb50f68b9382e0ef7d9f20060b9cc0bef60492b3a",
+          "annual_record_days": [
+            612064659,
+            955497495,
+            1313338969,
+            1669949510,
+            2022397710
+          ],
+          "year_end_records": [
+            2139473,
+            3091986,
+            4079532,
+            5073137,
+            5702744
+          ],
+          "last_60_record_days": 347997700,
+          "before_last_60_records": 5901340
+        },
+        "linear-witness": {
+          "daily_source_sha256": "13115bb7059239e65e749ac83d71e7b120a99a093797fcccc1c51a5a98a3cc87",
+          "annual_record_days": [
+            612069162,
+            955458977,
+            1313173604,
+            1669649084,
+            2022392872
+          ],
+          "year_end_records": [
+            2139504,
+            3091793,
+            4078767,
+            5072752,
+            5702694
+          ],
+          "last_60_record_days": 348007755,
+          "before_last_60_records": 5901500
+        }
+      }
+    },
+    {
+      "world": 1001,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "43d942e75bf458a56da77970043f342d80f2290d8d951268485b7b15a917528b",
+          "annual_record_days": [
+            582454817,
+            866842412,
+            1164880578,
+            1462671597,
+            1756541724
+          ],
+          "year_end_records": [
+            1974644,
+            2769806,
+            3592429,
+            4425079,
+            4891764
+          ],
+          "last_60_record_days": 300175142,
+          "before_last_60_records": 5119218
+        },
+        "control-process": {
+          "daily_source_sha256": "df95b0969c57e04c87872466b2eafa0e2a370e0e432ef10f052c7ac79f583f52",
+          "annual_record_days": [
+            582345565,
+            867137996,
+            1166675559,
+            1463914023,
+            1756481423
+          ],
+          "year_end_records": [
+            1974317,
+            2773497,
+            3596858,
+            4426791,
+            4889655
+          ],
+          "last_60_record_days": 300066903,
+          "before_last_60_records": 5117852
+        },
+        "dams-witness": {
+          "daily_source_sha256": "ca92dd9433b53baf9417e06e760b9d4197143f8d0d8c34f77619380189e3d272",
+          "annual_record_days": [
+            614033878,
+            957665499,
+            1316751949,
+            1673606477,
+            2027712223
+          ],
+          "year_end_records": [
+            2144495,
+            3100125,
+            4088874,
+            5084793,
+            5717978
+          ],
+          "last_60_record_days": 348915599,
+          "before_last_60_records": 5916518
+        },
+        "linear-witness": {
+          "daily_source_sha256": "948962edbb4ba320d152a33a9f4ce2e07019d7e0a319b4e852688f5e9f7fd44f",
+          "annual_record_days": [
+            614079051,
+            957438375,
+            1316101523,
+            1672634407,
+            2027260394
+          ],
+          "year_end_records": [
+            2144708,
+            3098479,
+            4086483,
+            5083246,
+            5717043
+          ],
+          "last_60_record_days": 348861684,
+          "before_last_60_records": 5915467
+        }
+      }
+    },
+    {
+      "world": 1002,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "bce2b07b1626073dad73218774052bc3d2b57c88f026ec5f5a7be7a84a952373",
+          "annual_record_days": [
+            583975945,
+            868057812,
+            1165859518,
+            1461411716,
+            1754440164
+          ],
+          "year_end_records": [
+            1978909,
+            2773538,
+            3592150,
+            4419019,
+            4885550
+          ],
+          "last_60_record_days": 299804904,
+          "before_last_60_records": 5113060
+        },
+        "control-process": {
+          "daily_source_sha256": "7efbba14f687442f8c0ba11bd8dfcfa63eb3825171ad30dc07ea9ad3075c3ca2",
+          "annual_record_days": [
+            583920094,
+            869309607,
+            1169205754,
+            1465092649,
+            1757640699
+          ],
+          "year_end_records": [
+            1979603,
+            2780578,
+            3602081,
+            4429022,
+            4894178
+          ],
+          "last_60_record_days": 300298545,
+          "before_last_60_records": 5121095
+        },
+        "dams-witness": {
+          "daily_source_sha256": "fa0931058decda7616a12426d4fed4207eb9fabb045052dc4636d6d47815f514",
+          "annual_record_days": [
+            615252685,
+            958450106,
+            1316373349,
+            1671778264,
+            2024937905
+          ],
+          "year_end_records": [
+            2147559,
+            3100655,
+            4086245,
+            5077208,
+            5711169
+          ],
+          "last_60_record_days": 348493697,
+          "before_last_60_records": 5909205
+        },
+        "linear-witness": {
+          "daily_source_sha256": "923a0fc7cf5aeb8b870f00d35866472ff5affba34722ee115206d57604aa2ca3",
+          "annual_record_days": [
+            615275016,
+            958440897,
+            1315978970,
+            1670915176,
+            2023817110
+          ],
+          "year_end_records": [
+            2147760,
+            3100216,
+            4084620,
+            5074289,
+            5708293
+          ],
+          "last_60_record_days": 348331086,
+          "before_last_60_records": 5906313
+        }
+      }
+    },
+    {
+      "world": 1003,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "60a23b63dd969253eda04a07132b2f32ccc9247994478f370f6ee1c522196a30",
+          "annual_record_days": [
+            586351787,
+            872344088,
+            1173359614,
+            1472709501,
+            1765867409
+          ],
+          "year_end_records": [
+            1988381,
+            2789023,
+            3617308,
+            4452580,
+            4917667
+          ],
+          "last_60_record_days": 301719116,
+          "before_last_60_records": 5144449
+        },
+        "control-process": {
+          "daily_source_sha256": "c3b99735055fe35d0666730c2fd6740243a05846171711547a4e00e592235948",
+          "annual_record_days": [
+            586376926,
+            873983824,
+            1177584011,
+            1478717943,
+            1772412780
+          ],
+          "year_end_records": [
+            1989797,
+            2797359,
+            3631759,
+            4469774,
+            4937628
+          ],
+          "last_60_record_days": 302892084,
+          "before_last_60_records": 5163800
+        },
+        "dams-witness": {
+          "daily_source_sha256": "124560d88073fcc40d8360f0274e493634abc6e4f6248855aa9451a3cc2b99f8",
+          "annual_record_days": [
+            617831696,
+            962923739,
+            1323630663,
+            1682238107,
+            2035297518
+          ],
+          "year_end_records": [
+            2157706,
+            3116351,
+            4110163,
+            5109116,
+            5737104
+          ],
+          "last_60_record_days": 350073887,
+          "before_last_60_records": 5935505
+        },
+        "linear-witness": {
+          "daily_source_sha256": "bb6dd80a227ccd45722945b20336a9e49f210967525d7e0eb53173bb2a4dcea2",
+          "annual_record_days": [
+            617813354,
+            962734476,
+            1322912342,
+            1681232154,
+            2034747644
+          ],
+          "year_end_records": [
+            2157585,
+            3115145,
+            4107932,
+            5106554,
+            5736771
+          ],
+          "last_60_record_days": 350032306,
+          "before_last_60_records": 5934479
+        }
+      }
+    },
+    {
+      "world": 1004,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "423f366d7715cbc6a1d670aa2e9b576d908cd3d74c675ae659b70f9d32d23ee9",
+          "annual_record_days": [
+            583971959,
+            867635291,
+            1164774137,
+            1462493252,
+            1755132920
+          ],
+          "year_end_records": [
+            1978988,
+            2770893,
+            3590487,
+            4423046,
+            4887361
+          ],
+          "last_60_record_days": 299902519,
+          "before_last_60_records": 5114796
+        },
+        "control-process": {
+          "daily_source_sha256": "a6a479a69805ce2dfebf4cfab024af6f6b778f88be9b8b223cc458704c81633b",
+          "annual_record_days": [
+            583941181,
+            869061210,
+            1168471030,
+            1464746001,
+            1754615414
+          ],
+          "year_end_records": [
+            1979775,
+            2778814,
+            3601348,
+            4424603,
+            4882784
+          ],
+          "last_60_record_days": 299674002,
+          "before_last_60_records": 5111427
+        },
+        "dams-witness": {
+          "daily_source_sha256": "ae9004d51f042ad0379aa3ee7b987d5071a2cff57efa17f96c474235b4c4b8b0",
+          "annual_record_days": [
+            615492085,
+            958997633,
+            1317016794,
+            1672690888,
+            2023199884
+          ],
+          "year_end_records": [
+            2149128,
+            3101910,
+            4088701,
+            5077598,
+            5702183
+          ],
+          "last_60_record_days": 347999299,
+          "before_last_60_records": 5901758
+        },
+        "linear-witness": {
+          "daily_source_sha256": "68f6767a261152a9c1d30c24fe3bf9dd93780bfc7c128191fe111328ec999d6c",
+          "annual_record_days": [
+            615493681,
+            958998921,
+            1316707152,
+            1672136831,
+            2023239588
+          ],
+          "year_end_records": [
+            2149166,
+            3101872,
+            4086809,
+            5076811,
+            5703192
+          ],
+          "last_60_record_days": 348056223,
+          "before_last_60_records": 5902501
+        }
+      }
+    },
+    {
+      "world": 1005,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "4153073d4a72a46e4b5b9a8f255f2ef859e6bde25c69d44996f2606e2ef2859d",
+          "annual_record_days": [
+            579159755,
+            862712018,
+            1161521919,
+            1459776089,
+            1752625198
+          ],
+          "year_end_records": [
+            1965111,
+            2758835,
+            3584605,
+            4413875,
+            4881968
+          ],
+          "last_60_record_days": 299557094,
+          "before_last_60_records": 5108859
+        },
+        "control-process": {
+          "daily_source_sha256": "ac0bae9701e00b5ff65484ab839b76beffca4b6239ce035dea9a6286e716b959",
+          "annual_record_days": [
+            579052543,
+            863966666,
+            1164762101,
+            1461932709,
+            1752180214
+          ],
+          "year_end_records": [
+            1965276,
+            2765574,
+            3593681,
+            4416023,
+            4878014
+          ],
+          "last_60_record_days": 299351532,
+          "before_last_60_records": 5105696
+        },
+        "dams-witness": {
+          "daily_source_sha256": "968c55dfb467dcfdb7dc40e16d49cdeaa710f84dfd476c4302ec2bf660b6d591",
+          "annual_record_days": [
+            610854564,
+            953918163,
+            1312615381,
+            1668419751,
+            2019261377
+          ],
+          "year_end_records": [
+            2135411,
+            3087823,
+            4077909,
+            5064487,
+            5693204
+          ],
+          "last_60_record_days": 347438511,
+          "before_last_60_records": 5891872
+        },
+        "linear-witness": {
+          "daily_source_sha256": "7cc184f290b902b9aaf9d03d77f1b0e6721d407095ead2c0dc612c95c4d70691",
+          "annual_record_days": [
+            610875826,
+            954112195,
+            1312944142,
+            1669331794,
+            2020786421
+          ],
+          "year_end_records": [
+            2135744,
+            3088746,
+            4079179,
+            5068593,
+            5698526
+          ],
+          "last_60_record_days": 347735182,
+          "before_last_60_records": 5896477
+        }
+      }
+    },
+    {
+      "world": 1006,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "09eab643ae5243a37039e0484e660de6cbc1cc9026381aea8e36b27fa5e1159c",
+          "annual_record_days": [
+            578713321,
+            859440128,
+            1156138905,
+            1452849264,
+            1746530237
+          ],
+          "year_end_records": [
+            1959825,
+            2746451,
+            3567381,
+            4395418,
+            4868392
+          ],
+          "last_60_record_days": 298714007,
+          "before_last_60_records": 5094117
+        },
+        "control-process": {
+          "daily_source_sha256": "9d12e9abaf52d64dcc743740b19b6c56804027115a341d9568c8c2de535d100e",
+          "annual_record_days": [
+            578672843,
+            860597468,
+            1159264187,
+            1456155313,
+            1747690517
+          ],
+          "year_end_records": [
+            1960281,
+            2753439,
+            3576514,
+            4403345,
+            4867525
+          ],
+          "last_60_record_days": 298701394,
+          "before_last_60_records": 5094702
+        },
+        "dams-witness": {
+          "daily_source_sha256": "3dc7bebe71d9670918aa1d66dc24f1e44710a048c0b40e9b89797a4bf59ed804",
+          "annual_record_days": [
+            610379383,
+            950858025,
+            1308244622,
+            1664197202,
+            2016101933
+          ],
+          "year_end_records": [
+            2130750,
+            3077794,
+            4064908,
+            5056112,
+            5685800
+          ],
+          "last_60_record_days": 346957072,
+          "before_last_60_records": 5883552
+        },
+        "linear-witness": {
+          "daily_source_sha256": "64c3843bf6f2f237e3d272f7990bed1380a6579f4849d104660ebd9789dad10a",
+          "annual_record_days": [
+            610365467,
+            950758751,
+            1307886427,
+            1663520332,
+            2015780352
+          ],
+          "year_end_records": [
+            2130427,
+            3077290,
+            4062940,
+            5054466,
+            5685692
+          ],
+          "last_60_record_days": 346951225,
+          "before_last_60_records": 5883273
+        }
+      }
+    },
+    {
+      "world": 1007,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "ac1c7daee415c2628ce47b7f8cb6b4d576860af6a9911474b4aedb36ab84f182",
+          "annual_record_days": [
+            580429676,
+            864004958,
+            1161088152,
+            1458416541,
+            1751935869
+          ],
+          "year_end_records": [
+            1969334,
+            2761669,
+            3581611,
+            4410612,
+            4882527
+          ],
+          "last_60_record_days": 299575456,
+          "before_last_60_records": 5108655
+        },
+        "control-process": {
+          "daily_source_sha256": "1591ee74d0b17146b1244f56cfc3d2600053ef0a80630b6cc833ee3bb640405f",
+          "annual_record_days": [
+            580324934,
+            864749236,
+            1164461775,
+            1462523971,
+            1754776408
+          ],
+          "year_end_records": [
+            1969389,
+            2767512,
+            3592859,
+            4421701,
+            4885237
+          ],
+          "last_60_record_days": 299794990,
+          "before_last_60_records": 5113250
+        },
+        "dams-witness": {
+          "daily_source_sha256": "e2b9e7892a2a2cf8e55aa752a2801fe98ae7d17cb7584bcdbcadbb0e2b9d8180",
+          "annual_record_days": [
+            612039013,
+            954775313,
+            1313213937,
+            1670656561,
+            2023882639
+          ],
+          "year_end_records": [
+            2139137,
+            3090625,
+            4080804,
+            5076183,
+            5705648
+          ],
+          "last_60_record_days": 348194705,
+          "before_last_60_records": 5904555
+        },
+        "linear-witness": {
+          "daily_source_sha256": "6f42e3a60ef2916568daae9889551d6e7cd2896fe113e6078cd1519687435952",
+          "annual_record_days": [
+            612034458,
+            954789871,
+            1313046921,
+            1669933027,
+            2021962314
+          ],
+          "year_end_records": [
+            2139099,
+            3090576,
+            4079702,
+            5072468,
+            5699015
+          ],
+          "last_60_record_days": 347813226,
+          "before_last_60_records": 5898618
+        }
+      }
+    },
+    {
+      "world": 1008,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "82c1ebb95ad311be7030e805c09cf228f84771d14c2d31397b6fa3aa6c5278c6",
+          "annual_record_days": [
+            581543157,
+            865964167,
+            1163770801,
+            1460634187,
+            1753304808
+          ],
+          "year_end_records": [
+            1973317,
+            2767196,
+            3588107,
+            4416745,
+            4884623
+          ],
+          "last_60_record_days": 299699057,
+          "before_last_60_records": 5110833
+        },
+        "control-process": {
+          "daily_source_sha256": "b1a95940d8d0053cb7f6728598d3bbc8fe5b8326334f6d46218e4107218e021e",
+          "annual_record_days": [
+            581533544,
+            867338747,
+            1167521680,
+            1463906940,
+            1755288516
+          ],
+          "year_end_records": [
+            1974681,
+            2774533,
+            3599783,
+            4423541,
+            4888658
+          ],
+          "last_60_record_days": 299960835,
+          "before_last_60_records": 5115316
+        },
+        "dams-witness": {
+          "daily_source_sha256": "aa78b3c0a8a9e32061c94e429722000b7fb0ee33b5f72a54f6b94328217c40b1",
+          "annual_record_days": [
+            613052240,
+            957215852,
+            1316449486,
+            1673755474,
+            2025137827
+          ],
+          "year_end_records": [
+            2143120,
+            3097454,
+            4090520,
+            5081233,
+            5709487
+          ],
+          "last_60_record_days": 348405963,
+          "before_last_60_records": 5907690
+        },
+        "linear-witness": {
+          "daily_source_sha256": "3de22030fa7834d1587bfc3e4db10b9652fb50aaeec990c8d6ebc82347f1ff4c",
+          "annual_record_days": [
+            613057744,
+            957291558,
+            1316385807,
+            1673709303,
+            2025390472
+          ],
+          "year_end_records": [
+            2143170,
+            3097524,
+            4089993,
+            5081857,
+            5709893
+          ],
+          "last_60_record_days": 348437409,
+          "before_last_60_records": 5908206
+        }
+      }
+    },
+    {
+      "world": 1009,
+      "arms": {
+        "control-hierarchy": {
+          "daily_source_sha256": "3cfc9b6a146b3ad72cf20a195d4bc64a7e4c3ce5a3e554e668d9c8a0c79b0302",
+          "annual_record_days": [
+            583420505,
+            867691756,
+            1165902416,
+            1463535444,
+            1757771891
+          ],
+          "year_end_records": [
+            1977366,
+            2774049,
+            3594779,
+            4425083,
+            4900963
+          ],
+          "last_60_record_days": 300650724,
+          "before_last_60_records": 5125978
+        },
+        "control-process": {
+          "daily_source_sha256": "29123560c3dc253cab8994ae7e8c789491ddf5b598f841f46157a7e5b294dc33",
+          "annual_record_days": [
+            583327495,
+            868341063,
+            1167547869,
+            1464035466,
+            1756244353
+          ],
+          "year_end_records": [
+            1977553,
+            2777845,
+            3598559,
+            4424266,
+            4892252
+          ],
+          "last_60_record_days": 300196405,
+          "before_last_60_records": 5119469
+        },
+        "dams-witness": {
+          "daily_source_sha256": "fec51b2cea07a4f3f838a0dcf0d1bcaf17f7738ab415885e2fa81b78c786993d",
+          "annual_record_days": [
+            614950397,
+            958183291,
+            1315454952,
+            1670720020,
+            2022264168
+          ],
+          "year_end_records": [
+            2146947,
+            3100501,
+            4083299,
+            5072835,
+            5702815
+          ],
+          "last_60_record_days": 347978478,
+          "before_last_60_records": 5900351
+        },
+        "linear-witness": {
+          "daily_source_sha256": "b87a666b657e51c33705e5df2f8f355fa7dafda16e15575bf9f8dbe3d998c383",
+          "annual_record_days": [
+            614939977,
+            958047067,
+            1315004965,
+            1670334279,
+            2021741337
+          ],
+          "year_end_records": [
+            2146797,
+            3099813,
+            4081510,
+            5072077,
+            5701069
+          ],
+          "last_60_record_days": 347884905,
+          "before_last_60_records": 5899095
+        }
+      }
+    }
+  ]
+}
