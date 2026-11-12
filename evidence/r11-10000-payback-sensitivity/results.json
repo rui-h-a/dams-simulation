@@ -1,0 +1,213 @@
+{
+  "annual_input_sha256": "0fb221775fe439e73e47a2186a6fb2598388fabbac37470124c7022f73af8335",
+  "world_count": 10,
+  "scenarios": {
+    "0.00": {
+      "common_rate_threshold": 47.35956820154227,
+      "world_threshold_minimum": 45.66613426443223,
+      "world_threshold_maximum": 52.238002827307305,
+      "worlds_closing_at_common_threshold": 6,
+      "worlds_closing_at_undiscounted_common_threshold": 6,
+      "worlds": [
+        {
+          "world": "1000",
+          "present_value_difference": -2210254.2430188656,
+          "discounted_future_dams_member_years": 47497.275838466805,
+          "world_specific_rate_threshold": 46.53433705410192
+        },
+        {
+          "world": "1001",
+          "present_value_difference": -2266854.5874084234,
+          "discounted_future_dams_member_years": 47501.040383299114,
+          "world_specific_rate_threshold": 47.722209221451635
+        },
+        {
+          "world": "1002",
+          "present_value_difference": -2172834.032657966,
+          "discounted_future_dams_member_years": 47497.50855578371,
+          "world_specific_rate_threshold": 45.746273830469846
+        },
+        {
+          "world": "1003",
+          "present_value_difference": -2213410.6837681085,
+          "discounted_future_dams_member_years": 47444.9144421629,
+          "world_specific_rate_threshold": 46.65222205145585
+        },
+        {
+          "world": "1004",
+          "present_value_difference": -2169481.4511681944,
+          "discounted_future_dams_member_years": 47507.44695414099,
+          "world_specific_rate_threshold": 45.66613426443223
+        },
+        {
+          "world": "1005",
+          "present_value_difference": -2302716.4856132492,
+          "discounted_future_dams_member_years": 47494.15468856947,
+          "world_specific_rate_threshold": 48.484208229680306
+        },
+        {
+          "world": "1006",
+          "present_value_difference": -2234419.4133411124,
+          "discounted_future_dams_member_years": 47521.724845995894,
+          "world_specific_rate_threshold": 47.01890389252951
+        },
+        {
+          "world": "1007",
+          "present_value_difference": -2255692.9665272683,
+          "discounted_future_dams_member_years": 47527.15947980835,
+          "world_specific_rate_threshold": 47.46113572147283
+        },
+        {
+          "world": "1008",
+          "present_value_difference": -2480740.920960605,
+          "discounted_future_dams_member_years": 47489.19917864477,
+          "world_specific_rate_threshold": 52.238002827307305
+        },
+        {
+          "world": "1009",
+          "present_value_difference": -2190184.2997841462,
+          "discounted_future_dams_member_years": 47536.344969199185,
+          "world_specific_rate_threshold": 46.07388938302387
+        }
+      ]
+    },
+    "0.05": {
+      "common_rate_threshold": 59.96703848965433,
+      "world_threshold_minimum": 58.03515193744236,
+      "world_threshold_maximum": 65.26485791052043,
+      "worlds_closing_at_common_threshold": 6,
+      "worlds_closing_at_undiscounted_common_threshold": 0,
+      "worlds": [
+        {
+          "world": "1000",
+          "present_value_difference": -1899906.5345906839,
+          "discounted_future_dams_member_years": 32224.6052443712,
+          "world_specific_rate_threshold": 58.958256282209945
+        },
+        {
+          "world": "1001",
+          "present_value_difference": -1942916.3028848618,
+          "discounted_future_dams_member_years": 32227.15930603062,
+          "world_specific_rate_threshold": 60.28816516016312
+        },
+        {
+          "world": "1002",
+          "present_value_difference": -1875269.635534875,
+          "discounted_future_dams_member_years": 32224.763131819233,
+          "world_specific_rate_threshold": 58.19343428107947
+        },
+        {
+          "world": "1003",
+          "present_value_difference": -1906761.0811375827,
+          "discounted_future_dams_member_years": 32189.08056856293,
+          "world_specific_rate_threshold": 59.23627042021813
+        },
+        {
+          "world": "1004",
+          "present_value_difference": -1870560.3394442797,
+          "discounted_future_dams_member_years": 32231.5058546001,
+          "world_specific_rate_threshold": 58.03515193744236
+        },
+        {
+          "world": "1005",
+          "present_value_difference": -1975840.355852127,
+          "discounted_future_dams_member_years": 32222.487695068117,
+          "world_specific_rate_threshold": 61.31867826438936
+        },
+        {
+          "world": "1006",
+          "present_value_difference": -1924162.9385759383,
+          "discounted_future_dams_member_years": 32241.192713912,
+          "world_specific_rate_threshold": 59.68026541852053
+        },
+        {
+          "world": "1007",
+          "present_value_difference": -1936602.2744922936,
+          "discounted_future_dams_member_years": 32244.879850198507,
+          "world_specific_rate_threshold": 60.05921819182624
+        },
+        {
+          "world": "1008",
+          "present_value_difference": -2102776.655667171,
+          "discounted_future_dams_member_years": 32219.125621174633,
+          "world_specific_rate_threshold": 65.26485791052043
+        },
+        {
+          "world": "1009",
+          "present_value_difference": -1891135.885804087,
+          "discounted_future_dams_member_years": 32251.111760647487,
+          "world_specific_rate_threshold": 58.6378509937643
+        }
+      ]
+    },
+    "0.10": {
+      "common_rate_threshold": 76.06832828772846,
+      "world_threshold_minimum": 73.84469173945969,
+      "world_threshold_maximum": 81.83719890222449,
+      "worlds_closing_at_common_threshold": 6,
+      "worlds_closing_at_undiscounted_common_threshold": 0,
+      "worlds": [
+        {
+          "world": "1000",
+          "present_value_difference": -1673175.0436059833,
+          "discounted_future_dams_member_years": 22359.630779244264,
+          "world_specific_rate_threshold": 74.83017318689978
+        },
+        {
+          "world": "1001",
+          "present_value_difference": -1706568.1620241553,
+          "discounted_future_dams_member_years": 22361.40296156454,
+          "world_specific_rate_threshold": 76.31758011594606
+        },
+        {
+          "world": "1002",
+          "present_value_difference": -1656953.4243313074,
+          "discounted_future_dams_member_years": 22359.740332333153,
+          "world_specific_rate_threshold": 74.10432320339969
+        },
+        {
+          "world": "1003",
+          "present_value_difference": -1682408.2213579938,
+          "discounted_future_dams_member_years": 22334.981334244036,
+          "world_specific_rate_threshold": 75.32615300548841
+        },
+        {
+          "world": "1004",
+          "present_value_difference": -1651493.619134374,
+          "discounted_future_dams_member_years": 22364.418893658687,
+          "world_specific_rate_threshold": 73.84469173945969
+        },
+        {
+          "world": "1005",
+          "present_value_difference": -1737291.6897312328,
+          "discounted_future_dams_member_years": 22358.16147899327,
+          "world_specific_rate_threshold": 77.70279731468594
+        },
+        {
+          "world": "1006",
+          "present_value_difference": -1697047.478750728,
+          "discounted_future_dams_member_years": 22371.14029787705,
+          "world_specific_rate_threshold": 75.85878306398948
+        },
+        {
+          "world": "1007",
+          "present_value_difference": -1703978.7815264165,
+          "discounted_future_dams_member_years": 22373.698684717598,
+          "world_specific_rate_threshold": 76.15990567935569
+        },
+        {
+          "world": "1008",
+          "present_value_difference": -1829538.3952509463,
+          "discounted_future_dams_member_years": 22355.82864262985,
+          "world_specific_rate_threshold": 81.83719890222449
+        },
+        {
+          "world": "1009",
+          "present_value_difference": -1671718.5451230109,
+          "discounted_future_dams_member_years": 22378.022809579074,
+          "world_specific_rate_threshold": 74.7035857165817
+        }
+      ]
+    }
+  }
+}

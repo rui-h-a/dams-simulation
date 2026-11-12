@@ -1,0 +1,7 @@
+# Ten-year operating break-even sensitivity
+
+Run `python3 -I -S -B verify.py` in this directory within the repository checkout and compare its output with `results.json`. The standard-library verifier reads the fixed 100 annual inputs from the [operating-payback calculation](../r11-10000-operating-payback) and uses its existing data reader and projection rule. The analysis uses previously retained outputs and requires no simulation or network access.
+
+For each of ten worlds, annual net operating resource units equal the product of the arm's rate and member-year exposure. Years 1–5 are simulated. Years 6–10 use the arm's mean annual rate in years 2–5 and its year-5 exposure. The hypothetical intervention adds the same rate increment to witnessed DAMS in each of years 6–10. Both arms' exposures and the hierarchy's operating path stay fixed.
+
+For discount rates of 0%, 5%, and 10% per year, treat each annual flow as occurring at year end and multiply it by (1 + rate) raised to the negative year number. The break-even increment for a world divides its negative present-value difference by its future DAMS exposure weighted with the same factors. The common increment divides the negative mean difference by the mean weighted exposure. The counts indicate which retained worlds would reach a nonnegative ten-year difference at each specified increment. The rates are sensitivity assumptions, the range spans the ten retained worlds, and the calculations use synthetic operating resources.
