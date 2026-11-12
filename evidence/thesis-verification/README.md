@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values or with the digest of its rounded output.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all 33 retained-result checks.`
+printing `Passed all 36 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -60,6 +60,9 @@ copies for execution and leaves the checkout untouched.
 | Short-model quorum outage | Initial-review and settlement stocks in 24 retained cases |
 | Formal 50,000-member comparison | Ten retained prehistories and completion status for 30 assigned arms |
 | Exploratory decision execution | Paired operating and decision contrasts and changes from the zero-effect setting in ten worlds |
+| Traditional-firm adoption timing | Fixed and backlog-triggered timing agreement and paired staged-adoption contrasts across 65 worlds |
+| Traditional-firm confirmation stocks | Confirmed records, delay and terminal stocks from 130 retained arm summaries |
+| Traditional-firm adoption phases | Paired operating results and outstanding record-days before and after the second guild adopts |
 | 100,000-member scale check | Three assigned worlds, two completed prehistories and the count of complete five-year pairs |
 | Short-model workplace disruption | Three output recovery cutoffs and cumulative deficits in 40 retained pairs |
 

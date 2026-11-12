@@ -397,6 +397,30 @@ PACKAGES = (
              "f897b26ce301e49ebae31280c94bd280230139886724bf612905f68ea8b4695a"),
         ),
     ),
+    (
+        "traditional-adoption-timing", "6d267d1ee99aaa7d60147d11a1300c987d4c505d", (
+            ("paired-worlds.json", 38181,
+             "80f3482de576bf8ba888544cef8ea6a27c50dd46b2ea15dbda66e424c4adc7cc"),
+            ("verify.py", 1236,
+             "a3b5936e0674d3d76e6a0a484724b5baa5c0fc232d06aa4850b360435734e766"),
+        ),
+    ),
+    (
+        "traditional-adoption-confirmation-stocks", "c81444747d627fdee2a279eda9350303fb7c02cf", (
+            ("terminal-counts.json", 39265,
+             "3dfc7e33ae085eedab3a16e740924f8bcca1cdde3e77275a5bce8f7284b79afe"),
+            ("verify.py", 1372,
+             "349316aa5881ca5bf3dd515f8715ff8d2edd5cf30a753b0cded6ead261ab4358"),
+        ),
+    ),
+    (
+        "traditional-adoption-phases", "5d5c06de5cef9b4795b108cd798f909448a018dd", (
+            ("phase-totals.json", 66394,
+             "0f5a54faabeb170e53624c2099f6671f36ba945b3b695dc268429eda48e169ce"),
+            ("verify.py", 1557,
+             "81c8cc742398c796224852abfe0b909579cbd0092ea9caaacbb9755d936a8a9e"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -437,6 +461,9 @@ PINNED_REPORTS = {
     "short-model-workplace-disruption": ("0786923bc52da008f3b3c93e55fb9d098a110f35fce4608a5a1b58bd83cae3d4", ()),
     "r11-50000-formal-disposition": ("898346c5207c6872ca44050d40ccf417aaecaf952187b641bbc6e2d0a2250c40", ()),
     "r11-decision-execution": ("224bf8e70473bea8a2d74c4d9872c7a66efbf1abd76ec2e2a934ce6e8ef0296a", ()),
+    "traditional-adoption-timing": ("0852e0c92581fe4b5faa2f1efda535c9ff96e88ad8b97815de46ee8f52c4094b", ()),
+    "traditional-adoption-confirmation-stocks": ("9249dd3feed7a782fc67e664b88346e4c94bcc2c9ed6ec4c1fa8794a2cce7ae0", ()),
+    "traditional-adoption-phases": ("0b1f3adbdb3e00a17fd2bf9f2075c4f3f4201748e67873fa3d8bd69e7319a1b9", ()),
 }
 
 CORE_REPORT = [
@@ -600,7 +627,7 @@ def verify(workspace):
         print(f"Verified {package}.")
     for package in PINNED_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 33 retained-result checks.")
+    print("Passed all 36 retained-result checks.")
 
 
 def main():
