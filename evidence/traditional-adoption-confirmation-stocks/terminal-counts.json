@@ -1,0 +1,1367 @@
+[
+  {
+    "world": 1000,
+    "staged": {
+      "compact_sha256": "437d32af2fd7d735ba4218052d5ff2696d4c6400f42f695177ccdd40c76fd3b8",
+      "confirmed": 152039,
+      "delay_sum": 59791870,
+      "p95_days": 932.0,
+      "pending_review": 189315,
+      "pending_settlement": 145,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "ed930f074b8deb0d49c214f4f299ca82d5b85546825ba17d44eeca17f2f460b4",
+      "confirmed": 151180,
+      "delay_sum": 60048109,
+      "p95_days": 938.0,
+      "pending_review": 190392,
+      "pending_settlement": 168,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1001,
+    "staged": {
+      "compact_sha256": "333b18ff7c86200fa9fac3f2257f655685d550de50707dbbcf8904c12fe0c6ad",
+      "confirmed": 153393,
+      "delay_sum": 58489504,
+      "p95_days": 935.0,
+      "pending_review": 180572,
+      "pending_settlement": 155,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "7300b2e015cc8adb22742b9e0e5f33d90032d06eb21349e324c423c9f4b803fa",
+      "confirmed": 154027,
+      "delay_sum": 59682182,
+      "p95_days": 939.0,
+      "pending_review": 181176,
+      "pending_settlement": 163,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1002,
+    "staged": {
+      "compact_sha256": "b83ca211d5f67719a563b91b9a6f01a7c10c8b0bb4624d0c7ea0170eca10f397",
+      "confirmed": 157011,
+      "delay_sum": 61822869,
+      "p95_days": 948.0,
+      "pending_review": 177616,
+      "pending_settlement": 162,
+      "pending_appeal": 5
+    },
+    "triggered": {
+      "compact_sha256": "71bd593dbb274e83d835a5ed8d3545cf6fcbaa2a717bf3d80c1a2210ca8468af",
+      "confirmed": 156273,
+      "delay_sum": 62106435,
+      "p95_days": 946.0,
+      "pending_review": 178630,
+      "pending_settlement": 159,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1003,
+    "staged": {
+      "compact_sha256": "70b0a127ce2ec0662a0186e253de617d205ba0b14a026c828dc4b53e29bc58e5",
+      "confirmed": 155661,
+      "delay_sum": 60055203,
+      "p95_days": 913.0,
+      "pending_review": 179349,
+      "pending_settlement": 139,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "4f3326deaff8f211b3de9c9e7047621a2728443da3be199d03d8cd3998850bdd",
+      "confirmed": 154878,
+      "delay_sum": 60680378,
+      "p95_days": 920.0,
+      "pending_review": 181128,
+      "pending_settlement": 133,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1004,
+    "staged": {
+      "compact_sha256": "829a0efc48896906cb61fd84e24f4bbb7705fe1a88ca81ca6504ea3fbf3ede42",
+      "confirmed": 150648,
+      "delay_sum": 58604193,
+      "p95_days": 932.0,
+      "pending_review": 179829,
+      "pending_settlement": 141,
+      "pending_appeal": 6
+    },
+    "triggered": {
+      "compact_sha256": "d2948fa6fb55b73996799362617445d93c3a939f343acd177cfbdb988f470e6f",
+      "confirmed": 149593,
+      "delay_sum": 58924042,
+      "p95_days": 939.0,
+      "pending_review": 180657,
+      "pending_settlement": 155,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1005,
+    "staged": {
+      "compact_sha256": "3cf0984a5bd6fd10efdf8a9dfa184240fbd514fb1c2a59e48a1838011cbb8fe8",
+      "confirmed": 157892,
+      "delay_sum": 60524660,
+      "p95_days": 929.0,
+      "pending_review": 178340,
+      "pending_settlement": 180,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "f29d83a2fa15b4fda7f610b9ba9d5dc3342e9723de8c6d362fe356c46b2fbdfd",
+      "confirmed": 156816,
+      "delay_sum": 60553176,
+      "p95_days": 933.0,
+      "pending_review": 179675,
+      "pending_settlement": 158,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1006,
+    "staged": {
+      "compact_sha256": "cbd826e530a776e0d0b081048ffbe5f9bc4785c1a1c0e1c0663257219a93b16c",
+      "confirmed": 147079,
+      "delay_sum": 56974484,
+      "p95_days": 940.0,
+      "pending_review": 180164,
+      "pending_settlement": 129,
+      "pending_appeal": 0
+    },
+    "triggered": {
+      "compact_sha256": "954c58b8b6f0fc1187117d8f894567e8b2bd1c9b5a534defc394ce4cf3f0c961",
+      "confirmed": 147633,
+      "delay_sum": 58258914,
+      "p95_days": 947.0,
+      "pending_review": 179645,
+      "pending_settlement": 128,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1007,
+    "staged": {
+      "compact_sha256": "6f1fb034848764d9ffeea84d5875ec02e8c901c94b7e9c9b9bbd07f16bb3e19f",
+      "confirmed": 159999,
+      "delay_sum": 59595474,
+      "p95_days": 910.0,
+      "pending_review": 174424,
+      "pending_settlement": 149,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "f9c74149327c6e6e37effb207b2fd9410aa1c064d7d8de8d58c7d301089c813c",
+      "confirmed": 159454,
+      "delay_sum": 60299490,
+      "p95_days": 919.0,
+      "pending_review": 175534,
+      "pending_settlement": 142,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1008,
+    "staged": {
+      "compact_sha256": "0e20b13d0eeffc3041c119b86e5f977f646330a3d1be57d6b5a75c1097f1c759",
+      "confirmed": 158572,
+      "delay_sum": 61221495,
+      "p95_days": 920.0,
+      "pending_review": 176687,
+      "pending_settlement": 158,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "9d5d46355e2606608dd17945a39ee5863b890ed9bfd7e122509639d94c2968d1",
+      "confirmed": 158176,
+      "delay_sum": 61656982,
+      "p95_days": 925.0,
+      "pending_review": 178575,
+      "pending_settlement": 147,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1009,
+    "staged": {
+      "compact_sha256": "a3f0a7645fb64e72e4addde2341a12b2a77b0c739baa31b8b26c3e0247d19c0e",
+      "confirmed": 159137,
+      "delay_sum": 61260935,
+      "p95_days": 928.0,
+      "pending_review": 181885,
+      "pending_settlement": 152,
+      "pending_appeal": 9
+    },
+    "triggered": {
+      "compact_sha256": "f98216995fe9d7b7fe031cebdf7d64afa84f9c0601e28c013b89752abce116bd",
+      "confirmed": 159018,
+      "delay_sum": 62235993,
+      "p95_days": 933.0,
+      "pending_review": 182975,
+      "pending_settlement": 169,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1010,
+    "staged": {
+      "compact_sha256": "4df7a97be369aac989f16d8638e68c04d4e503fa0a988cafd1acd92183004b92",
+      "confirmed": 155718,
+      "delay_sum": 58831246,
+      "p95_days": 912.0,
+      "pending_review": 176684,
+      "pending_settlement": 153,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "3cc837ad0e9ed6b828210639bd84f8777cfdddddb20bbc728edc5c5afb5f6d5f",
+      "confirmed": 155307,
+      "delay_sum": 59438970,
+      "p95_days": 915.0,
+      "pending_review": 177897,
+      "pending_settlement": 155,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1011,
+    "staged": {
+      "compact_sha256": "3d5362868e0386e5eb4b98161d38a4b85dbd9d56aa22b8535c6fe99103a8f567",
+      "confirmed": 162565,
+      "delay_sum": 61646471,
+      "p95_days": 927.0,
+      "pending_review": 177156,
+      "pending_settlement": 167,
+      "pending_appeal": 6
+    },
+    "triggered": {
+      "compact_sha256": "618769b7a29073815b7d940ce441ad4d8f1f8ff343b194e58864487cae6299a8",
+      "confirmed": 163116,
+      "delay_sum": 62595895,
+      "p95_days": 934.0,
+      "pending_review": 177270,
+      "pending_settlement": 148,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1012,
+    "staged": {
+      "compact_sha256": "7b16217084aa97d59058917959ac391a9cd42d07efdf440d25d1dede811a8c9f",
+      "confirmed": 166257,
+      "delay_sum": 63509585,
+      "p95_days": 926.0,
+      "pending_review": 175643,
+      "pending_settlement": 162,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "0780ac16d6add5768bfffbda5905c3e559965cc444d8042efcd1aba40cac50de",
+      "confirmed": 166880,
+      "delay_sum": 64738376,
+      "p95_days": 931.0,
+      "pending_review": 176561,
+      "pending_settlement": 156,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1013,
+    "staged": {
+      "compact_sha256": "2c2aa771a4afd6bc5c76a4007cbdd71d86dd7a5e7b6bdd59784f62da491628c3",
+      "confirmed": 148675,
+      "delay_sum": 56837360,
+      "p95_days": 921.0,
+      "pending_review": 178902,
+      "pending_settlement": 142,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "52670025b6dd84522bfed52b81cfa1b33471d453a576b6e56ff3fe6bca9ef3fc",
+      "confirmed": 148731,
+      "delay_sum": 57814875,
+      "p95_days": 926.0,
+      "pending_review": 178478,
+      "pending_settlement": 137,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1014,
+    "staged": {
+      "compact_sha256": "5aabc718c8d5ebca770d26627ef99134ebce8e6f7ce73fc9d98f15e18e2e9f45",
+      "confirmed": 150962,
+      "delay_sum": 59142746,
+      "p95_days": 951.0,
+      "pending_review": 178497,
+      "pending_settlement": 154,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "a0363871ee51b10641f05633cf23f473d8fb61c451cadeec06e3f51a9bb37465",
+      "confirmed": 150927,
+      "delay_sum": 59674006,
+      "p95_days": 953.0,
+      "pending_review": 179954,
+      "pending_settlement": 138,
+      "pending_appeal": 6
+    }
+  },
+  {
+    "world": 1015,
+    "staged": {
+      "compact_sha256": "f817a3c35e74705b8ab7b38e0d03e3822712e9103557c5f9823cb8143d246007",
+      "confirmed": 161370,
+      "delay_sum": 60311873,
+      "p95_days": 914.55,
+      "pending_review": 175595,
+      "pending_settlement": 153,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "09afe8052da3d03e7559b660f745048bd8264a37c6aa1ab4cb3251cf64848e84",
+      "confirmed": 160943,
+      "delay_sum": 60948228,
+      "p95_days": 919.0,
+      "pending_review": 175979,
+      "pending_settlement": 156,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1016,
+    "staged": {
+      "compact_sha256": "12f189e0adac8c7c6014a3b38f8e5375443654d97b5fcc4e2e7386d6971750d8",
+      "confirmed": 154062,
+      "delay_sum": 59730691,
+      "p95_days": 919.0,
+      "pending_review": 177331,
+      "pending_settlement": 149,
+      "pending_appeal": 6
+    },
+    "triggered": {
+      "compact_sha256": "647d8d0ac89117ce9d9b49e06b3c814d7b78c4b7400676ec6aab853f37764df8",
+      "confirmed": 152970,
+      "delay_sum": 60066336,
+      "p95_days": 926.0,
+      "pending_review": 179374,
+      "pending_settlement": 173,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1017,
+    "staged": {
+      "compact_sha256": "4bc4d56d43f0bf0cf1769aaff9e532f96e618c24514f2207580bf7f2fddde470",
+      "confirmed": 155165,
+      "delay_sum": 59136357,
+      "p95_days": 936.0,
+      "pending_review": 179703,
+      "pending_settlement": 162,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "d518cb63806e1a60ce9c540f7699dae47bf946fa36fc33a9d071a04d8c77d572",
+      "confirmed": 155676,
+      "delay_sum": 60252673,
+      "p95_days": 937.0,
+      "pending_review": 180280,
+      "pending_settlement": 175,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1018,
+    "staged": {
+      "compact_sha256": "30ef8d127b9d044e6b30c2254e46cefb85b9b6ecff4964bb3300c7f053aea0e8",
+      "confirmed": 146572,
+      "delay_sum": 56663511,
+      "p95_days": 926.0,
+      "pending_review": 179894,
+      "pending_settlement": 155,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "f7b052bf33347d1475ae73cae7d841ac08bd6c6fbd7833dd06a2f121a16de855",
+      "confirmed": 145716,
+      "delay_sum": 57164920,
+      "p95_days": 937.0,
+      "pending_review": 181384,
+      "pending_settlement": 150,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1019,
+    "staged": {
+      "compact_sha256": "a76d0761c9ec471a30b5896dff42903718255c22ec946b04f02eeac79c55c810",
+      "confirmed": 148494,
+      "delay_sum": 57251138,
+      "p95_days": 942.0,
+      "pending_review": 178938,
+      "pending_settlement": 113,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "b923a0c4d436a74dcdfba89c522fb47bc0e8e995c0e7a55d78ce36563164ba72",
+      "confirmed": 148673,
+      "delay_sum": 57860314,
+      "p95_days": 940.0,
+      "pending_review": 179864,
+      "pending_settlement": 126,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1020,
+    "staged": {
+      "compact_sha256": "a651c74a0e5ef716c09e33ab7589ff131eac30084a1bae47945beef9d0fdaa8c",
+      "confirmed": 148106,
+      "delay_sum": 57246991,
+      "p95_days": 955.0,
+      "pending_review": 186037,
+      "pending_settlement": 147,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "323e6d190721bfdbdd38a48a0bda4bc04cfe01f5cf60388442d44cf2a59e7d1d",
+      "confirmed": 148353,
+      "delay_sum": 58071088,
+      "p95_days": 954.0,
+      "pending_review": 186448,
+      "pending_settlement": 166,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1021,
+    "staged": {
+      "compact_sha256": "acba89b934bf41c48b7138aca014e9f57fa286ae01166c793b83cfdf221f725d",
+      "confirmed": 149031,
+      "delay_sum": 58783690,
+      "p95_days": 947.0,
+      "pending_review": 178504,
+      "pending_settlement": 141,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "d208a7ea8429bba3167baa9088d317c49e0435fe73715331307f0307ec4eca89",
+      "confirmed": 149154,
+      "delay_sum": 59424755,
+      "p95_days": 944.0,
+      "pending_review": 179349,
+      "pending_settlement": 136,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1022,
+    "staged": {
+      "compact_sha256": "14d6248d6450f6c8c3d8f150795530c3bf1982bfb13b4ab2a6f6ddb86c6f8a58",
+      "confirmed": 155690,
+      "delay_sum": 61675950,
+      "p95_days": 954.0,
+      "pending_review": 175899,
+      "pending_settlement": 169,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "25aacfaef555a896cec60278cfdec1e818f4476549035c3a820b03467da2f81f",
+      "confirmed": 154187,
+      "delay_sum": 61534358,
+      "p95_days": 957.0,
+      "pending_review": 177274,
+      "pending_settlement": 128,
+      "pending_appeal": 0
+    }
+  },
+  {
+    "world": 1023,
+    "staged": {
+      "compact_sha256": "45b92f2bd0c979d116228afa4a8a8df3629acd2668b7056c8f162fcb7bdfde0f",
+      "confirmed": 156288,
+      "delay_sum": 60750627,
+      "p95_days": 925.0,
+      "pending_review": 178091,
+      "pending_settlement": 165,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "ac78677f609dada77f65b3cceef21bd6fbc3bdcf4fb097097b9fb31da5743710",
+      "confirmed": 155698,
+      "delay_sum": 61075674,
+      "p95_days": 928.0,
+      "pending_review": 178626,
+      "pending_settlement": 142,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1024,
+    "staged": {
+      "compact_sha256": "c608ffff1027730a1e8f59ebd804b9d4b5bb3765f97bdc54edbde7687027a2a4",
+      "confirmed": 145577,
+      "delay_sum": 55506216,
+      "p95_days": 933.0,
+      "pending_review": 182114,
+      "pending_settlement": 150,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "49d32874d2217678f57869c9fb3c714f04da240745698f70947d8baacfbbe952",
+      "confirmed": 145157,
+      "delay_sum": 55992454,
+      "p95_days": 938.0,
+      "pending_review": 183343,
+      "pending_settlement": 148,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1025,
+    "staged": {
+      "compact_sha256": "e674265483cd65dcb1322913fa9561e2fadca5ec11afedcff1eccae854e5caaf",
+      "confirmed": 149803,
+      "delay_sum": 58717228,
+      "p95_days": 933.0,
+      "pending_review": 177477,
+      "pending_settlement": 134,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "00670a8cc52adae34199d23cba06cb63b31646fe833cfcddd4c2dcd1d6dd8d5f",
+      "confirmed": 148831,
+      "delay_sum": 59120590,
+      "p95_days": 937.5,
+      "pending_review": 178100,
+      "pending_settlement": 140,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1026,
+    "staged": {
+      "compact_sha256": "01b043f9b396d29a0267ab845e976d438641dfb7c42f301159912bbd6b19a27c",
+      "confirmed": 154162,
+      "delay_sum": 57192940,
+      "p95_days": 904.0,
+      "pending_review": 178270,
+      "pending_settlement": 136,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "b790f823d96cc88ffe4777350b850daebc30ed6efaef3698bdae5339015d0d08",
+      "confirmed": 154550,
+      "delay_sum": 58749981,
+      "p95_days": 918.0,
+      "pending_review": 178796,
+      "pending_settlement": 160,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1027,
+    "staged": {
+      "compact_sha256": "1601573240da015d67666dcf0420357e7258cf2687f9100282772ea6827b4f1a",
+      "confirmed": 155835,
+      "delay_sum": 59213397,
+      "p95_days": 928.0,
+      "pending_review": 176073,
+      "pending_settlement": 167,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "679c18b45632062f07f1a307ea308d2b4fce7ad7062b164a5b48e1381d6adfbb",
+      "confirmed": 153726,
+      "delay_sum": 58792378,
+      "p95_days": 933.0,
+      "pending_review": 178802,
+      "pending_settlement": 151,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1028,
+    "staged": {
+      "compact_sha256": "65379946cf545cecdbeef542066d5a0a769265beb586ced652e38c6da89ae5b5",
+      "confirmed": 165839,
+      "delay_sum": 63810456,
+      "p95_days": 920.0,
+      "pending_review": 175349,
+      "pending_settlement": 151,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "15136cbc24142027a9d09897a192be5b9009e3b74f4d75c162905925fc55c8c9",
+      "confirmed": 166231,
+      "delay_sum": 65066943,
+      "p95_days": 927.0,
+      "pending_review": 176736,
+      "pending_settlement": 136,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1029,
+    "staged": {
+      "compact_sha256": "e2177611808b1711a8a8d9e2c74be5ba81715352311646fd85f5e4637f522a36",
+      "confirmed": 161195,
+      "delay_sum": 61970316,
+      "p95_days": 914.0,
+      "pending_review": 173056,
+      "pending_settlement": 152,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "20aa287e0510a1ddf3ff77d6cac11ee8091d8bd6fd30f75d19eac76b7b3fe763",
+      "confirmed": 160713,
+      "delay_sum": 62694428,
+      "p95_days": 918.0,
+      "pending_review": 175110,
+      "pending_settlement": 162,
+      "pending_appeal": 6
+    }
+  },
+  {
+    "world": 1030,
+    "staged": {
+      "compact_sha256": "92ca6d9d4b233b3cbee97d987460abccb6cad44d71ab9b344a838dfd9362a20b",
+      "confirmed": 159684,
+      "delay_sum": 60207601,
+      "p95_days": 917.0,
+      "pending_review": 175150,
+      "pending_settlement": 149,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "2aa9c03b5c3f801be5cf0713971a4f89cd1ec74108b66c0b151a353fd92b64d5",
+      "confirmed": 157550,
+      "delay_sum": 59921336,
+      "p95_days": 920.0,
+      "pending_review": 177236,
+      "pending_settlement": 154,
+      "pending_appeal": 6
+    }
+  },
+  {
+    "world": 1031,
+    "staged": {
+      "compact_sha256": "752c9461c3f5fbcec74be901165909cd029a755209c523d6b0f20ecca62b06f1",
+      "confirmed": 150695,
+      "delay_sum": 57623409,
+      "p95_days": 928.0,
+      "pending_review": 180193,
+      "pending_settlement": 130,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "eab79183adadba0fbb5356466db6ff626cb1013f7ab377ddcf8e0aad1609ae50",
+      "confirmed": 149468,
+      "delay_sum": 57956222,
+      "p95_days": 938.0,
+      "pending_review": 181174,
+      "pending_settlement": 144,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1032,
+    "staged": {
+      "compact_sha256": "058bedd1795ed3c1e07be0ffe3dfab826ea1e39980c4f58ad97f5e6aec9dcea0",
+      "confirmed": 153450,
+      "delay_sum": 56773169,
+      "p95_days": 914.0,
+      "pending_review": 179522,
+      "pending_settlement": 155,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "ab042bfee9ab1d0f20cbc041d8adca5be2d5e5e5a58828680f3d1c1c7fe11cd9",
+      "confirmed": 152734,
+      "delay_sum": 57194043,
+      "p95_days": 921.35,
+      "pending_review": 181011,
+      "pending_settlement": 144,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1033,
+    "staged": {
+      "compact_sha256": "f5c12a71b925abfc87630fd33c51a3329cfa221871a5e96630e2ff2b6d60fabb",
+      "confirmed": 165866,
+      "delay_sum": 66864383,
+      "p95_days": 937.0,
+      "pending_review": 181764,
+      "pending_settlement": 163,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "28a6fd56e82c9126f6931bcbdc3f15e223f2a9809cc6f29310ff139e988a5741",
+      "confirmed": 165081,
+      "delay_sum": 67342802,
+      "p95_days": 940.0,
+      "pending_review": 183593,
+      "pending_settlement": 173,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1034,
+    "staged": {
+      "compact_sha256": "26a0e09d661927908a0eb25a38f10c8d29f6ddb098b41ad51ec5c9717a8c378e",
+      "confirmed": 141964,
+      "delay_sum": 55611141,
+      "p95_days": 936.0,
+      "pending_review": 180508,
+      "pending_settlement": 150,
+      "pending_appeal": 7
+    },
+    "triggered": {
+      "compact_sha256": "28f836b9593fbacbcd26abcbdb57473fead0fc217e5878abdcfbaa2c1ea4bf9f",
+      "confirmed": 141425,
+      "delay_sum": 56276582,
+      "p95_days": 944.0,
+      "pending_review": 181506,
+      "pending_settlement": 146,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1035,
+    "staged": {
+      "compact_sha256": "0763c2758a3cea149c743acd79ab7eee07bc74065659a8bf5bc779a894498a80",
+      "confirmed": 154349,
+      "delay_sum": 60637004,
+      "p95_days": 925.0,
+      "pending_review": 177831,
+      "pending_settlement": 147,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "c16d4588acf638640db4498b554bb4c1e9a04fd89247bcb303c80bbe900ba1fa",
+      "confirmed": 153448,
+      "delay_sum": 61377963,
+      "p95_days": 932.0,
+      "pending_review": 178200,
+      "pending_settlement": 172,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1036,
+    "staged": {
+      "compact_sha256": "78d1ddf6f90529b63fb53ab50796cbca7c5ec2a3bf7bba8036b89fd095998e79",
+      "confirmed": 164207,
+      "delay_sum": 62576461,
+      "p95_days": 905.0,
+      "pending_review": 176458,
+      "pending_settlement": 165,
+      "pending_appeal": 5
+    },
+    "triggered": {
+      "compact_sha256": "b8338c01551ddfe3062d4b157e5204a2818a7ae0fc3a1926be51bd907aa0dfaf",
+      "confirmed": 163337,
+      "delay_sum": 62667451,
+      "p95_days": 911.0,
+      "pending_review": 177411,
+      "pending_settlement": 174,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1037,
+    "staged": {
+      "compact_sha256": "5c44b8793ffa2e455f5736c5d552cfc616bf054b83a367d2f6081aa51822daed",
+      "confirmed": 160967,
+      "delay_sum": 62299126,
+      "p95_days": 927.0,
+      "pending_review": 177585,
+      "pending_settlement": 142,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "36a50a7ee060f6f86ffb0bca310f02aa1826c7c64f454d2e3cb3bf2ff99f6233",
+      "confirmed": 160204,
+      "delay_sum": 62927381,
+      "p95_days": 936.0,
+      "pending_review": 178283,
+      "pending_settlement": 135,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1038,
+    "staged": {
+      "compact_sha256": "25d6456e35bc8ea0111d7650ea5c15a91a126f3e97697efebff802aafa9a88b5",
+      "confirmed": 150071,
+      "delay_sum": 57508261,
+      "p95_days": 921.0,
+      "pending_review": 178617,
+      "pending_settlement": 139,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "28b903b0d3e2e67b2c2abf44982967ad357379e02070e8e0250740265ce63793",
+      "confirmed": 150890,
+      "delay_sum": 59202819,
+      "p95_days": 932.0,
+      "pending_review": 179276,
+      "pending_settlement": 158,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1039,
+    "staged": {
+      "compact_sha256": "f9fcfc4a11f1d1747baa699a13e0eda9f4a5d978748bcafd66e109a7df4ac5eb",
+      "confirmed": 160733,
+      "delay_sum": 62863713,
+      "p95_days": 927.0,
+      "pending_review": 176115,
+      "pending_settlement": 162,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "695452d564ebb76f42afb3a2856e1173c434e4a5e9ae074465b3e2e52cb1dc6a",
+      "confirmed": 159578,
+      "delay_sum": 63316673,
+      "p95_days": 938.0,
+      "pending_review": 177260,
+      "pending_settlement": 168,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1040,
+    "staged": {
+      "compact_sha256": "d20ca82fd23def08a078cf52e2355912b2fe8d5209dc63804e615a2266aa7394",
+      "confirmed": 157022,
+      "delay_sum": 60751858,
+      "p95_days": 930.0,
+      "pending_review": 178792,
+      "pending_settlement": 154,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "dd89278cfbc7e4b465144b1a4bfe65bdc43f94c47e9ad2d2a36c28dbaea15fd1",
+      "confirmed": 156806,
+      "delay_sum": 61634986,
+      "p95_days": 938.0,
+      "pending_review": 179556,
+      "pending_settlement": 145,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1041,
+    "staged": {
+      "compact_sha256": "1ce874f771b98c2499d38753aecebe9c71c3652f2e3ff25c0eb9a82a93f19288",
+      "confirmed": 155971,
+      "delay_sum": 58757150,
+      "p95_days": 914.0,
+      "pending_review": 177033,
+      "pending_settlement": 144,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "b1c2ace45ff8c82397d133aee79906f2c1088887fa5dfc32112ada2b3e77662d",
+      "confirmed": 156064,
+      "delay_sum": 59838830,
+      "p95_days": 919.0,
+      "pending_review": 176854,
+      "pending_settlement": 140,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1042,
+    "staged": {
+      "compact_sha256": "bf0c2efcc318bf3aa38da31976e3c1ce2db4ca0a82c4cf0fd78066fccffc8376",
+      "confirmed": 155140,
+      "delay_sum": 58886596,
+      "p95_days": 918.0,
+      "pending_review": 176719,
+      "pending_settlement": 150,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "fd22ac4cd8f4b248a9c0a50792ef6edc05cbe174604b843a9de3156c212fe909",
+      "confirmed": 154741,
+      "delay_sum": 59340349,
+      "p95_days": 924.0,
+      "pending_review": 177143,
+      "pending_settlement": 145,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1043,
+    "staged": {
+      "compact_sha256": "8afd01b0cba8436953c6d5ef0efcdccdf5a60475f1a0ab46859d27680823a2a2",
+      "confirmed": 165012,
+      "delay_sum": 61745182,
+      "p95_days": 897.0,
+      "pending_review": 173839,
+      "pending_settlement": 163,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "7fc3a46fd3ff00da0099a2212853e926cdb881e10ac8e90d58119778729791d5",
+      "confirmed": 164740,
+      "delay_sum": 62534128,
+      "p95_days": 904.0,
+      "pending_review": 174779,
+      "pending_settlement": 173,
+      "pending_appeal": 6
+    }
+  },
+  {
+    "world": 1044,
+    "staged": {
+      "compact_sha256": "6b93d8ea51a0262d03bac3f40e647dc5714226b517424edba05a3564f02011b3",
+      "confirmed": 148146,
+      "delay_sum": 56597916,
+      "p95_days": 933.0,
+      "pending_review": 178772,
+      "pending_settlement": 130,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "c43eeb3523674b9dfcbdb4fb0063cc8178f058c8f84b86239954e70ba25267d9",
+      "confirmed": 147711,
+      "delay_sum": 57452736,
+      "p95_days": 944.0,
+      "pending_review": 179360,
+      "pending_settlement": 152,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1045,
+    "staged": {
+      "compact_sha256": "5d8d9e63e1fde806aeaabd150966614d22e0331d5c00a10911647e078c9fa0df",
+      "confirmed": 154467,
+      "delay_sum": 59927559,
+      "p95_days": 935.0,
+      "pending_review": 186643,
+      "pending_settlement": 136,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "58c278901a63e3888019aa69fadf8f46523d3554ab28bd1a0e132e836c0ade00",
+      "confirmed": 154395,
+      "delay_sum": 60511781,
+      "p95_days": 935.0,
+      "pending_review": 187181,
+      "pending_settlement": 141,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1046,
+    "staged": {
+      "compact_sha256": "ffac916d280fd9ce23bb802813e71960c8bdd5c8bebbf36b2d0135ec70e8d973",
+      "confirmed": 155354,
+      "delay_sum": 59923214,
+      "p95_days": 926.0,
+      "pending_review": 175186,
+      "pending_settlement": 139,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "115af558359573d5e4d74506e95c44810809f77b89eb7d3d6b1dbcb2b105c9c5",
+      "confirmed": 154526,
+      "delay_sum": 60303326,
+      "p95_days": 933.0,
+      "pending_review": 176186,
+      "pending_settlement": 153,
+      "pending_appeal": 0
+    }
+  },
+  {
+    "world": 1047,
+    "staged": {
+      "compact_sha256": "8df2dec34a15dd15b33d2f8b66bf790d00147cc2eeea3abd755d4d414593e887",
+      "confirmed": 153649,
+      "delay_sum": 58688955,
+      "p95_days": 913.0,
+      "pending_review": 175865,
+      "pending_settlement": 139,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "0a0067a2c7afbea0d2eca8e3359cc93f9e462371c5039bca1a2bb592ab993f11",
+      "confirmed": 153976,
+      "delay_sum": 60184245,
+      "p95_days": 921.0,
+      "pending_review": 175971,
+      "pending_settlement": 158,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1048,
+    "staged": {
+      "compact_sha256": "2507452ff75570fa5053aafd311c44efcdbddffccc1ce3a1bb3aa73c9faa5888",
+      "confirmed": 153338,
+      "delay_sum": 59312278,
+      "p95_days": 934.0,
+      "pending_review": 178437,
+      "pending_settlement": 154,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "52ed7a611a2d459505fc40fda8bfdf8198f94150eb9aed4d3e04560eccdfbf6d",
+      "confirmed": 152411,
+      "delay_sum": 59455612,
+      "p95_days": 937.0,
+      "pending_review": 180098,
+      "pending_settlement": 143,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1049,
+    "staged": {
+      "compact_sha256": "be95f05fd6f652ecb453a6734cd3c9e683d435c9bbc5f32d13e5b60be09deceb",
+      "confirmed": 144959,
+      "delay_sum": 59932585,
+      "p95_days": 961.0,
+      "pending_review": 182117,
+      "pending_settlement": 146,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "3bb3f34e388e030e413f5fee034f559acd35514ddb4ddabb4fb04d5f63bbf8a5",
+      "confirmed": 144459,
+      "delay_sum": 60291725,
+      "p95_days": 961.0,
+      "pending_review": 183504,
+      "pending_settlement": 161,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1050,
+    "staged": {
+      "compact_sha256": "a4326de44ed063f77820fabac1060c958ea917db53ee621ebbed77f180fdbe7a",
+      "confirmed": 149016,
+      "delay_sum": 58281152,
+      "p95_days": 927.0,
+      "pending_review": 178452,
+      "pending_settlement": 143,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "f75ff3cea6d6b9f9ad0d0a084cccf34c8b018ad3e3957d61b3614b69e20ec708",
+      "confirmed": 148506,
+      "delay_sum": 58714353,
+      "p95_days": 928.0,
+      "pending_review": 178750,
+      "pending_settlement": 130,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1051,
+    "staged": {
+      "compact_sha256": "9c5b39bff36132399f39a414c976084d666b841521cab434325310d78e6d1d32",
+      "confirmed": 159455,
+      "delay_sum": 61432189,
+      "p95_days": 924.0,
+      "pending_review": 179571,
+      "pending_settlement": 141,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "07507d7152ef9a8c9b748f0717b2d5cb07a63920aaecd726155c942fc1c7b919",
+      "confirmed": 159443,
+      "delay_sum": 62146887,
+      "p95_days": 925.0,
+      "pending_review": 180117,
+      "pending_settlement": 156,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1052,
+    "staged": {
+      "compact_sha256": "ed33862af11048cb5788f715f7f0dd28ab959b0f9c350b29f0934f1e184db18c",
+      "confirmed": 150673,
+      "delay_sum": 57432701,
+      "p95_days": 915.0,
+      "pending_review": 179105,
+      "pending_settlement": 135,
+      "pending_appeal": 6
+    },
+    "triggered": {
+      "compact_sha256": "83f219189a3800ca354fa0dea3bc96058841ec4c629bb6e9d80d830415328bec",
+      "confirmed": 149615,
+      "delay_sum": 57694615,
+      "p95_days": 924.0,
+      "pending_review": 180069,
+      "pending_settlement": 160,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1053,
+    "staged": {
+      "compact_sha256": "bacc67ada76a780ee70453388f323066266b571cf0e3e0826e5ace577780ed21",
+      "confirmed": 159646,
+      "delay_sum": 62616379,
+      "p95_days": 952.0,
+      "pending_review": 175919,
+      "pending_settlement": 152,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "935679ae1619b38c2704fdfe44214e67ecd178add0510aa739c2537091ca0389",
+      "confirmed": 159452,
+      "delay_sum": 63356036,
+      "p95_days": 954.0,
+      "pending_review": 177440,
+      "pending_settlement": 166,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1054,
+    "staged": {
+      "compact_sha256": "0337e9540963d310dd72eedea5027e73d2ca3ab0ec6c17dd2e9686f732200a23",
+      "confirmed": 152219,
+      "delay_sum": 57457867,
+      "p95_days": 917.0,
+      "pending_review": 177723,
+      "pending_settlement": 146,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "91ed3516efce0d9fe281864e0c6ba711a940e80eb9252bca552087365a5a6d87",
+      "confirmed": 152678,
+      "delay_sum": 58593654,
+      "p95_days": 919.0,
+      "pending_review": 177739,
+      "pending_settlement": 157,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1055,
+    "staged": {
+      "compact_sha256": "f2386944bc980e433ab7da5b3fa14804578a022347c4d44eabef5ad2d509fce7",
+      "confirmed": 156757,
+      "delay_sum": 60525649,
+      "p95_days": 925.0,
+      "pending_review": 176964,
+      "pending_settlement": 163,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "02e64de41c292aa2f07897bdabe56f775543374e4f30ba004d46823cba46a47f",
+      "confirmed": 156456,
+      "delay_sum": 61248327,
+      "p95_days": 932.0,
+      "pending_review": 177502,
+      "pending_settlement": 173,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1056,
+    "staged": {
+      "compact_sha256": "af7b80b78080f33e79b874dfb0a37cef18508775bd29f153903a70a8a3c759ad",
+      "confirmed": 158489,
+      "delay_sum": 61116117,
+      "p95_days": 929.0,
+      "pending_review": 179457,
+      "pending_settlement": 160,
+      "pending_appeal": 2
+    },
+    "triggered": {
+      "compact_sha256": "c4321cd3e0c3dfcfb29f5dfe91f73cf2f0e8a2cef42edc77406ef13851e2ea2f",
+      "confirmed": 158417,
+      "delay_sum": 61648131,
+      "p95_days": 926.0,
+      "pending_review": 179754,
+      "pending_settlement": 162,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1057,
+    "staged": {
+      "compact_sha256": "59904773a57697783148567fe87513defd20ca0dbb908654b5f9b0d629c93cae",
+      "confirmed": 162615,
+      "delay_sum": 62908437,
+      "p95_days": 920.0,
+      "pending_review": 177364,
+      "pending_settlement": 175,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "da920bfc9730a01f87bd5510fc74a96c784c0abca681ce8123ea8260da8f55df",
+      "confirmed": 161867,
+      "delay_sum": 63422737,
+      "p95_days": 926.0,
+      "pending_review": 177941,
+      "pending_settlement": 189,
+      "pending_appeal": 1
+    }
+  },
+  {
+    "world": 1058,
+    "staged": {
+      "compact_sha256": "98525d022cc855654053871ea2e39bb0fc5492d65f527fbdb8d5a79171d1932c",
+      "confirmed": 154976,
+      "delay_sum": 58303805,
+      "p95_days": 918.0,
+      "pending_review": 176625,
+      "pending_settlement": 145,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "c538709fde8793a1b9a7337b7b33aca5da74f5810339e46c7f6612778174daba",
+      "confirmed": 154987,
+      "delay_sum": 59150854,
+      "p95_days": 922.0,
+      "pending_review": 177883,
+      "pending_settlement": 119,
+      "pending_appeal": 2
+    }
+  },
+  {
+    "world": 1059,
+    "staged": {
+      "compact_sha256": "8a66edce652888580466c8eb4632a7c1c8bb2f3078f7b55e1c0bba15682b7f0b",
+      "confirmed": 151142,
+      "delay_sum": 58589849,
+      "p95_days": 949.0,
+      "pending_review": 180259,
+      "pending_settlement": 148,
+      "pending_appeal": 5
+    },
+    "triggered": {
+      "compact_sha256": "f30d0f42614756d3954b3e15654d736171fc28be2db584f495396267d586816d",
+      "confirmed": 150859,
+      "delay_sum": 59091124,
+      "p95_days": 951.0,
+      "pending_review": 181127,
+      "pending_settlement": 165,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1060,
+    "staged": {
+      "compact_sha256": "68d86552520b03ec53e30fe22a077f70676adcdd1d5a06a55f0b0cfba4c27624",
+      "confirmed": 159671,
+      "delay_sum": 62592976,
+      "p95_days": 956.0,
+      "pending_review": 179174,
+      "pending_settlement": 178,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "43ea34eb3443b928103c9b43fdf0758bb4877625abb18eddad341bc23a6ecf99",
+      "confirmed": 158392,
+      "delay_sum": 62566954,
+      "p95_days": 959.0,
+      "pending_review": 179707,
+      "pending_settlement": 177,
+      "pending_appeal": 3
+    }
+  },
+  {
+    "world": 1061,
+    "staged": {
+      "compact_sha256": "bcce08845c747e543275054676952934eaa2e9b6da3e208c931e9a859c248c6b",
+      "confirmed": 152293,
+      "delay_sum": 60595535,
+      "p95_days": 948.0,
+      "pending_review": 181173,
+      "pending_settlement": 140,
+      "pending_appeal": 3
+    },
+    "triggered": {
+      "compact_sha256": "64f14efd239211d5ed25911648484d71a4e109c9ef32d4b4c1f5488d826cb7cf",
+      "confirmed": 152761,
+      "delay_sum": 61993304,
+      "p95_days": 955.0,
+      "pending_review": 180934,
+      "pending_settlement": 147,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1062,
+    "staged": {
+      "compact_sha256": "a7e02666ce365624f6138cab49ec9667b78cb31d88724dcfdb2343a3b7e0959d",
+      "confirmed": 165665,
+      "delay_sum": 63866530,
+      "p95_days": 912.0,
+      "pending_review": 175813,
+      "pending_settlement": 168,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "7dd0b45b9908695b44d08ea4653d5e80729242fdcfcb0136ae827ef660b7267b",
+      "confirmed": 164193,
+      "delay_sum": 63624814,
+      "p95_days": 915.0,
+      "pending_review": 176826,
+      "pending_settlement": 179,
+      "pending_appeal": 4
+    }
+  },
+  {
+    "world": 1063,
+    "staged": {
+      "compact_sha256": "b9f64328e4cdc997641170c632cbb412a076be7ba2c9de89fb6d81edfd02a9b0",
+      "confirmed": 169215,
+      "delay_sum": 66342066,
+      "p95_days": 926.0,
+      "pending_review": 183901,
+      "pending_settlement": 152,
+      "pending_appeal": 4
+    },
+    "triggered": {
+      "compact_sha256": "71734feb87c43f1f23a781522e67dfd883544600cc75c911a72f72d5da031da5",
+      "confirmed": 167633,
+      "delay_sum": 66586658,
+      "p95_days": 939.0,
+      "pending_review": 185399,
+      "pending_settlement": 147,
+      "pending_appeal": 5
+    }
+  },
+  {
+    "world": 1064,
+    "staged": {
+      "compact_sha256": "49734e2744729d45fe9a3c6954dd8208eecd0e1487c4cef980da31538503bae9",
+      "confirmed": 153656,
+      "delay_sum": 60392780,
+      "p95_days": 935.0,
+      "pending_review": 177363,
+      "pending_settlement": 151,
+      "pending_appeal": 1
+    },
+    "triggered": {
+      "compact_sha256": "50bd1e1ec9c56cb3aaf4476de4877bdd7c83f0ef00380b54b988f93e5141cc0e",
+      "confirmed": 153309,
+      "delay_sum": 61065366,
+      "p95_days": 939.0,
+      "pending_review": 177699,
+      "pending_settlement": 146,
+      "pending_appeal": 2
+    }
+  }
+]
