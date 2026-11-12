@@ -1,0 +1,7 @@
+# Settlement and initial review during a scheduled outage
+
+These 24 retained synthetic cases cover eight matched worlds under central, witnessed and consensus records. The model blocks only consensus settlement on zero-indexed days 20–34. The three processes keep their own daily review limits and settlement delays. The cases have no censorship and the retained ensemble supplies no same-world, gate-open consensus counterpart.
+
+The queue stock at the end of model day 59 is the day-60 endpoint. Initial review counts new claims that await first review. Settlement counts accepted claims awaiting confirmation, including those accepted on appeal. Unresolved appeals themselves are counted elsewhere. The daily trace stores the sum of review and settlement stocks. With 120 new submissions per day and 108, 88 or 72 initial reviews per day starting on model day 1, the initial-review stock follows directly from the flow balance. The extraction verifies the full-period review charge, each guild's terminal review queue, and every daily stock against the retained state history. Settlement is the residual, checked directly against the terminal settlement queue. The two retained columns are distinct parts of the same stock.
+
+Run python3 -I -S -B verify.py to recompute the stock means, the consensus settlement change when its gate reopens, and the mean across world-level delays conditional on confirmation. All inputs are synthetic case aggregates. The reopening step is an observation under the modeled clearing rule and has no same-world gate-open counterfactual.
