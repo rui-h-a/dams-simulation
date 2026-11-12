@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values, allowing for floating-point rounding.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all nine retained-result checks.`
+printing `Passed all 22 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -42,7 +42,15 @@ copies for execution and leaves the checkout untouched.
 | Startup regret | Comparisons with a common denominator at 30 and 120 initial members |
 | Partial 50,000-member pilot | Elapsed checkpoint times for four arms and size of the recorded file inventory |
 | Main-study terminal stock | Recorded terminal counts and 12 paired estimates from 40 arms |
+| Five years after adoption | Four outcomes across 40 arm totals, with adjustment over 12 comparisons |
+| Outstanding record-days | Daily backlog sums and paired record-day estimates for 40 arms |
+| Recognition flows and stages (two checks) | Submissions, confirmations, first-review rejections, appeal returns and terminal stocks |
+| Operating break-even (two checks) | Five observed model years and five projected years, with exposure and discount-rate sensitivity |
+| Lower demand (two checks) | Retained traditional-firm pairs and joint operating and decision contrasts |
+| Voluntary exits (two checks) | Monthly public and modeled flows, and first-year modeled exit counts |
+| Record intake | Paired censoring and intake outcomes from retained aggregate cases |
+| Founding closure | Public employer-birth and survival cohort arithmetic |
+| Extended evidence | Startup size decomposition, daily backlog history and three record procedures |
 
-These checks reproduce arithmetic from retained synthetic data. Revalidating
-original events requires the original event journals. Generating new worlds
+The checks recompute published estimates from retained aggregates and daily series. The exit and founding-closure comparisons also use public statistical data. The 50,000-member checkpoint check covers a partial pilot. Revalidating original events requires the event journals. Generating new worlds
 uses the separate [versioned research launcher and protocol](https://github.com/rui-h-a/dams-simulation/blob/bffe007794a022a2efb9dc9ce9d2c5c69d2e7c6a/docs/thesis-reproduction.md).

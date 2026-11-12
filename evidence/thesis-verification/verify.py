@@ -121,6 +121,190 @@ PACKAGES = (
              "269d942df8486157434ac90b30dd73a822954d5fc8e73216ecd9f36ed37840ec"),
         ),
     ),
+    (
+        "demand-regime-tradeoffs", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("arm-outcomes.csv", 83103,
+             "5614b24b8321c6c55be39ee8941004a9f5d56124b20758670e6561d9bd19b5c4"),
+            ("results.json", 1709,
+             "743c23c53926f2e093b15f82f27e9ae501f349d79344e5b811fd8aa1631567f1"),
+            ("verify.py", 3646,
+             "f6546080a6a582512d5f2ad9fc54d78d521ca536a02e372f89ec4003da691a4f"),
+        ),
+    ),
+    (
+        "first-year-voluntary-exits", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("arm-counts.csv", 48183,
+             "87e4886ccc3052d0fcd6a00c4e839e86493d2092d0b501150a8c5536e2b08b19"),
+            ("results.json", 2709,
+             "91af9f8310eb3e05c5d78d4c7de1807dd184648c3e222d94735e72dd49161a42"),
+            ("verify.py", 4127,
+             "c523ebc995595a604ecdd3733b696e040f3b15e44fcf26db384a12d7a4cb80a2"),
+        ),
+    ),
+    (
+        "founding-closure-observation", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("cbs-cells.json", 2033,
+             "868d25e62761362e3a924996bbdddd1c2effb7b3f48ebcb59fdb2d251ddb304e"),
+            ("cbs-periods.json", 495,
+             "7c49ec6c3d88d373a365d9e59d5ff050f35fdcb085cbe44f8cac9b57a5720241"),
+            ("cbs-sectors.json", 553,
+             "bda44db8e8a3b58b121679784d6a146b9572bf161d6326e09e10731b99816db7"),
+            ("cbs-size.json", 406,
+             "9a01a95d356c80f5858ec2a8496aa0e2e4c9dab00287121dd251471c6a98ce8c"),
+            ("cbs-source.json", 1875,
+             "658cbd5c52903ae4c2f957fd0ac98b56df599e22a070aa3f1ea2f2fa9b30de6b"),
+            ("cbs-table.json", 6215,
+             "5b001ec7dc9add31f98e1118ccc1195322fde74f4663c87f0d4f006106e28072"),
+            ("cbs-topics.json", 1093,
+             "44c8c17c576431c4633ac22dc732ab0df2a9f2d004f667a94339d746429d6b93"),
+            ("results.json", 13902,
+             "ce6026b30a22c128f811d3502112ddef71b6afffe8e4c4adb5d19c739249ce62"),
+            ("verify.py", 7832,
+             "64075542d19248b00d9f16f30ef5c39f55581b32c0854d8c63656a0c3979cf11"),
+        ),
+    ),
+    (
+        "r11-10000-operating-payback", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("annual-inputs.csv", 5914,
+             "0fb221775fe439e73e47a2186a6fb2598388fabbac37470124c7022f73af8335"),
+            ("provenance.json", 11642,
+             "c7290d1bdee41518f3590836237628dbb64e5fc60ea46ec748b9d41f6d9ff188"),
+            ("results.json", 6948,
+             "d0fa84b71f7192020019ee7f79016c1611eff0f613a1cfd906051e75296180ec"),
+            ("verify.py", 7071,
+             "1b6b88bcf7c75b81bbe8719638da0d4974986d6bdfa265df49201f6d7c85ec69"),
+        ),
+    ),
+    (
+        "r11-10000-outstanding-record-days", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("arm-totals.csv", 4557,
+             "4141e402db7aab8b982d27d6bbf8108aab65fe9fba9dd3c5202ced09d4beec39"),
+            ("results.json", 2775,
+             "4a92926db7ccf237be030aaf7a90b962c852bec47064c1ee465d546b2d72fab8"),
+            ("verify.py", 4453,
+             "b92886b01ba87514681581cce7e59b6137cb2876ff3ff38cb4c340a687fe63f6"),
+        ),
+    ),
+    (
+        "r11-10000-payback-sensitivity", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("results.json", 8145,
+             "c471e39580bfb61422e3a474322e188edf76da8623fa2e2f6ba01daa31ffbcee"),
+            ("verify.py", 3411,
+             "53cd36f6b332b824c6c950234dfeabcade981e587bac11eccc2094a01b9314f3"),
+        ),
+    ),
+    (
+        "r11-10000-recognition-flows", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("arm-flows.csv", 10501,
+             "8dd4cba6a758c3d37ecc78a2931f7f32cb94614d17cd3c9a22a5d9f5c71faebb"),
+            ("results.json", 9038,
+             "f3aef15f49bb7ef024c0acc03a1a46e4a1ffcaf2e6efb6be5740e68c6c317a49"),
+            ("verify.py", 3067,
+             "7802b48f18a712f06bebcd7b3abe1cdbd01cb3af05622d9b040bf0605d554acf"),
+        ),
+    ),
+    (
+        "r11-10000-recognition-stages", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("arm-stages.csv", 17129,
+             "5289bf10431435d330ce083b6fdd17f3ef80afe6db9621a375866e52f664bb84"),
+            ("results.json", 2979,
+             "7165690e4e4fa3608febf704bfa2ebec8c95cef89dbf6b0533964e8f7be2e4e3"),
+            ("verify.py", 3597,
+             "a5ceb4c49001983e2673ade3d21f526a62d68ff888912aae1196a285d6db02de"),
+        ),
+    ),
+    (
+        "record-intake-exclusion", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("provenance.json", 12252,
+             "215a88f10ce2f66aaed4babdc9635e04302996344bd4c6f1efdadcd40ca10d11"),
+            ("results.json", 5166,
+             "5ff4eaeca364fffc330314af99dd4183d9696419660636b9f2a47127eadd5e75"),
+            ("verify.py", 6308,
+             "b121ebdc70608b8c0985660586d8041ddcd1657a8f99fd47f3c673ee2a3b2895"),
+            ("world-outcomes.csv", 4641,
+             "7832b59f5b99a0866edb4d96cb3af8b3def70c19225ca1a743ef40c9d0a932ae"),
+        ),
+    ),
+    (
+        "traditional-demand-matched", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("arm-outcomes.json", 385035,
+             "e452b2c313fbdae91ccb4e725b5df0d48002c353b0f3e9a8b7bb2d58587d8457"),
+            ("results.json", 13084,
+             "5f8dc2dce6c1916640929142f19506de25c2094f6b4db5b2861c996371e9ef04"),
+            ("verify.py", 5933,
+             "af9bd73a3876e22189d665cb855d75f4a46fd82400bd8ddeed9f2353843f9fec"),
+        ),
+    ),
+    (
+        "voluntary-quit-observation", "830446ad3ea1929c6d1e863948a37dcdbc328f7d", (
+            ("bls-monthly.csv", 6026,
+             "72a38c2706e7717d26b138d8313e42c3bea22fe12b388bf46af2f59f8b0a6fbb"),
+            ("bls-provenance.json", 997,
+             "b9bb9c4f0ea4f6785a1d08c8fb54a01f988b78e0647ac0f273aeef24aa5a8364"),
+            ("founding-quits-provenance.json", 108857,
+             "c8ae76006299367036b9b82667de392be103557db5a8d0b73874e35917fa8e39"),
+            ("founding-quits.csv", 616912,
+             "9780222e564a84e24b4779e6d61bf58df09deba702890ade98d447db2698ba05"),
+            ("main-quits-provenance.json", 318458,
+             "66269df138a2179e127b31e5d261df981c35cb0dd1032daa78c15f74728e0f84"),
+            ("results.json", 4396,
+             "70318aee6eddb5f4c0bd9213e95fb2023d8a295999f0730c3657a90d47005d7f"),
+            ("verify.py", 4855,
+             "4e678eb0283976e648e67008447602dcc34a3d8b62651197252e705f75168d41"),
+        ),
+    ),
+    (
+        "r11-10000-post-adoption", "fc83b14aa3f1cf29fd9c71017825c1ea6ab87503", (
+            ("arm-totals.csv", 17290,
+             "dec0ebf6863d6acb3c0d358b674c25a437c3f63b144a127d141f1a3e0dd0c5b4"),
+            ("manifest.json", 1843,
+             "dfe985120c587e8c66445094cfc2a2efb7792f3a8968b6a52fc817f06d2c29b7"),
+            ("verify.py", 5249,
+             "dd2ea0c2f3d78d64dfc999b6e076fa3b72578529cb1f86d20504ae1f2b22657b"),
+        ),
+    ),
+    (
+        "thesis-extended", "e229ec5095ca25d9d803d55267753d131299581d", (
+            ("manifest.json", 2465,
+             "c6e89579ce6115ee7de08220400d14d80499717e5e25a177437ffaad24045a20"),
+            ("README.md", 1417,
+             "3beae504370ed5d06a99bac3fe05a75cb393cb13e551c386f70ad5809504378f"),
+            ("backlog-history/README.md", 1211,
+             "a307d441c15c8e6203742a86e65749585aef6bd2a7e845b7fbed691926976dc0"),
+            ("backlog-history/SHA256SUMS", 389,
+             "7c36af16914b9aac6107a2d802139ce1de83fb0b2f29114801382166ee662648"),
+            ("backlog-history/daily.csv.gz", 938549,
+             "67469933d0d329a05d909ec6649f5d033fa4cb9f7c6dcd12dd1492c164790257"),
+            ("backlog-history/results.json", 681,
+             "894b63ef3b600f784330efbbbe0eea5faf1c12f099a4ff9bd6cd388b401451c2"),
+            ("backlog-history/terminal.csv", 15551,
+             "eaff24a4232c6c03558a275900dcfc7d7a3e1083451c228c304863d15812ed46"),
+            ("backlog-history/verify.py", 5648,
+             "2db354855182a263e93634f9578babe1f0e735ea02fe8d2cfcd7bfe6eab917c0"),
+            ("record-procedure-three-arm/README.md", 2493,
+             "6ce8fbc83e8249105873a03901b13a0372f5db0fb973d56b01c3e5c13ce7eea0"),
+            ("record-procedure-three-arm/manifest.json", 4670,
+             "2814c3a0f9969af586d2eb4ff52257192981764f787625833715888de8a52917"),
+            ("record-procedure-three-arm/retained-summary-rows.csv", 69513,
+             "d79c1612615f876eeaae799685955cfa506cedd12f2cea39eab51e27f4369c9b"),
+            ("record-procedure-three-arm/verify.py", 6384,
+             "e7bfbd152cb789f121b9d1308233a61bcd3973d181d84803bb63fad6ab24f05f"),
+            ("startup-marginal-extension/README.md", 2317,
+             "fb61daf56ea99884f5bdc45d055a1f7233f000d3d4963d2531760a0eaaba4291"),
+            ("startup-marginal-extension/expected-results.json", 10801,
+             "e75ce9b5075c33b638ecf56b952dc61ed7d10068ceea072ae4f3abf28d547f1e"),
+            ("startup-marginal-extension/provenance.json", 1275,
+             "27b041747d86dbaf19d3e12a8da41edb2a752b72aa0cdf9ad4c0ae4daac717fd"),
+            ("startup-marginal-extension/verify.py", 6579,
+             "60c51bd2b2babfa13d9ecd59523775c8b49f4e7e8d7af32dbafc13f48ce2f57f"),
+            ("startup-marginal-extension/verify_extensions.py", 5281,
+             "2b7d7e3c0f66a20a5641498f086643c31db1c95988984cbce35c3419b4eae1cd"),
+            ("startup-marginal-extension/world-endpoints.csv", 11728,
+             "f8a2725ca6a294f8931db90c1e1ab8f7af4346d2f00ff28da164d01a9a8dca44"),
+            ("verify.py", 1324,
+             "5f5cb31ccd4ea6c993796a0a3d1668733db4db58a30a0d88d3c1306747639e04"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -133,6 +317,22 @@ ACQUISITION = "acquisition-matched-worlds"
 REGRET = "startup-regret-normalization"
 CHECKPOINT = "r11-50000-checkpoints"
 STOCK = "r11-10000-terminal-stock"
+STANDARD_REPORTS = (
+    "demand-regime-tradeoffs",
+    "first-year-voluntary-exits",
+    "r11-10000-operating-payback",
+    "r11-10000-payback-sensitivity",
+    "r11-10000-recognition-flows",
+    "r11-10000-recognition-stages",
+    "record-intake-exclusion",
+    "traditional-demand-matched",
+    "voluntary-quit-observation",
+)
+CLOSURE = "founding-closure-observation"
+RECORD_DAYS = "r11-10000-outstanding-record-days"
+POST_ADOPTION = "r11-10000-post-adoption"
+EXTENDED = "thesis-extended"
+POST_ADOPTION_REPORT_SHA256 = "699e4fc954139a7dd50b5d0a51fb436d1b15196aca53933e83de02b5e38d5e1a"
 CORE_REPORT = [
     "Verified 75 paired outcome summaries across 10 worlds.",
     "Verified plotted differences and adjusted intervals for 12 primary comparisons.",
@@ -205,13 +405,17 @@ def compare(actual, expected, label):
             raise ValueError(f"Unexpected result at {label}")
 
 
-def run_report(workspace, package, script, *args):
-    command = [sys.executable, "-I", "-S", "-B", str(workspace / package / script), *map(str, args)]
-    result = subprocess.run(command, cwd=workspace, capture_output=True, text=True, timeout=90)
+def run_output(workspace, package, script, *args):
+    command = [sys.executable, "-I", "-S", "-B", "-X", "utf8", str(workspace / package / script), *map(str, args)]
+    result = subprocess.run(command, cwd=workspace, capture_output=True, text=True, encoding="utf-8", timeout=90)
     if result.returncode:
         error = result.stderr.strip() or result.stdout.strip()
         raise ValueError(f"{package} verifier failed (exit {result.returncode}): {error}")
-    return json.loads(result.stdout)
+    return result.stdout
+
+
+def run_report(workspace, package, script, *args):
+    return json.loads(run_output(workspace, package, script, *args))
 
 
 def read_report(workspace, package, filename):
@@ -247,6 +451,26 @@ def verify(workspace):
     stock = run_report(workspace, STOCK, "verify.py", "--print-results")
     compare(stock, read_report(workspace, STOCK, "results.json"), STOCK)
 
+    for package in STANDARD_REPORTS:
+        compare(run_report(workspace, package, "verify.py"), read_report(workspace, package, "results.json"), package)
+
+    compare(run_report(workspace, CLOSURE, "verify.py"), read_report(workspace, CLOSURE, "results.json")["cbs"], CLOSURE)
+    history = workspace / EXTENDED / "backlog-history" / "daily.csv.gz"
+    compare(run_report(workspace, RECORD_DAYS, "verify.py", "--history", history),
+            read_report(workspace, RECORD_DAYS, "results.json"), RECORD_DAYS)
+
+    # The post-adoption verifier rounds to ten decimal places. Compare its
+    # UTF-8 JSON with the independently retained output fingerprint.
+    post = run_output(workspace, POST_ADOPTION, "verify.py").encode("utf-8")
+    if hashlib.sha256(post).hexdigest() != POST_ADOPTION_REPORT_SHA256:
+        raise ValueError(f"Unexpected result at {POST_ADOPTION}")
+
+    extended = read_report(workspace, EXTENDED, "manifest.json")
+    for script, expected in extended["result_sha256"].items():
+        output = run_output(workspace, EXTENDED, script).encode("utf-8")
+        if hashlib.sha256(output).hexdigest() != expected:
+            raise ValueError(f"Unexpected result at {EXTENDED}/{script}")
+
     for line in CORE_REPORT:
         print(line)
     print("Verified precision and multiplicity for 12 main-study comparisons.")
@@ -257,7 +481,13 @@ def verify(workspace):
     print("Verified startup regret normalization at 30 and 120 initial members.")
     print("Verified checkpoint timing and storage for four 50,000-member pilot arms.")
     print("Verified terminal stock and 12 paired estimates from 40 main-study arms.")
-    print("Passed all nine retained-result checks.")
+    print("Verified five-year post-adoption outcomes from 40 arm totals.")
+    print("Verified record-day totals against the retained daily backlog history.")
+    print("Verified the extended startup, backlog and three-procedure reports.")
+    print("Verified the public founding-closure cohort arithmetic.")
+    for package in STANDARD_REPORTS:
+        print(f"Verified {package}.")
+    print("Passed all 22 retained-result checks.")
 
 
 def main():
@@ -279,9 +509,10 @@ def main():
             workspace = Path(directory)
             for package, commit, files in PACKAGES:
                 target = workspace / package
-                target.mkdir()
                 for name, size, digest in files:
-                    (target / name).write_bytes(obtain(cache, opener, package, commit, name, size, digest))
+                    output = target / name
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    output.write_bytes(obtain(cache, opener, package, commit, name, size, digest))
             verify(workspace)
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f"Verification failed: {exc}", file=sys.stderr)
