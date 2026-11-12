@@ -1,0 +1,283 @@
+{
+  "input_sha256": "8dd4cba6a758c3d37ecc78a2931f7f32cb94614d17cd3c9a22a5d9f5c71faebb",
+  "model_commit": "3b4d44676872fff8d602cafbc47b49f0df6f79b9",
+  "results": {
+    "arm_count": 40,
+    "world_count": 10,
+    "comparisons": {
+      "control-hierarchy": {
+        "mean_differences": {
+          "work_events": -6308.6,
+          "confirmed_records": -548147.6,
+          "reviews_rejected": -284054.3,
+          "appeals_returning_to_settlement": -7065.2,
+          "unfinished_records": 818828.1
+        },
+        "worlds": [
+          {
+            "world": 1000,
+            "work_events": -8239,
+            "confirmed_records": -548071,
+            "reviews_rejected": -290869,
+            "appeals_returning_to_settlement": -6993,
+            "unfinished_records": 823708
+          },
+          {
+            "world": 1001,
+            "work_events": -7832,
+            "confirmed_records": -540290,
+            "reviews_rejected": -300459,
+            "appeals_returning_to_settlement": -6703,
+            "unfinished_records": 826214
+          },
+          {
+            "world": 1002,
+            "work_events": -7511,
+            "confirmed_records": -555440,
+            "reviews_rejected": -284855,
+            "appeals_returning_to_settlement": -7165,
+            "unfinished_records": 825619
+          },
+          {
+            "world": 1003,
+            "work_events": -4210,
+            "confirmed_records": -547467,
+            "reviews_rejected": -283230,
+            "appeals_returning_to_settlement": -7050,
+            "unfinished_records": 819437
+          },
+          {
+            "world": 1004,
+            "work_events": -5521,
+            "confirmed_records": -537881,
+            "reviews_rejected": -289475,
+            "appeals_returning_to_settlement": -7013,
+            "unfinished_records": 814822
+          },
+          {
+            "world": 1005,
+            "work_events": -3586,
+            "confirmed_records": -544539,
+            "reviews_rejected": -277415,
+            "appeals_returning_to_settlement": -7132,
+            "unfinished_records": 811236
+          },
+          {
+            "world": 1006,
+            "work_events": -5955,
+            "confirmed_records": -550226,
+            "reviews_rejected": -280314,
+            "appeals_returning_to_settlement": -7177,
+            "unfinished_records": 817408
+          },
+          {
+            "world": 1007,
+            "work_events": -8674,
+            "confirmed_records": -560526,
+            "reviews_rejected": -278407,
+            "appeals_returning_to_settlement": -7138,
+            "unfinished_records": 823121
+          },
+          {
+            "world": 1008,
+            "work_events": -5856,
+            "confirmed_records": -558269,
+            "reviews_rejected": -279956,
+            "appeals_returning_to_settlement": -7505,
+            "unfinished_records": 824864
+          },
+          {
+            "world": 1009,
+            "work_events": -5702,
+            "confirmed_records": -538767,
+            "reviews_rejected": -275563,
+            "appeals_returning_to_settlement": -6776,
+            "unfinished_records": 801852
+          }
+        ]
+      },
+      "control-process": {
+        "mean_differences": {
+          "work_events": 8924.1,
+          "confirmed_records": -391707.9,
+          "reviews_rejected": -422161.4,
+          "appeals_returning_to_settlement": -4062.5,
+          "unfinished_records": 818730.9
+        },
+        "worlds": [
+          {
+            "world": 1000,
+            "work_events": 4584,
+            "confirmed_records": -404422,
+            "reviews_rejected": -433159,
+            "appeals_returning_to_settlement": -4313,
+            "unfinished_records": 837852
+          },
+          {
+            "world": 1001,
+            "work_events": 9602,
+            "confirmed_records": -384319,
+            "reviews_rejected": -438221,
+            "appeals_returning_to_settlement": -3819,
+            "unfinished_records": 828323
+          },
+          {
+            "world": 1002,
+            "work_events": 11540,
+            "confirmed_records": -384755,
+            "reviews_rejected": -424639,
+            "appeals_returning_to_settlement": -3943,
+            "unfinished_records": 816991
+          },
+          {
+            "world": 1003,
+            "work_events": 7278,
+            "confirmed_records": -379688,
+            "reviews_rejected": -416542,
+            "appeals_returning_to_settlement": -4032,
+            "unfinished_records": 799476
+          },
+          {
+            "world": 1004,
+            "work_events": 11839,
+            "confirmed_records": -389836,
+            "reviews_rejected": -421767,
+            "appeals_returning_to_settlement": -4043,
+            "unfinished_records": 819399
+          },
+          {
+            "world": 1005,
+            "work_events": 8163,
+            "confirmed_records": -392643,
+            "reviews_rejected": -418490,
+            "appeals_returning_to_settlement": -4106,
+            "unfinished_records": 815190
+          },
+          {
+            "world": 1006,
+            "work_events": 8337,
+            "confirmed_records": -392987,
+            "reviews_rejected": -420981,
+            "appeals_returning_to_settlement": -4030,
+            "unfinished_records": 818275
+          },
+          {
+            "world": 1007,
+            "work_events": 9638,
+            "confirmed_records": -398446,
+            "reviews_rejected": -416361,
+            "appeals_returning_to_settlement": -4034,
+            "unfinished_records": 820411
+          },
+          {
+            "world": 1008,
+            "work_events": 11377,
+            "confirmed_records": -398361,
+            "reviews_rejected": -415243,
+            "appeals_returning_to_settlement": -4152,
+            "unfinished_records": 820829
+          },
+          {
+            "world": 1009,
+            "work_events": 6883,
+            "confirmed_records": -391622,
+            "reviews_rejected": -416211,
+            "appeals_returning_to_settlement": -4153,
+            "unfinished_records": 810563
+          }
+        ]
+      },
+      "linear-witness": {
+        "mean_differences": {
+          "work_events": -3814.1,
+          "confirmed_records": -48758.1,
+          "reviews_rejected": 43874.1,
+          "appeals_returning_to_settlement": -475.5,
+          "unfinished_records": 594.4
+        },
+        "worlds": [
+          {
+            "world": 1000,
+            "work_events": -4543,
+            "confirmed_records": -47338,
+            "reviews_rejected": 42427,
+            "appeals_returning_to_settlement": -318,
+            "unfinished_records": 50
+          },
+          {
+            "world": 1001,
+            "work_events": -2328,
+            "confirmed_records": -47505,
+            "reviews_rejected": 43814,
+            "appeals_returning_to_settlement": -428,
+            "unfinished_records": 935
+          },
+          {
+            "world": 1002,
+            "work_events": -3415,
+            "confirmed_records": -51305,
+            "reviews_rejected": 44438,
+            "appeals_returning_to_settlement": -576,
+            "unfinished_records": 2876
+          },
+          {
+            "world": 1003,
+            "work_events": -3049,
+            "confirmed_records": -53050,
+            "reviews_rejected": 49039,
+            "appeals_returning_to_settlement": -629,
+            "unfinished_records": 333
+          },
+          {
+            "world": 1004,
+            "work_events": -4729,
+            "confirmed_records": -44108,
+            "reviews_rejected": 40015,
+            "appeals_returning_to_settlement": -373,
+            "unfinished_records": -1009
+          },
+          {
+            "world": 1005,
+            "work_events": -5060,
+            "confirmed_records": -39191,
+            "reviews_rejected": 39338,
+            "appeals_returning_to_settlement": -115,
+            "unfinished_records": -5322
+          },
+          {
+            "world": 1006,
+            "work_events": -4102,
+            "confirmed_records": -52188,
+            "reviews_rejected": 47450,
+            "appeals_returning_to_settlement": -528,
+            "unfinished_records": 108
+          },
+          {
+            "world": 1007,
+            "work_events": -4768,
+            "confirmed_records": -54617,
+            "reviews_rejected": 42734,
+            "appeals_returning_to_settlement": -482,
+            "unfinished_records": 6633
+          },
+          {
+            "world": 1008,
+            "work_events": -3672,
+            "confirmed_records": -48786,
+            "reviews_rejected": 44993,
+            "appeals_returning_to_settlement": -527,
+            "unfinished_records": -406
+          },
+          {
+            "world": 1009,
+            "work_events": -2475,
+            "confirmed_records": -49493,
+            "reviews_rejected": 44493,
+            "appeals_returning_to_settlement": -779,
+            "unfinished_records": 1746
+          }
+        ]
+      }
+    }
+  }
+}
