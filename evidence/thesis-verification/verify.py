@@ -305,6 +305,64 @@ PACKAGES = (
              "5f5cb31ccd4ea6c993796a0a3d1668733db4db58a30a0d88d3c1306747639e04"),
         ),
     ),
+    (
+        "acquisition-period-results", "a4610ab31b3e77d7910939f483a035e0f2b1d112", (
+            ("arm-periods.csv", 158214,
+             "a69e1c66a09b86561337a4c9be3f78f85d783600adccee895ebf53dd5bc401df"),
+            ("verify.py", 3549,
+             "29c8f184878c9b3ee0967ce72c870d3775265d4db4834d09115155d5f97a9907"),
+        ),
+    ),
+    (
+        "r11-10000-world-influence", "819cc1570837b07adb2cce6eafb2932276bc23f3", (
+            ("verify.py", 3427,
+             "ea36eb27ca801f071ac96a3775fd4d5d353e348fb06105f295426ddf9f48c359"),
+        ),
+    ),
+    (
+        "short-model-confirmation-volume", "f94793f0e5c746ee6fb68c1ca0bd745f73bf5f14", (
+            ("confirmation_counts.csv", 5203,
+             "be361f09786683b460f27d3e9ce23a00cafc16250fa362dfebcd530a18a0ba49"),
+            ("verify.py", 2643,
+             "6720f0c823844690ccc0fbb4edf7b5b90e56268ce4f2f1fab21d24b15658e396"),
+            ("world-delay-counts.csv", 17504,
+             "c20a5d600e66a0df20fe32184cc02eead3831e740733554cf3285b375c85828a"),
+        ),
+    ),
+    (
+        "short-model-lower-half-authority", "a162193f13e428960262186a786091b9e41c1a13", (
+            ("verify.py", 1909,
+             "622c0a7330d25867401b3d64cc77e63210e71dcdab32d20bdf44c9de1f9cff36"),
+            ("world-half-shares.csv", 2863,
+             "2b1da98302c427bbf54470b02349210341bea87eeb01af432d93ad5bf32d44f6"),
+        ),
+    ),
+    (
+        "short-model-voting-weight", "7dfb32573b3988c4bfbd57cc9dfe8a8705d5812d", (
+            ("daily-voting.csv", 496624,
+             "2998ba6f1f6ffc1e85154f46dbe740b30c8f0dc409daee3efee3772482f49eab"),
+            ("verify.py", 2915,
+             "a23ae4f083a2418f569bdfa87fc9d7251d0a377fd714f7287f1f461692dd3deb"),
+        ),
+    ),
+    (
+        "short-model-work-contrasts", "2e6039122348dfebf813741bc5de6a2583714d61", (
+            ("verify.py", 1981,
+             "1edffb3ac4380086e1f59ec94a956f0e619d57a216fef25d077edf839fcf40b5"),
+            ("world-work.csv", 5396,
+             "f90836ed0ac63f5b0e95152fa2b91beb571ae4d9c1fc2671095f3722e4d39921"),
+        ),
+    ),
+    (
+        "short-model-quorum-outage-stocks", "d3837e738ff26cb2039aa81c38652e5b315cd383", (
+            ("outage-delays.csv", 946,
+             "c25d844e98fa1c5f897f8061c4236fd9233b9525af54aa901b91ad3377eb1743"),
+            ("outage-stocks.csv", 2903,
+             "d746cf769a6e0bd0c005123890e7ee582bd7fd9c1d792e6d4e898498d2aac76a"),
+            ("verify.py", 2835,
+             "d741c830a4646615c349ecc3dd00982bc97bc3c184792646bbf033422b392eea"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -333,6 +391,16 @@ RECORD_DAYS = "r11-10000-outstanding-record-days"
 POST_ADOPTION = "r11-10000-post-adoption"
 EXTENDED = "thesis-extended"
 POST_ADOPTION_REPORT_SHA256 = "699e4fc954139a7dd50b5d0a51fb436d1b15196aca53933e83de02b5e38d5e1a"
+PINNED_REPORTS = {
+    "acquisition-period-results": ("61cccf12c40af29c05cd78d11cc968214d3722db5816a1b63e55618bcc3b5372", ()),
+    "r11-10000-world-influence": ("2ff6356d05a34158702b8712cc99aca62b3546e480e3d408fc5ec398d4a54dc7", ("r11-10000-paired-results/pooled.json",)),
+    "short-model-confirmation-volume": ("3d8b08c77c55a96502347dc41e9e65511a02247f1083bc70afa30483c52f3c7c", ()),
+    "short-model-lower-half-authority": ("2daad55a9b41044d482e730930a5e3ff48dc436bdccd171dea1b56d6675cca09", ()),
+    "short-model-voting-weight": ("20ca4295cf1071d80852d89e0c9241d8e696476d796bb24dc3758131d17d90a3", ()),
+    "short-model-work-contrasts": ("b546a63cd1ed2c0e2adca3267b4256c0879b0bbde7198f43d2f3bb11090a8c77", ()),
+    "short-model-quorum-outage-stocks": ("55dd756e290afd721baa0739b5c68fc8dec0812fd63e1a4c8a6c5f5a0946e26f", ()),
+}
+
 CORE_REPORT = [
     "Verified 75 paired outcome summaries across 10 worlds.",
     "Verified plotted differences and adjusted intervals for 12 primary comparisons.",
@@ -471,6 +539,11 @@ def verify(workspace):
         if hashlib.sha256(output).hexdigest() != expected:
             raise ValueError(f"Unexpected result at {EXTENDED}/{script}")
 
+    for package, (expected, paths) in PINNED_REPORTS.items():
+        output = run_output(workspace, package, "verify.py", *(workspace / path for path in paths)).encode("utf-8")
+        if hashlib.sha256(output).hexdigest() != expected:
+            raise ValueError(f"Unexpected result at {package}")
+
     for line in CORE_REPORT:
         print(line)
     print("Verified precision and multiplicity for 12 main-study comparisons.")
@@ -487,7 +560,9 @@ def verify(workspace):
     print("Verified the public founding-closure cohort arithmetic.")
     for package in STANDARD_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 22 retained-result checks.")
+    for package in PINNED_REPORTS:
+        print(f"Verified {package}.")
+    print("Passed all 29 retained-result checks.")
 
 
 def main():
