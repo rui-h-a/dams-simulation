@@ -1,0 +1,96 @@
+{
+  "input_sha256": "4141e402db7aab8b982d27d6bbf8108aab65fe9fba9dd3c5202ced09d4beec39",
+  "daily_history_sha256": "67469933d0d329a05d909ec6649f5d033fa4cb9f7c6dcd12dd1492c164790257",
+  "result": {
+    "days_after_adoption": 1826,
+    "means": {
+      "control-hierarchy": {
+        "mean_daily_backlog": 3191494.513362541,
+        "mean_exposure_weighted_backlog_per_member": 336.4978185180656
+      },
+      "control-process": {
+        "mean_daily_backlog": 3195703.670427163,
+        "mean_exposure_weighted_backlog_per_member": 337.41477742323116
+      },
+      "dams-witness": {
+        "mean_daily_backlog": 3604366.443373494,
+        "mean_exposure_weighted_backlog_per_member": 380.24763062521635
+      },
+      "linear-witness": {
+        "mean_daily_backlog": 3603764.0508214673,
+        "mean_exposure_weighted_backlog_per_member": 380.0466753685878
+      }
+    },
+    "comparisons": {
+      "dams-witness minus control-hierarchy": {
+        "mean_daily_backlog_difference": {
+          "mean": 412871.93001095287,
+          "ci95": [
+            410892.50171424,
+            414851.35830766574
+          ]
+        },
+        "cumulative_record_day_difference": {
+          "mean": 753904144.2,
+          "ci95": [
+            750289708.1302023,
+            757518580.2697978
+          ]
+        },
+        "exposure_weighted_backlog_per_member_difference": {
+          "mean": 43.7498121071507,
+          "ci95": [
+            43.51511551474843,
+            43.984508699552975
+          ]
+        }
+      },
+      "dams-witness minus control-process": {
+        "mean_daily_backlog_difference": {
+          "mean": 408662.7729463308,
+          "ci95": [
+            405981.71116782736,
+            411343.8347248342
+          ]
+        },
+        "cumulative_record_day_difference": {
+          "mean": 746218223.4,
+          "ci95": [
+            741322604.5924526,
+            751113842.2075473
+          ]
+        },
+        "exposure_weighted_backlog_per_member_difference": {
+          "mean": 42.8328532019852,
+          "ci95": [
+            42.54968763790923,
+            43.116018766061174
+          ]
+        }
+      },
+      "dams-witness minus linear-witness": {
+        "mean_daily_backlog_difference": {
+          "mean": 602.392552026287,
+          "ci95": [
+            -74.67006101815468,
+            1279.4551650707288
+          ]
+        },
+        "cumulative_record_day_difference": {
+          "mean": 1099968.8,
+          "ci95": [
+            -136347.5314191503,
+            2336285.13141915
+          ]
+        },
+        "exposure_weighted_backlog_per_member_difference": {
+          "mean": 0.2009552566285265,
+          "ci95": [
+            0.14188007855928117,
+            0.2600304346977718
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+# Outstanding record-days in the 10,000-member main study
+
+Run `python3 -I -S -B verify.py` here with the Python standard library. The command recomputes the three paired comparisons offline from the 40 world-arm totals. Supply `--history PATH/daily.csv.gz` to check every backlog total against the [pinned daily history](https://github.com/rui-h-a/dams-simulation/tree/e229ec5095ca25d9d803d55267753d131299581d/evidence/thesis-extended/backlog-history).
+
+Each arm contributes 1,826 daily counts from 1 January 2022 through 31 December 2026, including the final 60-day period without new work. Each count includes records awaiting first review or settlement at the end of that simulated day. Appeals are a separate stock. Summing the counts gives record-days. Dividing by 1,826 gives average daily inventory. Dividing by total active member-days gives the member-day-weighted inventory per active member.
+
+The verifier computes each contrast within a world, then averages the ten world differences with equal weight. The paired 95% Student-t intervals are exploratory and unadjusted. Record-days include outstanding claims already present at adoption and claims that remain open at the end. They measure calendar-day occupancy over this window. The source hashes identify the original retained daily series, while the aggregate release contains no event logs. The optional daily history independently checks the record-day sums. Member-days and appeal-days are available in the exported aggregates.
