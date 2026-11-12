@@ -1,0 +1,123 @@
+{
+  "input_sha256": "5289bf10431435d330ce083b6fdd17f3ef80afe6db9621a375866e52f664bb84",
+  "arm_count": 40,
+  "world_count": 10,
+  "arm_means": {
+    "control-hierarchy": {
+      "post_review_count": 6987674.4,
+      "terminal_waiting_review": 4885650.5,
+      "terminal_waiting_settlement": 2334.6,
+      "terminal_waiting_appeal": 79.5
+    },
+    "control-process": {
+      "post_review_count": 6972328.9,
+      "terminal_waiting_review": 4885763.3,
+      "terminal_waiting_settlement": 2319.0,
+      "terminal_waiting_appeal": 74.4
+    },
+    "dams-witness": {
+      "post_review_count": 6164179.1,
+      "terminal_waiting_review": 5702837.2,
+      "terminal_waiting_settlement": 3976.0,
+      "terminal_waiting_appeal": 71.3
+    },
+    "linear-witness": {
+      "post_review_count": 6168668.1,
+      "terminal_waiting_review": 5702162.3,
+      "terminal_waiting_settlement": 4056.5,
+      "terminal_waiting_appeal": 70.6
+    }
+  },
+  "comparisons": {
+    "control-hierarchy": {
+      "post_review_count": {
+        "mean": -823495.3,
+        "paired_t95": [
+          -829867.6221097301,
+          -817122.97789027
+        ]
+      },
+      "terminal_waiting_review": {
+        "mean": 817186.7,
+        "paired_t95": [
+          811598.280010482,
+          822775.119989518
+        ]
+      },
+      "terminal_waiting_settlement": {
+        "mean": 1641.4,
+        "paired_t95": [
+          1577.5310950753235,
+          1705.2689049246767
+        ]
+      },
+      "terminal_waiting_appeal": {
+        "mean": -8.2,
+        "paired_t95": [
+          -13.687512311905028,
+          -2.7124876880949698
+        ]
+      }
+    },
+    "control-process": {
+      "post_review_count": {
+        "mean": -808149.8,
+        "paired_t95": [
+          -815719.6598997787,
+          -800579.9401002214
+        ]
+      },
+      "terminal_waiting_review": {
+        "mean": 817073.9,
+        "paired_t95": [
+          809854.5760290758,
+          824293.2239709243
+        ]
+      },
+      "terminal_waiting_settlement": {
+        "mean": 1657.0,
+        "paired_t95": [
+          1602.0296326609405,
+          1711.9703673390595
+        ]
+      },
+      "terminal_waiting_appeal": {
+        "mean": -3.1,
+        "paired_t95": [
+          -11.654092060010367,
+          5.4540920600103675
+        ]
+      }
+    },
+    "linear-witness": {
+      "post_review_count": {
+        "mean": -4489.0,
+        "paired_t95": [
+          -6592.907645268819,
+          -2385.0923547311813
+        ]
+      },
+      "terminal_waiting_review": {
+        "mean": 674.9,
+        "paired_t95": [
+          -1475.6554913055252,
+          2825.4554913055254
+        ]
+      },
+      "terminal_waiting_settlement": {
+        "mean": -80.5,
+        "paired_t95": [
+          -147.65068312163362,
+          -13.34931687836638
+        ]
+      },
+      "terminal_waiting_appeal": {
+        "mean": 0.7,
+        "paired_t95": [
+          -3.0710159150876217,
+          4.471015915087622
+        ]
+      }
+    }
+  }
+}

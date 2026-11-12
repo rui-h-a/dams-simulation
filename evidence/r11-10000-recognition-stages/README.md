@@ -1,0 +1,7 @@
+# Recognition stages in the 10,000-member study
+
+Run `python3 -I -S -B verify.py` in this folder. The standard-library verifier reconstructs the two terminal stocks, checks all 40 arm identities and computes descriptive arm means and exploratory paired Student-t intervals across ten worlds. The CSV contains aggregate counts from synthetic runs. Its hashes identify the retained sources.
+
+Each original work event submitted one claim in these runs. A completed first review removes a claim from the review stage. Accepted claims and successful appeals enter settlement. Confirmations leave settlement. The terminal appeal queue is separate. The combined stock matches the [previously published flow balance](https://github.com/rui-h-a/dams-simulation/tree/55c5f681b1161018243770471558936de3fe1bcf/evidence/r11-10000-recognition-flows).
+
+Each completed first review is booked as 0.1 hour in the [executed model](https://github.com/rui-h-a/dams-simulation/blob/3b4d44676872fff8d602cafbc47b49f0df6f79b9/dams_sim/longitudinal_model.py#L378-L437). Verifier deferrals do not complete review. For each arm, rounded daily counts agreed with the difference of cumulative hours at the two boundaries and with the whole-run summary total. The adoption boundary is day 731 (1 January 2022). Terminal aggregates were cross-checked against the retained daily series, the summary, and the checkpoint manifest's ledger row counts. Reconstructing a specific claim's path requires its event journal.
