@@ -1,0 +1,286 @@
+{
+  "scope": "October formal comparison under Amendment 12",
+  "inventory_observed_utc": "2026-11-12T23:06:20.760392+00:00",
+  "worlds": [
+    {
+      "world": 1000,
+      "progress_objects": 465,
+      "inventory_sha256": "4e50585d46955862789b54b1ac31e340dfa0777f52334c9641b1ff3292b87c4d",
+      "assigned": {
+        "worlds": [
+          1000
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "66fb940a992784de5656789b4e68d74768af1631549276fac77996a3aef59a86",
+      "plan_generation": "1793080213844597",
+      "event_sha256": "da4c912bab71570fc1feae4ead4aca97f84bb6ea4ac961b763672f0d2f2bbf2d",
+      "event_generation": "1793080214198558",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:29.664905Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 82106.136146527,
+      "peak_rss_mib": 1575.5546875
+    },
+    {
+      "world": 1001,
+      "progress_objects": 465,
+      "inventory_sha256": "e8be7af735762134d9748a84b3427bb1461140049d20ff4faf8741b0afab72fb",
+      "assigned": {
+        "worlds": [
+          1001
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "e17396df1355fd3ee29d386896c5dad8da80fba231aad03cb98d82737a86e657",
+      "plan_generation": "1793080225806524",
+      "event_sha256": "9cd9bf82b9ddfdf336e5ec5b99dfe4323339a2ca26e3fa5169c24cf2ccd69ea6",
+      "event_generation": "1793080226130991",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:34.076714Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 82061.920955846,
+      "peak_rss_mib": 1576.11328125
+    },
+    {
+      "world": 1002,
+      "progress_objects": 465,
+      "inventory_sha256": "22ca04a647a2253ec25666aa00f73b814b37dd30a73b4112085023e709558888",
+      "assigned": {
+        "worlds": [
+          1002
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "b307c871e887390fbc6de7de501abe8991182e7eed9098d98ffd7e961c8c8046",
+      "plan_generation": "1793080203521712",
+      "event_sha256": "42df29d20827832055dd1798749069cf1c667d908214d96e9ee82628548c4e31",
+      "event_generation": "1793080203834014",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:13.209691Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 64374.175060710004,
+      "peak_rss_mib": 1585.09375
+    },
+    {
+      "world": 1003,
+      "progress_objects": 465,
+      "inventory_sha256": "cf6ae1a26954b8034d3d4183fe1bf80d7f68a86054c8fcb49312a26ce4c64747",
+      "assigned": {
+        "worlds": [
+          1003
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "8ab408e0dfd5b1a55f412e5975b37bb8a1df0eeedbf0a26e5455a4fd1579241d",
+      "plan_generation": "1793080216623194",
+      "event_sha256": "1251c58bd3e8a4cebd53f0de06bcec6e6b312e75102fda06e263eb7cb51a02e3",
+      "event_generation": "1793080216933176",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:12.540493Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 66743.706227762,
+      "peak_rss_mib": 1572.47265625
+    },
+    {
+      "world": 1004,
+      "progress_objects": 465,
+      "inventory_sha256": "b2436ed25818cba737e75e2bca2b66c622941d96678ee2fcd1b7811a53b1882c",
+      "assigned": {
+        "worlds": [
+          1004
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "cda90b469d4864542f1f4478ff84042d08796d7e8995032e109d368ffbfef3c6",
+      "plan_generation": "1793080221854990",
+      "event_sha256": "d9cac4ecde5bb1808b72d52926cd696768f9f193044977ea8762c1b44e797871",
+      "event_generation": "1793080222162420",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:14.342745Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 64361.418165551004,
+      "peak_rss_mib": 1579.96484375
+    },
+    {
+      "world": 1005,
+      "progress_objects": 465,
+      "inventory_sha256": "fd928cac895f3ab13aba0fcb0f97fa5a64cce36b5382585be28afaa5adbecb78",
+      "assigned": {
+        "worlds": [
+          1005
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "be05cda2fb7a47556f4c8c1df4c4bfed2a567e0f07997b1b3528af94eca85f9b",
+      "plan_generation": "1793080240734652",
+      "event_sha256": "1c48c95feb540ce2d1205c9872bc008d405cb1fdc0e444a9b8a526cf60036412",
+      "event_generation": "1793080241057125",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:14.493723Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 65342.255828678004,
+      "peak_rss_mib": 1572.92578125
+    },
+    {
+      "world": 1006,
+      "progress_objects": 465,
+      "inventory_sha256": "0829a37edf8e7ccf66ab339eed42cfdfbdd2a68ecf527e7e982964cd4aad86b8",
+      "assigned": {
+        "worlds": [
+          1006
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "1f854e596fb90cb5f07a348c3a8fbe3fc950ed1609854a1e318d37c5d6182b37",
+      "plan_generation": "1793080254061576",
+      "event_sha256": "35e264d65215fd491f94b1472dda03d7072c1c1e80367f8057210c08c9361c1b",
+      "event_generation": "1793080254387711",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:12.408937Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 64079.223543907,
+      "peak_rss_mib": 1564.9453125
+    },
+    {
+      "world": 1007,
+      "progress_objects": 465,
+      "inventory_sha256": "213ba1214efd8beb48f63fb6104625a7d2db21dfa2c21f8068748cfe3a35af6a",
+      "assigned": {
+        "worlds": [
+          1007
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "7e2021e5941ae720c1357bf62ab3a4de76a2d33711a648af4d3f55f389608ed5",
+      "plan_generation": "1793080269274513",
+      "event_sha256": "2eab5695ea83d7302c43cc5a3eb962ffaaee25f5e6c3665e694c52ca092b552f",
+      "event_generation": "1793080269596131",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:13.121410Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 65187.322352636,
+      "peak_rss_mib": 1569.30859375
+    },
+    {
+      "world": 1008,
+      "progress_objects": 465,
+      "inventory_sha256": "0c4e87784843f65cbd97644cd5471eb175653bc40f5b8a47f6cfa832c51a2991",
+      "assigned": {
+        "worlds": [
+          1008
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "4883383a6d37e48e3aca28735143882b50501d9a56852c74f18590230c913092",
+      "plan_generation": "1793080285238203",
+      "event_sha256": "78dbebc4d5f28005fd1ece9e902f189e2b86997b591b2ae79d90e5b7e5f48e02",
+      "event_generation": "1793080285585729",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:34.804595Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 84110.458715729,
+      "peak_rss_mib": 1563.5234375
+    },
+    {
+      "world": 1009,
+      "progress_objects": 468,
+      "inventory_sha256": "8ee921890964f7d07fd86483f3382d708338b80d4fec2604fac02b4aa209f4e8",
+      "assigned": {
+        "worlds": [
+          1009
+        ],
+        "arms": [
+          "control-hierarchy",
+          "control-process",
+          "dams-witness"
+        ],
+        "scale": 50000,
+        "pre_years": 2,
+        "post_years": 5,
+        "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77"
+      },
+      "plan_sha256": "71719265ce73a935fccc6c639db1825bf74e20eec8b4bde8100709080084cd2c",
+      "plan_generation": "1793079901438811",
+      "event_sha256": "8380ad8e72787eb31eed3d373c7c174e0218d856b5d3d35e806f9342659d82a2",
+      "event_generation": "1793079901801112",
+      "event_kind": "prehistory",
+      "provider_instance_removed_utc": "2026-10-27T05:52:14.526238Z",
+      "complete_arm_receipts": 0,
+      "wall_seconds": 83010.884530018,
+      "peak_rss_mib": 1575.078125
+    }
+  ]
+}
