@@ -1,0 +1,46 @@
+{
+  "schema": "dams-main-post-adoption-totals-v1",
+  "inclusive_dates": [
+    "2022-01-01",
+    "2026-12-31"
+  ],
+  "worlds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "arms": [
+    "control-hierarchy",
+    "control-process",
+    "dams-witness",
+    "linear-witness"
+  ],
+  "simulated_days_before_adoption": 731,
+  "daily_rows_after_adoption": 73040,
+  "raw_calendar_rows_verified": 102280,
+  "engine_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+  "longitudinal_model_sha256": "270e89a4789ddedc039515838e849f19d70f2cd0efad829b2795b5386a8839ff",
+  "source_execution_revision": "3b4d44676872fff8d602cafbc47b49f0df6f79b9",
+  "source_receipt_sha256": "82636b032c859f3a5832a7bb1bcb13f03d9b63c4295fe4cd40450ea69180d7d9",
+  "prior_post_adoption_audit_sha256": "945e654963fa5339f80487883b60bfe302c130ed912bf27c02bc7802e974d018",
+  "plan_sha256_by_world": {
+    "1000": "d852cb4826e44fe7c6646da3b6ce2bbe977620412a380b0408b8b1fc074297f4",
+    "1001": "649696549770959884250b485487a7cfcb48a56a507a80d8c7b3bf61eb13816e",
+    "1002": "0a5cc1f28232eab5c72a33e2530b4c971be6e36be7912ac3e236f71850e7f3f5",
+    "1003": "473a02b3dbae9f5e295041ac6c78b4d2ca2c8005efb124a7273347eddfbf337e",
+    "1004": "de2bba7fc7020b4cc32016326ac84176eac0d2227ed60cebde9872a7348b9b76",
+    "1005": "475fd182cc891401f4763a9905e42949b750ea9ebdb102dbce876f9aea70af29",
+    "1006": "e66a9cf7704f37309995583bd8d7f3194047ffcc081cb9f4ca60649446048311",
+    "1007": "72692d463c22a9b6e99ba00ab45dc14ab9b237539cef4f066059c9de57289d84",
+    "1008": "ed948891960f54a212babfaaca349c85c8679b251f1c1691582b6eef5a36cadc",
+    "1009": "d8f161c9cb0b5f3d8e45a34694865756a7e965061971f50d37ad495919232dba"
+  },
+  "arm_totals_sha256": "dec0ebf6863d6acb3c0d358b674c25a437c3f63b144a127d141f1a3e0dd0c5b4"
+}
