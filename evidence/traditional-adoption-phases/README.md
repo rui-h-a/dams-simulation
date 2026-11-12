@@ -1,0 +1,7 @@
+# Operating results during staged adoption
+
+The 65 paired traditional-firm worlds compare staged and backlog-triggered adoption using the same independently witnessed record procedure. The first phase begins on day 731, when both guilds in the triggered arm and the first guild in the staged arm adopt. The second phase begins on day 913, when the second staged guild adopts. End days are exclusive. The full post-boundary period ends at day 2557.
+
+Each phase array contains revenue, operating resource use, active member-calendar-days and the sum of end-of-day unfinished review and settlement counts. The 130 retained daily files were checked against their arm receipts. The extractor subtracted cumulative totals at each boundary and independently checked the daily sums. The two histories through day 730 matched within every pair. The public inputs contain the resulting aggregates and source-file hashes.
+
+Run `python3 -I -S -B verify.py`. The net operating result is revenue minus operating resource use, divided by exposure in member-years at 365.25 days per year. Outstanding record-days are summed over calendar days, excluding open appeals. Differences are staged minus triggered, with unadjusted exploratory 95% paired Student-t intervals. Phases have different lengths and exposures. The estimates describe the two assigned policy paths and do not isolate the mechanisms behind their differences.
