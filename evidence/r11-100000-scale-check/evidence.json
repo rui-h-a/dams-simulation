@@ -1,0 +1,44 @@
+{
+  "protocol_commit": "956725516ddac7f7c2336b0ccc23a69c5d7a27c5",
+  "protocol_sha256": "1487eb9ab3aa64a6437db25710d72a92b3e082a5be25c9da4a8a18ca9fbefc67",
+  "planned_initial_members": 100000,
+  "planned_pre_years": 2,
+  "planned_post_years": 5,
+  "protocol_projected_prehistory_hours": 18,
+  "worlds": [
+    {
+      "world": 1000,
+      "prehistory": null,
+      "verified_arm_receipts": 0,
+      "progress_objects": 468,
+      "final_machine_operation": "deleted",
+      "progress_plan_sha256": "5bb24531a87848a85dacf4addff05caa1ea6e72d9233fb438692be5544724bd4",
+      "progress_events_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "world": 1001,
+      "prehistory": {
+        "wall_seconds": 134775.648181662,
+        "peak_rss_mib": 3114.81640625
+      },
+      "verified_arm_receipts": 0,
+      "progress_objects": 465,
+      "final_machine_operation": "deleted",
+      "progress_plan_sha256": "994f7f8941f472b31c845da5cde97b00060b1aef9eb884e95ebc3d7c569b709b",
+      "progress_events_sha256": "d53084196083b88655608b2fed1a8bba04cff55b02631675a40d59d42bc7d86f"
+    },
+    {
+      "world": 1002,
+      "prehistory": {
+        "wall_seconds": 134857.29301887698,
+        "peak_rss_mib": 3111.35546875
+      },
+      "verified_arm_receipts": 0,
+      "progress_objects": 465,
+      "final_machine_operation": "deleted",
+      "progress_plan_sha256": "7505c6284a5e1386d1cfd70ad8a9e3c88cc5cef38167b9aa6a276522de35a697",
+      "progress_events_sha256": "434e9004f8e1143cef5643518872aeefac9db7133eaa01e6f734e1ba0ae9b852"
+    }
+  ],
+  "disposition": "incomplete-scale-check-excluded-from-five-year-paired-analysis"
+}
