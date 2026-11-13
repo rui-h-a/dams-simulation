@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values or with the digest of its rounded output.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all 37 retained-result checks.`
+printing `Passed all 38 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -37,6 +37,7 @@ copies for execution and leaves the checkout untouched.
 | Main-study precision | Half-width ratios, multiplicity and conditional detectable differences for 12 comparisons |
 | Resource scheduling | Ideal schedules for 5, 6, 8 and 10 hosts from 40 arms and 10 prehistories |
 | Record procedure | Four contrasts across 65 matched worlds |
+| Record procedure costs | Paired operating, verification processing and review measures from 195 arm summaries, with a conditional break-even calculation |
 | Startup size | Six size baselines and ten adjacent-size contrasts |
 | Acquisition | Comparisons across 120 matched worlds and 480 arm aggregates |
 | Startup regret | Comparisons with a common denominator at 30 and 120 initial members |
@@ -51,7 +52,8 @@ copies for execution and leaves the checkout untouched.
 | Voluntary exits (two checks) | Monthly public and modeled flows, and first-year modeled exit counts |
 | Record intake | Paired censoring and intake outcomes from retained aggregate cases |
 | Founding closure | Public employer-birth and survival cohort arithmetic |
-| Extended evidence | Startup size decomposition, daily backlog history and three record procedures |
+| Extended evidence | Record procedure costs | Paired operating, verification processing and review measures from 195 arm summaries, with a conditional break-even calculation |
+| Startup size decomposition, daily backlog history and three record procedures |
 | Acquisition periods | Operating contrasts before and after integration from 480 retained arms |
 | Main-study world influence | Leave-one-world-out checks of the four primary outcomes |
 | Short-model confirmation volume | Delay curves, cumulative confirmations and unfinished counts from 96 arms |

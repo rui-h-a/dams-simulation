@@ -2,6 +2,7 @@
 """Verify the published arithmetic from fixed DAMS simulation summaries."""
 
 import argparse
+from csv import DictReader
 import hashlib
 import json
 import math
@@ -429,6 +430,14 @@ PACKAGES = (
              "7abef92bd13d0abd23a3875d8744c06d26bfab58db692e19c3b64fe8ace29e69"),
         ),
     ),
+    (
+        "record-procedure-costs", "e8fdc6f39af9e1d33ecebfda3fd2a1f69d9d4c00", (
+            ("arm-costs.json", 84756,
+             "80311a182a4a612731dbaa329e2dc480536f1d43ee85f591bed4c9f9abfaeff7"),
+            ("verify.py", 2398,
+             "76a2a6dff005b1e36790000ce4e294c0a75c222045b9cedc005af816f884558c"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -458,6 +467,7 @@ BACKLOG_YEARS = "r11-10000-backlog-by-year"
 BACKLOG_YEARS_SHA256 = "f2fa93c0c33eb4bbf04f59ff9fcad1aefef4183e175a5880bac0d180ce60de5b"
 POST_ADOPTION = "r11-10000-post-adoption"
 EXTENDED = "thesis-extended"
+RECORD_COSTS = "record-procedure-costs"
 POST_ADOPTION_REPORT_SHA256 = "699e4fc954139a7dd50b5d0a51fb436d1b15196aca53933e83de02b5e38d5e1a"
 PINNED_REPORTS = {
     "acquisition-period-results": ("61cccf12c40af29c05cd78d11cc968214d3722db5816a1b63e55618bcc3b5372", ()),
@@ -474,6 +484,7 @@ PINNED_REPORTS = {
     "traditional-adoption-timing": ("0852e0c92581fe4b5faa2f1efda535c9ff96e88ad8b97815de46ee8f52c4094b", ()),
     "traditional-adoption-confirmation-stocks": ("9249dd3feed7a782fc67e664b88346e4c94bcc2c9ed6ec4c1fa8794a2cce7ae0", ()),
     "traditional-adoption-phases": ("0b1f3adbdb3e00a17fd2bf9f2075c4f3f4201748e67873fa3d8bd69e7319a1b9", ()),
+    "record-procedure-costs": ("6ef8811195216210d2eb2f51602b57c3ea7996b439a1c42a8d4ee50cc0642bd6", ()),
 }
 
 CORE_REPORT = [
@@ -565,6 +576,23 @@ def read_report(workspace, package, filename):
     return json.loads((workspace / package / filename).read_bytes())
 
 
+def verify_record_cost_sources(workspace):
+    """Check that both packets use the same original summaries and denominators."""
+    path = workspace / EXTENDED / "record-procedure-three-arm" / "retained-summary-rows.csv"
+    with path.open(encoding="utf-8", newline="") as stream:
+        original = {(int(row["world"]), row["arm"]): row for row in DictReader(stream)}
+    costs = read_report(workspace, RECORD_COSTS, "arm-costs.json")
+    if len(costs) != len(original):
+        raise ValueError("Record procedure cost roster size differs")
+    fields = ("active_member_calendar_days", "revenue_resource_units", "operating_resource_units")
+    for row in costs:
+        key = row["world"], row["arm"]
+        source = original.pop(key, None)
+        if (source is None or row["summary_sha256"] != source["source_summary_sha256"]
+                or any(row[field] != float(source[field]) for field in fields)):
+            raise ValueError(f"Record procedure cost source differs for {key}")
+
+
 def verify(workspace):
     precision = run_report(workspace, PRECISION, "verify_precision.py", workspace / CORE)
     compare(precision, read_report(workspace, PRECISION, "summary.json"), PRECISION)
@@ -618,6 +646,8 @@ def verify(workspace):
         if hashlib.sha256(output).hexdigest() != expected:
             raise ValueError(f"Unexpected result at {EXTENDED}/{script}")
 
+    verify_record_cost_sources(workspace)
+
     for package, (expected, paths) in PINNED_REPORTS.items():
         output = run_output(workspace, package, "verify.py", *(workspace / path for path in paths)).encode("utf-8")
         if hashlib.sha256(output).hexdigest() != expected:
@@ -642,7 +672,7 @@ def verify(workspace):
         print(f"Verified {package}.")
     for package in PINNED_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 37 retained-result checks.")
+    print("Passed all 38 retained-result checks.")
 
 
 def main():
