@@ -1,0 +1,222 @@
+{
+  "study": "r11-main-n10000",
+  "source_sha256": "76246e9fdddf566e1db24f0d7da58afa4fa2a44a467889340010205a6ddb3f77",
+  "worlds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "days_per_arm": 2557,
+  "arm_count": 40,
+  "arm_inputs_sha256": "9ed0af245016c16d2480da48490f39626647dad6cb553f60d3e56f92dfd9af90",
+  "source_arm_receipts": [
+    {
+      "world": 1000,
+      "arm": "control-hierarchy",
+      "sha256": "2b03ff4e568eca156b56bbb19ed6c8c9626170b5d90de3b76febfcab01832992"
+    },
+    {
+      "world": 1000,
+      "arm": "control-process",
+      "sha256": "efd98873b7a73eea922a132f0f3e6e3a3c7d907889945ff508917f6ea4b0eabf"
+    },
+    {
+      "world": 1000,
+      "arm": "dams-witness",
+      "sha256": "9aa14dee957ceaedb4aa356929d3cdff8f1865ec434f13cb0c553740fa53e579"
+    },
+    {
+      "world": 1000,
+      "arm": "linear-witness",
+      "sha256": "04fca04abe7a42642b7edbc40a2bc47ff3bb521c98ce1f3068a23fc1429f964a"
+    },
+    {
+      "world": 1001,
+      "arm": "control-hierarchy",
+      "sha256": "dce90e885118b53f1485480119a7eb50f6512fb24fa3823f963263a713bc5d3c"
+    },
+    {
+      "world": 1001,
+      "arm": "control-process",
+      "sha256": "a03653cc8611d4fb565346bcca08de24a4322868a3cc88a7d3bce9c131090122"
+    },
+    {
+      "world": 1001,
+      "arm": "dams-witness",
+      "sha256": "0d1b28a5f57b91e00152a422b0b24a8b28ab7c879a6e836533a3e0fa786bee99"
+    },
+    {
+      "world": 1001,
+      "arm": "linear-witness",
+      "sha256": "5a0cc7345c169bf16e8cc6cbfa39bbea05ac7d5332809c2fbb4b9199954bce93"
+    },
+    {
+      "world": 1002,
+      "arm": "control-hierarchy",
+      "sha256": "58730649a8a71c88106036355b8f4346dcfa1626c7def581a28769a18c578b3a"
+    },
+    {
+      "world": 1002,
+      "arm": "control-process",
+      "sha256": "aa355e77697d467b93add73971c75a610a0f7be467d6af4f9028ffa82e01743c"
+    },
+    {
+      "world": 1002,
+      "arm": "dams-witness",
+      "sha256": "74a09d84a16375401ef5ec8e342adb6ae597cf1d7b63cf711e2ee27aa8989486"
+    },
+    {
+      "world": 1002,
+      "arm": "linear-witness",
+      "sha256": "2fd918b62bae3fe9f8dd1a2a73dba85bb036db6b000b7e5c05697168a9692cbf"
+    },
+    {
+      "world": 1003,
+      "arm": "control-hierarchy",
+      "sha256": "fd734211ced68d0eb499b87edc9a914cbc96d3ef447f378bc638f4695a375e94"
+    },
+    {
+      "world": 1003,
+      "arm": "control-process",
+      "sha256": "813248e64103a3d332ac20148981f71360896abc6d093f31d53cbd8e3b555b4e"
+    },
+    {
+      "world": 1003,
+      "arm": "dams-witness",
+      "sha256": "b69f425f776e9b7798ba4649aa32139e34941b2d8ba74a56f8f83be33ae0ca99"
+    },
+    {
+      "world": 1003,
+      "arm": "linear-witness",
+      "sha256": "d00d1dcbe02e7dcdf8138316b6da5ea62f5ba19480bf745f5b65f8258a7a702a"
+    },
+    {
+      "world": 1004,
+      "arm": "control-hierarchy",
+      "sha256": "5a89f7358c5b0a78c611f7610d9a7acde9b905207562e6280c775ddd0c5c0260"
+    },
+    {
+      "world": 1004,
+      "arm": "control-process",
+      "sha256": "385159a1625f079f835e2b97d65e0978f83869ffd4e6636a5fa9567ef220e2f1"
+    },
+    {
+      "world": 1004,
+      "arm": "dams-witness",
+      "sha256": "b87d82ecfe887251159752dae0ba121d724d5a4acc16e73c1db142e533522a2e"
+    },
+    {
+      "world": 1004,
+      "arm": "linear-witness",
+      "sha256": "6bce4c1ab21fd67abf2dacf484fa4c0e59222350dfca4ee90203f1e4b37e20c3"
+    },
+    {
+      "world": 1005,
+      "arm": "control-hierarchy",
+      "sha256": "a0b4fa429893b2df6f9298ce2bc7c0450d13b5f62eb6f1f97b1f54eb7c6dad4a"
+    },
+    {
+      "world": 1005,
+      "arm": "control-process",
+      "sha256": "f4286e680712bd21116bda6fa5fdd2a157d596a0ed7b2ff585f16fc53f3d70ea"
+    },
+    {
+      "world": 1005,
+      "arm": "dams-witness",
+      "sha256": "e9d16411d7cb1f5b1639159ec4e0b79676b41192789972cdfb133760d8b42cc2"
+    },
+    {
+      "world": 1005,
+      "arm": "linear-witness",
+      "sha256": "8344a083bd9990583af38efd471899c0be72d72c40e31fdb530b05fcd400d6ef"
+    },
+    {
+      "world": 1006,
+      "arm": "control-hierarchy",
+      "sha256": "6f04e51aaf84ab7f313bbf6ac09451bb6c1a45daedaa38ba40f75951c6d3f6ec"
+    },
+    {
+      "world": 1006,
+      "arm": "control-process",
+      "sha256": "b089cc86aeca26fc3c901cd1207e3a75775134230395803e388af0fe03ec11ec"
+    },
+    {
+      "world": 1006,
+      "arm": "dams-witness",
+      "sha256": "44d2d74f3a1b95d2e51b99b3fe499107bb39aabdc8c7781ffcd311b978585952"
+    },
+    {
+      "world": 1006,
+      "arm": "linear-witness",
+      "sha256": "6c9acc3aa8be20b5d88d3a44cf7b1adaa8abe09c121242102e800cc36aac72b8"
+    },
+    {
+      "world": 1007,
+      "arm": "control-hierarchy",
+      "sha256": "366f5b168c14c530891b1efd52c80e53c4840686a7cc4a427265930f82a7186f"
+    },
+    {
+      "world": 1007,
+      "arm": "control-process",
+      "sha256": "fd78efd479489f87c9941e14defc3aa7570d14f6764929bc449a3a716b0e41bd"
+    },
+    {
+      "world": 1007,
+      "arm": "dams-witness",
+      "sha256": "4609b26b9faf8b8d1ee53084bbbb66fd5525d010ef14caf56950273406b5b72e"
+    },
+    {
+      "world": 1007,
+      "arm": "linear-witness",
+      "sha256": "bfc600ba14d8e6d3aa3df2a6ba5b61aee2eeb7e13581eeb038d62a21cb7a7335"
+    },
+    {
+      "world": 1008,
+      "arm": "control-hierarchy",
+      "sha256": "228a22fa00d6e9ab0a4ba33412f6d3cfb81621a69f576a0c86e2fe124ee1676f"
+    },
+    {
+      "world": 1008,
+      "arm": "control-process",
+      "sha256": "4d6af9e4f1d98c92ee99c7ecff2b0e1410d148b92718dd798e376d570bbc1b98"
+    },
+    {
+      "world": 1008,
+      "arm": "dams-witness",
+      "sha256": "8d4b8bf2e66deed69932a3b1097fdad71c5469697555ba5c5d2feff308dcb37d"
+    },
+    {
+      "world": 1008,
+      "arm": "linear-witness",
+      "sha256": "aca8dd0193912ad6e5c9284abe39d531635c9e54696e87e0ac419eec79d1c50e"
+    },
+    {
+      "world": 1009,
+      "arm": "control-hierarchy",
+      "sha256": "e875ec5a92c6f295d62b2998d52d547d89444a8264ad165eb0cfbbb22b0d3c3f"
+    },
+    {
+      "world": 1009,
+      "arm": "control-process",
+      "sha256": "fa787f66e2a917751cf03c38da5c87e80af05078b72dc140c2773ee730f37ad5"
+    },
+    {
+      "world": 1009,
+      "arm": "dams-witness",
+      "sha256": "f9612c45104126f7d0c0e4556ce65ceae7a2196168d36da36228227102022dcf"
+    },
+    {
+      "world": 1009,
+      "arm": "linear-witness",
+      "sha256": "f5840191bbf9b998fecb1287681803bc187312b8cfd2dc18489503d04153b05b"
+    }
+  ],
+  "scope": "Retained aggregate inputs, with receipt identities. No original journals or private paths."
+}
