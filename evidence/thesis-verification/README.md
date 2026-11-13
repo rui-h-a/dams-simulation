@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values or with the digest of its rounded output.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all 36 retained-result checks.`
+printing `Passed all 37 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -44,6 +44,7 @@ copies for execution and leaves the checkout untouched.
 | Main-study terminal stock | Recorded terminal counts and 12 paired estimates from 40 arms |
 | Five years after adoption | Four outcomes across 40 arm totals, with adjustment over 12 comparisons |
 | Outstanding record-days | Daily backlog sums and paired record-day estimates for 40 arms |
+| Outstanding records by year | Annual and year-end stocks and the final 60-day gap from the pinned daily series across 40 arms |
 | Recognition flows and stages (two checks) | Submissions, confirmations, first-review rejections, appeal returns and terminal stocks |
 | Operating break-even (two checks) | Five observed model years and five projected years, with exposure and discount-rate sensitivity |
 | Lower demand (two checks) | Retained traditional-firm pairs and joint operating and decision contrasts |

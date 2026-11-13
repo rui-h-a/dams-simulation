@@ -421,6 +421,14 @@ PACKAGES = (
              "81c8cc742398c796224852abfe0b909579cbd0092ea9caaacbb9755d936a8a9e"),
         ),
     ),
+    (
+        "r11-10000-backlog-by-year", "24de59d3bdbba9b4cc8cfca41afbe47564ba1777", (
+            ("annual-stocks.json", 22458,
+             "25c81d201e2e6b4d30231f5179aa0f8895852f3d1a53b3daa6219993bc8409bd"),
+            ("verify.py", 5254,
+             "7abef92bd13d0abd23a3875d8744c06d26bfab58db692e19c3b64fe8ace29e69"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -446,6 +454,8 @@ STANDARD_REPORTS = (
 )
 CLOSURE = "founding-closure-observation"
 RECORD_DAYS = "r11-10000-outstanding-record-days"
+BACKLOG_YEARS = "r11-10000-backlog-by-year"
+BACKLOG_YEARS_SHA256 = "f2fa93c0c33eb4bbf04f59ff9fcad1aefef4183e175a5880bac0d180ce60de5b"
 POST_ADOPTION = "r11-10000-post-adoption"
 EXTENDED = "thesis-extended"
 POST_ADOPTION_REPORT_SHA256 = "699e4fc954139a7dd50b5d0a51fb436d1b15196aca53933e83de02b5e38d5e1a"
@@ -592,6 +602,10 @@ def verify(workspace):
     compare(run_report(workspace, RECORD_DAYS, "verify.py", "--history", history),
             read_report(workspace, RECORD_DAYS, "results.json"), RECORD_DAYS)
 
+    annual = run_output(workspace, BACKLOG_YEARS, "verify.py", "--history", history)
+    if hashlib.sha256(annual.encode("utf-8")).hexdigest() != BACKLOG_YEARS_SHA256:
+        raise ValueError(f"Unexpected result at {BACKLOG_YEARS}")
+
     # The post-adoption verifier rounds to ten decimal places. Compare its
     # UTF-8 JSON with the independently retained output fingerprint.
     post = run_output(workspace, POST_ADOPTION, "verify.py").encode("utf-8")
@@ -621,13 +635,14 @@ def verify(workspace):
     print("Verified terminal stock and 12 paired estimates from 40 main-study arms.")
     print("Verified five-year post-adoption outcomes from 40 arm totals.")
     print("Verified record-day totals against the retained daily backlog history.")
+    print("Verified annual stocks and the final 60 days against the daily backlog history.")
     print("Verified the extended startup, backlog and three-procedure reports.")
     print("Verified the public founding-closure cohort arithmetic.")
     for package in STANDARD_REPORTS:
         print(f"Verified {package}.")
     for package in PINNED_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 36 retained-result checks.")
+    print("Passed all 37 retained-result checks.")
 
 
 def main():
