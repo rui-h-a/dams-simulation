@@ -5,7 +5,7 @@ from csv import DictReader
 from hashlib import sha256
 from io import StringIO
 import json
-from math import isfinite, sqrt
+from math import erfc, exp, fsum, gamma, isfinite, sqrt
 from pathlib import Path
 from statistics import fmean, stdev
 
@@ -21,6 +21,7 @@ OUTCOMES = (
     'governance_member_hours_per_member_year', 'witness_resource_units_per_member_year',
 )
 T_975_DF9 = 2.262157162798205
+T_BONFERRONI_DF9 = 3.110934823179468
 
 
 def load_totals(root):
@@ -56,6 +57,50 @@ def outcomes(totals):
     return dict(zip(OUTCOMES, values, strict=True))
 
 
+def holm(probabilities):
+    # Preserve the slot of an undefined test, and retain null in the output.
+    ordered = sorted(
+        enumerate(probabilities),
+        key=lambda item: (1 if item[1] is None else item[1], item[0]),
+    )
+    adjusted = [None] * len(ordered)
+    previous = 0.0
+    for rank, (index, p_value) in enumerate(ordered):
+        if p_value is not None:
+            previous = min(1.0, max(previous, (len(ordered) - rank) * p_value))
+            adjusted[index] = previous
+    return adjusted
+
+
+def quadrature(upper, count):
+    step = upper / count
+    return [
+        (i * step, (1 if i in (0, count) else (4 if i % 2 else 2)) * step / 3)
+        for i in range(count + 1)
+    ]
+
+
+def scale_density(value, df):
+    # Density of sqrt(V / df) for V ~ chi-square(df).
+    coefficient = 2 * (df / 2) ** (df / 2) / gamma(df / 2)
+    return coefficient * value ** (df - 1) * exp(-df * value**2 / 2)
+
+
+def normal_sf(value):
+    return erfc(value / sqrt(2)) / 2
+
+
+def null_two_sided_p(statistic, df):
+    # For large statistics, scale the integration axis so the integrand does
+    # not become concentrated in a tiny neighborhood of zero.
+    rescale = max(1.0, statistic)
+    return 2 / rescale * fsum(
+        weight * scale_density(value / rescale, df)
+        * normal_sf(statistic * value / rescale)
+        for value, weight in quadrature(12 if statistic > 1 else 6, 8192)
+    )
+
+
 def recompute(totals):
     calculated = {key: outcomes(values) for key, values in totals.items()}
     comparisons = {}
@@ -66,10 +111,24 @@ def recompute(totals):
             differences = [treatment - control for _, treatment, control in paired]
             mean = fmean(differences)
             deviation = stdev(differences)
-            margin = T_975_DF9 * deviation / sqrt(len(WORLDS))
-            interval = [mean - margin, mean + margin] if deviation else None
-            comparisons[arm][name] = {'mean_difference': mean, 'ci95': interval,
-                                      'world_values': paired}
+            standard_error = deviation / sqrt(len(WORLDS))
+            marginal = T_975_DF9 * standard_error
+            adjusted = T_BONFERRONI_DF9 * standard_error
+            comparisons[arm][name] = {
+                'mean_difference': mean, 'sample_sd': deviation,
+                'ci95': [mean - marginal, mean + marginal] if deviation else None,
+                'ci95_bonferroni_within_arm': [mean - adjusted, mean + adjusted] if deviation else None,
+                'p_unadjusted_two_sided': null_two_sided_p(abs(mean) / standard_error, len(WORLDS) - 1)
+                if deviation else None,
+                'world_values': paired,
+            }
+    all_rows = [row for endpoints in comparisons.values() for row in endpoints.values()]
+    for endpoints in comparisons.values():
+        rows = list(endpoints.values())
+        for row, p in zip(rows, holm([x['p_unadjusted_two_sided'] for x in rows]), strict=True):
+            row['p_holm_within_arm_four'] = p
+    for row, p in zip(all_rows, holm([x['p_unadjusted_two_sided'] for x in all_rows]), strict=True):
+        row['p_holm_study_wide_twelve'] = p
     return {'worlds': list(WORLDS), 'reference': ARMS[0], 'comparisons': comparisons}
 
 
