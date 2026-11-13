@@ -656,6 +656,34 @@ def verify_quit_dynamics(workspace):
             raise ValueError(f"Mean absolute quit-flow changes differ for {series}")
 
 
+def verify_post_adoption_controls(report):
+    """Check five-year contrasts between arms that share a transition or record."""
+    comparisons = report["comparisons"]
+    operating = "net_operating_result_per_member_year"
+    regret = "decision_regret_per_million_available_member_hours"
+    checks = (
+        (operating, "control-process", "control-hierarchy", (-27.43, -28.57, -26.29)),
+        (operating, "dams-witness", "control-process", (-7.77, -9.10, -6.45)),
+        (operating, "linear-witness", "control-process", (7.20, 5.73, 8.68)),
+        (operating, "dams-witness", "linear-witness", (-14.97, -15.65, -14.30)),
+        (regret, "dams-witness", "linear-witness", (-2.81, -3.21, -2.41)),
+    )
+    worlds = report["worlds"]
+    if worlds != list(range(1000, 1010)):
+        raise ValueError("Unexpected five-year paired roster")
+    for outcome, arm, reference, expected in checks:
+        arm_values = comparisons[arm][outcome]["values_by_world"]
+        reference_values = ([0.0] * len(worlds) if reference == "control-hierarchy"
+                            else comparisons[reference][outcome]["values_by_world"])
+        differences = [x - y for x, y in zip(arm_values, reference_values, strict=True)]
+        if len(differences) != len(worlds):
+            raise ValueError("Incomplete five-year paired contrast")
+        center = fmean(differences)
+        margin = 2.2621571628540993 * stdev(differences) / math.sqrt(len(differences))
+        if tuple(round(v, 2) for v in (center, center - margin, center + margin)) != expected:
+            raise ValueError(f"Unexpected five-year contrast: {outcome}, {arm} versus {reference}")
+
+
 def verify(workspace):
     precision = run_report(workspace, PRECISION, "verify_precision.py", workspace / CORE)
     compare(precision, read_report(workspace, PRECISION, "summary.json"), PRECISION)
@@ -702,6 +730,7 @@ def verify(workspace):
     post = run_output(workspace, POST_ADOPTION, "verify.py").encode("utf-8")
     if hashlib.sha256(post).hexdigest() != POST_ADOPTION_REPORT_SHA256:
         raise ValueError(f"Unexpected result at {POST_ADOPTION}")
+    verify_post_adoption_controls(json.loads(post))
 
     extended = read_report(workspace, EXTENDED, "manifest.json")
     for script, expected in extended["result_sha256"].items():
@@ -739,7 +768,8 @@ def verify(workspace):
         print(f"Verified {package}.")
     print("Verified three unadjusted secondary-outcome intervals across ten main-study worlds.")
     print("Verified absolute same-month quit-flow changes over 36 months per comparison.")
-    print("Passed all 40 retained-result checks.")
+    print("Verified five-year process-control and within-witness operating and regret contrasts.")
+    print("Passed all 41 retained-result checks.")
 
 
 def main():
