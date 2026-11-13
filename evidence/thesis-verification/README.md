@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values or with the digest of its rounded output.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all 43 retained-result checks.`
+printing `Passed all 44 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -35,6 +35,7 @@ copies for execution and leaves the checkout untouched.
 | --- | --- |
 | Main study | 75 paired outcome summaries and adjusted intervals for 12 primary comparisons across 10 worlds |
 | Main-study secondary outcomes | Unadjusted paired intervals for delivered share, learning hours and material and logistics cost per delivered unit |
+| Main-study group differences in formal share | Four hierarchy levels, 12 changes from hierarchy and four direct DAMS-minus-linear comparisons. The inputs are retained world aggregates for the final 365 days |
 | Main-study precision | Half-width ratios, multiplicity and conditional detectable differences for 12 comparisons |
 | Resource scheduling | Ideal schedules for 5, 6, 8 and 10 hosts from 40 arms and 10 prehistories |
 | Record procedure | Four contrasts across 65 matched worlds |

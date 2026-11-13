@@ -694,6 +694,56 @@ def verify_post_adoption_controls(report):
             raise ValueError(f"Unexpected five-year contrast: {outcome}, {arm} versus {reference}")
 
 
+def verify_group_formal_shares(workspace):
+    """Recompute Table 28 and the direct witnessed-policy comparisons."""
+    pooled = read_report(workspace, CORE, "pooled.json")
+    worlds = list(range(1000, 1010))
+    if pooled["worlds"] != worlds or pooled["reference"] != "control-hierarchy":
+        raise ValueError("Unexpected group-share reference or world roster")
+    arms = ("control-process", "dams-witness", "linear-witness")
+    # Values at manuscript precision in units of 10**-4, in arm order.
+    expected = {
+        "share_gap_female_minus_male": (2.59, (0.04, -0.25, 0.33), (1.74, 1.29, 2.20),
+                                      (3.52, 2.95, 4.09), (-1.78, -1.98, -1.57)),
+        "share_gap_migrant_minus_local": (-2.72, (-0.07, -0.55, 0.41), (-2.50, -3.21, -1.79),
+                                        (-1.31, -2.71, 0.10), (-1.19, -2.01, -0.38)),
+        "share_gap_caregiver_minus_other": (10.78, (-0.07, -0.45, 0.31), (7.85, 7.35, 8.36),
+                                          (16.11, 15.37, 16.85), (-8.25, -8.73, -7.78)),
+        "share_gap_minority_minus_majority": (-0.06, (0.09, -0.16, 0.34), (0.09, -0.44, 0.62),
+                                            (0.22, -0.45, 0.89), (-0.13, -0.39, 0.14)),
+    }
+
+    def interval(differences):
+        center = fmean(differences)
+        margin = 2.262157162798205 * stdev(differences) / math.sqrt(len(worlds))
+        return tuple(round(1e4 * x, 2) for x in (center, center - margin, center + margin))
+
+    for outcome, published in expected.items():
+        values = {}
+        hierarchy = None
+        for arm in arms:
+            records = pooled["comparisons"][arm][outcome]["world_values"]
+            if sorted(world for world, _, _ in records) != worlds:
+                raise ValueError(f"Unexpected group-share world roster: {outcome}/{arm}")
+            ordered = sorted(records)
+            reference = tuple(value for _, _, value in ordered)
+            if hierarchy is not None and hierarchy != reference:
+                raise ValueError(f"Inconsistent hierarchy group shares: {outcome}/{arm}")
+            hierarchy = reference
+            values[arm] = tuple(value for _, value, _ in ordered)
+            if not all(math.isfinite(x) for x in (*values[arm], *hierarchy)):
+                raise ValueError(f"Nonfinite group shares: {outcome}/{arm}")
+
+        def compare_arms(left, right):
+            return interval([x - y for x, y in zip(left, right, strict=True)])
+
+        actual = (round(1e4 * fmean(hierarchy), 2),
+                  *(compare_arms(values[arm], hierarchy) for arm in arms),
+                  compare_arms(values["dams-witness"], values["linear-witness"]))
+        if actual != published:
+            raise ValueError(f"Unexpected formal-share comparison: {outcome}")
+
+
 def verify_main_adoption_windows(workspace):
     """Reconcile annual totals and recompute the year-window comparisons."""
     worlds = range(1000, 1010)
@@ -810,6 +860,7 @@ def verify(workspace):
 
     verify_record_cost_sources(workspace)
     verify_secondary_outcomes(workspace)
+    verify_group_formal_shares(workspace)
     verify_quit_dynamics(workspace)
 
     for package, (expected, paths) in PINNED_REPORTS.items():
@@ -840,7 +891,8 @@ def verify(workspace):
     print("Verified absolute same-month quit-flow changes over 36 months per comparison.")
     print("Verified five-year process-control and within-witness operating and regret contrasts.")
     print("Verified operating shortfall by adoption window from 100 annual rows and 20 five-year totals.")
-    print("Passed all 43 retained-result checks.")
+    print("Verified four hierarchy levels and 16 paired formal-share intervals in ten worlds.")
+    print("Passed all 44 retained-result checks.")
 
 
 def main():
