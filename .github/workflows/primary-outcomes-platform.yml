@@ -1,0 +1,99 @@
+name: Primary-outcome arithmetic on Linux and Windows
+'on':
+  push:
+    branches:
+      - evidence/retained-verifier-platform-check-20261109
+    paths:
+      - .github/workflows/primary-outcomes-platform.yml
+permissions: {}
+jobs:
+  verify:
+    name: Verify on ${{ matrix.system }}
+    if: github.repository == 'rui-h-a/dams-simulation'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: Linux
+          - runner: windows-2022
+            system: Windows
+    steps:
+      - name: Verify the pinned aggregate-only bundle
+        shell: python
+        env:
+          EXPECTED_PLATFORM: ${{ matrix.system }}
+        run: |
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import platform
+          import subprocess
+          import sys
+          from tempfile import TemporaryDirectory
+          from urllib.request import urlopen
+
+          RELEASE = 'd9e72c6f44b9153b21a0712e9cb32f9eccb37d17'
+          BASE = 'https://raw.githubusercontent.com/rui-h-a/dams-simulation/'
+          PINS = {'README.md': (2060, 'd37ef90e77013b54d596c0648a179470b94bce479d541a52687ae7c301931dc2'), 'arm-inputs.csv': (7986, '9ed0af245016c16d2480da48490f39626647dad6cb553f60d3e56f92dfd9af90'), 'manifest.json': (6448, 'dfa0045f91ef9987a5fd144c7b93ccbe7fa9bcdf463bea06027170306045dea3'), 'verify.py': (5936, '0535116fc3425c165c32d9c885e16486e1923ddd49105d63832c85251465d0a6')}
+          EXPECTED = '07e64cc4864cb187e03d8039b75b1ee8cafa690f5a62ad8715da231dd321042f'
+
+
+          def fetch(url, size, digest):
+              with urlopen(url, timeout=20) as response:
+                  payload = response.read(size + 1)
+              if len(payload) != size or hashlib.sha256(payload).hexdigest() != digest:
+                  raise ValueError('Unexpected public bytes: ' + url)
+              return payload
+
+
+          def normalize(value):
+              if isinstance(value, dict):
+                  return {key: normalize(item) for key, item in value.items()}
+              if isinstance(value, list):
+                  return [normalize(item) for item in value]
+              if isinstance(value, float):
+                  return format(value, '.10g')
+              return value
+
+
+          def main():
+              system = platform.system()
+              if system != os.environ['EXPECTED_PLATFORM'] or sys.version_info < (3, 11):
+                  raise RuntimeError('Unexpected runner platform or Python version')
+              print(f'Platform: {system} {platform.machine()}, Python {platform.python_version()}', flush=True)
+              with TemporaryDirectory(prefix='dams-primary-') as directory:
+                  root = Path(directory)
+                  for name, (size, digest) in PINS.items():
+                      url = BASE + RELEASE + '/evidence/r11-10000-primary-inputs/' + name
+                      (root / name).write_bytes(fetch(url, size, digest))
+                  print('Public source and all inputs matched pinned byte counts and hashes.', flush=True)
+                  command = [sys.executable, '-I', '-S', '-B', 'verify.py']
+                  env = os.environ | {key: 'http://127.0.0.1:1' for key in ('http_proxy', 'https_proxy', 'HTTP_PROXY', 'HTTPS_PROXY')}
+                  first = subprocess.check_output(command, cwd=root, env=env, timeout=30)
+                  second = subprocess.check_output(command, cwd=root, env=env, timeout=30)
+                  if first != second:
+                      raise ValueError('Repeated outputs differ on the same runner')
+                  report = json.loads(first)
+                  rows = [row for outcomes in report['comparisons'].values() for row in outcomes.values()]
+                  if len(rows) != 12 or sum(row['ci95'] is None for row in rows) != 1:
+                      raise ValueError('Unexpected outcome roster or zero-variation count')
+                  stable = json.dumps(normalize(report), sort_keys=True, separators=(',', ':')).encode('ascii')
+                  digest = hashlib.sha256(stable).hexdigest()
+                  print('Normalized full report SHA-256:', digest, flush=True)
+                  if digest != EXPECTED:
+                      raise ValueError('Normalized report differs from the independent baseline')
+                  source = root / 'arm-inputs.csv'
+                  payload = source.read_bytes()
+                  source.write_bytes(bytes([payload[0] ^ 1]) + payload[1:])
+                  rejected = subprocess.run(command, cwd=root, env=env, capture_output=True, timeout=30)
+                  if rejected.returncode != 1 or b'Arm inputs do not match the manifest' not in rejected.stderr:
+                      raise ValueError('The verifier accepted corrupted input')
+                  print('Recomputed 12 contrasts, 22 intervals and 33 p-values. Rejected the altered input.', flush=True)
+
+
+          if __name__ == '__main__':
+              main()
