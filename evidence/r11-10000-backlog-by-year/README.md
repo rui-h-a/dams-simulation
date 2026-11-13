@@ -22,4 +22,13 @@ python3 -I -S -B verify.py
 
 This command reads the fixed annual aggregates. The original [daily backlog
 series and provenance](https://github.com/rui-h-a/dams-simulation/tree/e229ec5095ca25d9d803d55267753d131299581d/evidence/thesis-extended/backlog-history)
-remain available for deriving the annual stocks.
+provide a second check against all 102,280 rows. Download the
+[pinned daily.csv.gz](https://raw.githubusercontent.com/rui-h-a/dams-simulation/e229ec5095ca25d9d803d55267753d131299581d/evidence/thesis-extended/backlog-history/daily.csv.gz)
+and run:
+
+```sh
+python3 -I -S -B verify.py --history daily.csv.gz
+```
+
+This mode checks the daily calendar, arm fingerprints, work cutoff, annual
+totals, year-end stocks and final 60 days before printing the same report.
