@@ -441,6 +441,14 @@ PACKAGES = (
              "76a2a6dff005b1e36790000ce4e294c0a75c222045b9cedc005af816f884558c"),
         ),
     ),
+    (
+        "traditional-ten-year-windows", "f3b4b82d9faba7ed085a3414c7777f0778b3cbde", (
+            ("annual-arm-aggregates.csv", 89784,
+             "8a613fe93ecc10492ce955e51fbd0fad40fe2908728fe252a832eccd0cd3c00f"),
+            ("verify.py", 2453,
+             "5cf41df0675ddb19f2569758613d3320015d5830c9d05033ca86fa6b8afa5c42"),
+        ),
+    ),
 )
 
 CORE = "r11-10000-paired-results"
@@ -489,6 +497,7 @@ PINNED_REPORTS = {
     "traditional-adoption-confirmation-stocks": ("9249dd3feed7a782fc67e664b88346e4c94bcc2c9ed6ec4c1fa8794a2cce7ae0", ()),
     "traditional-adoption-phases": ("0b1f3adbdb3e00a17fd2bf9f2075c4f3f4201748e67873fa3d8bd69e7319a1b9", ()),
     "record-procedure-costs": ("6ef8811195216210d2eb2f51602b57c3ea7996b439a1c42a8d4ee50cc0642bd6", ()),
+    "traditional-ten-year-windows": ("9e280c544c06a8a458245d06321a361770773a5d7b9e4e54bb986f9b39be54a2", ()),
 }
 
 CORE_REPORT = [
@@ -769,7 +778,7 @@ def verify(workspace):
     print("Verified three unadjusted secondary-outcome intervals across ten main-study worlds.")
     print("Verified absolute same-month quit-flow changes over 36 months per comparison.")
     print("Verified five-year process-control and within-witness operating and regret contrasts.")
-    print("Passed all 41 retained-result checks.")
+    print("Passed all 42 retained-result checks.")
 
 
 def main():
