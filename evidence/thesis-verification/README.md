@@ -15,7 +15,7 @@ checks every byte count and SHA-256 before executing the verifiers. It compares
 each report with its published values or with the digest of its rounded output.
 Python's standard library is sufficient. No package installation, cloud
 account or simulation is required. The command exits successfully after
-printing `Passed all 38 retained-result checks.`
+printing `Passed all 40 retained-result checks.`
 
 The first run needs access to `raw.githubusercontent.com` and a writable cache
 and temporary directory. The cache defaults to `~/.cache/dams-thesis-verification`.
@@ -34,6 +34,7 @@ copies for execution and leaves the checkout untouched.
 | Check | Evidence recomputed |
 | --- | --- |
 | Main study | 75 paired outcome summaries and adjusted intervals for 12 primary comparisons across 10 worlds |
+| Main-study secondary outcomes | Unadjusted paired intervals for delivered share, learning hours and material and logistics cost per delivered unit |
 | Main-study precision | Half-width ratios, multiplicity and conditional detectable differences for 12 comparisons |
 | Resource scheduling | Ideal schedules for 5, 6, 8 and 10 hosts from 40 arms and 10 prehistories |
 | Record procedure | Four contrasts across 65 matched worlds |
@@ -50,9 +51,10 @@ copies for execution and leaves the checkout untouched.
 | Operating break-even (two checks) | Five observed model years and five projected years, with exposure and discount-rate sensitivity |
 | Lower demand (two checks) | Retained traditional-firm pairs and joint operating and decision contrasts |
 | Voluntary exits (two checks) | Monthly public and modeled flows, and first-year modeled exit counts |
+| Voluntary quit dynamics | Mean absolute same-month year-over-year changes for two simulated sizes and their respective BLS references |
 | Record intake | Paired censoring and intake outcomes from retained aggregate cases |
 | Founding closure | Public employer-birth and survival cohort arithmetic |
-| Extended evidence (three checks) | Startup size decomposition, daily backlog history and three record procedures |
+| Extended evidence | Startup size decomposition, daily backlog history and three record procedures |
 | Acquisition periods | Operating contrasts before and after integration from 480 retained arms |
 | Main-study world influence | Leave-one-world-out checks of the four primary outcomes |
 | Short-model confirmation volume | Delay curves, cumulative confirmations and unfinished counts from 96 arms |

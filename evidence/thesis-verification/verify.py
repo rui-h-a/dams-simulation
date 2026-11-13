@@ -2,13 +2,16 @@
 """Verify the published arithmetic from fixed DAMS simulation summaries."""
 
 import argparse
+from collections import defaultdict
 from csv import DictReader
+from fractions import Fraction
 import hashlib
 import json
 import math
 import os
 from pathlib import Path
 import stat
+from statistics import fmean, stdev
 import subprocess
 import sys
 import tempfile
@@ -441,6 +444,7 @@ PACKAGES = (
 )
 
 CORE = "r11-10000-paired-results"
+QUIT_OBSERVATION = "voluntary-quit-observation"
 PRECISION = "r11-10000-precision"
 RESOURCE = "r11-10000-resources"
 SCHEDULE = "r11-10000-scheduling"
@@ -459,7 +463,7 @@ STANDARD_REPORTS = (
     "r11-10000-recognition-stages",
     "record-intake-exclusion",
     "traditional-demand-matched",
-    "voluntary-quit-observation",
+    QUIT_OBSERVATION,
 )
 CLOSURE = "founding-closure-observation"
 RECORD_DAYS = "r11-10000-outstanding-record-days"
@@ -593,6 +597,65 @@ def verify_record_cost_sources(workspace):
             raise ValueError(f"Record procedure cost source differs for {key}")
 
 
+def verify_secondary_outcomes(workspace):
+    """Recompute the three unadjusted DAMS-minus-hierarchy intervals."""
+    paired = read_report(workspace, CORE, "pooled.json")["comparisons"]["dams-witness"]
+    outcomes = {
+        "delivered_share_of_orders": (-0.006862224781, -0.006981686923, -0.006742762640),
+        "learning_hours_per_member_year": (-0.142564632590, -0.156711576205, -0.128417688974),
+        "material_logistics_per_delivered_unit": (0.000003278478, -0.000010092923, 0.000016649878),
+    }
+    for outcome, expected in outcomes.items():
+        rows = paired[outcome]["world_values"]
+        if sorted(world for world, _, _ in rows) != list(range(1000, 1010)):
+            raise ValueError(f"Secondary outcome roster differs: {outcome}")
+        differences = [dams - hierarchy for _, dams, hierarchy in rows]
+        center = fmean(differences)
+        margin = 2.2621571628540993 * stdev(differences) / math.sqrt(len(differences))
+        actual = (center, center - margin, center + margin)
+        if any(not math.isclose(value, reference, rel_tol=0, abs_tol=5e-12)
+               for value, reference in zip(actual, expected, strict=True)):
+            raise ValueError(f"Secondary outcome differs: {outcome}")
+
+
+def verify_quit_dynamics(workspace):
+    """Check absolute same-month changes in annualized quit flows."""
+    root = workspace / QUIT_OBSERVATION
+    with (root / "bls-monthly.csv").open(encoding="utf-8", newline="") as stream:
+        bls = {(r["series"], int(r["year"]), int(r["month"])): 12 * Fraction(r["quits_per_100_employed"])
+               for r in DictReader(stream)}
+    founding = defaultdict(list)
+    with (root / "founding-quits.csv").open(encoding="utf-8", newline="") as stream:
+        for row in DictReader(stream):
+            if row["arm"] == "control-hierarchy":
+                period = int(row["year"]), int(row["month"])
+                founding[period].append(Fraction(1200 * int(row["voluntary_quits"]), int(row["active_on_twelfth"])))
+    main = defaultdict(list)
+    for world in read_report(workspace, QUIT_OBSERVATION, "main-quits-provenance.json")["worlds"].values():
+        for year, row in world["arms"]["control-hierarchy"]["annual"].items():
+            counts = zip(row["voluntary_exits_by_month"], row["active_members_on_monthly_12th"], strict=True)
+            for month, (quits, headcount) in enumerate(counts, start=1):
+                main[int(year), month].append(Fraction(1200 * quits, headcount))
+
+    comparisons = (
+        (founding, 57, "JTS100000000000004QUR", 2022, (1.93, 5.33)),
+        (main, 10, "JTS100000000000000QUR", 2023, (1.21, 3.67)),
+    )
+    for rates, worlds, series, first_year, expected in comparisons:
+        changes = []
+        reference = []
+        for year in range(first_year, first_year + 3):
+            for month in range(1, 13):
+                previous, current = rates[year - 1, month], rates[year, month]
+                if len(previous) != worlds or len(current) != worlds:
+                    raise ValueError(f"Monthly model roster differs for {series}, {year}-{month:02}")
+                changes.append(abs(sum(current) - sum(previous)) / worlds)
+                reference.append(abs(bls[series, year, month] - bls[series, year - 1, month]))
+        actual = tuple(round(sum(values) / len(values), 2) for values in (changes, reference))
+        if actual != tuple(Fraction(str(value)) for value in expected):
+            raise ValueError(f"Mean absolute quit-flow changes differ for {series}")
+
+
 def verify(workspace):
     precision = run_report(workspace, PRECISION, "verify_precision.py", workspace / CORE)
     compare(precision, read_report(workspace, PRECISION, "summary.json"), PRECISION)
@@ -647,6 +710,8 @@ def verify(workspace):
             raise ValueError(f"Unexpected result at {EXTENDED}/{script}")
 
     verify_record_cost_sources(workspace)
+    verify_secondary_outcomes(workspace)
+    verify_quit_dynamics(workspace)
 
     for package, (expected, paths) in PINNED_REPORTS.items():
         output = run_output(workspace, package, "verify.py", *(workspace / path for path in paths)).encode("utf-8")
@@ -672,7 +737,9 @@ def verify(workspace):
         print(f"Verified {package}.")
     for package in PINNED_REPORTS:
         print(f"Verified {package}.")
-    print("Passed all 38 retained-result checks.")
+    print("Verified three unadjusted secondary-outcome intervals across ten main-study worlds.")
+    print("Verified absolute same-month quit-flow changes over 36 months per comparison.")
+    print("Passed all 40 retained-result checks.")
 
 
 def main():
