@@ -478,6 +478,7 @@ RECORD_DAYS = "r11-10000-outstanding-record-days"
 BACKLOG_YEARS = "r11-10000-backlog-by-year"
 BACKLOG_YEARS_SHA256 = "f2fa93c0c33eb4bbf04f59ff9fcad1aefef4183e175a5880bac0d180ce60de5b"
 POST_ADOPTION = "r11-10000-post-adoption"
+OPERATING_PAYBACK = "r11-10000-operating-payback"
 EXTENDED = "thesis-extended"
 RECORD_COSTS = "record-procedure-costs"
 POST_ADOPTION_REPORT_SHA256 = "699e4fc954139a7dd50b5d0a51fb436d1b15196aca53933e83de02b5e38d5e1a"
@@ -693,6 +694,65 @@ def verify_post_adoption_controls(report):
             raise ValueError(f"Unexpected five-year contrast: {outcome}, {arm} versus {reference}")
 
 
+def verify_main_adoption_windows(workspace):
+    """Reconcile annual totals and recompute the year-window comparisons."""
+    worlds = range(1000, 1010)
+    arms = ("control-hierarchy", "dams-witness")
+    years = range(1, 6)
+    annual = {}
+    path = workspace / OPERATING_PAYBACK / "annual-inputs.csv"
+    with path.open(encoding="utf-8", newline="") as stream:
+        for row in DictReader(stream):
+            key = (int(row["world"]), row["arm"], int(row["year_after_adoption"]))
+            exposure = Fraction(row["member_years"])
+            if key in annual or exposure <= 0:
+                raise ValueError(f"Invalid or duplicate adoption-window record: {key}")
+            annual[key] = exposure, exposure * Fraction(row["net_operating_resource_units_per_member_year"])
+    if annual.keys() != {(world, arm, year) for world in worlds for arm in arms for year in years}:
+        raise ValueError("Unexpected annual adoption-window roster")
+
+    def aggregate(world, arm, window):
+        exposure, net = zip(*(annual[world, arm, year] for year in window), strict=True)
+        return sum(exposure), sum(net)
+
+    five_year = {}
+    path = workspace / POST_ADOPTION / "arm-totals.csv"
+    with path.open(encoding="utf-8", newline="") as stream:
+        for row in DictReader(stream):
+            if row["arm"] not in arms:
+                continue
+            key = (int(row["world"]), row["arm"])
+            if key in five_year:
+                raise ValueError(f"Duplicate five-year total: {key}")
+            five_year[key] = (Fraction(row["active_member_calendar_days"]) / Fraction("365.25"),
+                              Fraction(row["revenue_resource_units"]) - Fraction(row["operating_resource_units"]))
+    if five_year.keys() != {(world, arm) for world in worlds for arm in arms}:
+        raise ValueError("Unexpected five-year reconciliation roster")
+    for (world, arm), (exposure, net) in five_year.items():
+        annual_exposure, annual_net = aggregate(world, arm, years)
+        if abs(annual_exposure - exposure) >= Fraction("1e-9") or abs(annual_net - net) >= Fraction("1e-5"):
+            raise ValueError(f"Annual and five-year operating totals differ: {world}/{arm}")
+
+    def total_difference(window):
+        return sum(aggregate(world, arms[1], window)[1] - aggregate(world, arms[0], window)[1]
+                   for world in worlds)
+
+    five_year_difference = total_difference(years)
+    shares = tuple(round(100 * total_difference(window) / five_year_difference, 2)
+                   for window in (range(1, 2), range(1, 4)))
+    late_rates = []
+    for world in worlds:
+        (hierarchy_exposure, hierarchy), (dams_exposure, dams) = [
+            aggregate(world, arm, range(4, 6)) for arm in arms]
+        late_rates.append(dams / dams_exposure - hierarchy / hierarchy_exposure)
+    center = fmean(late_rates)
+    margin = 2.262157162798205 * stdev(late_rates) / math.sqrt(len(worlds))
+    if shares != (Fraction("70.76"), Fraction("85.23")) or tuple(
+            round(value, 2) for value in (center, center - margin, center + margin)
+    ) != (-13.72, -14.91, -12.53):
+        raise ValueError("Unexpected operating result by adoption window")
+
+
 def verify(workspace):
     precision = run_report(workspace, PRECISION, "verify_precision.py", workspace / CORE)
     compare(precision, read_report(workspace, PRECISION, "summary.json"), PRECISION)
@@ -740,6 +800,7 @@ def verify(workspace):
     if hashlib.sha256(post).hexdigest() != POST_ADOPTION_REPORT_SHA256:
         raise ValueError(f"Unexpected result at {POST_ADOPTION}")
     verify_post_adoption_controls(json.loads(post))
+    verify_main_adoption_windows(workspace)
 
     extended = read_report(workspace, EXTENDED, "manifest.json")
     for script, expected in extended["result_sha256"].items():
@@ -778,7 +839,8 @@ def verify(workspace):
     print("Verified three unadjusted secondary-outcome intervals across ten main-study worlds.")
     print("Verified absolute same-month quit-flow changes over 36 months per comparison.")
     print("Verified five-year process-control and within-witness operating and regret contrasts.")
-    print("Passed all 42 retained-result checks.")
+    print("Verified operating shortfall by adoption window from 100 annual rows and 20 five-year totals.")
+    print("Passed all 43 retained-result checks.")
 
 
 def main():
