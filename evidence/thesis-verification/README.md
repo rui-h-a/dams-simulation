@@ -52,8 +52,7 @@ copies for execution and leaves the checkout untouched.
 | Voluntary exits (two checks) | Monthly public and modeled flows, and first-year modeled exit counts |
 | Record intake | Paired censoring and intake outcomes from retained aggregate cases |
 | Founding closure | Public employer-birth and survival cohort arithmetic |
-| Extended evidence | Record procedure costs | Paired operating, verification processing and review measures from 195 arm summaries, with a conditional break-even calculation |
-| Startup size decomposition, daily backlog history and three record procedures |
+| Extended evidence (three checks) | Startup size decomposition, daily backlog history and three record procedures |
 | Acquisition periods | Operating contrasts before and after integration from 480 retained arms |
 | Main-study world influence | Leave-one-world-out checks of the four primary outcomes |
 | Short-model confirmation volume | Delay curves, cumulative confirmations and unfinished counts from 96 arms |
