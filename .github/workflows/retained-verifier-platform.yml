@@ -14,7 +14,7 @@ jobs:
     name: Verify on ${{ matrix.system }}
     if: github.repository == 'rui-h-a/dams-simulation'
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 5
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -24,7 +24,7 @@ jobs:
           - runner: windows-2022
             system: Windows
     steps:
-      - name: Recompute nine retained analyses online and offline
+      - name: Recompute the retained thesis results online and offline
         shell: python
         env:
           EXPECTED_PLATFORM: ${{ matrix.system }}
@@ -40,10 +40,10 @@ jobs:
 
           source = (
               "https://raw.githubusercontent.com/rui-h-a/dams-simulation/"
-              "03f5fe5320bf5b5fa6cec898d2cf6699f9bd0969/evidence/thesis-verification/verify.py"
+              "d22a25af4cfd60c86b1c7057ca0125930a6d07f5/evidence/thesis-verification/verify.py"
           )
-          digest = "4b7c2a9a796900eef1fca4a65037873cb26f556511cfcc0d026c205c036d9eed"
-          size = 13032
+          digest = "9444697f20afd3b5411b1181d62196a1cf9af470e343fc769524fd768aa4e03d"
+          size = 46966
           system = platform.system()
           if system != os.environ["EXPECTED_PLATFORM"] or sys.version_info < (3, 11):
               raise RuntimeError(f"Unexpected execution platform: {system}, Python {platform.python_version()}")
@@ -62,12 +62,17 @@ jobs:
               if cache.exists():
                   raise RuntimeError("Expected an empty cache")
               command = [sys.executable, "-I", "-S", "-B", "verify.py", "--cache", str(cache)]
-              online = subprocess.check_output(command, cwd=folder, timeout=150)
-              if online.splitlines()[-1:] != [b"Passed all nine retained-result checks."]:
-                  raise RuntimeError("Online verification did not report all nine checks")
+              online = subprocess.check_output(command, cwd=folder, timeout=330)
+              if online.splitlines()[-1:] != [b"Passed all 44 retained-result checks."]:
+                  raise RuntimeError("Online verification did not report all 44 checks")
               cached = list(cache.iterdir())
-              if len(cached) != 32 or sum(entry.stat().st_size for entry in cached) != 698529:
+              if len(cached) != 130 or sum(entry.stat().st_size for entry in cached) != 4835507:
                   raise RuntimeError("Unexpected online cache inventory")
+              normalized = online.replace(b"\r\n", b"\n")
+              output_digest = hashlib.sha256(normalized).hexdigest()
+              if output_digest != "0f9c86a7d3b0f6192e6fcd82cbcfb7067b3eb768a94f85669e6c329396058699":
+                  raise RuntimeError("Verification report differs from the pinned report")
+              print(f"Normalized report SHA-256: {output_digest}", flush=True)
               print(online.decode("ascii").rstrip(), flush=True)
 
               offline_environment = os.environ.copy()
@@ -76,8 +81,18 @@ jobs:
                   offline_environment[name] = value
                   offline_environment[name.upper()] = value
               offline = subprocess.check_output(
-                  [*command, "--offline"], cwd=folder, env=offline_environment, timeout=30,
+                  [*command, "--offline"], cwd=folder, env=offline_environment, timeout=120,
               )
               if offline != online:
                   raise RuntimeError("Offline and online verification outputs differ")
               print("Empty-cache online and offline output matched byte for byte.", flush=True)
+              pooled = cache / "9507497f0e295c93fcbf31ed6d29a9a02cb2532dbd10ab63d07973420de1eecc"
+              original = pooled.read_bytes()
+              pooled.write_bytes(bytes([original[0] ^ 1]) + original[1:])
+              rejected = subprocess.run(
+                  [*command, "--offline"], cwd=folder, env=offline_environment,
+                  capture_output=True, timeout=120,
+              )
+              if rejected.returncode != 1 or b"Byte count or SHA-256 mismatch: r11-10000-paired-results/pooled.json" not in rejected.stderr:
+                  raise RuntimeError("Offline verifier did not reject the altered input")
+              print("Offline verifier rejected a same-size altered input.", flush=True)
