@@ -186,6 +186,19 @@ ARMS = {
                                            'cross_boundary_share': 0.5}),
     'hierarchy-isa-full': dict(adoption='fixed', regime='hierarchy', backend='central',
                                automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True}),
+    # Sensitivity arms on the dams-isa-coord base (same automation block, one change each).
+    # No scope rule: the sandbox graph and project sandboxes stay, scoped_authority is off, so every member keeps the
+    # reporting and coordination layers of the whole organization (cross_boundary_share 1 would still run the scoped code path).
+    'dams-isa-coord-unscoped': dict(adoption='fixed', regime='sublinear', backend='witness',
+                                    automation={'sandboxes': True, 'project_sandboxes': True, 'coordination_automation': 0.5}),
+    # Verification-service outage in sandbox g0 (14 days, 120 days after the boundary), as in dams-isa-fault.
+    'dams-isa-coord-fault': dict(adoption='fixed', regime='sublinear', backend='witness', fault_after_boundary_days=120,
+                                 automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5,
+                                             'fault_mode': 'service_stop', 'fault_sandbox': 'g0', 'fault_days': 14}),
+    # Processing quota capped at 0.6 units per member-day in every sandbox, as in dams-isa-saturated.
+    'dams-isa-coord-saturated': dict(adoption='fixed', regime='sublinear', backend='witness',
+                                     automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5,
+                                                 'quota_units_per_member_day': 0.6}),
 }
 
 
@@ -432,6 +445,10 @@ VARIANTS = {
     'full-coord75': {**_FULL, 'automation_coordination_share': 0.75},
     'full-classes-503515': {**_FULL, 'automation.class_share_objective': 0.50, 'automation.class_share_inferential': 0.35,
                             'automation.class_share_disputed': 0.15},
+    # Span of control 4 / 16 instead of 8 on the full configuration (both the enterprise-operations and the task-structure
+    # section, as in accounted-work-span4/-span16): supervisory depth and the layer thresholds of the scope rule follow.
+    'full-span4': {**_FULL, 'enterprise_operations.management_span': 4, 'organization_tasks.management_span': 4},
+    'full-span16': {**_FULL, 'enterprise_operations.management_span': 16, 'organization_tasks.management_span': 16},
     'accounted-work-decisions-classes-charged': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
                                                  'automation.record_classes': True, 'automation.charge_processing': True,
                                                  'automation.resource_units_per_processing_unit': 0.01},

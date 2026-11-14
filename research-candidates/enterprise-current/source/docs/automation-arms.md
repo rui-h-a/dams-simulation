@@ -430,6 +430,14 @@ Each differs from `full` in one setting; configuration only.
 | `full-charge10` | processing charge 0.1 per unit (base-level rate and automation block) |
 | `full-coord25`, `full-coord75` | `coordination_automation` 0.25 / 0.75, set only on the arms that automate coordination (the `-coord` arms) |
 | `full-classes-503515` | record class mix objective / inferential / disputed 0.50 / 0.35 / 0.15 (the class thresholds follow from the shares) |
+| `full-span4`, `full-span16` | span of control 4 / 16 instead of 8 in the enterprise-operations and task-structure sections (supervisory depth and the layer thresholds of the scope rule follow) |
+
+Three further arms for the sensitivity studies are copies of `dams-isa-coord` with one change each (configuration only):
+`dams-isa-coord-unscoped` has no scope rule (`scoped_authority` off, sandboxes and project sandboxes kept, so every member bears the reporting
+and coordination layers of the whole organization; `cross_boundary_share` 1 would still run the scoped code path and is not used for this);
+`dams-isa-coord-fault` adds the 14-day outage of sandbox `g0` 120 days after the boundary, as in `dams-isa-fault`;
+`dams-isa-coord-saturated` caps the processing quota at 0.6 units per member-day, as in `dams-isa-saturated`.
+Adoption at founding needs no new setting: `--pre-years 0` puts the adoption boundary on day 0.
 
 ### Parameters introduced by the automation and sandbox model
 None of the values below has an empirical source; each is a declared design assumption, chosen as stated or as a round conservative
