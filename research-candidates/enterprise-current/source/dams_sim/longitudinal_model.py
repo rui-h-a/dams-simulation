@@ -30,6 +30,8 @@ from .longitudinal_storage import (ExactLedger, snapshot_semantics, CHECKPOINT_F
     integer_state_maps, json_chunks, journal_json, load_checkpoint_json)
 from .randomness import WorldRandom
 from .storage import atomic_stream, canonical, digest, file_digest, source_hash
+from . import automation as _automation
+from . import sandbox as _sandbox
 
 IMPORTED_SOURCE_SHA256=source_hash()
 
@@ -351,7 +353,12 @@ class LongitudinalEngine:
             if regime in {'hierarchy','hierarchy_tenure'}:
                 scores=c if regime=='hierarchy' and p.hierarchy_basis=='performance' else [self.agents[i].tenure for i in ids]
                 weights=tier_authority(scores,p.hierarchy_weights)
+            elif self._team_sandboxes(g):
+                # Shares are normalised inside each team sandbox; the guild's vote weights teams by headcount.
+                scoped,blocks=_automation.scoped_shares(c,{'equal':0.,'linear':1.,'sublinear':p.alpha}[regime],p.team_size)
+                weights=[w*(hi-lo)/len(c) for (lo,hi) in blocks for w in scoped[lo:hi]]
             else:weights=authority(c,{'equal':0.,'linear':1.,'sublinear':p.alpha}[regime],zero_policy='equal')
+            if self._sandboxed(g) and not math.isclose(math.fsum(weights),1.,rel_tol=0,abs_tol=1e-9):raise ValueError('sandbox shares do not sum to one')
             self.authority_change_sum+=math.fsum(abs(self.agents[i].share-v) for i,v in zip(ids,weights))/2;self.authority_change_count+=1
             for i,v,credit in zip(ids,weights,c):
                 self.agents[i].share=v;self.agents[i].confirmed=credit
@@ -361,6 +368,7 @@ class LongitudinalEngine:
     def _commit(self):
         from .model import clip
         day=self.day
+        a_=self.config.automation;track=a_ is not None and a_.sandboxes and a_.fault_mode!='none' and '_sbg' in self.__dict__
         for g in range(self.guild_count):
             _,backend=self.policy(self.guild_alias[g])
             if backend=='consensus' and self.config.quorum_unavailable_start_day<=day<self.config.quorum_unavailable_stop_day:
@@ -373,10 +381,182 @@ class LongitudinalEngine:
                     if not self.ledger.mark_seen(claim.event):self.metrics['duplicate_records_rejected']+=1;continue
                     value=max(0.,claim.observed*retention(self.l.credit_half_life_days,day-claim.created))
                     self.ledger.add_credit(claim.agent,g,value);self.agents[claim.agent].trust=clip(self.agents[claim.agent].trust+.015)
+                    if track:self._sbg.note_commit(day,claim.agent)
                     self.metrics['confirmed_records']+=1;self.metrics['fraudulent_records_accepted']+=int(claim.fraudulent)
                     self.ledger.add_delay('confirmation',day-claim.created)
                     if claim.correction:self.metrics['corrections']+=1;self.ledger.add_delay('appeal',day-claim.created)
                     self.ledger.add_journal(day,'commit',claim.event,{'person':claim.agent,'guild':g,'credit':value,'fraudulent':claim.fraudulent,'correction':claim.correction})
+
+    def _acceptance_floor(self,guild):
+        """Minimum observed work for acceptance: 0.25 in human review; the declared rule where automation is in use."""
+        c=self.config.automation
+        return _automation.acceptance_floor(c) if c is not None and self.adoption[guild] is not None else .25
+
+    def _sandboxed(self,guild):
+        c=self.config.automation
+        return c is not None and c.sandboxes and self.adoption[guild] is not None
+    def _team_sandboxes(self,guild):
+        return self._sandboxed(guild) and self.config.automation.sandbox_level=='team'
+
+    def _graph(self):
+        g=self.__dict__.get('_sbg')
+        if g is None:g=self.__dict__['_sbg']=_sandbox.SandboxGraph(self.config.automation,self.rng.uniform)
+        return g
+
+    def _submit(self,guild,claim,batch):
+        """First review of a new claim: the human queue, or (adopted guild with automation) today's automated batch."""
+        if self.config.automation is not None and self.adoption[guild] is not None:batch.append((guild,claim))
+        else:self.ledger.push('review',guild,claim)
+
+    def _sync_sandboxes(self,day):
+        """Mirror guilds (and teams) of adopted domains into the sandbox graph; apply the declared lifecycle."""
+        c=self.config.automation;g=self._graph();desired={}
+        for gd,ids in sorted(self.members.items()):
+            if not ids or self.adoption[gd] is None:continue
+            anchor='g%d'%gd
+            if anchor not in g.sandboxes:g.create(day,anchor,'guild',members=ids)
+            for i in ids:desired[i]=gd
+            if c.sandbox_level=='team':
+                for t,tids in sorted(self.teams.items()):
+                    if self.agents[tids[0]].guild!=gd:continue
+                    sid='t%d'%t
+                    if sid not in g.sandboxes:g.create(day,sid,'team',parents=[anchor])
+                    for i in g.sandboxes[sid]['members']:
+                        if i not in tids and g.primary.get(i)==sid:g.primary.pop(i,None)
+                    g.sandboxes[sid]['members']=sorted(tids)
+                    for i in tids:g.primary[i]=sid
+            else:
+                leaves=g.leaves_under(anchor);sizes={l:len(g.sandboxes[l]['members']) for l in leaves}
+                for i in ids:
+                    if g.primary.get(i) in sizes:continue
+                    g.remove_person(i)
+                    leaf=min(leaves,key=lambda l:(sizes[l],l));g.add_member(day,leaf,i,primary=True);sizes[leaf]+=1
+        for i in sorted(set(g.primary)-set(desired)):g.remove_person(i)
+        if c.sandbox_level=='guild' and (c.split_size or c.merge_size):g.rebalance(day,c.split_size,c.merge_size)
+        if c.fault_mode!='none':g.record_sizes(day)
+
+    def _sandbox_quotas(self):
+        c=self.config.automation;g=self._graph();quotas={}
+        for sid in g.live():
+            s=g.sandboxes[sid]
+            if s['members'] and s['kind']!='project' and (c.sandbox_level=='team')==(s['kind']=='team'):quotas[sid]=c.quota_units_per_member_day*len(s['members'])
+        return quotas
+
+    def _automate(self,day,batch):
+        """Route today's new claims of adopted guilds: automated verification (processing units, no member time),
+        audit sample / abstention / quota overflow to the ordinary human review queue. See automation.py and sandbox.py."""
+        p,c=self.config,self.config.automation
+        g=self._graph() if c.sandboxes else None
+        if g is not None:
+            self._sync_sandboxes(day)
+            if c.fault_mode!='none':g.inject(day);g.end_fault_if_due(day)
+        multiplier={};settle={}
+        for guild in {gd for gd,_ in batch}:
+            _,backend=self.policy(guild);k=('central','witness','consensus').index(backend)
+            multiplier[guild]=p.backend_review_multipliers[k];settle[guild]=p.backend_settlement_days[k]
+        plan=[]
+        for guild,claim in batch:
+            token=self.people[claim.agent]['token']
+            sandbox=g.primary.get(claim.agent) if g is not None else None
+            fraction=g.local(sandbox,'exception_fraction') if sandbox is not None else c.exception_fraction
+            u_sample=self.rng.uniform('auto_sample',day,token)
+            route='sampled' if _automation.is_sampled(fraction,u_sample) else ('outage' if g is not None and sandbox is not None and g.service_down(sandbox,day) else None)
+            plan.append([guild,claim,token,sandbox,_automation.processing_units(c,multiplier[guild]),route,None,u_sample])
+        if g is not None:
+            demanded={}
+            for k,row in enumerate(plan):
+                if row[5] is None:demanded.setdefault(row[3],[]).append(k)
+            ordered={sb:sorted(ks,key=lambda k:(plan[k][1].priority,plan[k][1].event,k)) for sb,ks in demanded.items()}
+            decisions={}
+            def approve(requester,donor):
+                if (requester,donor) not in decisions:
+                    r=g.request(day,requester,donor,'borrow_quota')
+                    decisions[(requester,donor)]=(r['approved'],'approved' if r['approved'] else 'approval '+r['decision'],donor if donor in g.ancestors(requester) else g.common_parent(requester,donor))
+                return decisions[(requester,donor)]
+            admitted,flows=_automation.allocate_quota({sb:[plan[k][4] for k in ks] for sb,ks in ordered.items()},self._sandbox_quotas(),
+                borrow_limit_fraction=c.borrow_limit_fraction,approve=approve)
+            for sb,ks in ordered.items():
+                for k,mark in zip(ks,admitted[sb]):
+                    if mark is None:plan[k][5]='quota'
+                    else:plan[k][6]=mark
+            for index,flow in enumerate(flows):
+                if flow['approved']:self.metrics['sandbox_borrowed_units']+=flow['units']
+                self.ledger.add_journal(day,'sandbox_quota',f'sandbox-quota:{day}:{index}',flow)
+        tally={}
+        for guild,claim,token,sandbox,units,route,mark,u_sample in plan:
+            borrowed=None
+            u_unc=self.rng.uniform('auto_uncertain',day,token);u_err=self.rng.uniform('auto_error',day,token)
+            rule=_automation.rule_accepts(claim.observed,claim.audit_detected,_automation.acceptance_floor(c))
+            hypothetical=_automation.verdict(c,rule_accept=rule,u_uncertain=u_unc,u_error=u_err,false_reject=g.local(sandbox,'false_reject_probability') if g is not None and sandbox is not None else None)
+            if route is None:
+                self.metrics['automated_verifications']+=1;self.metrics['automated_processing_units']+=units
+                result=hypothetical
+                route='uncertain' if result=='exception' else 'automated'
+                if isinstance(mark,tuple):borrowed=mark[1]
+                if g is not None:g.attribute(sandbox,units,lender=borrowed)
+            else:result='exception';units=0.
+            if g is not None and sandbox is not None:
+                t=tally.setdefault(sandbox,[0,0,0])
+                if route=='outage':t[2]+=1
+                if result!='exception':t[0]+=1;t[1]+=int(_automation.is_wrong(result,rule))
+            if g is not None and sandbox in g.shadows:
+                sh=g.shadows[sandbox];w=c.human_load_weight
+                cost=lambda human,verdict_:(0. if human else float(_automation.is_wrong(verdict_,rule)))+w*human
+                live=cost(result=='exception',result)
+                candidate=u_sample<sh['value'] if sh['phase']=='shadow' else None
+                shadow_cost=cost(candidate or route=='quota' or hypothetical=='exception',hypothetical) if candidate is not None else 0.
+                g.observe(sandbox,live,shadow_cost)
+            if result=='accept':
+                self.ledger.push('commit',guild,dataclasses.replace(claim,ready=_automation.settled_ready(claim.ready,settle[guild])))
+                self.metrics['automated_accepts']+=1;self.metrics['auto_false_accepts']+=int(not rule)
+                if self.pc is not None:self.pc.observe_review(claim.agent,True,not claim.fraudulent)
+            elif result=='reject':
+                self.metrics['automated_rejects']+=1;self.metrics['auto_false_rejects']+=int(rule)
+                self._auto_reject(guild,claim,day,token)
+            else:
+                self.ledger.push('review',guild,claim)
+                self.metrics['exception_claims']+=1;self.metrics['exception_'+route]+=1
+            self.ledger.add_journal(day,'auto_verify',claim.event,{'person':claim.agent,'guild':guild,'sandbox':sandbox,'route':route,'verdict':result,
+                'processing_units':units,'borrowed_from':borrowed,'fraudulent':claim.fraudulent,'rule_accept':rule})
+        if g is not None:
+            for sb in sorted(tally):g.monitor(day,sb,*tally[sb])
+            if c.self_modify:
+                g.settle(day)
+                if day%c.proposal_interval_days==0:
+                    for sid in g.live():
+                        s=g.sandboxes[sid]
+                        if s['kind']=='project' or not s['members'] or sid in g.shadows:continue
+                        lo,hi=_sandbox.LOCAL_BOUNDS['exception_fraction'];cur=s['local']['exception_fraction']
+                        value=round(min(hi,max(lo,cur+(-1 if self.rng.uniform('sandbox_selfmod',day,sid)<.5 else 1)*c.self_modify_step)),6)
+                        if value!=cur:g.propose(day,sid,'exception_fraction',value)
+            self._journal_sandbox_log(day,'')
+
+    def _journal_sandbox_log(self,day,phase):
+        for index,entry in enumerate(self._graph().drain()):
+            if entry['kind']=='sandbox_request':
+                self.metrics['sandbox_requests']+=1;self.metrics['sandbox_requests_approved']+=int(entry['approved'])
+                if entry['approved']:self.metrics['sandbox_approval_latency_days']+=entry['effective_day']-day
+            elif entry['kind'] in _sandbox.COUNTED_EVENTS:self.metrics[_sandbox.COUNTED_EVENTS[entry['kind']]]+=1
+            self.ledger.add_journal(day,entry['kind'],f"{entry['kind']}:{day}:{phase}{index}",entry)
+
+    def _reviewer_may_read(self,day,reviewer,claim):
+        """Sandbox privacy scope for a human review: a reviewer whose home sandbox does not contain the
+        claimant's needs a read grant (lateral request to the common parent). Without one the read is
+        blocked and logged, and the claim waits a day."""
+        g=self._graph();mine=g.primary.get(reviewer);theirs=g.primary.get(claim.agent)
+        if mine is None or theirs is None or g.in_scope(mine,theirs):return True
+        if g.request(day,mine,theirs,'read_records')['approved']:return True
+        g.read_records(day,mine,theirs)
+        return False
+
+    def _auto_reject(self,source,claim,day,token):
+        """Same consequences as a human rejection (trust, appeal path), without a human review."""
+        from .model import clip
+        p=self.config
+        self.metrics['fraudulent_records_detected']+=int(claim.fraudulent);self.metrics['honest_records_rejected']+=int(not claim.fraudulent)
+        a=self.agents[claim.agent];a.trust=clip(a.trust-.025)
+        if self.pc is not None:self.pc.observe_review(claim.agent,False,not claim.fraudulent)
+        if claim.observed>=self._acceptance_floor(source) and a.trust>.2 and (self.pc is None or self.rng.uniform('pc_voice',day,token)<self.pc.voice_probability(claim.agent,self.pc.team_safety(self.teams.get(a.team,[]),self.agents))):self.ledger.push('appeal',source,dataclasses.replace(claim,ready=day+p.appeal_delay_days))
 
     def _review(self,present,funding):
         from .model import clip
@@ -406,6 +586,12 @@ class LongitudinalEngine:
                             self.metrics['organization_verification_deferred_records']+=1
                             self.ledger.add_journal(day,'organization_verification_deferred',claim.event,{'person':claim.agent,'ready':day+1})
                             continue
+                        if self._sandboxed(domain) and not self._reviewer_may_read(day,reviewer,claim):
+                            self.organization.review_remaining[str(reviewer)]+=1  # the reviewer's slot is not spent
+                            self.ledger.push('review',source,dataclasses.replace(claim,ready=day+1))
+                            self.metrics['sandbox_read_deferred_records']+=1
+                            self.ledger.add_journal(day,'sandbox_read_deferred',claim.event,{'person':claim.agent,'reviewer':reviewer,'ready':day+1})
+                            continue
                         self.metrics['organization_verification_hours']+=self.organization.c.verification_hours_per_claim
                     self._review_one(source,claim,day,backend,unit,settlement,reviewer=reviewer)
             remaining=appeal_slots
@@ -420,14 +606,15 @@ class LongitudinalEngine:
         p=self.config
         self.metrics['review_hours']+=.1;self.metrics['verification_resource_units']+=unit-1
         shift=self.pc.evaluation_shift(claim.agent,reviewer) if self.pc is not None else 0.
-        accepted=claim.observed+shift>=.25 and not claim.audit_detected
+        floor=self._acceptance_floor(source)
+        accepted=claim.observed+shift>=floor and not claim.audit_detected
         if self.pc is not None:self.pc.observe_review(claim.agent,accepted,not claim.fraudulent)
         self.ledger.add_journal(day,'review',claim.event,{'accepted':accepted,'observed':claim.observed,'audit_detected':claim.audit_detected,'backend':backend,**({'verification_reviewer':reviewer,'verification_hours':self.organization.c.verification_hours_per_claim} if self.organization is not None else {})})
         if accepted:self.ledger.push('commit',source,dataclasses.replace(claim,ready=day+settlement))
         else:
             self.metrics['reviews_rejected']+=1;self.metrics['fraudulent_records_detected']+=int(claim.fraudulent);self.metrics['honest_records_rejected']+=int(not claim.fraudulent)
             a=self.agents[claim.agent];a.trust=clip(a.trust-.025)
-            if claim.observed>=.25 and a.trust>.2 and (self.pc is None or self.rng.uniform('pc_voice',day,self.people[claim.agent]['token'])<self.pc.voice_probability(claim.agent,self.pc.team_safety(self.teams.get(a.team,[]),self.agents))):self.ledger.push('appeal',source,dataclasses.replace(claim,ready=day+p.appeal_delay_days))
+            if claim.observed>=floor and a.trust>.2 and (self.pc is None or self.rng.uniform('pc_voice',day,self.people[claim.agent]['token'])<self.pc.voice_probability(claim.agent,self.pc.team_safety(self.teams.get(a.team,[]),self.agents))):self.ledger.push('appeal',source,dataclasses.replace(claim,ready=day+p.appeal_delay_days))
     def _appeal_one(self,source,claim,day,settlement):
         self.metrics['appeal_hours']+=.15
         token=self.people[claim.agent]['token']
@@ -690,6 +877,7 @@ class LongitudinalEngine:
             efforts={i:effort*production_fractions.get(i,1.) for i,effort in efforts.items()}
             self.metrics['enterprise_coordination_hours']+=math.fsum(coordination.values())*funding
         organization_produced={}
+        auto_batch=[]
         produced_by_site=defaultdict(list)
         daily_output=0.;yearwork=max(1,self.clock.workdays_in_year(day))
         for index,i in enumerate(self.active):
@@ -728,8 +916,8 @@ class LongitudinalEngine:
             _,backend=self.policy(a.guild);resistance=p.administrative_censorship_exposure[('central','witness','consensus').index(backend)]
             censor=attack_active and p.attack=='censor' and i not in attacker_set and self.rng.uniform('censor',day,token)<min(1.,p.attack_budget_hours_per_day/max(1,len(present)))*resistance
             if censor:self.metrics['censored_records']+=1;a.trust=clip(a.trust-.03)
-            else:self.ledger.push('review',a.guild,claim)
-            if attack_active and p.attack=='duplicate' and i in attacker_set:self.ledger.push('review',a.guild,dataclasses.replace(claim))
+            else:self._submit(a.guild,claim,auto_batch)
+            if attack_active and p.attack=='duplicate' and i in attacker_set:self._submit(a.guild,dataclasses.replace(claim),auto_batch)
             self.metrics['work_events']+=1
             self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attacker_set else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
             workload=efforts[i]+coordination[i]*funding+(attack_time if i in attacker_set else 0.)+training[i]*funding
@@ -764,7 +952,9 @@ class LongitudinalEngine:
         self.metrics['produced_work_units']+=daily_output;self.metrics['effort_hours']+=math.fsum(efforts.values());self.metrics['cooperation_units']+=math.fsum(cooperation.values());self.metrics['decision_regret_units']+=math.fsum(losses)
         consumed=attack_time*len(attackers) if attack_active else 0.;self.metrics['attack_hours_consumed']+=consumed;self.metrics['attack_budget_hours']+=consumed
         self.last_work_per_present_member=daily_output/max(1,len(present))
+        if auto_batch:self._automate(day,auto_batch)
         if present:self._review(present,funding)
+        if '_sbg' in self.__dict__ and self._sbg.log:self._journal_sandbox_log(day,'r')
         backlog=self.ledger.pending_count('review')+self.ledger.pending_count('commit');self.metrics['backlog_peak_records']=max(self.metrics['backlog_peak_records'],backlog)
         if day%p.trace_every_days==0 or day+1==p.days:
             tvs=[];gaps=[];ginis=[]
@@ -826,6 +1016,7 @@ class LongitudinalEngine:
                 'growth_assumptions_status':'synthetic design; no empirical calibration or holdout validation'})
         if self.operations is not None:
             out.update({'enterprise_operating_state_final':self.operations.to_dict(),'operating_assumptions_status':'synthetic mechanisms; not externally validated'})
+        if '_sbg' in self.__dict__:out.update({'sandbox_usage':self._sbg.usage,'sandbox_live_count':len(self._sbg.live()),'fault_containment':self._sbg.containment(),'sandbox_local_exception_fraction':{i:self._sbg.sandboxes[i]['local']['exception_fraction'] for i in self._sbg.live()}})
         if self.acquisitions is not None:out.update({'enterprise_acquisition_state_final':self.acquisitions.to_dict(),'acquisition_assumptions_status':'conditional synthetic target histories; no empirical calibration or formal study admission'})
         if self.organization is not None:out.update({'organization_tasks_state_final':self.organization.to_dict(),'organization_assumptions_status':'conditional synthetic mechanisms; not calibrated or externally validated'})
         if self.organization is not None and self.organization.structure is not None:out.update({'task_department_count_final':self.organization.c.department_count,'task_reorganization_pending_count':len(self.organization.structure['pending']),'task_reorganization_remaining_work_hours':math.fsum(self.organization.structure['training_remaining'].values())})
@@ -845,6 +1036,7 @@ class LongitudinalEngine:
         if self.acquisitions is not None:value['enterprise_acquisition_state']=self.acquisitions.to_dict()
         if self.organization is not None:value['organization_tasks_state']=self.organization.to_dict()
         if self.pc is not None:value['person_context_state']=self.pc.to_dict()
+        if self.config.automation is not None and self.config.automation.sandboxes and '_sbg' in self.__dict__:value['sandbox_state']=self._sbg.to_dict()
         if self.joint_control is not None:value['joint_control']=copy.deepcopy(self.joint_control)
         if self._state_hash_codec!=LEGACY_STATE_HASH_CODEC:value['state_hash_codec']=self._state_hash_codec
         return value
@@ -963,6 +1155,7 @@ class LongitudinalEngine:
         obj.clock=GregorianClock(obj.l)
         obj.rng=WorldRandom(obj.config.seed,obj.config.world,world_context=obj.l.world_context)
         obj.failed_day=False
+        if value.get('sandbox_state') is not None:obj._sbg=_sandbox.SandboxGraph.from_dict(value['sandbox_state'],obj.config.automation,obj.rng.uniform)
         obj._native_owner=native_owner
         obj.agents=[Agent(**a) for a in value['agents']]
         for name in ('day','people','target','demand','cash','closed_day','suspended_day','unfunded_workdays','history','authority_change_sum','authority_change_count','last_work_per_present_member','branch_origin','execution_source_sha256'):setattr(obj,name,copy.deepcopy(value[name]))
@@ -1084,7 +1277,7 @@ class LongitudinalEngine:
         if source_hash()!=self.execution_source_sha256:raise ValueError('branch parent execution source changed')
         if new_config.longitudinal is None:raise ValueError('cannot fork a longitudinal state into the legacy model')
         old=self.config.to_dict();new=new_config.to_dict()
-        allowed={'regime','backend','days','alpha','update_interval_days','review_capacity_per_member_day','appeal_capacity_per_member_day','review_error_sd','max_wall_seconds','max_output_mb','max_rss_mb','max_events'}
+        allowed={'regime','backend','automation','days','alpha','update_interval_days','review_capacity_per_member_day','appeal_capacity_per_member_day','review_error_sd','max_wall_seconds','max_output_mb','max_rss_mb','max_events'}
         long_allowed={'adoption_mode','adoption_day','guild_adoption_days','observable_trigger','trigger_threshold','trigger_not_before_day','transition_days','training_hours_per_workday','migration_resource_units_per_member','dual_run_resource_units_per_member_workday'}
         for k in set(old)|set(new):
             if k not in allowed|{'longitudinal'} and old.get(k)!=new.get(k):raise ValueError('fork changes shared world/history field: '+k)

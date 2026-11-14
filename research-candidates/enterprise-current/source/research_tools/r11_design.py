@@ -125,6 +125,32 @@ ARMS = {
     'dams-staged-witness': dict(adoption='staged', regime='sublinear', backend='witness'),
     # Adoption only when the observable review backlog per active member reaches 2 records.
     'dams-triggered-witness': dict(adoption='triggered', regime='sublinear', backend='witness'),
+    # Automation arms (opt-in `automation` block; see dams_sim/automation.py and sandbox.py).
+    # Routine first review of a claim is automated on the submission day (declared error model,
+    # processing units instead of member time); a declared sample and the verifier's uncertain
+    # claims go to the ordinary human review queue. All adopt on the boundary like the other
+    # fixed-adoption arms, so migration, training and dual-running costs are the same.
+    # hierarchy-auto: the retained hierarchy with the same automated verification. Record
+    # verification is independent of the authority rule (control-hierarchy also reviews every
+    # claim), so the equivalent step exists and the comparison with dams-auto isolates the rule.
+    # Both keep the human review's acceptance rule, so automation changes who verifies and when.
+    'hierarchy-auto': dict(adoption='fixed', regime='hierarchy', backend='central', automation={}),
+    'dams-auto': dict(adoption='fixed', regime='sublinear', backend='witness', automation={}),
+    # The same two arms with measured credit: no minimum amount, a record is refused only on an
+    # audit alarm. A different verification policy that automation makes practicable.
+    'hierarchy-auto-measured': dict(adoption='fixed', regime='hierarchy', backend='central', automation={'acceptance_rule': 'measured'}),
+    'dams-auto-measured': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'acceptance_rule': 'measured'}),
+    # dams-auto plus the sandbox architecture (quotas, scoped authority, approvals, lifecycle, self-modification).
+    'dams-isa': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'sandboxes': True}),
+    # dams-isa with a verification-service outage in sandbox g0 for 14 days, 120 days after the boundary
+    # (fault containment study; a separate arm so that dams-isa itself carries no injected fault).
+    'dams-isa-fault': dict(adoption='fixed', regime='sublinear', backend='witness', fault_after_boundary_days=120,
+                           automation={'sandboxes': True, 'fault_mode': 'service_stop', 'fault_sandbox': 'g0', 'fault_days': 14}),
+    # dams-isa with verification processing capped at 0.6 units per member-day, about half of the expected
+    # demand, in every sandbox (processing saturation study: no sandbox has spare quota to lend, so the
+    # overflow goes to the human exception lane).
+    'dams-isa-saturated': dict(adoption='fixed', regime='sublinear', backend='witness',
+                               automation={'sandboxes': True, 'quota_units_per_member_day': 0.6}),
 }
 
 
@@ -327,6 +353,10 @@ VARIANTS = {
     'high-turnover': {'person_context.baseline_annual_quit_probability': 'x1.5'},
     'low-turnover': {'person_context.baseline_annual_quit_probability': 'x0.5'},
     'reversed-share-response': {'autonomy_response': -0.25},
+    # The engine's two other effort rules (dams_sim/longitudinal_model.py): effort that depends on confirmed
+    # credit instead of trust, and effort that adjusts slowly from its own past level.
+    'satisficing-effort': {'behavior_rule': 'satisficing'},
+    'reinforcement-effort': {'behavior_rule': 'reinforcement'},
     'demand-shock': {'longitudinal.demand_schedule': 'shock'},
     'demand-matched': {'enterprise_operations.base_orders_per_workday': 'matched'},
     'ma-centralize': {'enterprise_acquisition.integration_mode': 'centralize'},
@@ -405,6 +435,10 @@ def arm_config(base, branch, arm):
     d = copy.deepcopy(base)
     d['regime'] = spec['regime']
     d['backend'] = spec['backend']
+    if 'automation' in spec:
+        d['automation'] = dict(spec['automation'])
+        if 'fault_after_boundary_days' in spec:
+            d['automation']['fault_start_day'] = branch+spec['fault_after_boundary_days']
     L = d['longitudinal']
     if spec['adoption'] == 'never':
         L['adoption_mode'] = 'never'

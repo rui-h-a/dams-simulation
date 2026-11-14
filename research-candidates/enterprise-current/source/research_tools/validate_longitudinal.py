@@ -21,6 +21,7 @@ from dams_sim.enterprise_growth import EnterpriseGrowthState
 from dams_sim.enterprise_operations import EnterpriseOperatingState
 from dams_sim.enterprise_acquisition import EnterpriseAcquisitionState
 from dams_sim.randomness import WorldRandom
+from dams_sim.sandbox import COUNTED_EVENTS as SANDBOX_COUNTED
 from dams_sim.longitudinal import GregorianClock
 from dams_sim.longitudinal_design import PRIMARY_ENDPOINTS,resolve_longitudinal_spec,freeze_precision,declared_contrasts
 from dams_sim.longitudinal_model import verify_snapshot
@@ -228,7 +229,11 @@ class _RawDailyAccounting:
         'produced_work_units','effort_hours','cooperation_units','revenue_resource_units','training_hours',
         'attack_hours_consumed','attack_budget_hours',
         'governance_hours','review_hours','verification_resource_units','reviews_rejected','appeal_hours',
-        'appeals_denied','confirmed_records','fraudulent_records_accepted','corrections'))
+        'appeals_denied','confirmed_records','fraudulent_records_accepted','corrections',
+        'automated_verifications','automated_processing_units','automated_accepts','automated_rejects','auto_false_accepts','auto_false_rejects',
+        'exception_claims','exception_sampled','exception_uncertain','exception_quota','sandbox_requests','sandbox_requests_approved','sandbox_borrowed_units','sandbox_approval_latency_days',
+        'sandboxes_created','sandboxes_split','sandboxes_merged','sandboxes_closed','privacy_blocks','core_blocks','selfmod_adoptions','selfmod_rollbacks',
+        'faults_injected','faults_detected','faults_recovered','exception_outage','sandbox_read_deferred_records'))
     def __init__(self,config,state,config_history=()):
         self.config=config;self.state=state;self.config_history=config_history
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
@@ -254,6 +259,10 @@ class _RawDailyAccounting:
 
     def at(self,day):
         return next((config for end,config in self.config_history if day<end),self.config)
+
+    def acceptance_floor(self,guild,p):
+        if p.automation is not None and self.adoption[str(guild)] is not None:return .25 if p.automation.acceptance_rule=='threshold' else 0.
+        return .25
 
     def policy(self,guild,p):
         if self.joint_control is not None and self.joint_control['policy'] is not None:return tuple(self.joint_control['policy'])
@@ -366,7 +375,7 @@ class _RawDailyAccounting:
             ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
             for k,e,v in events:
                 if k=='entry' and not v['initial'] and not ready.get(v['slot'],False):raise ValueError('raw recruitment bypasses talent lead time')
-        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False
+        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[]
         for kind,event,value in events:
             if kind=='acquisition_entry':
                 i=value['person'];person=self.people.get(i)
@@ -439,6 +448,13 @@ class _RawDailyAccounting:
             elif kind=='review':reviews.append((event,value))
             elif kind=='appeal':appeals.append((event,value))
             elif kind=='commit':commits.append((event,value))
+            elif kind=='auto_verify':autos.append((event,value))
+            elif kind=='sandbox_request':sandbox_requests.append(value)
+            elif kind=='sandbox_quota':sandbox_quotas.append(value)
+            elif kind in SANDBOX_COUNTED:sandbox_counted.append(kind)
+            elif kind=='sandbox_read_deferred':
+                if p.automation is None or not p.automation.sandboxes:raise ValueError('raw sandbox read deferral without sandboxes')
+                self.metrics['sandbox_read_deferred_records']+=1
         if self.operations is not None:
             for i in self.members:self.operations.filled(self.people[i]['slot'])
         active=sorted(self.members) if self.closed is None and self.suspended is None else []
@@ -722,7 +738,7 @@ class _RawDailyAccounting:
                 if cw['language']!=rw['language']:shift+=p.person_context.cross_group_evaluation_bias
                 if cw.get('gender')=='female' and rw.get('gender')=='male':shift+=p.person_context.gender_evaluation_bias
                 shift+=p.person_context.appearance_evaluation_bias*cw['traits'].get('appearance',0.)
-            if value['accepted']!=(value['observed']+shift>=.25 and not value['audit_detected']):
+            if value['accepted']!=(value['observed']+shift>=self.acceptance_floor(self.source_domain(event,day)[0],p) and not value['audit_detected']):
                 raise ValueError('raw review outcome differs from observed/audit evidence')
             self.metrics['review_hours']+=.1
             self.metrics['verification_resource_units']+=p.backend_review_multipliers[('central','witness','consensus').index(value['backend'])]-1
@@ -739,6 +755,32 @@ class _RawDailyAccounting:
                 unit=p.backend_review_multipliers[('central','witness','consensus').index(backend)]
                 if review_counts[domain]>int(size*p.review_capacity_per_member_day*funding/unit) or appeal_counts[domain]>int(size*p.appeal_capacity_per_member_day*funding):
                     raise ValueError('raw review/appeal exceeds funded domain capacity')
+        if (autos or sandbox_requests or sandbox_quotas or sandbox_counted) and p.automation is None:raise ValueError('raw automated verification without declared automation')
+        work_fraud={f"work:{day}:{self.people[v['person']]['token']}:g:{v['guild']}":v['fraudulent'] for v in work}
+        work_rule={f"work:{day}:{self.people[v['person']]['token']}:g:{v['guild']}":(v['observed']>=self.acceptance_floor(v['guild'],p) and not v['audit']) for v in work}
+        for event,value in autos:
+            source,_person=self.source_domain(event,day);domain=self.alias[source]
+            if value['person']!=_person or value['guild']!=source or self.adoption[str(domain)] is None:raise ValueError('raw automated verification identity/adoption differs')
+            if value['route'] not in ('automated','sampled','uncertain','quota','outage') or value['verdict'] not in ('accept','reject','exception') or type(value['fraudulent']) is not bool:raise ValueError('raw automated verification route/verdict differs')
+            if event in work_fraud and work_fraud[event]!=value['fraudulent']:raise ValueError('raw automated verification fraud label differs from work')
+            if type(value['rule_accept']) is not bool or (event in work_rule and work_rule[event]!=value['rule_accept']):raise ValueError('raw automated verification rule outcome differs from observed/audit evidence')
+            backend=self.policy(domain,p)[1];unit=p.backend_review_multipliers[('central','witness','consensus').index(backend)]
+            processed=value['route'] in ('automated','uncertain')
+            expected_units=p.automation.processing_units_per_claim*unit if processed else 0.
+            if value['processing_units']!=expected_units or (value['route']=='automated')==(value['verdict']=='exception') or (not processed and value['verdict']!='exception'):raise ValueError('raw automated verification units/verdict differ from declared model')
+            if processed:
+                self.metrics['automated_verifications']+=1;self.metrics['automated_processing_units']+=value['processing_units']
+            if value['verdict']=='accept':self.metrics['automated_accepts']+=1;self.metrics['auto_false_accepts']+=int(not value['rule_accept'])
+            elif value['verdict']=='reject':self.metrics['automated_rejects']+=1;self.metrics['auto_false_rejects']+=int(value['rule_accept'])
+            else:self.metrics['exception_claims']+=1;self.metrics['exception_'+value['route']]+=1
+        for value in sandbox_requests:
+            if type(value['approved']) is not bool:raise ValueError('raw sandbox request boolean differs')
+            self.metrics['sandbox_requests']+=1;self.metrics['sandbox_requests_approved']+=int(value['approved'])
+            if value['approved']:self.metrics['sandbox_approval_latency_days']+=self.number(value['effective_day'],'sandbox approval day')-day
+        for kind in sandbox_counted:self.metrics[SANDBOX_COUNTED[kind]]+=1
+        for value in sandbox_quotas:
+            if type(value['approved']) is not bool:raise ValueError('raw sandbox quota boolean differs')
+            if value['approved']:self.metrics['sandbox_borrowed_units']+=self.number(value['units'],'sandbox borrowed units')
         for event,value in commits:
             source,person=self.source_domain(event,day)
             if source!=value['guild'] or person!=value['person']:raise ValueError('raw commit source person/domain differs')

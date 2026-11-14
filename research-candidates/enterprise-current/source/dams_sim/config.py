@@ -10,6 +10,7 @@ from .enterprise_acquisition import EnterpriseAcquisitionConfig
 from .joint_population import JointPopulationConfig
 from .organization_tasks import OrganizationTasksConfig
 from .person_context import PersonContextConfig
+from .automation import AutomationConfig
 
 
 @dataclasses.dataclass(frozen=True)
@@ -62,6 +63,7 @@ class Config:
     joint_population: JointPopulationConfig | None = None
     organization_tasks: OrganizationTasksConfig | None = None
     person_context: PersonContextConfig | None = None
+    automation: AutomationConfig | None = None
 
     def validate(self) -> Config:
         if self.longitudinal is not None and not isinstance(self.longitudinal, LongitudinalConfig):
@@ -89,6 +91,10 @@ class Config:
             if self.joint_population is not None:raise ValueError('person_context supersedes joint_population; enable only one entry copula')
             self.person_context.validate()
         horizon_limit = 50_000 if self.longitudinal is not None else 3650
+        if self.automation is not None:
+            if not isinstance(self.automation, AutomationConfig):raise ValueError('automation must be typed')
+            if self.longitudinal is None:raise ValueError('automation requires the longitudinal engine')
+            self.automation.validate()
         integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
         if self.longitudinal is not None:
             for name in ('days','appeal_delay_days','attack_start_day','attack_stop_day','fault_start_day','fault_stop_day','quorum_unavailable_start_day','quorum_unavailable_stop_day','trace_every_days'):
@@ -153,6 +159,7 @@ class Config:
         if self.joint_population is None:value.pop('joint_population')
         if self.organization_tasks is None:value.pop('organization_tasks')
         if self.person_context is None:value.pop('person_context')
+        if self.automation is None:value.pop('automation')
         return value
 
     @classmethod
@@ -170,6 +177,7 @@ class Config:
         if value.get('joint_population') is not None:value['joint_population']=JointPopulationConfig.from_dict(value['joint_population'])
         if value.get('organization_tasks') is not None:value['organization_tasks']=OrganizationTasksConfig.from_dict(value['organization_tasks'])
         if value.get('person_context') is not None:value['person_context']=PersonContextConfig.from_dict(value['person_context'])
+        if value.get('automation') is not None:value['automation']=AutomationConfig.from_dict(value['automation'])
         for name in ("hierarchy_weights", "backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             if name in value:
                 value[name] = tuple(value[name])

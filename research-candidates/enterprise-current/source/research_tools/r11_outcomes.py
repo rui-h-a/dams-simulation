@@ -83,7 +83,7 @@ def outcomes(arm_dir):
         'delivered_share_of_orders': delivered/orders if orders else None,
         'expired_share_of_orders': s.get('orders_expired_units', 0.)/orders if orders else None,
         'confirmation_mean_days': s.get('confirmation_mean_days'),
-        'honest_rejection_share': s.get('honest_records_rejected', 0.)/(s.get('confirmed_records', 0.)+s.get('reviews_rejected', 0.)) if s.get('confirmed_records', 0.)+s.get('reviews_rejected', 0.) else None,
+        'honest_rejection_share': s.get('honest_records_rejected', 0.)/(s.get('confirmed_records', 0.)+s.get('reviews_rejected', 0.)+s.get('automated_rejects', 0.)) if s.get('confirmed_records', 0.)+s.get('reviews_rejected', 0.)+s.get('automated_rejects', 0.) else None,
         'fraud_acceptance_share': (s.get('fraudulent_records_accepted', 0.)/max(1., s.get('fraudulent_records_accepted', 0.)+s.get('fraudulent_records_detected', 0.))) if (s.get('fraudulent_records_accepted', 0.)+s.get('fraudulent_records_detected', 0.)) else None,
         'decision_regret_per_available_member_hour': s.get('decision_regret_per_available_member_hour'),
         'learning_hours_per_member_year': per_my(s.get('organization_learning_hours', 0.)),
