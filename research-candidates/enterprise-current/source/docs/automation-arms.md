@@ -340,7 +340,7 @@ Unpaid part. When cash cannot cover a day's charge the charge is limited to the 
 unpaid part is recorded in `operating_unfunded_resource_units`; no debt is carried to later days and the unpaid units are not
 charged again.
 
-Symmetric charge (`processing_charge_rate`). The charge used to apply only to arms that have an automation block, although an arm
+Symmetric charge (`processing_charge_rate`). A charge set only in the automation block would reach only arms that have such a block, although an arm
 without one (`dams-witness`) accumulates `verification_resource_units` for its witnessed record and automated DAMS arms pay for the
 same record units. The setting `processing_charge_rate` (top-level, absent by default so earlier configurations keep their digest) makes the
 charge a base-level setting: where it is set, every arm pays for the processing units it accumulates at that rate, including an arm
@@ -443,7 +443,7 @@ value. Results that depend on them are conditional on them and are probed by the
 | acceptance_rule | threshold (0.25) or measured | the human review's floor, or no floor |
 | processing_units_per_claim | 1.0 | units before the backend multiplier |
 | resource_units_per_processing_unit / processing_charge_rate | 0.01 (0.1 in `full-charge10`) | price of a processing unit in cash |
-| quota_units_per_member_day | 1.35 (0.6 in `dams-isa-saturated`) | sandbox processing quota (1.25 x expected demand 1.08) |
+| quota_units_per_member_day | 1.35 (0.6 in `dams-isa-saturated`) | sandbox processing quota, calibrated as 1.25 x the expected demand 1.08 of a witness record with 10 % sampling and no record classes; the quota is the same in absolute units for every backend and class mix, so a central record has more headroom and, under classes (inferential x2), a witness record has less, which shows as `exception_quota` |
 | borrow_limit_fraction | 0.5 | borrowing cap relative to own quota |
 | approval_rejection_probability / approval_latency_days / grant_validity_days | 0.1 / 0 / 30 | approvals of crossings |
 | split_size / merge_size | 400 / 4 | sandbox lifecycle |

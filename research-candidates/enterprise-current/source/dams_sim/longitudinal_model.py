@@ -532,7 +532,7 @@ class LongitudinalEngine:
                 cost=lambda human,verdict_:(0. if human else float(_automation.is_wrong(verdict_,rule)))+w*human
                 live=cost(result=='exception',result)
                 candidate=u_sample<sh['value'] if sh['phase']=='shadow' else None
-                shadow_cost=cost(_automation.shadow_to_human(candidate,route,hypothetical),hypothetical) if candidate is not None else 0.
+                shadow_cost=cost(_automation.shadow_to_human(candidate,route,hypothetical,g.service_down(sandbox,day)),hypothetical) if candidate is not None else 0.
                 g.observe(sandbox,live,shadow_cost)
             if klass is not None:
                 self.metrics['rc_'+klass+'_claims']+=1

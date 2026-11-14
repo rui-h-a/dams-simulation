@@ -274,15 +274,16 @@ def class_multiplier(config, klass):
 SHADOW_HUMAN_ROUTES = ('quota', 'outage', 'disputed')
 
 
-def shadow_to_human(candidate_sampled, route, hypothetical):
+def shadow_to_human(candidate_sampled, route, hypothetical, service_down=False):
     """Whether a candidate exception fraction would leave the claim to humans, as live handling would.
 
     Live handling sends a claim to human review when it is audit-sampled, when the verifier abstains, and when it
     cannot be processed automatically: no quota left, the sandbox's verification service is down, or the record is
     disputed. The shadow evaluation of a candidate fraction costs the claim in the same way; only the audit sample
-    (`candidate_sampled`) depends on the candidate, the other routes do not.
+    (`candidate_sampled`) depends on the candidate, the other routes do not.  `service_down` is the outage state of the
+    claim's sandbox on that day; it applies to a claim that was audit-sampled live too, whose route is then 'sampled'.
     """
-    return bool(candidate_sampled) or route in SHADOW_HUMAN_ROUTES or hypothetical == 'exception'
+    return bool(candidate_sampled) or bool(service_down) or route in SHADOW_HUMAN_ROUTES or hypothetical == 'exception'
 
 
 def verdict(config, *, rule_accept, u_uncertain, u_error, false_reject=None, klass=None):

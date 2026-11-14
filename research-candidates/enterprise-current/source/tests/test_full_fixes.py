@@ -46,6 +46,12 @@ class ShadowRoutesTest(unittest.TestCase):
             for hypothetical in ('accept', 'reject'):
                 self.assertFalse(A.shadow_to_human(False, route, hypothetical), (route, hypothetical))
 
+    def test_a_sampled_claim_is_human_in_the_shadow_while_the_service_is_down(self):
+        # live-sampled claims keep the route 'sampled'; the outage of their sandbox is passed separately
+        self.assertTrue(A.shadow_to_human(False, 'sampled', 'accept', service_down=True))
+        self.assertTrue(A.shadow_to_human(False, 'automated', 'reject', service_down=True))
+        self.assertFalse(A.shadow_to_human(False, 'sampled', 'accept', service_down=False))
+
     def test_every_route_that_live_handling_sends_to_humans_is_covered(self):
         # the routes of automation.ROUTES that are decided by a human without the candidate fraction mattering
         self.assertEqual(set(A.SHADOW_HUMAN_ROUTES), {'quota', 'outage', 'disputed'})
@@ -190,6 +196,14 @@ class EngineTest(unittest.TestCase):
         self.assertAlmostEqual(math.fsum(v['charged'] for v in charges), s['processing_charge_resource_units'], places=9)
         self.assertEqual(s['operating_unfunded_resource_units'], 0)
 
+    def test_measures_report_the_charged_units_of_an_arm_without_automation(self):
+        from research_tools import r11_isa_measures
+        out, s = self.run_arm('dams-witness', 'full')
+        m = r11_isa_measures.measures(out)[0]['governance_cost']
+        self.assertAlmostEqual(m['processing_units_charged'], s['verification_resource_units'], places=9)
+        self.assertEqual(m['processing_charge_rate'], .01)
+        self.assertAlmostEqual(m['processing_units_charged']*m['processing_charge_rate'], m['processing_charge_resource_units'], places=9)
+
     def test_the_same_record_costs_the_same_with_and_without_automation(self):
         ws = self.run_arm('dams-witness', 'full')[1]; au = self.run_arm('dams-auto', 'full')[1]
         for s in (ws, au):
@@ -247,6 +261,14 @@ class EngineTest(unittest.TestCase):
         same = [day for day in sorted(set(coord_sc) & set(coord_un)) if plans_sc.get(day) and plans_un.get(day) and plans_sc[day][0]['topology'] == plans_un[day][0]['topology']
                 and plans_sc[day][0]['present_people'] == plans_un[day][0]['present_people']]
         self.assertTrue(same)
+        # coordination hours: on days with the same plan inputs, the requested workdays of every site are equal
+        equal_inputs = 0
+        for day in same:
+            a, b = coord_sc[day][0], coord_un[day][0]
+            if a['inputs'] != b['inputs']:continue
+            equal_inputs += 1
+            self.assertEqual([v['requested'] for v in a['plan']['sites']], [v['requested'] for v in b['plan']['sites']])
+        self.assertGreater(equal_inputs, 0)
 
     def test_scoped_arms_delay_cross_boundary_reports_by_the_rounded_share_of_the_layers_above_the_scope(self):
         for arm, share in (('dams-isa', .25), ('dams-isa-x50', .5)):

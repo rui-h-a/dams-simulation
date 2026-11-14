@@ -27,6 +27,8 @@ def measures(arm_dir):
     with (arm_dir/'timeseries.csv').open() as f:
         rows = list(csv.DictReader(f))
     g = lambda k: s.get(k, 0.) or 0.
+    # the rate the engine charges: the automation block's when that block charges, else the base-level rate
+    charge_rate = auto['resource_units_per_processing_unit'] if auto and auto.get('charge_processing') else arm['config'].get('processing_charge_rate')
     years = s['active_member_calendar_days']/365.25
     per = lambda v: v/years if years else None
     member_hours = sum(g(k) for k in ('review_hours', 'appeal_hours', 'governance_hours', 'organization_verification_hours'))
@@ -45,6 +47,9 @@ def measures(arm_dir):
             'processing_units_total': g('automated_processing_units')+g('coordination_processing_units'),
             'processing_charge_resource_units': g('processing_charge_resource_units'),
             'processing_charge_per_member_year': per(g('processing_charge_resource_units')),
+            'processing_units_charged': g('automated_processing_units')+g('verification_resource_units')+g('coordination_processing_units'),
+            'processing_units_charged_per_member_year': per(g('automated_processing_units')+g('verification_resource_units')+g('coordination_processing_units')),
+            'processing_charge_rate': charge_rate,
             'processing_units_per_member_year': per(g('automated_processing_units')),
             'processing_units_total_per_member_year': per(g('automated_processing_units')+g('coordination_processing_units')),
             'witness_verification_units_per_member_year': per(g('verification_resource_units')),
