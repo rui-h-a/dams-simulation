@@ -146,6 +146,9 @@ ARMS = {
     # authority by performance tiers and a central record, routine work decided inside its scope. The
     # strongest hierarchical competitor of dams-isa; the two differ in the authority rule and the record.
     'hierarchy-isa': dict(adoption='fixed', regime='hierarchy', backend='central', automation={'sandboxes': True, 'scoped_authority': True}),
+    # dams-isa on a central record: with hierarchy-isa it holds the record procedure equal, so the pair
+    # differs in the authority rule alone; with dams-isa it isolates the witnessed record.
+    'dams-isa-central': dict(adoption='fixed', regime='sublinear', backend='central', automation={'sandboxes': True, 'scoped_authority': True}),
     # Sensitivity of the scope rule: half of reporting and coordination crosses the sandbox boundary
     # (default one quarter); with share 1 the arm would equal dams-isa-unscoped.
     'dams-isa-x50': dict(adoption='fixed', regime='sublinear', backend='witness',
