@@ -21,7 +21,7 @@ from dams_sim.enterprise_growth import EnterpriseGrowthState
 from dams_sim.enterprise_operations import EnterpriseOperatingState
 from dams_sim.enterprise_acquisition import EnterpriseAcquisitionState
 from dams_sim.randomness import WorldRandom
-from dams_sim.sandbox import COUNTED_EVENTS as SANDBOX_COUNTED
+from dams_sim.sandbox import COUNTED_EVENTS as SANDBOX_COUNTED, PROTECTED_CORE
 from dams_sim.longitudinal import GregorianClock
 from dams_sim.longitudinal_design import PRIMARY_ENDPOINTS,resolve_longitudinal_spec,freeze_precision,declared_contrasts
 from dams_sim.longitudinal_model import verify_snapshot
@@ -233,7 +233,9 @@ class _RawDailyAccounting:
         'automated_verifications','automated_processing_units','automated_accepts','automated_rejects','auto_false_accepts','auto_false_rejects',
         'exception_claims','exception_sampled','exception_uncertain','exception_quota','sandbox_requests','sandbox_requests_approved','sandbox_borrowed_units','sandbox_approval_latency_days',
         'sandboxes_created','sandboxes_split','sandboxes_merged','sandboxes_closed','privacy_blocks','core_blocks','selfmod_adoptions','selfmod_rollbacks',
-        'faults_injected','faults_detected','faults_recovered','exception_outage','sandbox_read_deferred_records','administrative_work_hours'))
+        'faults_injected','faults_detected','faults_recovered','exception_outage','sandbox_read_deferred_records','administrative_work_hours',
+        'decision_effect_output_factor_sum','decision_effect_output_factor_count','project_sandboxes_created','project_sandboxes_closed',
+        'project_collaboration_pair_days','refused_collaboration_pair_days','refused_collaboration_links','project_sandbox_member_workdays','allocation_attempts'))
     def __init__(self,config,state,config_history=()):
         self.config=config;self.state=state;self.config_history=config_history
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
@@ -256,6 +258,8 @@ class _RawDailyAccounting:
         self.previous_reported={};self.unfunded_workdays=0
         self.seen_people=set();self.pc_wit={};self.person_exposure={i:defaultdict(float) for i in self.people}
         self.unknown_present=set()
+        self.dstate={}   # guild -> decision-quality debt, re-derived from the decision events only
+        self.projects={};self.project_last={};self.collab_grants={};self.core_cycle=0   # project sandbox lifecycle, standing grants, core attempts
 
     def at(self,day):
         return next((config for end,config in self.config_history if day<end),self.config)
@@ -375,7 +379,7 @@ class _RawDailyAccounting:
             ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
             for k,e,v in events:
                 if k=='entry' and not v['initial'] and not ready.get(v['slot'],False):raise ValueError('raw recruitment bypasses talent lead time')
-        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;administrative=None;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[]
+        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;administrative=None;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[];lifecycle=[];project_events=[]
         for kind,event,value in events:
             if kind=='acquisition_entry':
                 i=value['person'];person=self.people.get(i)
@@ -415,6 +419,9 @@ class _RawDailyAccounting:
                 self.metrics['memory_loss_units']+=self.number(value['memory_loss'],'memory loss')
             elif kind=='guild_merger':
                 a,b=value['source'],value['target']
+                if p.decision_effect is not None:
+                    na,nb=sum(v==a for v in self.members.values()),sum(v==b for v in self.members.values())
+                    self.dstate[b]=(self.dstate.get(a,0.)*na+self.dstate.get(b,0.)*nb)/(na+nb) if na+nb else (self.dstate.get(a,0.)+self.dstate.get(b,0.))/2
                 for g in self.alias:
                     if self.alias[g]==a:self.alias[g]=b
                 for i in self.members:
@@ -451,7 +458,9 @@ class _RawDailyAccounting:
             elif kind=='auto_verify':autos.append((event,value))
             elif kind=='sandbox_request':sandbox_requests.append(value)
             elif kind=='sandbox_quota':sandbox_quotas.append(value)
-            elif kind in SANDBOX_COUNTED:sandbox_counted.append(kind)
+            elif kind in SANDBOX_COUNTED:sandbox_counted.append(kind);lifecycle.append((kind,value))
+            elif kind=='project_join':lifecycle.append((kind,value))
+            elif kind=='project_collaboration':project_events.append(value)
             elif kind=='administrative_work':
                 if not p.administrative_fatigue:raise ValueError('raw administrative work without the declared accounting')
                 administrative=value['hours_by_person']
@@ -596,7 +605,7 @@ class _RawDailyAccounting:
             if phase['plan']!=coordination_plan:raise ValueError('raw requested/served/unmet coordination differs')
             self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
             self.metrics['enterprise_coordination_served_workdays']+=math.fsum(v['served'] for v in coordination_plan['sites'])
-        losses=[]
+        losses=[];dmorning=dict(self.dstate)
         for g,decision in sorted(decisions.items()):
             domain=[votes[i] for i in active if self.members[i]==g];effective=[];ballots=[];flags=[]
             for vote in domain:
@@ -617,13 +626,15 @@ class _RawDailyAccounting:
             if decision['effective_mass']!=mass or decision['participation']!=sum(flags) or decision['loss']!=loss:
                 raise ValueError('raw decision fields differ from recorded votes/truth')
             losses.append(loss);self.metrics['decisions_completed' if mass else 'decisions_unresolved']+=1
+            if p.decision_effect is not None:
+                d=self.dstate.get(g,0.);self.dstate[g]=d+(min(1.,decision['loss']/p.decision_effect.reference_loss)-d)/p.decision_effect.memory_workdays
             if mass:self.metrics['decision_errors']+=int(loss>0)
         self.metrics['decision_regret_units']+=math.fsum(losses)
         should_work=creating and working and self.closed is None and self.suspended is None and (funding is None or funding>0)
         if not should_work and work or should_work and len(work)!=n:raise ValueError('raw work event daily roster differs')
         if [v['person'] for v in work]!=sorted(set(v['person'] for v in work)):
             raise ValueError('raw work person order/uniqueness differs')
-        output=0.;efforts=[];cooperation=[];governance={}
+        output=0.;efforts=[];cooperation=[];governance={};factors=[]
         post_present=[] if auto_closure else present or []
         attack_active=creating and p.attack!='none' and p.attack_budget_hours_per_day>0 and p.attack_start_day<=day<p.attack_stop_day and bool(post_present)
         attack_slots=math.ceil(p.n*p.attack_cohort_fraction)
@@ -633,6 +644,11 @@ class _RawDailyAccounting:
             i=value['person']
             if self.members.get(i)!=value['guild']:raise ValueError('raw work person/domain differs')
             output+=self.number(value['produced_research_only'],'produced work')
+            if p.decision_effect is not None:
+                expected_factor=1-p.decision_effect.gamma*dmorning.get(value['guild'],0.)
+                if value.get('decision_output_factor')!=expected_factor:raise ValueError('raw decision output factor differs from the guild decision history')
+                factors.append(expected_factor)
+            elif 'decision_output_factor' in value:raise ValueError('raw decision output factor without a declared decision effect')
             efforts.append(self.number(value['effort'],'effort hours',high=1.))
             cooperation.append(self.number(value['cooperation'],'cooperation',high=1.))
             if funding is not None and (value['funding_fraction']!=funding or value['training']!=training[i]*funding):
@@ -680,6 +696,11 @@ class _RawDailyAccounting:
                 if value[field]:self.metrics[key]+=1
             if value['fraudulent']!=(attack_active and p.attack=='forge' and i in attackers) or value['censored'] and not (attack_active and p.attack=='censor' and i not in attackers):
                 raise ValueError('raw work fraud/censorship differs from declared attack')
+        if p.decision_effect is not None:
+            self.metrics['decision_effect_output_factor_sum']+=math.fsum(factors);self.metrics['decision_effect_output_factor_count']+=len(factors)
+            if record.get('decision_effect_state')!={str(g):v for g,v in sorted(self.dstate.items())}:raise ValueError('raw decision-quality state differs from the decision history')
+        elif 'decision_effect_state' in record:raise ValueError('raw decision state without a declared decision effect')
+        self._verify_projects(day,p,working,n,work,sandbox_requests,lifecycle,project_events)
         self.metrics['produced_work_units']+=output
         self.metrics['effort_hours']+=math.fsum(efforts)
         consumed=attack_time*len(attackers) if attack_active else 0.
@@ -824,6 +845,86 @@ class _RawDailyAccounting:
                 raise ValueError('raw event daily/cumulative accounting differs: '+key)
         for key in unsupported:self.metrics[key]=record['metrics_cumulative'].get(key,0.)
         self.previous_reported=dict(reported)
+
+    def _verify_projects(self,day,p,working,n,work,requests,lifecycle,project_events):
+        """Project sandboxes, collaboration approvals and core/allocation attempts, re-derived from the journal.
+
+        Independent here: every `collaborate` request is re-drawn with the keyed random stream and its approval, latency
+        and standing grant re-stated; each pair decision follows from the requests and grants; the project lifecycle
+        (one live project per pair of homes, creation, joins, idle closure) is rebuilt from create/join/close events;
+        core and allocation attempts are re-drawn and the core items must follow the declared cycle. Not independent: the
+        sandbox graph itself (which sandbox is a member's home, scope, approvers) is read from the journal only; the
+        per-member exclusions are checked against the pairs in the organization verifier."""
+        a=p.automation;on=a is not None and a.sandboxes and a.project_sandboxes
+        closed=[]
+        for kind,v in lifecycle:
+            if kind=='sandbox_create' and v.get('sandbox_kind')=='project':
+                pid=v['sandbox']
+                if not on or pid in self.projects or len(v['parents'])!=2 or v['parents']!=sorted(v['parents']):raise ValueError('raw project sandbox creation differs from the declared model')
+                self.projects[pid]={'parents':list(v['parents']),'closed':None,'joined':set()};self.project_last[pid]=day
+                self.metrics['project_sandboxes_created']+=1
+            elif kind=='sandbox_close':
+                pid=v['sandbox']
+                if pid not in self.projects or self.projects[pid]['closed'] is not None:raise ValueError('raw sandbox closure other than a live project sandbox')
+                self.projects[pid]['closed']=day;closed.append(pid);self.metrics['project_sandboxes_closed']+=1
+            elif kind=='project_join':
+                pid=v['sandbox'];people=v['persons']
+                if pid not in self.projects or self.projects[pid]['closed'] is not None or people!=sorted(set(people)) or not people or any(type(i) is not int or i not in self.people for i in people):
+                    raise ValueError('raw project join differs')
+                self.projects[pid]['joined'].update(people)
+            elif kind=='core_block':
+                u=self.market_rng.uniform('sandbox_attempt',day,v['actor'])
+                if (not on or v['item']!=PROTECTED_CORE[self.core_cycle%len(PROTECTED_CORE)] or v['protected'] is not True or day%a.proposal_interval_days
+                        or not u<a.core_attempt_probability):raise ValueError('raw core-protection attempt differs from the declared draw and cycle')
+                self.core_cycle+=1
+            elif kind=='selfmod_needs_approval':
+                u=self.market_rng.uniform('sandbox_attempt',day,v['sandbox'])
+                if (not on or v['parameter']!='authority_alpha' or day%a.proposal_interval_days
+                        or not a.core_attempt_probability<=u<a.core_attempt_probability+a.allocation_attempt_probability):raise ValueError('raw allocation-rule proposal differs from the declared draw')
+        live=sorted(i for i,r in self.projects.items() if r['closed'] is None)
+        if len({tuple(self.projects[i]['parents']) for i in live})!=len(live):raise ValueError('raw two live project sandboxes for one pair of home sandboxes')
+        todays={}
+        for v in requests:
+            if v['action']!='collaborate':continue
+            actor,target=v['actor'],v['target']
+            if not on or not actor<target or (actor,target) in todays:raise ValueError('raw collaboration request differs from the declared model')
+            rejected=self.market_rng.uniform('sandbox_approval',day,actor,target,'collaborate')<a.approval_rejection_probability
+            if v['approved']==rejected or v['direction']!='lateral' or v['effective_day']!=(None if rejected else day+a.approval_latency_days):
+                raise ValueError('raw collaboration approval differs from the keyed draw')
+            todays[(actor,target)]=v
+            if not rejected:self.collab_grants[(actor,target)]=[day+a.approval_latency_days,day+a.approval_latency_days+a.grant_validity_days]
+        if not on:
+            if project_events or any('collaboration_excluded' in w for w in work):raise ValueError('raw project collaboration without declared project sandboxes')
+            return
+        if len(project_events)!=1:raise ValueError('raw project collaboration phase missing or duplicated')
+        event=project_events[0];seen=set();approved=0
+        for x,y,decision,pid in event['pairs']:
+            if not x<y or (x,y) in seen:raise ValueError('raw collaboration pair order/uniqueness differs')
+            seen.add((x,y))
+            if (x,y) in todays:
+                v=todays[(x,y)];expected='rejected' if not v['approved'] else ('approved' if v['effective_day']<=day else 'pending')
+            else:
+                g=self.collab_grants.get((x,y))
+                if g is not None and g[0]<=day<g[1]:expected='granted'
+                elif g is not None and day<g[0]:expected='pending'
+                else:raise ValueError('raw collaboration without a request or a valid standing grant')
+            if decision!=expected or (expected in ('approved','granted'))!=(pid is not None):raise ValueError('raw collaboration decision differs from requests and grants')
+            if pid is not None:
+                approved+=1
+                if pid not in live or self.projects[pid]['parents']!=[x,y]:raise ValueError('raw collaboration project is not the live project of the pair')
+                self.project_last[pid]=day
+        if set(todays)-seen:raise ValueError('raw collaboration request without a pair decision')
+        for pid in closed:
+            if day-self.project_last[pid]<a.project_idle_days:raise ValueError('raw project closed before it was idle')
+        for pid in live:
+            if day-self.project_last[pid]>=a.project_idle_days:raise ValueError('raw idle project sandbox not closed')
+        members=event['project_members']
+        if sorted(members)!=live or any(type(m) is not int or not 0<=m<=len(self.projects[k]['joined']) for k,m in members.items()):raise ValueError('raw project membership differs from the live projects and joins')
+        excluded=sum(len(w['collaboration_excluded']) for w in work)
+        if event['refused_links']<excluded or (len(work)==int(n) and event['refused_links']!=excluded):raise ValueError('raw refused collaboration links differ from the work records')
+        self.metrics['project_collaboration_pair_days']+=approved;self.metrics['refused_collaboration_pair_days']+=len(seen)-approved
+        self.metrics['refused_collaboration_links']+=event['refused_links']
+        if working:self.metrics['project_sandbox_member_workdays']+=sum(members.values())
 
     def finish(self):
         if self.acquisitions is not None and self.state.get('enterprise_acquisition_state')!=self.acquisitions.to_dict():raise ValueError('raw final acquisition state differs')

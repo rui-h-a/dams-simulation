@@ -98,6 +98,12 @@ def verify_organization_accounts(config,state,database):
         return {'splits':edges,'moved_people':sorted({i for row in edges for i in row['moved_people']})}
 
     people_by_token={p['token']:p['id'] for p in state['people']}
+    de=getattr(config,'decision_effect',None);dstate={};dstate_checked=0
+    auto_cfg=getattr(config,'automation',None);project_on=auto_cfg is not None and auto_cfg.sandboxes and auto_cfg.project_sandboxes
+    project_checked=project_unverified=0
+    # A branched arm is validated against its own configuration from the branch day on; the shared prehistory before it
+    # has no automation, so it carries no project phase.
+    branch_day=(state.get('branch_origin') or {}).get('parent_day',0)
     day=0;events=[];last=None;last_plan=None;remaining={}
     l=config.longitudinal;clock=GregorianClock(l);learn={};fatigue={};guilds={};memory={str(g):l.initial_memory for g in range(config.guilds)};exit_sizes={};inventory_guilds=config.guilds
     routine={str(g):l.initial_routine_strength for g in range(config.guilds)};aliases={g:g for g in range(config.guilds)};adoptions={str(g):None for g in range(config.guilds)}
@@ -206,6 +212,7 @@ def verify_organization_accounts(config,state,database):
                 source,target=v['source'],v['target'];na=sum(guilds[i]==source for i in active);nb=sum(guilds[i]==target for i in active)
                 memory[str(target)]=(memory[str(source)]*na+memory[str(target)]*nb)/(na+nb) if na+nb else (memory[str(source)]+memory[str(target)])/2
                 routine[str(target)]=(routine[str(source)]*na+routine[str(target)]*nb)/(na+nb) if na+nb else (routine[str(source)]+routine[str(target)])/2
+                if de is not None:dstate[target]=(dstate.get(source,0.)*na+dstate.get(target,0.)*nb)/(na+nb) if na+nb else (dstate.get(source,0.)+dstate.get(target,0.))/2
                 for g,root in list(aliases.items()):
                     if root==source:aliases[g]=target
                 for i in active:
@@ -260,6 +267,14 @@ def verify_organization_accounts(config,state,database):
                 remaining[key]=int((served+1e-12)/c.verification_hours_per_claim)
             metrics['organization_network_hours']+=net;metrics['organization_quality_hours']+=quality;metrics['organization_learning_hours']+=learning
             work=[p for k,e,p in events if k=='work']
+            dmorning=dict(dstate)   # decision-quality debt held in the morning (before today's decisions move it)
+            project_pairs=None
+            if project_on and day>=branch_day:
+                collaboration=[p for k,e,p in events if k=='project_collaboration']
+                if len(collaboration)!=1:raise ValueError('project collaboration phase missing or duplicated')
+                project_pairs={(x,y):decision not in ('approved','granted') for x,y,decision,_pid in collaboration[0]['pairs']}
+                homes={p['person']:p['sandbox'] for k,e,p in events if k=='auto_verify'}
+            elif any('collaboration_excluded' in p for p in work) or any(k=='project_collaboration' for k,e,p in events):raise ValueError('project collaboration records without declared project sandboxes')
             for person in learn:learn[person]*=2**(-1/l.skill_forgetting_half_life_days)
             for g in v['memory']:memory.setdefault(str(g),0.)
             for g in memory:memory[g]*=2**(-1/l.memory_half_life_days)
@@ -277,9 +292,23 @@ def verify_organization_accounts(config,state,database):
                 delay_layers=min(links['reporting_depth'][str(i)],config.automation.in_scope_layers) if 'reporting_layers' in a else links['reporting_depth'][str(i)]
                 if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+delay_layers*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
                 peers=[j for j in links['collaboration_peers'][str(i)] if j in present_set]
+                excluded=set()
+                if project_pairs is not None:
+                    excluded=set(p['collaboration_excluded'])
+                    if len(excluded)!=len(p['collaboration_excluded']) or not excluded<=set(peers):raise ValueError('collaboration exclusions are not present collaboration peers')
+                    for j in peers:
+                        hi,hj=homes.get(i),homes.get(j)
+                        if hi is None or hj is None:
+                            project_unverified+=j in excluded;continue   # a home sandbox is known only from that day's automated-verification records
+                        pair=(hi,hj) if hi<hj else (hj,hi)
+                        if hi==hj:refused=False
+                        elif pair in project_pairs:refused=project_pairs[pair]
+                        else:raise ValueError('collaboration across two home sandboxes has no recorded pair decision')
+                        if refused!=(j in excluded):raise ValueError('collaboration exclusion differs from the recorded pair decision')
+                        project_checked+=1
                 # R11: cross-language collaboration contacts carry the declared discount (independent re-statement).
                 lang=(lambda j:1. if pc is None else (1. if pc_language[i]==pc_language[j] else 1-pc.cross_language_help_discount)*(1. if pc_ethnicity[i]==pc_ethnicity[j] else 1-pc.cross_ethnic_help_discount))
-                help_input=math.fsum(cooperation[str(j)]*lang(j) for j in peers)/len(peers) if peers else 0.
+                help_input=math.fsum(cooperation[str(j)]*lang(j) for j in peers if j not in excluded)/len(peers) if peers else 0.
                 _close(p['help_input'],help_input,'collaboration input')
                 agent=state['agents'][i];morning=p['morning_observed_state'];token=state['people'][i]['token']
                 _close(morning['learning'],learn[i],'morning learning from complete history')
@@ -294,7 +323,12 @@ def verify_organization_accounts(config,state,database):
                 demand=1. if config.enterprise_operations is not None else next((amount for when,amount in reversed(l.demand_schedule) if when<=day),1.)
                 _close(o['transition_fraction'],transition,'production adoption/routine transition')
                 _close(o['demand_fraction'],demand,'production actual demand schedule')
-                before=agent['skill']*(1+morning['learning'])*o['planned_effort']*(1-morning['fatigue'])*noise*shock*o['demand_fraction']*o['transition_fraction']/difficulty*(1+config.cooperation_strength*help_input)*readiness
+                dfactor=1.
+                if de is not None:
+                    dfactor=1-de.gamma*dmorning.get(guilds[i],0.)
+                    _close(p['decision_output_factor'],dfactor,'decision output factor from the guild decision history')
+                elif 'decision_output_factor' in p:raise ValueError('decision output factor without a declared decision effect')
+                before=agent['skill']*(1+morning['learning'])*o['planned_effort']*(1-morning['fatigue'])*noise*shock*o['demand_fraction']*o['transition_fraction']/difficulty*(1+config.cooperation_strength*help_input)*readiness*dfactor
                 _close(o['potential_before_dependencies'],before,'production equation before dependencies')
                 potential[key]+=before;by_department[key]+=p['produced_research_only']
                 sd=config.review_error_sd/(1+c.quality_measurement_efficiency*o['quality_hours'])
@@ -383,6 +417,15 @@ def verify_organization_accounts(config,state,database):
                 key=str(g);decay=2**(-1/l.routine_adjustment_half_life_days)
                 routine[key]=routine[key]*decay if adoptions[key] is not None else min(1.,routine[key]+(1-routine[key])*(1-decay))
             for g,amount in v['routine'].items():_close(amount,routine[str(g)],'organizational routine history')
+            if de is not None:
+                for kind_,_event,payload_ in events:
+                    if kind_=='decision':
+                        g_=payload_['guild'];d_=dstate.get(g_,0.);dstate[g_]=d_+(min(1.,payload_['loss']/de.reference_loss)-d_)/de.memory_workdays
+                recorded=v.get('decision_effect_state')
+                if not isinstance(recorded,dict) or set(recorded)!={str(g_) for g_ in dstate}:raise ValueError('decision-quality state roster differs from the decision history')
+                for g_,x in dstate.items():_close(recorded[str(g_)],x,'decision-quality debt history')
+                dstate_checked+=1
+            elif 'decision_effect_state' in v:raise ValueError('decision-quality state without a declared decision effect')
             durable={'schema_version':base_c.schema_version,'completed_days':day+1,'stocks':dict(stocks),'generated':dict(generated),'consumed':dict(consumed),'last_plan':plan,'review_remaining':remaining}
             if structure is not None:
                 installed=v['enterprise_growth_state']['departments']
@@ -398,6 +441,11 @@ def verify_organization_accounts(config,state,database):
         if events or day!=state['day']:raise ValueError('organization raw history is incomplete')
         if day==0:last={'schema_version':base_c.schema_version,'completed_days':0,'stocks':stocks,'generated':generated,'consumed':consumed,'last_plan':None,'review_remaining':{}}
         if day==0 and structure is not None:last['structure']=copy.deepcopy(structure)
+        if de is not None:
+            final=state.get('decision_state')
+            if not isinstance(final,dict) or set(final)!={str(g_) for g_ in dstate}:raise ValueError('final decision-quality roster differs from the decision history')
+            for g_,x in dstate.items():_close(final[str(g_)],x,'final decision-quality debt')
+        elif 'decision_state' in state:raise ValueError('decision state without a declared decision effect')
         for person in learn:
             _close(state['agents'][person]['learning'],learn[person],'final restored learning')
             _close(state['agents'][person]['fatigue'],fatigue[person],'final restored fatigue')
@@ -407,4 +455,6 @@ def verify_organization_accounts(config,state,database):
         if owned:db.close()
     _source()
     return {'valid':True,'enabled':True,'days_verified':day,'independent_transition_functions':True,
-            'formal_worlds_added':0,'empirical_calibration_completed':False,'external_validation_completed':False}
+            'formal_worlds_added':0,'empirical_calibration_completed':False,'external_validation_completed':False,
+            **({'decision_effect_days_verified':dstate_checked} if de is not None else {}),
+            **({'collaboration_links_verified':project_checked,'collaboration_exclusions_with_unverified_home':project_unverified} if project_on else {})}

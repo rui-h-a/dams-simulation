@@ -52,7 +52,14 @@ def measures(arm_dir):
             'rejection_rate': (requests-approved)/requests if requests else None,
             'mean_approval_latency_days': g('sandbox_approval_latency_days')/approved if approved else None,
             'borrowed_quota_units': g('sandbox_borrowed_units'),
-            'reviews_deferred_for_read_grant': g('sandbox_read_deferred_records')},
+            'reviews_deferred_for_read_grant': g('sandbox_read_deferred_records'),
+            # Project sandboxes (arms with project_sandboxes): a collaboration across two home sandboxes needs an approved project.
+            'project_sandboxes_created': g('project_sandboxes_created'), 'project_sandboxes_closed': g('project_sandboxes_closed'),
+            'project_sandboxes_live_at_end': g('project_sandboxes_live'),
+            'project_sandbox_member_workdays': g('project_sandbox_member_workdays'),
+            'collaboration_pair_days_approved': g('project_collaboration_pair_days'),
+            'collaboration_pair_days_refused': g('refused_collaboration_pair_days'),
+            'collaboration_peer_links_refused': g('refused_collaboration_links')},
         'structural_change': {k: g(k) for k in ('sandboxes_created', 'sandboxes_split', 'sandboxes_merged', 'sandboxes_closed')},
         'scaling': {
             'produced_work_units_per_member_year': per(g('produced_work_units')),
@@ -63,12 +70,15 @@ def measures(arm_dir):
             'confirmation_mean_days': s.get('confirmation_mean_days')},
         'safety': {
             'blocked_privacy_reads': g('privacy_blocks'), 'blocked_core_modifications': g('core_blocks'),
+            'allocation_rule_proposals_needing_approval': g('allocation_attempts'),
             'self_modification_adoptions': g('selfmod_adoptions'), 'self_modification_rollbacks': g('selfmod_rollbacks'),
             'faults_injected': g('faults_injected'), 'faults_detected': g('faults_detected'), 'faults_recovered': g('faults_recovered'),
             'fault_containment': s.get('fault_containment')},
         'governance_quality': {
             'decision_regret_per_available_member_hour': s.get('decision_regret_per_available_member_hour'),
             'decision_regret_units': g('decision_regret_units'),
+            'decision_effect_mean_output_factor': s.get('decision_effect_mean_output_factor'),
+            'decision_effect_member_days': g('decision_effect_output_factor_count'),
             'automated_false_accepts': g('auto_false_accepts'), 'automated_false_rejects': g('auto_false_rejects'),
             'automated_verifications': processed,
             'honest_records_rejected': g('honest_records_rejected'),

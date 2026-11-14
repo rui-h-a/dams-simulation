@@ -42,7 +42,9 @@ KINDS = ('guild', 'team', 'project')
 COUNTED_EVENTS = {'sandbox_create': 'sandboxes_created', 'sandbox_split': 'sandboxes_split', 'sandbox_merge': 'sandboxes_merged',
                   'sandbox_close': 'sandboxes_closed', 'privacy_block': 'privacy_blocks', 'core_block': 'core_blocks',
                   'selfmod_adopt': 'selfmod_adoptions', 'selfmod_rollback': 'selfmod_rollbacks', 'fault_inject': 'faults_injected',
-                  'fault_detected': 'faults_detected', 'fault_recovered': 'faults_recovered'}
+                  'fault_detected': 'faults_detected', 'fault_recovered': 'faults_recovered',
+                  # Allocation-parameter proposals made by sandboxes (each is logged once and never applied locally).
+                  'selfmod_needs_approval': 'allocation_attempts'}
 
 
 class SandboxError(ValueError):
@@ -65,12 +67,14 @@ class SandboxGraph:
         self.series = {}        # str(day) -> {sandbox: confirmed claims}  (fault runs only)
         self.sizes = {}         # str(day) -> {sandbox: members}            (fault runs only)
         self.fault = None       # injected-fault record
+        self.core_cycle = 0     # protected-core items attempted so far (the next attempt takes PROTECTED_CORE[core_cycle % 5])
 
     # ---- serialisation ----
     def to_dict(self):
         return {'sandboxes': copy.deepcopy(self.sandboxes), 'primary': {str(k): v for k, v in sorted(self.primary.items())},
                 'grants': copy.deepcopy(self.grants), 'denials': dict(self.denials), 'shadows': copy.deepcopy(self.shadows), 'usage': copy.deepcopy(self.usage),
-                'series': copy.deepcopy(self.series), 'sizes': copy.deepcopy(self.sizes), 'fault': copy.deepcopy(self.fault)}
+                'series': copy.deepcopy(self.series), 'sizes': copy.deepcopy(self.sizes), 'fault': copy.deepcopy(self.fault),
+                **({'core_cycle': self.core_cycle} if self.core_cycle else {})}
 
     @classmethod
     def from_dict(cls, value, config, uniform):
@@ -78,6 +82,7 @@ class SandboxGraph:
         g.sandboxes = copy.deepcopy(value['sandboxes']); g.primary = {int(k): v for k, v in value['primary'].items()}
         g.grants = copy.deepcopy(value['grants']); g.denials = dict(value.get('denials', {})); g.shadows = copy.deepcopy(value['shadows']); g.usage = copy.deepcopy(value['usage'])
         g.series = copy.deepcopy(value.get('series', {})); g.sizes = copy.deepcopy(value.get('sizes', {})); g.fault = copy.deepcopy(value.get('fault'))
+        g.core_cycle = int(value.get('core_cycle', 0))
         return g
 
     def drain(self):
@@ -103,6 +108,7 @@ class SandboxGraph:
                                'open': sorted(open_claims), 'local': {'exception_fraction': self.c.exception_fraction, 'false_reject_probability': self.c.false_reject_probability},
                                'history': [[day, 'create', {'kind': kind, 'parents': sorted(parents)}]]}
         self.usage.setdefault(sid, {'own': 0., 'borrowed_in': 0., 'lent_out': 0.})
+        if kind == 'project':self.sandboxes[sid]['last_active'] = day     # last day of collaboration (idle closure)
         if kind != 'project':
             for m in self.sandboxes[sid]['members']:self.primary[m] = sid
         self._note(day, 'sandbox_create', sandbox=sid, sandbox_kind=kind, parents=sorted(parents))
@@ -229,20 +235,24 @@ class SandboxGraph:
         self._retire(day, a, [nid], 'merge'); self._retire(day, b, [nid], 'merge')
         return nid
 
+    def _structural_descendants(self, sid):
+        """Descendants other than project sandboxes: a project hanging under a guild does not freeze its restructuring."""
+        return {d for d in self.descendants(sid) if self.sandboxes[d]['kind'] != 'project'}
+
     def rebalance(self, day, split_above, merge_below):
         """Split live leaf sandboxes above `split_above` members; merge sibling leaves below `merge_below`."""
         done = []
         frozen = self.fault['sandbox'] if self.fault is not None and self.fault['active'] else None   # no restructuring during its fault
         for sid in self.live():
             s = self.sandboxes[sid]
-            if sid != frozen and s['closed'] is None and s['kind'] != 'project' and split_above and len(s['members']) > split_above and not self.descendants(sid):
+            if sid != frozen and s['closed'] is None and s['kind'] != 'project' and split_above and len(s['members']) > split_above and not self._structural_descendants(sid):
                 done.append(('split', self.split(day, sid)))
         if merge_below:
             for sid in self.live():
                 s = self.sandboxes[sid]
-                if sid == frozen or s['closed'] is not None or s['kind'] == 'project' or len(s['members']) >= merge_below or self.descendants(sid):continue
+                if sid == frozen or s['closed'] is not None or s['kind'] == 'project' or len(s['members']) >= merge_below or self._structural_descendants(sid):continue
                 mates = [o for o in self.live() if o != sid and o != frozen and self.sandboxes[o]['parents'] == s['parents'] and self.sandboxes[o]['kind'] == s['kind']
-                         and not self.descendants(o)]
+                         and not self._structural_descendants(o)]
                 if mates:
                     mate = min(mates, key=lambda o: (len(self.sandboxes[o]['members']), o))
                     done.append(('merge', self.merge(day, *sorted((sid, mate)))))
@@ -291,6 +301,71 @@ class SandboxGraph:
         """No sandbox can modify the protected core; the attempt is blocked and logged."""
         self._note(day, 'core_block', actor=sandbox, item=item, protected=item in PROTECTED_CORE)
         return False
+
+    # ---- project sandboxes: cross-boundary collaboration ----
+    def project_for(self, a, b):
+        """Live project sandbox whose parents are exactly the two home sandboxes a and b (None if there is none)."""
+        parents = sorted((a, b))
+        for sid in self.live():
+            s = self.sandboxes[sid]
+            if s['kind'] == 'project' and s['parents'] == parents:return sid
+        return None
+
+    def _new_project_id(self, a, b):
+        base = 'p:'+'+'.join(sorted((a, b)))
+        sid, k = base, 1
+        while sid in self.sandboxes:   # a pair whose earlier project was closed gets a new generation
+            k += 1; sid = f'{base}#{k}'
+        return sid
+
+    def collaborate(self, day, a, b, persons):
+        """Collaboration of the members `persons` of two home sandboxes a and b that are not in each other's
+        scope. It needs the common parent's approval of a lateral request (`collaborate`, logged; a standing
+        grant is reused until it expires) and takes place in a project sandbox with both homes as parents:
+        created on the first approved day, joined by later pairs of the same two homes. Returns
+        {'decision', 'approved', 'project'}; a refused collaboration leaves everything unchanged."""
+        a, b = sorted((a, b))
+        if a == b or self.in_scope(a, b) or self.in_scope(b, a):raise SandboxError('collaboration across a boundary needs two sandboxes outside each other\'s scope')
+        r = self.request(day, a, b, 'collaborate')
+        if not r['approved']:return {'decision': r['decision'], 'approved': False, 'project': None}
+        people = sorted(set(persons))
+        pid = self.project_for(a, b)
+        if pid is None:
+            pid = self.create(day, self._new_project_id(a, b), 'project', parents=[a, b], members=people)
+            joined = people
+        else:
+            joined = [p for p in people if p not in self.sandboxes[pid]['members']]
+            for p in joined:self.add_member(day, pid, p)
+        if joined:self._note(day, 'project_join', sandbox=pid, persons=joined)
+        self.sandboxes[pid]['last_active'] = day
+        return {'decision': r['decision'], 'approved': True, 'project': pid}
+
+    def project_heir(self, sid):
+        """Live non-project sandbox that receives a closing project's credit and open claims: its first parent,
+        or (when that parent has been split or merged since) the first live successor."""
+        for p in self.sandboxes[sid]['parents']:
+            for cand in ([p] if self.sandboxes[p]['closed'] is None else self.leaves_under(p)):
+                if self.sandboxes[cand]['closed'] is None and self.sandboxes[cand]['kind'] != 'project':return cand
+        raise SandboxError('a closing project sandbox has no live parent or successor to receive its credit and open claims')
+
+    def close_idle_projects(self, day, idle_days):
+        """Close project sandboxes without collaboration for `idle_days` days (heir: see project_heir)."""
+        closed = []
+        for sid in self.live():
+            s = self.sandboxes[sid]
+            if s['kind'] == 'project' and day-s.get('last_active', s['created']) >= idle_days:
+                self.close(day, sid, heir=self.project_heir(sid)); closed.append(sid)
+        return closed
+
+    def project_members(self):
+        """{project sandbox: member count} of the live project sandboxes."""
+        return {i: len(self.sandboxes[i]['members']) for i in self.live() if self.sandboxes[i]['kind'] == 'project'}
+
+    def next_core_item(self):
+        """The protected-core item the next attempt targets (deterministic cycle through PROTECTED_CORE)."""
+        item = PROTECTED_CORE[self.core_cycle % len(PROTECTED_CORE)]
+        self.core_cycle += 1
+        return item
 
     # ---- quota consumption attribution ----
     def attribute(self, sandbox, units, *, lender=None):

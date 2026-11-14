@@ -105,9 +105,23 @@ class AutomationConfig:
     fault_detect_min_claims: int = 5
     fault_drop_threshold: float = 0.2           # relative throughput drop that counts as 'affected'
     fault_baseline_days: int = 30
+    # Project sandboxes and core-protection attempts in the daily loop (all declared design assumptions; they
+    # may be set only with project_sandboxes). A cross-guild collaboration needs a project sandbox that has
+    # both home sandboxes as parents; it is closed after project_idle_days without collaboration. When a
+    # sandbox makes its periodic self-modification proposal it instead tries to change a protected-core item
+    # with probability core_attempt_probability, or an allocation parameter with allocation_attempt_probability.
+    project_sandboxes: bool = False
+    project_idle_days: int = 30
+    core_attempt_probability: float = 0.05
+    allocation_attempt_probability: float = 0.05
+
+    PROJECT_FIELDS = ('project_sandboxes', 'project_idle_days', 'core_attempt_probability', 'allocation_attempt_probability')
 
     def to_dict(self):
-        return dataclasses.asdict(self)
+        value = dataclasses.asdict(self)
+        if not self.project_sandboxes:   # earlier arms keep their configuration digest
+            for name in self.PROJECT_FIELDS:value.pop(name)
+        return value
 
     @classmethod
     def from_dict(cls, value):
@@ -151,6 +165,21 @@ class AutomationConfig:
             raise ValueError('scoped_authority is boolean and needs sandboxes')
         if not isinstance(self.sandboxes, bool):
             raise ValueError('sandboxes must be boolean')
+        if not isinstance(self.project_sandboxes, bool):
+            raise ValueError('project_sandboxes must be boolean')
+        defaults = type(self)()
+        if self.project_sandboxes:
+            if not self.sandboxes:raise ValueError('project_sandboxes needs sandboxes')
+            if type(self.project_idle_days) is not int or not 1 <= self.project_idle_days <= 100_000_000:raise ValueError('project_idle_days must be an integer >= 1')
+            for name in ('core_attempt_probability', 'allocation_attempt_probability'):
+                v = getattr(self, name)
+                if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not 0. <= v <= 1.:raise ValueError(f'{name} must be finite in [0, 1]')
+            if self.core_attempt_probability+self.allocation_attempt_probability > 1.+1e-12:raise ValueError('core and allocation attempt probabilities must sum to at most 1')
+            if (self.core_attempt_probability or self.allocation_attempt_probability) and not self.self_modify:
+                raise ValueError('core and allocation attempts are made with the periodic self-modification proposal and need self_modify')
+        else:
+            for name in self.PROJECT_FIELDS:
+                if getattr(self, name) != getattr(defaults, name):raise ValueError(name+' may be set only with project_sandboxes')
         if self.sandbox_level not in ('guild', 'team'):
             raise ValueError('sandbox_level must be guild or team')
         return self
@@ -213,6 +242,18 @@ def settled_ready(claim_ready, settlement_days):
     settlement lag counted from d; the reporting delay is kept.
     """
     return claim_ready-1+settlement_days
+
+
+# ---- project sandboxes: what a periodic self-modification proposal turns into -----------------
+
+def attempt_kind(config, u):
+    """'core' (an attempt to change a protected-core item), 'allocation' (a proposal on an allocation
+    parameter) or None (the ordinary local proposal) for the keyed uniform draw `u`; always None unless
+    project sandboxes are on."""
+    if not config.project_sandboxes:return None
+    if u < config.core_attempt_probability:return 'core'
+    if u < config.core_attempt_probability+config.allocation_attempt_probability:return 'allocation'
+    return None
 
 
 # ---- scoped authority: layers a member's work passes --------------------------------------

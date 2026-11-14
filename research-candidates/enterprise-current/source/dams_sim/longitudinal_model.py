@@ -27,11 +27,12 @@ from .organization_tasks import OrganizationTasksState, VERSION as ORGANIZATION_
 from .longitudinal import GregorianClock, anniversary, birth_for_age, interval_probability, retention
 from .longitudinal_storage import (ExactLedger, snapshot_semantics, CHECKPOINT_FORMAT_VERSION,
     STATE_HASH_CODEC, LEGACY_STATE_HASH_CODEC, checkpoint_codec, hash_state_json,
-    integer_state_maps, json_chunks, journal_json, load_checkpoint_json)
+    integer_state_maps, integer_key_map, json_chunks, journal_json, load_checkpoint_json)
 from .randomness import WorldRandom
 from .storage import atomic_stream, canonical, digest, file_digest, source_hash
 from . import automation as _automation
 from . import sandbox as _sandbox
+from . import decision_effect as _decision
 
 IMPORTED_SOURCE_SHA256=source_hash()
 
@@ -73,6 +74,7 @@ class LongitudinalEngine:
         self.routine={g:self.l.initial_routine_strength for g in range(config.guilds)}
         self.adoption={g:None for g in range(config.guilds)}
         self.migration_paid={g:False for g in range(config.guilds)}
+        self.decision_state={}   # guild -> decision-quality debt D (only with a decision_effect block; absent guilds hold 0)
         self.closed_day=None; self.suspended_day=None; self.unfunded_workdays=0
         self.metrics=defaultdict(float); self.history=[]; self.authority_change_sum=0.; self.authority_change_count=0
         self.branch_origin=None
@@ -258,6 +260,7 @@ class LongitudinalEngine:
             na,nb=len(self.members.get(a,[])),len(self.members.get(b,[])); total=na+nb
             self.memory[b]=(self.memory[a]*na+self.memory[b]*nb)/total if total else (self.memory[a]+self.memory[b])/2
             self.routine[b]=(self.routine[a]*na+self.routine[b]*nb)/total if total else (self.routine[a]+self.routine[b])/2
+            if p.decision_effect is not None:self.decision_state[b]=_decision.merge_debt(self.decision_state.get(a,0.),na,self.decision_state.get(b,0.),nb)
             for g,v in list(self.guild_alias.items()):
                 if v==a:self.guild_alias[g]=b
             # A merged domain does not automatically grant the source-domain's
@@ -415,6 +418,8 @@ class LongitudinalEngine:
 
     def _sync_sandboxes(self,day):
         """Mirror guilds (and teams) of adopted domains into the sandbox graph; apply the declared lifecycle."""
+        if self.__dict__.get('_sync_day')==day:return   # already mirrored today (project collaboration runs before verification)
+        self._sync_day=day
         c=self.config.automation;g=self._graph();desired={}
         for gd,ids in sorted(self.members.items()):
             if not ids or self.adoption[gd] is None:continue
@@ -531,6 +536,9 @@ class LongitudinalEngine:
                     for sid in g.live():
                         s=g.sandboxes[sid]
                         if s['kind']=='project' or not s['members'] or sid in g.shadows:continue
+                        attempt=_automation.attempt_kind(c,self.rng.uniform('sandbox_attempt',day,sid)) if c.project_sandboxes else None
+                        if attempt=='core':g.propose(day,sid,g.next_core_item(),0.);continue
+                        if attempt=='allocation':g.propose(day,sid,'authority_alpha',p.alpha);continue
                         lo,hi=_sandbox.LOCAL_BOUNDS['exception_fraction'];cur=s['local']['exception_fraction']
                         value=round(min(hi,max(lo,cur+(-1 if self.rng.uniform('sandbox_selfmod',day,sid)<.5 else 1)*c.self_modify_step)),6)
                         if value!=cur:g.propose(day,sid,'exception_fraction',value)
@@ -541,8 +549,47 @@ class LongitudinalEngine:
             if entry['kind']=='sandbox_request':
                 self.metrics['sandbox_requests']+=1;self.metrics['sandbox_requests_approved']+=int(entry['approved'])
                 if entry['approved']:self.metrics['sandbox_approval_latency_days']+=entry['effective_day']-day
-            elif entry['kind'] in _sandbox.COUNTED_EVENTS:self.metrics[_sandbox.COUNTED_EVENTS[entry['kind']]]+=1
+            elif entry['kind'] in _sandbox.COUNTED_EVENTS:
+                self.metrics[_sandbox.COUNTED_EVENTS[entry['kind']]]+=1
+                if entry['kind']=='sandbox_create' and entry['sandbox_kind']=='project':self.metrics['project_sandboxes_created']+=1
+                elif entry['kind']=='sandbox_close' and self._graph().sandboxes[entry['sandbox']]['kind']=='project':self.metrics['project_sandboxes_closed']+=1
             self.ledger.add_journal(day,entry['kind'],f"{entry['kind']}:{day}:{phase}{index}",entry)
+
+    def _project_collaboration(self,day,present,links,working):
+        """Collaboration across home sandboxes (project sandboxes on). A member and a present collaboration peer whose
+        home (primary, non-project) sandboxes differ and are not in each other's scope need a project sandbox with both
+        homes as parents: the pair of homes asks the common parent for `collaborate` (once per day and unordered pair;
+        a standing grant is reused), and when approved the project sandbox is created or joined. A pair that is refused
+        (or whose approval is still pending) cannot collaborate that day: the peer contributes nothing to the member's
+        help input but still counts in its denominator. Projects without collaboration for `project_idle_days` days are
+        closed. Returns {person: set of peers excluded today}; everything is journalled as one `project_collaboration`
+        event per day."""
+        c=self.config.automation
+        g=self._graph();self._sync_sandboxes(day)
+        pairs={};directed=[]
+        for i in sorted(present):
+            home=g.primary.get(i)
+            if home is None:continue
+            for j in links[str(i)]:
+                if j not in present:continue
+                other=g.primary.get(j)
+                if other is None or other==home or g.in_scope(home,other) or g.in_scope(other,home):continue
+                key=(home,other) if home<other else (other,home)
+                pairs.setdefault(key,set()).update((i,j));directed.append((i,j,key))
+        decisions={key:g.collaborate(day,key[0],key[1],pairs[key]) for key in sorted(pairs)}
+        excluded={}
+        for i,j,key in directed:
+            if not decisions[key]['approved']:excluded.setdefault(i,set()).add(j)
+        g.close_idle_projects(day,c.project_idle_days)
+        members=g.project_members()
+        approved=sum(d['approved'] for d in decisions.values())
+        self.metrics['project_collaboration_pair_days']+=approved
+        self.metrics['refused_collaboration_pair_days']+=len(decisions)-approved
+        self.metrics['refused_collaboration_links']+=sum(len(v) for v in excluded.values())
+        if working:self.metrics['project_sandbox_member_workdays']+=sum(members.values())
+        self.ledger.add_journal(day,'project_collaboration',f'project:{day}',{'pairs':[[key[0],key[1],d['decision'],d['project']] for key,d in sorted(decisions.items())],
+            'refused_links':sum(len(v) for v in excluded.values()),'project_members':members})
+        return excluded
 
     def _reviewer_may_read(self,day,reviewer,claim):
         """Sandbox privacy scope for a human review: a reviewer whose home sandbox does not contain the
@@ -664,6 +711,7 @@ class LongitudinalEngine:
         from .model import Claim,clip
         p,l,day=self.config,self.l,self.day
         before=dict(self.metrics)
+        de=p.decision_effect
         control=self._joint_pending_control
         if control is not None:
             from .joint_firm import validate_control, VERSION
@@ -797,6 +845,9 @@ class LongitudinalEngine:
             self.metrics['organization_learning_hours']+=math.fsum(organization_learning.values())*funding
             self.ledger.add_journal(day,'organization_plan',f'organization:plan:{day}',plan)
         governance_time={i:.05 if (1-self.agents[i].care_hours-variable_reservations[i])*funding>=.05 else 0. for i in present}
+        # Decision-quality debt held in the morning: it scales today's output; today's decisions only move it for tomorrow.
+        decision_morning=dict(self.decision_state) if de is not None else {}
+        decision_factor=lambda guild:_decision.output_factor(de,decision_morning.get(guild,0.)) if de is not None else 1.
         losses=[];participation=[];influence=[]
         if creating and working and operating and self.closed_day is None:
             for g,ids in sorted(self.members.items()):
@@ -822,6 +873,7 @@ class LongitudinalEngine:
                     self.metrics['decisions_completed']+=1;self.metrics['decision_errors']+=int(loss>0)
                 else:loss=abs(theta);self.metrics['decisions_unresolved']+=1
                 losses.append(loss);participation.append(sum(flags)/len(ids) if ids else 0.)
+                if de is not None:self.decision_state[g]=_decision.update_debt(de,self.decision_state.get(g,0.),loss)
                 self.ledger.add_journal(day,'decision',f'decision:{day}:{g}',{'guild':g,'proposal_truth_research_only':theta,'loss':loss,'participation':sum(flags),'effective_mass':mass})
         attack_active=creating and p.attack!='none' and p.attack_budget_hours_per_day>0 and p.attack_start_day<=day<p.attack_stop_day and bool(present)
         # A fixed slot cohort remains policy-common despite nonreused person IDs.
@@ -854,9 +906,11 @@ class LongitudinalEngine:
             self.metrics['training_hours']+=training[i]*funding
             self.metrics['governance_hours']+=governance_time[i]
         team_help={team:statistics.fmean(cooperation.get(i,0.) for i in ids) for team,ids in self.teams.items()}
+        project_on=p.automation is not None and p.automation.sandboxes and p.automation.project_sandboxes;collaboration_excluded={}
         if self.organization is not None:
             links=self.organization.last_plan['topology']['collaboration_peers']
-            organization_help={i:(math.fsum(cooperation[j]*(self.pc.help_language_factor(i,j) if self.pc is not None else 1.) for j in links[str(i)] if j in present)/sum(j in present for j in links[str(i)]) if any(j in present for j in links[str(i)]) else 0.) for i in present}
+            if project_on:collaboration_excluded=self._project_collaboration(day,present,links,working)
+            organization_help={i:(math.fsum(cooperation[j]*(self.pc.help_language_factor(i,j) if self.pc is not None else 1.) for j in links[str(i)] if j in present and j not in collaboration_excluded.get(i,()))/sum(j in present for j in links[str(i)]) if any(j in present for j in links[str(i)]) else 0.) for i in present}
         organization_potential={};organization_unconstrained={};organization_planned_effort=dict(efforts)
         if self.organization is not None:
             for i in sorted(present):
@@ -864,7 +918,7 @@ class LongitudinalEngine:
                 a=self.agents[i];token=self.people[i]['token']
                 shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
                 adopt=self.adoption[a.guild];transition=1. if adopt is None else 1-.2*self.routine[a.guild]*(1-clip((day-adopt)/l.transition_days))
-                organization_potential[i]=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*(self.demand if self.operations is None else 1.)*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*organization_help[i])*organization_readiness[i]
+                organization_potential[i]=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*(self.demand if self.operations is None else 1.)*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*organization_help[i])*organization_readiness[i]*decision_factor(a.guild)
             organization_unconstrained=dict(organization_potential)
             organization_potential=self.organization.task_allocation(organization_potential)
         production_fraction=1.
@@ -876,7 +930,7 @@ class LongitudinalEngine:
                 help_input=(team_help[a.team]+cooperation.get(cross,0.)*(self.pc.help_language_factor(i,cross) if self.pc is not None else 1.))/2
                 shock=.7 if p.fault_start_day<=day<p.fault_stop_day and a.site==0 else 1.
                 adopt=self.adoption[a.guild];transition=1. if adopt is None else 1-.2*self.routine[a.guild]*(1-clip((day-adopt)/l.transition_days))
-                potential=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input)
+                potential=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*math.exp(.1*self.rng.normal('task_output',day,token))*shock*transition/(.5+self.rng.uniform('task_difficulty',day,token))*(1+p.cooperation_strength*help_input)*decision_factor(a.guild)
                 if self.organization is not None:potential=organization_potential[i]
                 potential_by_person[i]=potential;potential_by_site[a.site]+=potential
             allocated=self.operations.allocate_production(dict(potential_by_site),self.enterprise.capacity,self.cash,self.site_count)
@@ -891,7 +945,7 @@ class LongitudinalEngine:
         organization_produced={}
         auto_batch=[]
         produced_by_site=defaultdict(list)
-        daily_output=0.;yearwork=max(1,self.clock.workdays_in_year(day))
+        daily_output=0.;yearwork=max(1,self.clock.workdays_in_year(day));decision_factors=[]
         for index,i in enumerate(self.active):
             a=self.agents[i];token=self.people[i]['token']
             if i not in present:
@@ -910,12 +964,13 @@ class LongitudinalEngine:
                 transition=1-.2*self.routine[a.guild]*(1-progress)
             difficulty=.5+self.rng.uniform('task_difficulty',day,token)
             quality=math.exp(.1*self.rng.normal('task_output',day,token))
-            produced=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*quality*shock*(self.demand if self.operations is None else 1.)*transition/difficulty*(1+p.cooperation_strength*help_input)
+            produced=a.skill*(1+a.learning)*efforts[i]*(1-a.fatigue)*quality*shock*(self.demand if self.operations is None else 1.)*transition/difficulty*(1+p.cooperation_strength*help_input)*decision_factor(a.guild)
             if self.organization is not None:
                 help_input=organization_help[i]
                 produced=organization_potential[i]
             if self.operations is not None:produced=allocated_people[i]
             organization_produced[i]=produced
+            if de is not None:decision_factors.append(decision_factor(a.guild))
             daily_output+=produced;produced_by_site[a.site].append(produced);observed=max(0.,produced+p.review_error_sd*self.rng.normal('observed_work',day,token))
             if self.organization is not None:observed=max(0.,produced+p.review_error_sd/(1+self.organization.c.quality_measurement_efficiency*organization_quality[i]*funding)*self.rng.normal('observed_work',day,token))
             fraud=attack_active and p.attack=='forge' and i in attacker_set
@@ -934,7 +989,7 @@ class LongitudinalEngine:
             else:self._submit(a.guild,claim,auto_batch)
             if attack_active and p.attack=='duplicate' and i in attacker_set:self._submit(a.guild,dataclasses.replace(claim),auto_batch)
             self.metrics['work_events']+=1
-            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attacker_set else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
+            self.ledger.add_journal(day,'work',event,{'person':i,'guild':a.guild,'produced_research_only':produced,'observed':observed,'audit':audit,'fraudulent':fraud,'censored':censor,'effort':efforts[i],'training':training[i]*funding,'attack_hours':attack_time if i in attacker_set else 0.,'morning_observed_state':{'share':snapshot[i][0],'trust':snapshot[i][1],'fatigue':snapshot[i][2],'learning':snapshot[i][3]},'cooperation':cooperation[i],'help_input':help_input,'funding_fraction':funding,**({'collaboration_excluded':sorted(collaboration_excluded.get(i,()))} if project_on else {}),**({'decision_output_factor':decision_factor(a.guild)} if de is not None else {}),**({'organization':{'planned_effort':organization_planned_effort[i],'quality_hours':organization_quality[i]*funding,'learning_hours':organization_learning[i]*funding,'reporting_readiness_fraction':organization_readiness[i],'task_department':self.organization.department(i),'claim_ready_day':ready,'potential_before_dependencies':organization_unconstrained[i],'transition_fraction':transition,'demand_fraction':self.demand if self.operations is None else 1.}} if self.organization is not None else {}),**({'enterprise_coordination':coordination[i]*funding,'enterprise_calendar_fraction':self.operations.calendar_fraction(self.clock,a.site,day),'enterprise_production_fraction':production_fractions.get(i,1.),'enterprise_unconstrained_potential':potential_by_person.get(i,0.),'enterprise_coordination_readiness_fraction':coordination_readiness.get(a.site,1.)} if self.operations is not None else {})})
             workload=efforts[i]+coordination[i]*funding+(attack_time if i in attacker_set else 0.)+training[i]*funding
             if self.organization is not None:workload+=(fixed[i]+organization_quality[i]+organization_learning[i])*funding
             a.fatigue=clip(a.fatigue+.15*workload-.1*(1-workload)-.03+(self.pc.fatigue_extra(i) if self.pc is not None else 0.))
@@ -964,6 +1019,7 @@ class LongitudinalEngine:
             self.cash+=revenue;self.metrics['revenue_resource_units']+=revenue
         if self.enterprise is not None:
             self.enterprise.observe(day,revenue,paid+(material_cost if self.operations is not None else 0.)+acquisition_cost,working=working and operating)
+        if de is not None:self.metrics['decision_effect_output_factor_sum']+=math.fsum(decision_factors);self.metrics['decision_effect_output_factor_count']+=len(decision_factors)
         self.metrics['produced_work_units']+=daily_output;self.metrics['effort_hours']+=math.fsum(efforts.values());self.metrics['cooperation_units']+=math.fsum(cooperation.values());self.metrics['decision_regret_units']+=math.fsum(losses)
         consumed=attack_time*len(attackers) if attack_active else 0.;self.metrics['attack_hours_consumed']+=consumed;self.metrics['attack_budget_hours']+=consumed
         self.last_work_per_present_member=daily_output/max(1,len(present))
@@ -1016,7 +1072,7 @@ class LongitudinalEngine:
             for key in ('active_member_calendar_days','active_member_workdays','present_member_workdays','present_member_work_hours','available_member_work_hours','post_adoption_available_member_work_hours','produced_work_units','decision_regret_units','decisions_completed','decisions_unresolved','review_hours','appeal_hours','governance_hours','training_hours','migration_resource_units','dual_run_resource_units','maintenance_resource_units','payroll_resource_units','recruitment_resource_units','operating_resource_units','operating_unfunded_resource_units','revenue_resource_units'):
                 row[key+'_daily']=self.metrics.get(key,0.)-before.get(key,0.)
                 row[key+'_cumulative']=self.metrics.get(key,0.)
-        self.ledger.add_journal(day,'day_end',f'day:{day}',{**({'enterprise_growth_state':self.enterprise.to_dict()} if self.enterprise is not None else {}),**({'enterprise_operating_state':self.operations.to_dict()} if self.operations is not None else {}),**({'enterprise_acquisition_state':self.acquisitions.to_dict()} if self.acquisitions is not None else {}),**({'organization_tasks_state':self.organization.to_dict()} if self.organization is not None else {}),**({'person_context_groups':self.pc.group_summary(self.active,self.agents)} if self.pc is not None else {}),'date':self.clock.at(day).isoformat(),'active':len(active),'present':len(present),'output':daily_output,'cash':self.cash,'closed_day':self.closed_day,'suspended_day':self.suspended_day,'adoption_days':self.adoption,
+        self.ledger.add_journal(day,'day_end',f'day:{day}',{**({'decision_effect_state':{str(g):v for g,v in sorted(self.decision_state.items())}} if de is not None else {}),**({'enterprise_growth_state':self.enterprise.to_dict()} if self.enterprise is not None else {}),**({'enterprise_operating_state':self.operations.to_dict()} if self.operations is not None else {}),**({'enterprise_acquisition_state':self.acquisitions.to_dict()} if self.acquisitions is not None else {}),**({'organization_tasks_state':self.organization.to_dict()} if self.organization is not None else {}),**({'person_context_groups':self.pc.group_summary(self.active,self.agents)} if self.pc is not None else {}),'date':self.clock.at(day).isoformat(),'active':len(active),'present':len(present),'output':daily_output,'cash':self.cash,'closed_day':self.closed_day,'suspended_day':self.suspended_day,'adoption_days':self.adoption,
             **({'joint_control':self.joint_control} if self.joint_control is not None else {}),
             'metrics_daily':{k:self.metrics[k]-before.get(k,0.) for k in self.metrics},'metrics_cumulative':dict(self.metrics),
             'memory':self.memory,'routine':self.routine,'review_backlog_records':backlog,'appeal_backlog_records':self.ledger.pending_count('appeal')})
@@ -1041,7 +1097,11 @@ class LongitudinalEngine:
                 'growth_assumptions_status':'synthetic design; no empirical calibration or holdout validation'})
         if self.operations is not None:
             out.update({'enterprise_operating_state_final':self.operations.to_dict(),'operating_assumptions_status':'synthetic mechanisms; not externally validated'})
-        if '_sbg' in self.__dict__:out.update({'sandbox_usage':self._sbg.usage,'sandbox_live_count':len(self._sbg.live()),'fault_containment':self._sbg.containment(),'sandbox_local_exception_fraction':{i:self._sbg.sandboxes[i]['local']['exception_fraction'] for i in self._sbg.live()}})
+        if '_sbg' in self.__dict__ and self.config.automation.project_sandboxes:out['project_sandboxes_live']=len(self._sbg.project_members())
+        if '_sbg' in self.__dict__:out.update({'sandbox_usage':self._sbg.usage,'sandbox_live_count':len(self._sbg.live()),'fault_containment':self._sbg.containment(),'sandbox_local_exception_fraction':{i:self._sbg.sandboxes[i]['local']['exception_fraction'] for i in self._sbg.live() if self._sbg.sandboxes[i]['kind']!='project'}})
+        if self.config.decision_effect is not None:
+            n=out.get('decision_effect_output_factor_count',0.)
+            out['decision_effect_mean_output_factor']=out.get('decision_effect_output_factor_sum',0.)/n if n else None
         if self.acquisitions is not None:out.update({'enterprise_acquisition_state_final':self.acquisitions.to_dict(),'acquisition_assumptions_status':'conditional synthetic target histories; no empirical calibration or formal study admission'})
         if self.organization is not None:out.update({'organization_tasks_state_final':self.organization.to_dict(),'organization_assumptions_status':'conditional synthetic mechanisms; not calibrated or externally validated'})
         if self.organization is not None and self.organization.structure is not None:out.update({'task_department_count_final':self.organization.c.department_count,'task_reorganization_pending_count':len(self.organization.structure['pending']),'task_reorganization_remaining_work_hours':math.fsum(self.organization.structure['training_remaining'].values())})
@@ -1061,6 +1121,7 @@ class LongitudinalEngine:
         if self.acquisitions is not None:value['enterprise_acquisition_state']=self.acquisitions.to_dict()
         if self.organization is not None:value['organization_tasks_state']=self.organization.to_dict()
         if self.pc is not None:value['person_context_state']=self.pc.to_dict()
+        if self.config.decision_effect is not None:value['decision_state']={str(g):v for g,v in sorted(self.decision_state.items())}
         if self.config.automation is not None and self.config.automation.sandboxes and '_sbg' in self.__dict__:value['sandbox_state']=self._sbg.to_dict()
         if self.joint_control is not None:value['joint_control']=copy.deepcopy(self.joint_control)
         if self._state_hash_codec!=LEGACY_STATE_HASH_CODEC:value['state_hash_codec']=self._state_hash_codec
@@ -1180,6 +1241,8 @@ class LongitudinalEngine:
         obj.clock=GregorianClock(obj.l)
         obj.rng=WorldRandom(obj.config.seed,obj.config.world,world_context=obj.l.world_context)
         obj.failed_day=False
+        if (obj.config.decision_effect is None)!=('decision_state' not in value):raise ValueError('decision state differs from the declared decision_effect block')
+        obj.decision_state={g:float(v) for g,v in integer_key_map(value['decision_state'],name='decision_state').items()} if obj.config.decision_effect is not None else {}
         if value.get('sandbox_state') is not None:obj._sbg=_sandbox.SandboxGraph.from_dict(value['sandbox_state'],obj.config.automation,obj.rng.uniform)
         obj._native_owner=native_owner
         obj.agents=[Agent(**a) for a in value['agents']]

@@ -162,6 +162,13 @@ ARMS = {
     # overflow goes to the human exception lane).
     'dams-isa-saturated': dict(adoption='fixed', regime='sublinear', backend='witness',
                                automation={'sandboxes': True, 'scoped_authority': True, 'quota_units_per_member_day': 0.6}),
+    # dams-isa and hierarchy-isa with the full sandbox mechanics: collaboration across guild sandboxes needs
+    # approved project sandboxes (a refusal costs the member that peer's help that day) and sandboxes
+    # occasionally try to change protected-core items or allocation rules (docs/automation-arms.md).
+    'dams-isa-full': dict(adoption='fixed', regime='sublinear', backend='witness',
+                          automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True}),
+    'hierarchy-isa-full': dict(adoption='fixed', regime='hierarchy', backend='central',
+                               automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True}),
 }
 
 
@@ -374,6 +381,10 @@ VARIANTS = {
     'accounted-work': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14},
     # The work-accounting model with a narrower or wider span of control (default 8): the supervisory depth,
     # and with it the layer thresholds of the scope rule, follows from the span.
+    # The work-accounting model plus the opt-in channel from decision quality to output (dams_sim/decision_effect.py):
+    # a guild's recent decision losses lower its members' potential output by up to gamma (default 0.05; -g20: 0.2).
+    'accounted-work-decisions': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {}},
+    'accounted-work-decisions-g20': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {'gamma': 0.2}},
     'accounted-work-span4': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14,
                              'enterprise_operations.management_span': 4, 'organization_tasks.management_span': 4},
     'accounted-work-span16': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14,
@@ -437,6 +448,8 @@ def apply_variant(d, branch, name, context=None):
             if context not in DEMAND_MATCH:
                 raise ValueError('demand-matched variant has no measured factor for this context')
             d['enterprise_operations']['base_orders_per_workday'] *= DEMAND_MATCH[context]
+        elif key == 'decision_effect':
+            d['decision_effect'] = dict(value)
         elif key.startswith(('enterprise_operations.management_span', 'organization_tasks.management_span')):
             section, field = key.split('.', 1)
             d[section][field] = value

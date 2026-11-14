@@ -11,6 +11,7 @@ from .joint_population import JointPopulationConfig
 from .organization_tasks import OrganizationTasksConfig
 from .person_context import PersonContextConfig
 from .automation import AutomationConfig
+from .decision_effect import DecisionEffectConfig
 
 
 @dataclasses.dataclass(frozen=True)
@@ -64,6 +65,8 @@ class Config:
     organization_tasks: OrganizationTasksConfig | None = None
     person_context: PersonContextConfig | None = None
     automation: AutomationConfig | None = None
+    # Opt-in channel from decision quality to output (see decision_effect.py); None keeps the earlier model.
+    decision_effect: DecisionEffectConfig | None = None
     # Review, appeal, governance and verification work actually done by members counts as workload in
     # the fatigue update (False keeps the earlier accounting, in which only time reserved for it was withheld).
     administrative_fatigue: bool = False
@@ -104,6 +107,11 @@ class Config:
             if not isinstance(self.automation, AutomationConfig):raise ValueError('automation must be typed')
             if self.longitudinal is None:raise ValueError('automation requires the longitudinal engine')
             self.automation.validate()
+            if self.automation.project_sandboxes and self.organization_tasks is None:raise ValueError('project_sandboxes needs the organization-tasks model (collaboration peers)')
+        if self.decision_effect is not None:
+            if not isinstance(self.decision_effect, DecisionEffectConfig):raise ValueError('decision_effect must be typed')
+            if self.longitudinal is None:raise ValueError('decision_effect requires the longitudinal engine')
+            self.decision_effect.validate()
         integers = {"n": (2, 10_000_000), "days": (1, 3650), "guilds": (1, self.n), "team_size": (1, self.n), "sites": (1, self.n), "seed": (0, 2**63-1), "world": (0, 2**63-1), "update_interval_days": (1, self.days), "appeal_delay_days": (1, 3650), "attack_start_day": (0, 3650), "attack_stop_day": (0, 3650), "fault_start_day": (0, 3650), "fault_stop_day": (0, 3650), "quorum_unavailable_start_day": (0,3650), "quorum_unavailable_stop_day": (0,3650), "trace_every_days": (1, 3650), "max_events": (1,1_000_000_000_000)}
         if self.longitudinal is not None:
             for name in ('days','appeal_delay_days','attack_start_day','attack_stop_day','fault_start_day','fault_stop_day','quorum_unavailable_start_day','quorum_unavailable_stop_day','trace_every_days'):
@@ -169,6 +177,8 @@ class Config:
         if self.organization_tasks is None:value.pop('organization_tasks')
         if self.person_context is None:value.pop('person_context')
         if self.automation is None:value.pop('automation')
+        else:value['automation']=self.automation.to_dict()   # project-sandbox fields appear only when that feature is on
+        if self.decision_effect is None:value.pop('decision_effect')
         if not self.administrative_fatigue:value.pop('administrative_fatigue');value.pop('administrative_fatigue_reference')
         return value
 
@@ -188,6 +198,7 @@ class Config:
         if value.get('organization_tasks') is not None:value['organization_tasks']=OrganizationTasksConfig.from_dict(value['organization_tasks'])
         if value.get('person_context') is not None:value['person_context']=PersonContextConfig.from_dict(value['person_context'])
         if value.get('automation') is not None:value['automation']=AutomationConfig.from_dict(value['automation'])
+        if value.get('decision_effect') is not None:value['decision_effect']=DecisionEffectConfig.from_dict(value['decision_effect'])
         for name in ("hierarchy_weights", "backend_review_multipliers", "backend_settlement_days", "administrative_censorship_exposure"):
             if name in value:
                 value[name] = tuple(value[name])
