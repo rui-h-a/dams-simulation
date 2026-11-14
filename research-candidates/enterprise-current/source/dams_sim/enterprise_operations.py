@@ -222,8 +222,9 @@ class EnterpriseOperatingState:
             if when.weekday() in clock.config.work_weekdays and when.date().isoformat() not in clock.config.holidays and c.work_start_local<=when.hour<c.work_end_local:available+=1
         return available/(c.work_end_local-c.work_start_local)
 
-    def coordination_required(self, active, guilds, departments, sites, site, scope=None):
-        """scope: None, or a function layers -> layers borne under scoped authority."""
+    def coordination_required(self, active, guilds, departments, sites, site, scope=None, layer_time=1.):
+        """scope: None, or a function layers -> layers borne under scoped authority. layer_time: share of the per-layer
+        coordination time that is still done by members (1 - the share taken over by automation)."""
         c=self.context(site)
         managers=max(1,guilds)
         if self.c.coordination_manager_basis=='span':
@@ -234,7 +235,7 @@ class EnterpriseOperatingState:
             layers=1+math.ceil(math.log(max(1,departments),self.c.management_span)) if self.c.management_span>1 else departments
         reports=active/managers
         if scope is not None:layers=scope(layers)
-        return (self.c.coordination_workday_units_per_layer*layers+
+        return (self.c.coordination_workday_units_per_layer*layers*layer_time+
                 self.c.management_overload_workday_units_per_report*max(0,reports-self.c.management_span)+
                 c.communication_workday_units*(sites>1))
 
@@ -247,7 +248,7 @@ class EnterpriseOperatingState:
         return min(self.c.coordination_service_budget_workday_fraction,
                    max(0.,1-care_fraction-other_reservations))
 
-    def prepare_coordination(self, day, *, active, guilds, departments, sites, people, funding, scoped=None, scope=None):
+    def prepare_coordination(self, day, *, active, guilds, departments, sites, people, funding, scoped=None, scope=None, automated=None, automation_share=0.):
         """One staged phase per day; (person, site, capacity) uses real time bounds.
 
         Old debt is served with today's requests. Unserved work remains pending;
@@ -276,10 +277,20 @@ class EnterpriseOperatingState:
             members=groups.get(site,[])
             raw=self.coordination_required(active,guilds,departments,sites,site)
             inside=[person for person,_ in members if person in scoped] if scoped else []
+            auto=[person for person,_ in members if automated and person in automated]
             need={person:raw for person,_ in members}
-            if inside:
-                low=self.coordination_required(active,guilds,departments,sites,site,scope)
-                for person in inside:need[person]=low
+            # Scoped authority changes the layers borne; automation takes over a share of the time per layer borne.
+            by_kind={}
+            def required_for(in_scope,in_auto):
+                if (in_scope,in_auto) not in by_kind:
+                    by_kind[(in_scope,in_auto)]=self.coordination_required(active,guilds,departments,sites,site,scope if in_scope else None,1-automation_share if in_auto else 1.)
+                return by_kind[(in_scope,in_auto)]
+            if inside:low=required_for(True,False)
+            inside_set,auto_set=set(inside),set(auto)
+            for person,_ in members:
+                in_scope,in_auto=person in inside_set,person in auto_set
+                if in_scope and not in_auto:need[person]=low
+                elif in_auto:need[person]=required_for(in_scope,True)
             requested=math.fsum(need[person] for person,_ in members)
             pending=self.coordination_pending.get(str(site),0.)
             total=pending+requested
@@ -299,7 +310,8 @@ class EnterpriseOperatingState:
             service.update(chosen);readiness[site]=ready
             rows.append({'site':site,'people':len(members),'required_per_person':raw,'requested':requested,
                          'pending_before':pending,'service_capacity':capacity,'served':served,
-                         'pending_after':after,'readiness_fraction':ready,**({'scoped_people':len(inside),'required_per_scoped_person':low} if inside else {})})
+                         'pending_after':after,'readiness_fraction':ready,**({'scoped_people':len(inside),'required_per_scoped_person':low} if inside else {}),
+                         **({'automated_people':len(auto),'automation_share':automation_share} if auto else {})})
         self.coordination_plan={'day':day,'funding_fraction':funding,'sites':rows,
                                 'service_by_person':[[i,v] for i,v in sorted(service.items())]}
         return service,readiness,copy.deepcopy(self.coordination_plan)

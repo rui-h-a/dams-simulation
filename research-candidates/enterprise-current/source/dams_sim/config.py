@@ -107,6 +107,8 @@ class Config:
             if not isinstance(self.automation, AutomationConfig):raise ValueError('automation must be typed')
             if self.longitudinal is None:raise ValueError('automation requires the longitudinal engine')
             self.automation.validate()
+            if self.automation.coordination_automation and self.enterprise_operations is None and self.organization_tasks is None:
+                raise ValueError('coordination_automation needs the enterprise-operations or organization-tasks model')
             if self.automation.project_sandboxes and self.organization_tasks is None:raise ValueError('project_sandboxes needs the organization-tasks model (collaboration peers)')
         if self.decision_effect is not None:
             if not isinstance(self.decision_effect, DecisionEffectConfig):raise ValueError('decision_effect must be typed')
@@ -124,8 +126,10 @@ class Config:
             raise ValueError("unknown authority regime")
         if self.backend not in {"central", "witness", "consensus"}:
             raise ValueError("unknown stylized evidence backend")
-        if self.attack not in {"none", "freeride", "forge", "duplicate", "censor"}:
+        if self.attack not in {"none", "freeride", "forge", "duplicate", "censor", "collude"}:
             raise ValueError("unknown attack")
+        if self.attack == "collude" and self.longitudinal is None:
+            raise ValueError("collude (bribed review) is implemented in the longitudinal engine only")
         if self.hierarchy_basis not in {"performance", "tenure"}:
             raise ValueError("hierarchy_basis must be performance or tenure")
         if self.behavior_rule not in {"linear_response", "satisficing", "reinforcement"}:

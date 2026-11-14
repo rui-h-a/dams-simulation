@@ -230,3 +230,108 @@ Size. Worlds have `max(2, round(n/250))` guilds, so a 60-member world has two gu
 (one project sandbox, no closure unless guilds split); projects multiply with the number of sandboxes (several guilds, or
 splitting with `split_size`). The test arms in `tests/test_decision_project.py` use small `split_size` and
 `project_idle_days` to exercise creation, closure, refusal and attempts.
+
+## Record classes in automated verification (`record_classes`)
+Opt-in (`AutomationConfig.record_classes`; the class fields are written to the stored configuration only when it is on and may
+be set only with it). Each work record of an adopted guild is drawn into a class per (day, person) with the keyed process
+`record_class`:
+
+| class | share | handling |
+|---|---|---|
+| objective | 0.70 | measurable output, verified exactly as before |
+| inferential | 0.25 | abstention probability 0.20 (instead of 0.05), false-accept and false-reject probability 0.10 (instead of 0.05), processing units x2 |
+| disputed | 0.05 | cannot be decided automatically: always routed to the human exception lane (route `disputed`), nothing processed, no quota demanded |
+
+Shares, abstention and error rates and the multiplier are config fields (`class_share_*`, `inferential_uncertain_probability`,
+`inferential_error_probability`, `inferential_processing_multiplier`) and declared design assumptions, not calibrated values.
+Sampling into the exception lane (`exception_fraction`) and outages apply to objective and inferential records as before. The
+class is not stored on the claim: it is a keyed draw of (submission day, person), repeated at human review and at commit; only
+records submitted after the adoption of their domain have one. The class is journalled on the `auto_verify` record.
+
+Per class the engine counts (metrics `rc_<class>_*`, summary `record_class_summary`, `r11_isa_measures`): claims, automated
+decisions (so the automated share), wrong automated decisions (accept of a record the rule refuses, or reject of one it accepts),
+human first reviews, confirmed records and the days from submission to commit (mean days to confirmation), and processing units.
+Validated independently: the validator re-draws every class and requires the journalled class to equal it, requires the route
+`disputed` for exactly the disputed records (verdict exception, no units), re-states the units per class (backend multiplier x
+2 for inferential) and re-sums every `rc_` metric from the `auto_verify`, `review` and `commit` records (classes of reviews and
+commits are re-drawn from the claim's event identity). Not verified: that the error rates of the verifier hold per class (only
+the rule outcome and the wrong-decision count follow from the records; the rates are visible in the counts, as before).
+
+## Automated coordination (`coordination_automation`)
+`coordination_automation` is a share in [0, 1] (default 0 = off). In adopted guilds of an arm that sets it, the per-layer
+coordination time (`coordination_workday_units_per_layer`) and the per-layer reporting hours (`reporting_hours_per_layer`) of
+each member are multiplied by (1 - share). Only those two per-layer terms change: the overload and communication terms of
+coordination, the collaboration and verification hours, the readiness penalty per layer and the report delay still use the layers
+borne. Each such present member-day consumes `coordination_processing_units_per_member_day` (default 0.5) processing units,
+counted in `coordination_processing_units` and added to the processing total of `r11_isa_measures`
+(`processing_units_automated` is verification only; `processing_units_total` includes coordination). The share and the 0.5
+units are declared design assumptions.
+
+Composition with scoped authority. The share multiplies the layers borne: the layers are first reduced by the scope rule
+(`effective_layers`) where scoped authority is on, and the result is multiplied by (1 - share). Implementation:
+`enterprise_operations.coordination_required(..., scope, layer_time)` and `prepare_coordination(..., scoped, scope, automated,
+automation_share)` extend the existing `scope` hook (a member can be scoped, automated, both or neither; the staged queue,
+service and readiness arithmetic is the existing one), and `organization_tasks.prepare(..., automated, automation_share)` charges
+reporting hours for `depth_borne x (1 - share)` layers while readiness and delay keep `depth_borne`. The plan records
+`reporting_automation` (share) per automated member and the coordination plan `automated_people` and `automation_share`.
+Arms: `hierarchy-auto-coord`, `dams-auto-coord` (the `-auto` arms with share 0.5), `hierarchy-isa-coord`, `dams-isa-coord`
+(the `-isa-full` arms with share 0.5, so scoped authority, sandboxes and project sandboxes included).
+
+Validated independently: the longitudinal validator re-runs the staged coordination phase with the same arguments and compares
+the whole plan; re-counts `coordination_processing_units` from the present roster and adoption; the organization validator
+requires `reporting_automation` exactly for present members of adopted guilds (equal to the declared share), recomputes the
+network request and the verification capacity from reduced reporting hours and keeps the readiness on the layers borne.
+Not validated: the realism of a time share taken over by automation, and that the 0.5 units are a sufficient or fair price.
+
+## Processing charged to cash (`charge_processing`)
+With `charge_processing` the day's processing units (automated verification, witness verification units of human reviews
+(`verification_resource_units`), coordination automation) times `resource_units_per_processing_unit` (default 0.01, the
+existing reporting conversion) are paid from cash as an operating expense. Timing: verification and review happen after the
+day's production, so the charge is made at the end of that same day, from the cash that is left; it is added to
+`operating_resource_units` (so the cash identity of the engine holds), to the new metric `processing_charge_resource_units`, and
+the growth model sees it as a cost of that day. What cash cannot cover is not paid and is added to
+`operating_unfunded_resource_units`. The morning funding fraction, growth and closure therefore respond from the next day on, not
+on the same day (the morning funding fraction is fixed before the day's processing exists); this is a deliberate simplification.
+Each day carries a `processing_charge` journal record (units by source, rate, requested, charged).
+
+Variants (on top of `accounted-work-decisions`): `accounted-work-decisions-charged` (rate 0.01) and
+`accounted-work-decisions-charged-r10` (0.1). Variant keys beginning with `automation.` are not applied to the shared history;
+`arm_config(base, branch, arm, variant)` sets them on the automation block of every arm that has one (an arm without a block,
+such as `control-hierarchy`, is unchanged), and `r11_study` records the variant in the prehistory receipt so that `arm` can pass it
+(a receipt without one means none). Two further variants of the same kind switch record classes on
+(`accounted-work-decisions-classes`, and `-classes-charged` with rate 0.01); the check run uses the latter.
+
+Validated independently: the validator re-derives the day's units from its own re-derived records (automated units from the
+`auto_verify` records, witness units from the reviews, coordination units from the roster), the requested and charged amounts
+(charged = min(requested, cash left)), compares them with the `processing_charge` record, and applies the debit to its own cash,
+metrics and growth observation. Not validated: the economic meaning of the rate.
+
+## Collusive review (`attack='collude'`)
+A new attack beside `forge`, `duplicate`, `censor` and `freeride` (longitudinal engine only). The cohort and window are those of
+the existing attacks: the present members whose initial slot is below `ceil(n x attack_cohort_fraction)` are the attackers, inside
+`[attack_start_day, attack_stop_day)`, and each spends `attack_budget_hours_per_day` / (present attackers) of his day. Attackers
+submit forged records exactly as under `forge` (the observed work is inflated by the hours spent, and the audit alarm rings with
+probability 0.6 instead of 0.02). New: when a forged record reaches a HUMAN first review, and the reviewer (the named
+organizational reviewer when the organization model gives one, otherwise a deterministic keyed draw `collude_reviewer` among the
+present members of the domain, in slot order) belongs to the cohort inside the window, the review ignores the audit alarm and the
+threshold and accepts it (`colluded_acceptances`; `colluded_decisive_acceptances` counts those the rule would have refused). The
+automated verifier cannot be bought: it applies the rule and its declared error (`forged_accepted_by_automation`). Records routed
+to the human exception lane (audit sample, abstention, overflow, disputed) are exposed to collusion as any human review; in
+sandbox arms a reviewer from another sandbox still needs the read grant, so a colluding reviewer outside the claimant's sandbox is
+deferred like any other. The review record carries `fraudulent`, `rule_accept` and `colluded` (and `collusion_reviewer` when drawn).
+
+Reported quantities: forged records submitted (`fraudulent_records_submitted`), accepted by automation
+(`forged_accepted_by_automation`), accepted by collusion (`colluded_acceptances`), detected (`fraudulent_records_detected`),
+credit obtained by forged records (`forged_credit_units`, divided by the cohort size for credit per attacker), and the attackers'
+formal share at the end (read from the final state) against their share in the same world without the attack (the same arm of
+the study without the attack variant). Variants `accounted-work-decisions-collude05` and `-collude20` set the attack on the base
+configuration: cohort fraction 0.05 / 0.2, window from the adoption boundary to the horizon, budget 0.1 workday per cohort member
+(a declared design assumption; the attack hours are taken from the attackers' own time).
+
+Validated independently: the validator requires the work record's fraud label, re-derives for every review who the reviewer is
+(the organizational verifier checks the named reviewer; the keyed draw is re-drawn for the non-organizational case), whether he
+is in the cohort and the window, whether the rule alone would accept, and requires `accepted = rule or colluded`; the four
+collusion metrics and the forged credit are re-summed from the reviews, automated records and commits. Not validated: that a
+real bribe works this way. In particular there is NO laundering model: credit is non-transferable and the model has no assets
+or payments between members, so a bribe has no flow to launder and none is modelled; the cost of bribery to the attackers is only
+the time budget above, and the payment itself is not represented.

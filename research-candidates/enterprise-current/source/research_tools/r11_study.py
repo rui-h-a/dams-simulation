@@ -164,7 +164,7 @@ def prehistory(args):
     verify_snapshot(cp, expected_config=config)
     # Preserve progress and interruption evidence pending independent recovery
     # and named retirement admission.  Snapshot validation is not that admission.
-    receipt = {'kind': 'r11-prehistory', 'python': sys.version, 'source_sha256': source_hash(), 'config': d, 'branch_day': branch,
+    receipt = {'kind': 'r11-prehistory', 'python': sys.version, 'source_sha256': source_hash(), 'config': d, 'branch_day': branch, 'variant': args.get('variant', 'baseline'),
                'checkpoint': cp.name, 'checkpoint_sha256': file_digest(cp),
                'semantic_sha256': m.semantic_digest() if False else None,
                'wall_seconds': time.monotonic()-t, 'cpu_seconds': time.process_time()-cpu, 'peak_rss_mb': _rss_mb(),
@@ -203,7 +203,7 @@ def arm(args):
     out.mkdir(parents=True, exist_ok=True)
     parent_d, branch = meta['config'], meta['branch_day']
     parent = Config.from_dict(parent_d)
-    child_d = arm_config(parent_d, branch, args['arm'])
+    child_d = arm_config(parent_d, branch, args['arm'], meta.get('variant'))
     child = Config.from_dict(child_d)
     t, cpu = time.monotonic(), time.process_time()
     _retire_failure(out)

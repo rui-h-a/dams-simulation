@@ -45,7 +45,8 @@ import math
 
 VERSION = 'automation-1'
 ROOT = 'root'
-ROUTES = ('automated', 'sampled', 'uncertain', 'quota', 'outage')
+ROUTES = ('automated', 'sampled', 'uncertain', 'quota', 'outage', 'disputed')
+CLASSES = ('objective', 'inferential', 'disputed')
 FAULT_MODES = ('none', 'service_stop', 'bad_parameter')
 VERDICTS = ('accept', 'reject', 'exception')
 
@@ -115,12 +116,41 @@ class AutomationConfig:
     core_attempt_probability: float = 0.05
     allocation_attempt_probability: float = 0.05
 
+    # Record classes (all declared design assumptions; settable only with record_classes). Each work record is
+    # drawn into a class per (day, person): objective (measurable output, verified as before), inferential (needs
+    # inference: more abstention and error, more processing) or disputed (cannot be decided automatically: always
+    # routed to the human exception lane, no processing).
+    record_classes: bool = False
+    class_share_objective: float = 0.70
+    class_share_inferential: float = 0.25
+    class_share_disputed: float = 0.05
+    inferential_uncertain_probability: float = 0.20     # instead of uncertain_probability
+    inferential_error_probability: float = 0.10         # false accept and false reject, instead of 0.05
+    inferential_processing_multiplier: float = 2.0      # processing units x this
+    # Automated coordination (declared design assumption). Share of the per-layer coordination time and of the
+    # per-layer reporting hours that automation takes over for members of adopted guilds; each such member-day
+    # consumes the processing units below. 0 keeps the earlier model.
+    coordination_automation: float = 0.0
+    coordination_processing_units_per_member_day: float = 0.5
+    # Processing charged to cash (declared design assumption): the day's processing units (automated verification,
+    # witness verification units of human reviews, coordination automation) times resource_units_per_processing_unit
+    # are paid from cash as an operating expense at the end of that day.
+    charge_processing: bool = False
+
+    CLASS_FIELDS = ('record_classes', 'class_share_objective', 'class_share_inferential', 'class_share_disputed',
+                    'inferential_uncertain_probability', 'inferential_error_probability', 'inferential_processing_multiplier')
+    COORDINATION_FIELDS = ('coordination_automation', 'coordination_processing_units_per_member_day')
     PROJECT_FIELDS = ('project_sandboxes', 'project_idle_days', 'core_attempt_probability', 'allocation_attempt_probability')
 
     def to_dict(self):
         value = dataclasses.asdict(self)
         if not self.project_sandboxes:   # earlier arms keep their configuration digest
             for name in self.PROJECT_FIELDS:value.pop(name)
+        if not self.record_classes:   # likewise for the other optional groups: earlier arms keep their configuration digest
+            for name in self.CLASS_FIELDS:value.pop(name)
+        if not self.coordination_automation:
+            for name in self.COORDINATION_FIELDS:value.pop(name)
+        if not self.charge_processing:value.pop('charge_processing')
         return value
 
     @classmethod
@@ -168,6 +198,23 @@ class AutomationConfig:
         if not isinstance(self.project_sandboxes, bool):
             raise ValueError('project_sandboxes must be boolean')
         defaults = type(self)()
+        for name in ('record_classes', 'charge_processing'):
+            if not isinstance(getattr(self, name), bool):raise ValueError(name+' must be boolean')
+        for name in ('class_share_objective', 'class_share_inferential', 'class_share_disputed', 'inferential_uncertain_probability',
+                     'inferential_error_probability', 'coordination_automation'):
+            v = getattr(self, name)
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not 0. <= v <= 1.:raise ValueError(f'{name} must be finite in [0, 1]')
+        for name, low, high in (('inferential_processing_multiplier', 1., 100.), ('coordination_processing_units_per_member_day', 0., 1e6)):
+            v = getattr(self, name)
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not low <= v <= high:raise ValueError(f'{name} must be finite in [{low}, {high}]')
+        if self.record_classes:
+            if not math.isclose(self.class_share_objective+self.class_share_inferential+self.class_share_disputed, 1., rel_tol=0, abs_tol=1e-9):
+                raise ValueError('class shares must sum to one')
+        else:
+            for name in self.CLASS_FIELDS:
+                if getattr(self, name) != getattr(defaults, name):raise ValueError(name+' may be set only with record_classes')
+        if not self.coordination_automation and self.coordination_processing_units_per_member_day != defaults.coordination_processing_units_per_member_day:
+            raise ValueError('coordination_processing_units_per_member_day may be set only with coordination_automation')
         if self.project_sandboxes:
             if not self.sandboxes:raise ValueError('project_sandboxes needs sandboxes')
             if type(self.project_idle_days) is not int or not 1 <= self.project_idle_days <= 100_000_000:raise ValueError('project_idle_days must be an integer >= 1')
@@ -212,17 +259,31 @@ def rule_accepts(observed, audit_detected, floor=ACCEPTANCE_THRESHOLD):
     return observed >= floor and not audit_detected
 
 
-def verdict(config, *, rule_accept, u_uncertain, u_error, false_reject=None):
+def record_class(config, u):
+    """Class of a work record for the keyed uniform draw `u` (objective, inferential, disputed in this order)."""
+    if u < config.class_share_objective:return 'objective'
+    if u < config.class_share_objective+config.class_share_inferential:return 'inferential'
+    return 'disputed'
+
+
+def class_multiplier(config, klass):
+    """Processing-unit multiplier of a record class (1 where record classes are off)."""
+    return config.inferential_processing_multiplier if klass == 'inferential' else 1.
+
+
+def verdict(config, *, rule_accept, u_uncertain, u_error, false_reject=None, klass=None):
     """Automated verdict for a claim that has been processed: accept/reject/exception.
 
     `rule_accept` is what the review rule decides on the claim's evidence; the
     verifier deviates from it at the declared error rates.
     """
-    if u_uncertain < config.uncertain_probability:
+    inferential = klass == 'inferential'
+    if u_uncertain < (config.inferential_uncertain_probability if inferential else config.uncertain_probability):
         return 'exception'
     if not rule_accept:
-        return 'accept' if u_error < config.false_accept_probability else 'reject'
+        return 'accept' if u_error < (config.inferential_error_probability if inferential else config.false_accept_probability) else 'reject'
     fr = config.false_reject_probability if false_reject is None else false_reject
+    if inferential:fr = config.inferential_error_probability
     return 'reject' if u_error < fr else 'accept'
 
 

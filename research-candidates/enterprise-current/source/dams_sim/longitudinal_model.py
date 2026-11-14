@@ -384,6 +384,9 @@ class LongitudinalEngine:
                     if not self.ledger.mark_seen(claim.event):self.metrics['duplicate_records_rejected']+=1;continue
                     value=max(0.,claim.observed*retention(self.l.credit_half_life_days,day-claim.created))
                     self.ledger.add_credit(claim.agent,g,value);self.agents[claim.agent].trust=clip(self.agents[claim.agent].trust+.015)
+                    if claim.fraudulent:self.metrics['forged_credit_units']+=value
+                    klass=self._record_class(claim.created,self.people[claim.agent]['token'],g)
+                    if klass is not None:self.metrics['rc_'+klass+'_confirmed']+=1;self.metrics['rc_'+klass+'_confirm_days']+=day-claim.created
                     if track:self._sbg.note_commit(day,claim.agent)
                     self.metrics['confirmed_records']+=1;self.metrics['fraudulent_records_accepted']+=int(claim.fraudulent)
                     self.ledger.add_delay('confirmation',day-claim.created)
@@ -394,6 +397,18 @@ class LongitudinalEngine:
         """Minimum observed work for acceptance: 0.25 in human review; the declared rule where automation is in use."""
         c=self.config.automation
         return _automation.acceptance_floor(c) if c is not None and self.adoption[guild] is not None else .25
+
+    def _coordination_share(self,guild):
+        """Share of per-layer coordination and reporting time taken over by automation in an adopted guild."""
+        c=self.config.automation
+        return c.coordination_automation if c is not None and c.coordination_automation and self.adoption[guild] is not None else 0.
+
+    def _record_class(self,created,token,domain):
+        """Class of a work record submitted on day `created` by person token in an adopted domain (None where classes are off
+        or the record was submitted before the domain's adoption). The draw is keyed, so it can be repeated at review and commit."""
+        c=self.config.automation
+        if c is None or not c.record_classes or self.adoption.get(domain) is None or created<self.adoption[domain]:return None
+        return _automation.record_class(c,self.rng.uniform('record_class',created,token))
 
     def _scoped(self,guild):
         """Scoped authority is in force for an adopted guild of a sandbox arm that declares it."""
@@ -471,7 +486,9 @@ class LongitudinalEngine:
             fraction=g.local(sandbox,'exception_fraction') if sandbox is not None else c.exception_fraction
             u_sample=self.rng.uniform('auto_sample',day,token)
             route='sampled' if _automation.is_sampled(fraction,u_sample) else ('outage' if g is not None and sandbox is not None and g.service_down(sandbox,day) else None)
-            plan.append([guild,claim,token,sandbox,_automation.processing_units(c,multiplier[guild]),route,None,u_sample])
+            klass=_automation.record_class(c,self.rng.uniform('record_class',day,token)) if c.record_classes else None
+            if klass=='disputed':route='disputed'   # cannot be decided automatically: human exception lane, nothing processed
+            plan.append([guild,claim,token,sandbox,_automation.processing_units(c,multiplier[guild])*(_automation.class_multiplier(c,klass) if klass is not None else 1.),route,None,u_sample,klass])
         if g is not None:
             demanded={}
             for k,row in enumerate(plan):
@@ -493,13 +510,14 @@ class LongitudinalEngine:
                 if flow['approved']:self.metrics['sandbox_borrowed_units']+=flow['units']
                 self.ledger.add_journal(day,'sandbox_quota',f'sandbox-quota:{day}:{index}',flow)
         tally={}
-        for guild,claim,token,sandbox,units,route,mark,u_sample in plan:
+        for guild,claim,token,sandbox,units,route,mark,u_sample,klass in plan:
             borrowed=None
             u_unc=self.rng.uniform('auto_uncertain',day,token);u_err=self.rng.uniform('auto_error',day,token)
             rule=_automation.rule_accepts(claim.observed,claim.audit_detected,_automation.acceptance_floor(c))
-            hypothetical=_automation.verdict(c,rule_accept=rule,u_uncertain=u_unc,u_error=u_err,false_reject=g.local(sandbox,'false_reject_probability') if g is not None and sandbox is not None else None)
+            hypothetical=_automation.verdict(c,rule_accept=rule,u_uncertain=u_unc,u_error=u_err,false_reject=g.local(sandbox,'false_reject_probability') if g is not None and sandbox is not None else None,klass=klass)
             if route is None:
                 self.metrics['automated_verifications']+=1;self.metrics['automated_processing_units']+=units
+                if klass is not None:self.metrics['rc_'+klass+'_units']+=units
                 result=hypothetical
                 route='uncertain' if result=='exception' else 'automated'
                 if isinstance(mark,tuple):borrowed=mark[1]
@@ -516,6 +534,10 @@ class LongitudinalEngine:
                 candidate=u_sample<sh['value'] if sh['phase']=='shadow' else None
                 shadow_cost=cost(candidate or route=='quota' or hypothetical=='exception',hypothetical) if candidate is not None else 0.
                 g.observe(sandbox,live,shadow_cost)
+            if klass is not None:
+                self.metrics['rc_'+klass+'_claims']+=1
+                if result!='exception':self.metrics['rc_'+klass+'_automated']+=1;self.metrics['rc_'+klass+'_wrong']+=int(_automation.is_wrong(result,rule))
+            if result=='accept' and claim.fraudulent:self.metrics['forged_accepted_by_automation']+=1
             if result=='accept':
                 self.ledger.push('commit',guild,dataclasses.replace(claim,ready=_automation.settled_ready(claim.ready,settle[guild])))
                 self.metrics['automated_accepts']+=1;self.metrics['auto_false_accepts']+=int(not rule)
@@ -527,7 +549,7 @@ class LongitudinalEngine:
                 self.ledger.push('review',guild,claim)
                 self.metrics['exception_claims']+=1;self.metrics['exception_'+route]+=1
             self.ledger.add_journal(day,'auto_verify',claim.event,{'person':claim.agent,'guild':guild,'sandbox':sandbox,'route':route,'verdict':result,
-                'processing_units':units,'borrowed_from':borrowed,'fraudulent':claim.fraudulent,'rule_accept':rule})
+                'processing_units':units,'borrowed_from':borrowed,'fraudulent':claim.fraudulent,'rule_accept':rule,**({'record_class':klass} if c.record_classes else {})})
         if g is not None:
             for sb in sorted(tally):g.monitor(day,sb,*tally[sb])
             if c.self_modify:
@@ -649,7 +671,10 @@ class LongitudinalEngine:
                             continue
                         self.metrics['organization_verification_hours']+=self.organization.c.verification_hours_per_claim
                         administrative[reviewer]+=self.organization.c.verification_hours_per_claim
-                    self._review_one(source,claim,day,backend,unit,settlement,reviewer=reviewer);pooled+=.1
+                    colluding=reviewer
+                    if p.attack=='collude' and claim.fraudulent and reviewer is None and ids:   # no named reviewer: a deterministic draw among the present members
+                        colluding=ids[int(self.rng.uniform('collude_reviewer',day,claim.event)*len(ids))]
+                    self._review_one(source,claim,day,backend,unit,settlement,reviewer=reviewer,colluding=colluding);pooled+=.1
             remaining=appeal_slots
             while remaining>0:
                 batch=self.ledger.take_ready_domains('appeal',source_domains,day,min(1024,remaining))
@@ -660,15 +685,27 @@ class LongitudinalEngine:
                 for i in ids:administrative[i]+=pooled/len(ids)
         return administrative
 
-    def _review_one(self,source,claim,day,backend,unit,settlement,*,reviewer=None):
+    def _colluding(self,reviewer,claim,day):
+        """A forged record is accepted unseen when its first human reviewer belongs to the attack cohort (collude attack, inside its window)."""
+        p=self.config
+        return (p.attack=='collude' and claim.fraudulent and reviewer is not None and p.attack_budget_hours_per_day>0
+                and p.attack_start_day<=day<p.attack_stop_day and self.people[reviewer]['slot']<math.ceil(p.n*p.attack_cohort_fraction))
+
+    def _review_one(self,source,claim,day,backend,unit,settlement,*,reviewer=None,colluding=None):
         from .model import clip
         p=self.config
         self.metrics['review_hours']+=.1;self.metrics['verification_resource_units']+=unit-1
+        klass=self._record_class(claim.created,self.people[claim.agent]['token'],source)
+        if klass is not None:self.metrics['rc_'+klass+'_human_reviews']+=1
         shift=self.pc.evaluation_shift(claim.agent,reviewer) if self.pc is not None else 0.
         floor=self._acceptance_floor(source)
-        accepted=claim.observed+shift>=floor and not claim.audit_detected
+        rule_accept=claim.observed+shift>=floor and not claim.audit_detected
+        colluded=self._colluding(colluding,claim,day)
+        accepted=rule_accept or colluded
+        if colluded:
+            self.metrics['colluded_acceptances']+=1;self.metrics['colluded_decisive_acceptances']+=int(not rule_accept)
         if self.pc is not None:self.pc.observe_review(claim.agent,accepted,not claim.fraudulent)
-        self.ledger.add_journal(day,'review',claim.event,{'accepted':accepted,'observed':claim.observed,'audit_detected':claim.audit_detected,'backend':backend,**({'verification_reviewer':reviewer,'verification_hours':self.organization.c.verification_hours_per_claim} if self.organization is not None else {})})
+        self.ledger.add_journal(day,'review',claim.event,{'accepted':accepted,'observed':claim.observed,'audit_detected':claim.audit_detected,'backend':backend,**({'fraudulent':claim.fraudulent,'rule_accept':rule_accept,'colluded':colluded,**({'collusion_reviewer':colluding} if reviewer is None and colluding is not None else {})} if p.attack=='collude' else {}),**({'verification_reviewer':reviewer,'verification_hours':self.organization.c.verification_hours_per_claim} if self.organization is not None else {})})
         if accepted:self.ledger.push('commit',source,dataclasses.replace(claim,ready=day+settlement))
         else:
             self.metrics['reviews_rejected']+=1;self.metrics['fraudulent_records_detected']+=int(claim.fraudulent);self.metrics['honest_records_rejected']+=int(not claim.fraudulent)
@@ -806,6 +843,8 @@ class LongitudinalEngine:
         if self.pc is not None:
             cooperation={i:clip(v*self.pc.cooperation_factor(i)) for i,v in cooperation.items()}
             team_safety={team:self.pc.team_safety(ids,self.agents) for team,ids in self.teams.items()}
+        if p.automation is not None and p.automation.coordination_automation:
+            self.metrics['coordination_processing_units']+=sum(1 for i in present if self._coordination_share(self.agents[i].guild))*p.automation.coordination_processing_units_per_member_day
         acquisition_coordination={i:(self.acquisitions.coordination(i) if self.acquisitions is not None else 0.) for i in present}
         if self.joint_control is not None:
             for i in acquisition_coordination:acquisition_coordination[i]+=self.joint_control['coordination_hours']
@@ -822,7 +861,8 @@ class LongitudinalEngine:
             coordination,coordination_readiness,coordination_plan=self.operations.prepare_coordination(day,
                 active=len(active),guilds=self.guild_count,departments=self.enterprise.departments,sites=self.site_count,
                 people=[(v['person'],v['site'],v['service_capacity']) for v in coordination_inputs],funding=funding,
-                **({'scoped':frozenset(i for i in present if self._scoped(self.agents[i].guild)),'scope':lambda layers:_automation.effective_layers(p.automation,layers)} if p.automation is not None and p.automation.scoped_authority else {}))
+                **({'scoped':frozenset(i for i in present if self._scoped(self.agents[i].guild)),'scope':lambda layers:_automation.effective_layers(p.automation,layers)} if p.automation is not None and p.automation.scoped_authority else {}),
+                **({'automated':frozenset(i for i in present if self._coordination_share(self.agents[i].guild)),'automation_share':p.automation.coordination_automation} if p.automation is not None and p.automation.coordination_automation else {}))
             self.ledger.add_journal(day,'enterprise_coordination_begin',f'coordination:begin:{day}',
                                     {'inputs':coordination_inputs,'plan':coordination_plan})
             self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
@@ -838,7 +878,8 @@ class LongitudinalEngine:
                     self.metrics['task_reorganization_cancelled_unserved_hours']+=math.fsum(reorganization['cancelled_unserved_hours_by_person'].values())
                 self.ledger.add_journal(day,kind,f'task:structure:{day}:{index}',reorganization)
             fixed,organization_quality,organization_learning,organization_cap,organization_help,organization_readiness,plan=self.organization.prepare(day,self.active,present,available,cooperation,funding=funding,
-                **({'scoped':frozenset(i for i in present if self._scoped(self.agents[i].guild)),'scope':lambda layers:_automation.effective_layers(p.automation,layers)} if p.automation is not None and p.automation.scoped_authority else {}))
+                **({'scoped':frozenset(i for i in present if self._scoped(self.agents[i].guild)),'scope':lambda layers:_automation.effective_layers(p.automation,layers)} if p.automation is not None and p.automation.scoped_authority else {}),
+                **({'automated':frozenset(i for i in present if self._coordination_share(self.agents[i].guild)),'automation_share':p.automation.coordination_automation} if p.automation is not None and p.automation.coordination_automation else {}))
             for i in present:variable_reservations[i]+=fixed[i]+organization_quality[i]+organization_learning[i]
             self.metrics['organization_network_hours']+=math.fsum(fixed.values())*funding
             self.metrics['organization_quality_hours']+=math.fsum(organization_quality.values())*funding
@@ -973,7 +1014,7 @@ class LongitudinalEngine:
             if de is not None:decision_factors.append(decision_factor(a.guild))
             daily_output+=produced;produced_by_site[a.site].append(produced);observed=max(0.,produced+p.review_error_sd*self.rng.normal('observed_work',day,token))
             if self.organization is not None:observed=max(0.,produced+p.review_error_sd/(1+self.organization.c.quality_measurement_efficiency*organization_quality[i]*funding)*self.rng.normal('observed_work',day,token))
-            fraud=attack_active and p.attack=='forge' and i in attacker_set
+            fraud=attack_active and p.attack in ('forge','collude') and i in attacker_set
             if fraud:observed+=attack_time;self.metrics['fraudulent_records_submitted']+=1
             audit=self.rng.uniform('review_audit',day,token)<(.6 if fraud else .02)
             event=f'work:{day}:{token}:g:{a.guild}'
@@ -1017,7 +1058,8 @@ class LongitudinalEngine:
             self.ledger.add_journal(day,'enterprise_market_end',f'market:end:{day}',operation_end)
         else:
             self.cash+=revenue;self.metrics['revenue_resource_units']+=revenue
-        if self.enterprise is not None:
+        charging=p.automation is not None and p.automation.charge_processing
+        if self.enterprise is not None and not charging:
             self.enterprise.observe(day,revenue,paid+(material_cost if self.operations is not None else 0.)+acquisition_cost,working=working and operating)
         if de is not None:self.metrics['decision_effect_output_factor_sum']+=math.fsum(decision_factors);self.metrics['decision_effect_output_factor_count']+=len(decision_factors)
         self.metrics['produced_work_units']+=daily_output;self.metrics['effort_hours']+=math.fsum(efforts.values());self.metrics['cooperation_units']+=math.fsum(cooperation.values());self.metrics['decision_regret_units']+=math.fsum(losses)
@@ -1036,6 +1078,18 @@ class LongitudinalEngine:
             self.metrics['administrative_work_hours']+=math.fsum(hours.values())
             self.ledger.add_journal(day,'administrative_work',f'administrative-work:{day}',{'hours_by_person':hours})
         if '_sbg' in self.__dict__ and self._sbg.log:self._journal_sandbox_log(day,'r')
+        if charging:
+            # Processing is paid at the end of the day it is used (it is known only after verification and review), from the cash
+            # that is left: the next morning's funding fraction, growth and closure respond to the lower cash, and growth also
+            # sees the charge as a cost of this day. What cash cannot cover is recorded as unfunded.
+            units={k:self.metrics.get(k,0.)-before.get(k,0.) for k in ('automated_processing_units','verification_resource_units','coordination_processing_units')}
+            requested=math.fsum(units.values())*p.automation.resource_units_per_processing_unit
+            charged=min(requested,self.cash)
+            self.cash-=charged;self.metrics['operating_resource_units']+=charged;self.metrics['processing_charge_resource_units']+=charged
+            self.metrics['operating_unfunded_resource_units']+=requested-charged
+            self.ledger.add_journal(day,'processing_charge',f'processing-charge:{day}',{'units':units,'rate':p.automation.resource_units_per_processing_unit,'requested':requested,'charged':charged})
+            if self.enterprise is not None:
+                self.enterprise.observe(day,revenue,paid+(material_cost if self.operations is not None else 0.)+acquisition_cost+charged,working=working and operating)
         backlog=self.ledger.pending_count('review')+self.ledger.pending_count('commit');self.metrics['backlog_peak_records']=max(self.metrics['backlog_peak_records'],backlog)
         if day%p.trace_every_days==0 or day+1==p.days:
             tvs=[];gaps=[];ginis=[]
@@ -1099,6 +1153,12 @@ class LongitudinalEngine:
             out.update({'enterprise_operating_state_final':self.operations.to_dict(),'operating_assumptions_status':'synthetic mechanisms; not externally validated'})
         if '_sbg' in self.__dict__ and self.config.automation.project_sandboxes:out['project_sandboxes_live']=len(self._sbg.project_members())
         if '_sbg' in self.__dict__:out.update({'sandbox_usage':self._sbg.usage,'sandbox_live_count':len(self._sbg.live()),'fault_containment':self._sbg.containment(),'sandbox_local_exception_fraction':{i:self._sbg.sandboxes[i]['local']['exception_fraction'] for i in self._sbg.live() if self._sbg.sandboxes[i]['kind']!='project'}})
+        if self.config.automation is not None and self.config.automation.record_classes:
+            out['record_class_summary']={k:{'claims':out.get('rc_%s_claims'%k,0.),'automated_decisions':out.get('rc_%s_automated'%k,0.),
+                'automated_share':out.get('rc_%s_automated'%k,0.)/out['rc_%s_claims'%k] if out.get('rc_%s_claims'%k) else None,
+                'wrong_automated_decisions':out.get('rc_%s_wrong'%k,0.),'human_reviews':out.get('rc_%s_human_reviews'%k,0.),
+                'confirmed':out.get('rc_%s_confirmed'%k,0.),'mean_days_to_confirmation':out.get('rc_%s_confirm_days'%k,0.)/out['rc_%s_confirmed'%k] if out.get('rc_%s_confirmed'%k) else None,
+                'processing_units':out.get('rc_%s_units'%k,0.)} for k in _automation.CLASSES}
         if self.config.decision_effect is not None:
             n=out.get('decision_effect_output_factor_count',0.)
             out['decision_effect_mean_output_factor']=out.get('decision_effect_output_factor_sum',0.)/n if n else None

@@ -167,6 +167,13 @@ ARMS = {
     # occasionally try to change protected-core items or allocation rules (docs/automation-arms.md).
     'dams-isa-full': dict(adoption='fixed', regime='sublinear', backend='witness',
                           automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True}),
+    # Automated coordination (share 0.5 of the per-layer coordination time and reporting hours of adopted guilds).
+    'hierarchy-auto-coord': dict(adoption='fixed', regime='hierarchy', backend='central', automation={'coordination_automation': 0.5}),
+    'dams-auto-coord': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'coordination_automation': 0.5}),
+    'hierarchy-isa-coord': dict(adoption='fixed', regime='hierarchy', backend='central',
+                                automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5}),
+    'dams-isa-coord': dict(adoption='fixed', regime='sublinear', backend='witness',
+                           automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5}),
     'hierarchy-isa-full': dict(adoption='fixed', regime='hierarchy', backend='central',
                                automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True}),
 }
@@ -385,6 +392,23 @@ VARIANTS = {
     # a guild's recent decision losses lower its members' potential output by up to gamma (default 0.05; -g20: 0.2).
     'accounted-work-decisions': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {}},
     'accounted-work-decisions-g20': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {'gamma': 0.2}},
+    # Processing charged to cash: set on the automation block of every arm that has one (applied by arm_config, not by the
+    # shared history). Rate in resource units per processing unit: 0.01 (the declared reporting conversion) or 0.1.
+    'accounted-work-decisions-charged': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
+                                         'automation.charge_processing': True, 'automation.resource_units_per_processing_unit': 0.01},
+    'accounted-work-decisions-charged-r10': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
+                                             'automation.charge_processing': True, 'automation.resource_units_per_processing_unit': 0.1},
+    # Record classes on every automation block (and the charge at 0.01): the check run of the coordination arms.
+    'accounted-work-decisions-classes': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
+                                         'automation.record_classes': True},
+    'accounted-work-decisions-classes-charged': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
+                                                 'automation.record_classes': True, 'automation.charge_processing': True,
+                                                 'automation.resource_units_per_processing_unit': 0.01},
+    # Collusive review: attackers (a cohort of the initial slots) forge records from the adoption boundary to the horizon
+    # and a forged record that reaches a human first review with a cohort reviewer is accepted unseen. Cohort fraction
+    # 0.05 / 0.2; daily budget 0.1 workday per cohort member (declared design assumption).
+    'accounted-work-decisions-collude05': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {}, 'collude': 0.05},
+    'accounted-work-decisions-collude20': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {}, 'collude': 0.2},
     'accounted-work-span4': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14,
                              'enterprise_operations.management_span': 4, 'organization_tasks.management_span': 4},
     'accounted-work-span16': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14,
@@ -448,6 +472,11 @@ def apply_variant(d, branch, name, context=None):
             if context not in DEMAND_MATCH:
                 raise ValueError('demand-matched variant has no measured factor for this context')
             d['enterprise_operations']['base_orders_per_workday'] *= DEMAND_MATCH[context]
+        elif key.startswith('automation.'):
+            continue   # set on each arm's automation block by arm_config
+        elif key == 'collude':
+            d.update(attack='collude', attack_cohort_fraction=value, attack_start_day=branch, attack_stop_day=d['days'],
+                     attack_budget_hours_per_day=round(.1*math.ceil(d['n']*value), 6))
         elif key == 'decision_effect':
             d['decision_effect'] = dict(value)
         elif key.startswith(('enterprise_operations.management_span', 'organization_tasks.management_span')):
@@ -469,7 +498,7 @@ def apply_variant(d, branch, name, context=None):
     return d
 
 
-def arm_config(base, branch, arm):
+def arm_config(base, branch, arm, variant=None):
     spec = ARMS[arm]
     d = copy.deepcopy(base)
     d['regime'] = spec['regime']
@@ -478,6 +507,9 @@ def arm_config(base, branch, arm):
         d['automation'] = dict(spec['automation'])
         if 'fault_after_boundary_days' in spec:
             d['automation']['fault_start_day'] = branch+spec['fault_after_boundary_days']
+        for key, value in VARIANTS.get(variant, {}).items():     # variant settings for the automation block of an arm that has one
+            if key.startswith('automation.'):
+                d['automation'][key.split('.', 1)[1]] = value
     L = d['longitudinal']
     if spec['adoption'] == 'never':
         L['adoption_mode'] = 'never'

@@ -245,7 +245,11 @@ def verify_organization_accounts(config,state,database):
                     inside=min(depth,auto.in_scope_layers);depth=inside+auto.cross_boundary_share*(depth-inside)
                     _close(a['reporting_layers'],depth,'scoped reporting layers')
                 layers_borne[key]=depth
-                request=depth*c.reporting_hours_per_layer+len(peers)*c.collaboration_hours_per_contact+c.verification_hours_per_member_workday
+                share=auto_cfg.coordination_automation if auto_cfg is not None and auto_cfg.coordination_automation and adoptions[str(guilds[i])] is not None else 0.
+                if ('reporting_automation' in a)!=(share>0):raise ValueError('reporting automation differs from the declared share and adoption state')
+                if share>0:_close(a['reporting_automation'],share,'reporting automation share')
+                reporting_time=depth*(1-share) if share>0 else depth   # automation takes over a share of the hours per layer borne; readiness and delay keep the layers
+                request=reporting_time*c.reporting_hours_per_layer+len(peers)*c.collaboration_hours_per_contact+c.verification_hours_per_member_workday
                 _close(a['requested_network_hours'],request,'network request')
                 available=a['available_hours'];_close(available,max(0.,available),'available capacity')
                 reorganization=0.;still_training=False
@@ -263,7 +267,7 @@ def verify_organization_accounts(config,state,database):
                 for field,w in zip(('production_cap_hours','quality_hours','learning_hours'),weights):
                     _close(a[field],residual*w,field)
                 net+=fixed*funding;quality+=a['quality_hours']*funding;learning+=a['learning_hours']*funding
-                served=max(0.,network-depth*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
+                served=max(0.,network-reporting_time*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
                 remaining[key]=int((served+1e-12)/c.verification_hours_per_claim)
             metrics['organization_network_hours']+=net;metrics['organization_quality_hours']+=quality;metrics['organization_learning_hours']+=learning
             work=[p for k,e,p in events if k=='work']

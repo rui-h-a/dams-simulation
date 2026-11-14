@@ -41,7 +41,12 @@ def measures(arm_dir):
             'coordination_hours_per_member_year': per(g('enterprise_coordination_hours')), 'reporting_and_network_hours_per_member_year': per(g('organization_network_hours')),
             'review_hours': g('review_hours'), 'appeal_hours': g('appeal_hours'), 'governance_hours': g('governance_hours'),
             'processing_units_automated': g('automated_processing_units'),
+            'processing_units_coordination': g('coordination_processing_units'),
+            'processing_units_total': g('automated_processing_units')+g('coordination_processing_units'),
+            'processing_charge_resource_units': g('processing_charge_resource_units'),
+            'processing_charge_per_member_year': per(g('processing_charge_resource_units')),
             'processing_units_per_member_year': per(g('automated_processing_units')),
+            'processing_units_total_per_member_year': per(g('automated_processing_units')+g('coordination_processing_units')),
             'witness_verification_units_per_member_year': per(g('verification_resource_units')),
             'processing_cost_at_declared_rate_per_member_year': per(g('automated_processing_units')*auto['resource_units_per_processing_unit']) if auto else None,
             'exception_claims': g('exception_claims'),
@@ -83,6 +88,11 @@ def measures(arm_dir):
             'automated_verifications': processed,
             'honest_records_rejected': g('honest_records_rejected'),
             'fraudulent_records_accepted': g('fraudulent_records_accepted')},
+        # Record classes (arms with record_classes): per class counts, automated share, wrong automated decisions, human reviews,
+        # mean days from submission to commit, processing units.
+        'record_classes': s.get('record_class_summary'),
+        'collusion': ({k: g(k) for k in ('fraudulent_records_submitted', 'forged_accepted_by_automation', 'colluded_acceptances', 'colluded_decisive_acceptances',
+                                          'fraudulent_records_detected', 'fraudulent_records_accepted', 'forged_credit_units')} if s.get('attack') == 'collude' else None),
         'sandbox_usage_attribution': s.get('sandbox_usage'),
     }
     return out, bool(auto)

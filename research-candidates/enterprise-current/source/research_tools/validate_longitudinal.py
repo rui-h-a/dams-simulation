@@ -209,6 +209,10 @@ def _verify_joint_entry(config, rng, event, initial, witness, agent):
             raise ValueError('raw joint generated immutable trait differs: '+field)
 
 
+def event_id(day,token,guild):
+    return f'work:{day}:{token}:g:{guild}'
+
+
 class _RawDailyAccounting:
     """Event-to-day accounting, not a rerun or a claim of empirical truth.
 
@@ -235,7 +239,9 @@ class _RawDailyAccounting:
         'sandboxes_created','sandboxes_split','sandboxes_merged','sandboxes_closed','privacy_blocks','core_blocks','selfmod_adoptions','selfmod_rollbacks',
         'faults_injected','faults_detected','faults_recovered','exception_outage','sandbox_read_deferred_records','administrative_work_hours',
         'decision_effect_output_factor_sum','decision_effect_output_factor_count','project_sandboxes_created','project_sandboxes_closed',
-        'project_collaboration_pair_days','refused_collaboration_pair_days','refused_collaboration_links','project_sandbox_member_workdays','allocation_attempts'))
+        'project_collaboration_pair_days','refused_collaboration_pair_days','refused_collaboration_links','project_sandbox_member_workdays','allocation_attempts',
+        'processing_charge_resource_units','coordination_processing_units','forged_credit_units','forged_accepted_by_automation','colluded_acceptances','colluded_decisive_acceptances','exception_disputed')
+        +tuple('rc_%s_%s'%(k,m) for k in ('objective','inferential','disputed') for m in ('claims','automated','wrong','human_reviews','confirmed','confirm_days','units')))
     def __init__(self,config,state,config_history=()):
         self.config=config;self.state=state;self.config_history=config_history
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
@@ -258,6 +264,7 @@ class _RawDailyAccounting:
         self.previous_reported={};self.unfunded_workdays=0
         self.seen_people=set();self.pc_wit={};self.person_exposure={i:defaultdict(float) for i in self.people}
         self.unknown_present=set()
+        self.fraud_labels={};self.charge_cash_log=[]
         self.dstate={}   # guild -> decision-quality debt, re-derived from the decision events only
         self.projects={};self.project_last={};self.collab_grants={};self.core_cycle=0   # project sandbox lifecycle, standing grants, core attempts
 
@@ -379,7 +386,7 @@ class _RawDailyAccounting:
             ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
             for k,e,v in events:
                 if k=='entry' and not v['initial'] and not ready.get(v['slot'],False):raise ValueError('raw recruitment bypasses talent lead time')
-        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;administrative=None;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[];lifecycle=[];project_events=[]
+        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;administrative=None;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[];lifecycle=[];project_events=[];charge_events=[]
         for kind,event,value in events:
             if kind=='acquisition_entry':
                 i=value['person'];person=self.people.get(i)
@@ -461,6 +468,7 @@ class _RawDailyAccounting:
             elif kind in SANDBOX_COUNTED:sandbox_counted.append(kind);lifecycle.append((kind,value))
             elif kind=='project_join':lifecycle.append((kind,value))
             elif kind=='project_collaboration':project_events.append(value)
+            elif kind=='processing_charge':charge_events.append(value)
             elif kind=='administrative_work':
                 if not p.administrative_fatigue:raise ValueError('raw administrative work without the declared accounting')
                 administrative=value['hours_by_person']
@@ -601,7 +609,9 @@ class _RawDailyAccounting:
                 people=people,funding=funding,
                 **({'scoped':frozenset(i for i,_site,_capacity in people if self.adoption[str(self.members[i])] is not None),
                     'scope':lambda layers:min(layers,p.automation.in_scope_layers)+p.automation.cross_boundary_share*(layers-min(layers,p.automation.in_scope_layers))}
-                   if p.automation is not None and p.automation.scoped_authority else {}))
+                   if p.automation is not None and p.automation.scoped_authority else {}),
+                **({'automated':frozenset(i for i,_site,_capacity in people if self.adoption[str(self.members[i])] is not None),'automation_share':p.automation.coordination_automation}
+                   if p.automation is not None and p.automation.coordination_automation else {}))
             if phase['plan']!=coordination_plan:raise ValueError('raw requested/served/unmet coordination differs')
             self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
             self.metrics['enterprise_coordination_served_workdays']+=math.fsum(v['served'] for v in coordination_plan['sites'])
@@ -636,6 +646,8 @@ class _RawDailyAccounting:
             raise ValueError('raw work person order/uniqueness differs')
         output=0.;efforts=[];cooperation=[];governance={};factors=[]
         post_present=[] if auto_closure else present or []
+        if p.automation is not None and p.automation.coordination_automation and present is not None:
+            self.metrics['coordination_processing_units']+=sum(1 for i in post_present if self.adoption[str(self.members[i])] is not None)*p.automation.coordination_processing_units_per_member_day
         attack_active=creating and p.attack!='none' and p.attack_budget_hours_per_day>0 and p.attack_start_day<=day<p.attack_stop_day and bool(post_present)
         attack_slots=math.ceil(p.n*p.attack_cohort_fraction)
         attackers=[i for i in post_present if self.people[i]['slot']<attack_slots]
@@ -691,10 +703,11 @@ class _RawDailyAccounting:
                     raise ValueError('raw work exceeds funded individual time capacity')
                 if value['effort']==0 and value['produced_research_only']!=0:raise ValueError('raw zero-effort work produces output')
             self.metrics['work_events']+=1
+            if p.attack=='collude':self.fraud_labels[event_id(day,self.people[i]['token'],value['guild'])]=value['fraudulent']
             for field,key in (('fraudulent','fraudulent_records_submitted'),('censored','censored_records')):
                 if type(value[field]) is not bool:raise ValueError('raw work boolean differs')
                 if value[field]:self.metrics[key]+=1
-            if value['fraudulent']!=(attack_active and p.attack=='forge' and i in attackers) or value['censored'] and not (attack_active and p.attack=='censor' and i not in attackers):
+            if value['fraudulent']!=(attack_active and p.attack in ('forge','collude') and i in attackers) or value['censored'] and not (attack_active and p.attack=='censor' and i not in attackers):
                 raise ValueError('raw work fraud/censorship differs from declared attack')
         if p.decision_effect is not None:
             self.metrics['decision_effect_output_factor_sum']+=math.fsum(factors);self.metrics['decision_effect_output_factor_count']+=len(factors)
@@ -767,8 +780,26 @@ class _RawDailyAccounting:
                 if cw['language']!=rw['language']:shift+=p.person_context.cross_group_evaluation_bias
                 if cw.get('gender')=='female' and rw.get('gender')=='male':shift+=p.person_context.gender_evaluation_bias
                 shift+=p.person_context.appearance_evaluation_bias*cw['traits'].get('appearance',0.)
-            if value['accepted']!=(value['observed']+shift>=self.acceptance_floor(self.source_domain(event,day)[0],p) and not value['audit_detected']):
+            rule=value['observed']+shift>=self.acceptance_floor(self.source_domain(event,day)[0],p) and not value['audit_detected']
+            expected_accept=rule
+            if p.attack=='collude':
+                forged=self.fraud_labels.get(event,False)
+                reviewer=value.get('verification_reviewer')
+                if reviewer is None and forged and present is not None:
+                    cohort_ids=[i for i in sorted(post_present,key=lambda i:self.people[i]['slot']) if self.members[i]==domain]
+                    reviewer=cohort_ids[int(self.market_rng.uniform('collude_reviewer',day,event)*len(cohort_ids))] if cohort_ids else None
+                    if value.get('collusion_reviewer')!=reviewer:raise ValueError('raw collusion reviewer differs from the declared deterministic draw')
+                elif reviewer is None and forged:reviewer=value.get('collusion_reviewer')
+                colluded=bool(forged and reviewer is not None and p.attack_budget_hours_per_day>0 and p.attack_start_day<=day<p.attack_stop_day
+                              and self.people[reviewer]['slot']<math.ceil(p.n*p.attack_cohort_fraction))
+                if (value.get('fraudulent'),value.get('rule_accept'),value.get('colluded'))!=(forged,rule,colluded):raise ValueError('raw review collusion record differs from the forged label, cohort and window')
+                expected_accept=rule or colluded
+                if colluded:self.metrics['colluded_acceptances']+=1;self.metrics['colluded_decisive_acceptances']+=int(not rule)
+            elif 'colluded' in value:raise ValueError('raw review collusion record without a collude attack')
+            if value['accepted']!=expected_accept:
                 raise ValueError('raw review outcome differs from observed/audit evidence')
+            created=int(event[5:].split(':',1)[0]);klass=self._record_class_of(p,created,self.people[_person]['token'],source)
+            if klass is not None:self.metrics['rc_'+klass+'_human_reviews']+=1
             self.metrics['review_hours']+=.1
             self.metrics['verification_resource_units']+=p.backend_review_multipliers[('central','witness','consensus').index(value['backend'])]-1
             if not value['accepted']:self.metrics['reviews_rejected']+=1
@@ -798,12 +829,25 @@ class _RawDailyAccounting:
         for event,value in autos:
             source,_person=self.source_domain(event,day);domain=self.alias[source]
             if value['person']!=_person or value['guild']!=source or self.adoption[str(domain)] is None:raise ValueError('raw automated verification identity/adoption differs')
-            if value['route'] not in ('automated','sampled','uncertain','quota','outage') or value['verdict'] not in ('accept','reject','exception') or type(value['fraudulent']) is not bool:raise ValueError('raw automated verification route/verdict differs')
+            if value['route'] not in ('automated','sampled','uncertain','quota','outage','disputed') or value['verdict'] not in ('accept','reject','exception') or type(value['fraudulent']) is not bool:raise ValueError('raw automated verification route/verdict differs')
             if event in work_fraud and work_fraud[event]!=value['fraudulent']:raise ValueError('raw automated verification fraud label differs from work')
             if type(value['rule_accept']) is not bool or (event in work_rule and work_rule[event]!=value['rule_accept']):raise ValueError('raw automated verification rule outcome differs from observed/audit evidence')
             backend=self.policy(domain,p)[1];unit=p.backend_review_multipliers[('central','witness','consensus').index(backend)]
             processed=value['route'] in ('automated','uncertain')
+            klass=None
+            if p.automation.record_classes:
+                a=p.automation;u=self.market_rng.uniform('record_class',day,self.people[_person]['token'])
+                klass='objective' if u<a.class_share_objective else ('inferential' if u<a.class_share_objective+a.class_share_inferential else 'disputed')
+                if value.get('record_class')!=klass or (klass=='disputed')!=(value['route']=='disputed'):raise ValueError('raw automated verification record class or disputed routing differs')
+            elif 'record_class' in value or value['route']=='disputed':raise ValueError('raw record class without declared record classes')
             expected_units=p.automation.processing_units_per_claim*unit if processed else 0.
+            if processed and klass=='inferential':expected_units=expected_units*p.automation.inferential_processing_multiplier
+            if klass is not None:
+                self.metrics['rc_'+klass+'_claims']+=1
+                if value['verdict']!='exception':
+                    self.metrics['rc_'+klass+'_automated']+=1;self.metrics['rc_'+klass+'_wrong']+=int((value['verdict']=='accept')!=value['rule_accept'])
+                if processed:self.metrics['rc_'+klass+'_units']+=value['processing_units']
+            if value['verdict']=='accept' and value['fraudulent']:self.metrics['forged_accepted_by_automation']+=1
             if value['processing_units']!=expected_units or (value['route']=='automated')==(value['verdict']=='exception') or (not processed and value['verdict']!='exception'):raise ValueError('raw automated verification units/verdict differ from declared model')
             if processed:
                 self.metrics['automated_verifications']+=1;self.metrics['automated_processing_units']+=value['processing_units']
@@ -823,9 +867,24 @@ class _RawDailyAccounting:
             if source!=value['guild'] or person!=value['person']:raise ValueError('raw commit source person/domain differs')
             if type(value['fraudulent']) is not bool or type(value['correction']) is not bool:raise ValueError('raw commit boolean differs')
             self.metrics['confirmed_records']+=1;self.metrics['fraudulent_records_accepted']+=int(value['fraudulent'])
+            if value['fraudulent']:self.metrics['forged_credit_units']+=value['credit']
+            created=int(event[5:].split(':',1)[0]);klass=self._record_class_of(p,created,self.people[person]['token'],source)
+            if klass is not None:self.metrics['rc_'+klass+'_confirmed']+=1;self.metrics['rc_'+klass+'_confirm_days']+=day-created
             if value['correction']:self.metrics['corrections']+=1
+        charged=None
+        if p.automation is not None and p.automation.charge_processing:
+            # Processing units of the day re-derived from the records above (automated verification, witness units of human reviews,
+            # coordination automation), paid from the cash left at the end of the day.
+            if present is None or len(charge_events)!=1:raise ValueError('raw processing charge missing, duplicated or without a known roster')
+            units={k:self.metrics.get(k,0.)-before.get(k,0.) for k in ('automated_processing_units','verification_resource_units','coordination_processing_units')}
+            requested=math.fsum(units.values())*p.automation.resource_units_per_processing_unit
+            charged=min(requested,self.cash)
+            if charge_events[0]!={'units':units,'rate':p.automation.resource_units_per_processing_unit,'requested':requested,'charged':charged}:raise ValueError('raw processing charge differs from the day\'s processing records')
+            self.cash-=charged;self.metrics['operating_resource_units']+=charged;self.metrics['processing_charge_resource_units']+=charged
+            self.metrics['operating_unfunded_resource_units']+=requested-charged
+        elif charge_events:raise ValueError('raw processing charge without declared charged processing')
         if self.enterprise is not None:
-            self.enterprise.observe(day,revenue,paid+material_cost+acquisition_cost,working=working and operating)
+            self.enterprise.observe(day,revenue,paid+material_cost+acquisition_cost+charged if charged is not None else paid+material_cost+acquisition_cost,working=working and operating)
             if record.get('enterprise_growth_state')!=self.enterprise.to_dict():
                 raise ValueError('raw enterprise state differs from full decision/cash history')
         elif 'enterprise_growth_state' in record:raise ValueError('unexpected raw enterprise state')
@@ -833,7 +892,7 @@ class _RawDailyAccounting:
         if record['output']!=output or record['cash']!=self.cash:raise ValueError('raw work/resource balance differs from day end')
         unsupported=set()
         if present is None:
-            unsupported.update(('present_member_workdays','present_member_work_hours','training_hours',
+            unsupported.update(('coordination_processing_units','present_member_workdays','present_member_work_hours','training_hours',
                 'operating_resource_units','operating_unfunded_resource_units','payroll_resource_units',
                 'maintenance_resource_units','dual_run_resource_units'))
         if not work and observed_present:unsupported.add('cooperation_units')
@@ -845,6 +904,13 @@ class _RawDailyAccounting:
                 raise ValueError('raw event daily/cumulative accounting differs: '+key)
         for key in unsupported:self.metrics[key]=record['metrics_cumulative'].get(key,0.)
         self.previous_reported=dict(reported)
+
+    def _record_class_of(self,p,created,token,source):
+        """Record class of a claim created on day `created` in source domain `source` (None if classes are off or it predates adoption)."""
+        a=p.automation
+        if a is None or not a.record_classes or self.adoption[str(source)] is None or created<self.adoption[str(source)]:return None
+        u=self.market_rng.uniform('record_class',created,token)
+        return 'objective' if u<a.class_share_objective else ('inferential' if u<a.class_share_objective+a.class_share_inferential else 'disputed')
 
     def _verify_projects(self,day,p,working,n,work,requests,lifecycle,project_events):
         """Project sandboxes, collaboration approvals and core/allocation attempts, re-derived from the journal.
