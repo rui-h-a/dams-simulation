@@ -142,6 +142,10 @@ ARMS = {
     'dams-auto-measured': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'acceptance_rule': 'measured'}),
     # dams-auto plus the sandbox architecture (quotas, scoped authority, approvals, lifecycle, self-modification).
     'dams-isa': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'sandboxes': True, 'scoped_authority': True}),
+    # The retained hierarchy with automated verification and the same sandbox architecture and scope rule:
+    # authority by performance tiers and a central record, routine work decided inside its scope. The
+    # strongest hierarchical competitor of dams-isa; the two differ in the authority rule and the record.
+    'hierarchy-isa': dict(adoption='fixed', regime='hierarchy', backend='central', automation={'sandboxes': True, 'scoped_authority': True}),
     # Sensitivity of the scope rule: half of reporting and coordination crosses the sandbox boundary
     # (default one quarter); with share 1 the arm would equal dams-isa-unscoped.
     'dams-isa-x50': dict(adoption='fixed', regime='sublinear', backend='witness',
@@ -368,6 +372,12 @@ VARIANTS = {
     # of the earlier model (300-member pilot world: review 0.071, verification 0.018, governance 0.050,
     # appeal 0.001), so that the hierarchy keeps the fatigue level its constants were set for.
     'accounted-work': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14},
+    # The work-accounting model with a narrower or wider span of control (default 8): the supervisory depth,
+    # and with it the layer thresholds of the scope rule, follows from the span.
+    'accounted-work-span4': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14,
+                             'enterprise_operations.management_span': 4, 'organization_tasks.management_span': 4},
+    'accounted-work-span16': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14,
+                              'enterprise_operations.management_span': 16, 'organization_tasks.management_span': 16},
     'satisficing-effort': {'behavior_rule': 'satisficing'},
     'reinforcement-effort': {'behavior_rule': 'reinforcement'},
     'demand-shock': {'longitudinal.demand_schedule': 'shock'},
@@ -427,6 +437,9 @@ def apply_variant(d, branch, name, context=None):
             if context not in DEMAND_MATCH:
                 raise ValueError('demand-matched variant has no measured factor for this context')
             d['enterprise_operations']['base_orders_per_workday'] *= DEMAND_MATCH[context]
+        elif key.startswith(('enterprise_operations.management_span', 'organization_tasks.management_span')):
+            section, field = key.split('.', 1)
+            d[section][field] = value
         elif key.startswith('enterprise_acquisition.'):
             d['enterprise_acquisition'][key.split('.', 1)[1]] = value
         elif key.startswith('person_context.'):

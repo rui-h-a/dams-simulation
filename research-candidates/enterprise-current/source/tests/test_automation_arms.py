@@ -322,19 +322,28 @@ class ScopedAuthorityTest(unittest.TestCase):
         self.assertEqual([A.effective_layers(full, d) for d in range(6)], list(range(6)))        # share 1: no change
         with self.assertRaises(ValueError):AutomationConfig.from_dict({'scoped_authority': True})  # needs sandboxes
 
+    def test_span_variants_and_the_delegated_hierarchy_are_configurations_only(self):
+        from dams_sim.config import Config
+        for variant, span in (('accounted-work-span4', 4), ('accounted-work-span16', 16), ('accounted-work', 8)):
+            d, branch = r11_design.base_config(scale=300, context='multinational', growth='organic', world=1, seed=2, pre_years=1, post_years=1, variant=variant)
+            self.assertEqual((d['enterprise_operations']['management_span'], d['organization_tasks']['management_span']), (span, span))
+            cfg = Config.from_dict(r11_design.arm_config(d, branch, 'hierarchy-isa'))
+            self.assertEqual((cfg.regime, cfg.backend, cfg.automation.scoped_authority, cfg.automation.sandboxes), ('hierarchy', 'central', True, True))
+
     def test_scoped_coordination_and_reporting_cost_less_and_validate(self):
         tmp = tempfile.mkdtemp(dir=os.environ.get('TMPDIR')); root = Path(tmp)
         try:
             r11_study.prehistory(dict(scale=60, context='multinational', growth='organic', world=5, seed=20261017, pre_years=0, post_years=1,
                                       variant='accounted-work', out=str(root/'pre')))
             out = {}
-            for arm in ('dams-isa-unscoped', 'dams-isa', 'dams-isa-x50', 'control-hierarchy', 'hierarchy-auto'):
+            for arm in ('dams-isa-unscoped', 'dams-isa', 'dams-isa-x50', 'control-hierarchy', 'hierarchy-auto', 'hierarchy-isa'):
                 r11_study.arm(dict(prehistory=str(root/'pre'), arm=arm, retain_journal=False, out=str(root/arm)))   # raw validators run
                 out[arm] = json.loads((root/arm/'summary.json').read_text())
             coordination = {k: v['enterprise_coordination_hours'] for k, v in out.items()}
             network = {k: v['organization_network_hours'] for k, v in out.items()}
             self.assertLess(coordination['dams-isa'], coordination['dams-isa-x50']); self.assertLess(coordination['dams-isa-x50'], coordination['dams-isa-unscoped'])
             self.assertLess(network['dams-isa'], network['dams-isa-unscoped'])
+            self.assertAlmostEqual(coordination['hierarchy-isa'], coordination['dams-isa'], delta=.02*coordination['dams-isa'])   # same scope rule
             self.assertLess(out['dams-isa']['confirmation_mean_days'], out['dams-isa-unscoped']['confirmation_mean_days'])
             # work accounting: members of the manual arm do more administrative work than those of the automated arm
             self.assertGreater(out['control-hierarchy']['administrative_work_hours'], out['hierarchy-auto']['administrative_work_hours'])

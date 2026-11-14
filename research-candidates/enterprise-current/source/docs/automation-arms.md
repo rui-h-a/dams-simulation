@@ -91,6 +91,15 @@ self-modification and scoped authority. Project sandboxes, core-modification att
 mechanisms exercised by unit tests, not by the engine's daily loop. With `sandbox_level='team'` formal
 shares are normalised inside each team sandbox (tested; not used by the study arms).
 
+## Delegated hierarchy (`hierarchy-isa`) and span variants
+`hierarchy-isa` gives the retained hierarchy automated verification and the same sandbox architecture and
+scope rule as `dams-isa`; authority stays with performance tiers and the record stays central. It is the
+strongest hierarchical competitor: the difference between `dams-isa` and `hierarchy-isa` is what the
+contribution-based authority rule and the witnessed record add once scope and automation are equal.
+Variants `accounted-work-span4` and `accounted-work-span16` change the span of control from 8, and with it
+the supervisory depth and the sizes at which a layer is added. Arms and variants are configurations:
+the model source hash covers `dams_sim/*.py` only, so they branch from the same histories as the other arms.
+
 ## Fault and saturation studies
 `dams-isa-fault`: a 14-day verification-service outage in sandbox `g0` starting 120 days after the boundary.
 Reports whether the throughput of other sandboxes (confirmed claims per member-day, fault window against
