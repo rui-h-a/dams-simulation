@@ -65,8 +65,8 @@ class AutomationConfig:
     acceptance_rule: str = 'threshold'
     # Processing units per claim, before the evidence backend's multiplier.
     processing_units_per_claim: float = 1.0
-    # Reporting conversion only: processing is not debited from cash, in line
-    # with the witness verification units that are also reported separately.
+    # Reporting conversion of processing units; also the price per unit where processing is charged to cash
+    # (charge_processing below, or the base-level processing_charge_rate). Without a charge, units are only reported.
     resource_units_per_processing_unit: float = 0.01
     # Nested sandboxes (dams-isa). Off: unlimited processing, no sandbox logs.
     sandboxes: bool = False
@@ -271,6 +271,20 @@ def class_multiplier(config, klass):
     return config.inferential_processing_multiplier if klass == 'inferential' else 1.
 
 
+SHADOW_HUMAN_ROUTES = ('quota', 'outage', 'disputed')
+
+
+def shadow_to_human(candidate_sampled, route, hypothetical):
+    """Whether a candidate exception fraction would leave the claim to humans, as live handling would.
+
+    Live handling sends a claim to human review when it is audit-sampled, when the verifier abstains, and when it
+    cannot be processed automatically: no quota left, the sandbox's verification service is down, or the record is
+    disputed. The shadow evaluation of a candidate fraction costs the claim in the same way; only the audit sample
+    (`candidate_sampled`) depends on the candidate, the other routes do not.
+    """
+    return bool(candidate_sampled) or route in SHADOW_HUMAN_ROUTES or hypothetical == 'exception'
+
+
 def verdict(config, *, rule_accept, u_uncertain, u_error, false_reject=None, klass=None):
     """Automated verdict for a claim that has been processed: accept/reject/exception.
 
@@ -330,8 +344,14 @@ def effective_layers(config, layers):
 
 
 def in_scope_delay_layers(config, layers):
-    """Layers that delay a member's own work record: the record is in scope."""
-    return min(layers, config.in_scope_layers)
+    """Whole layers (days at one day per layer) that delay a member's work record under scoped authority.
+
+    The layers up to `in_scope_layers` always delay the record; of the layers above the scope the cross-boundary
+    share still does, rounded half up to a whole layer: min(layers, l0) + floor(share*(layers-min(layers, l0)) + 0.5).
+    Share 1 gives all `layers` (the unscoped rule), share 0 gives min(layers, l0).
+    """
+    inside = min(layers, config.in_scope_layers)
+    return inside+math.floor(config.cross_boundary_share*(layers-inside)+0.5)
 
 
 # ---- sandboxes: quota and borrowing ----------------------------------------------------

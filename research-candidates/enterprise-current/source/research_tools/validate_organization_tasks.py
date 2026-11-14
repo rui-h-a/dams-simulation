@@ -293,7 +293,9 @@ def verify_organization_accounts(config,state,database):
                 if o['planned_effort']>a['production_cap_hours']*funding+1e-12:raise ValueError('organization production exceeds local objective time')
                 readiness=1/(1+c.reporting_readiness_penalty_per_layer*layers_borne[str(i)])
                 _close(o['reporting_readiness_fraction'],readiness,'reporting readiness')
-                delay_layers=min(links['reporting_depth'][str(i)],config.automation.in_scope_layers) if 'reporting_layers' in a else links['reporting_depth'][str(i)]
+                delay_layers=links['reporting_depth'][str(i)]
+                if 'reporting_layers' in a:   # scoped: layers up to the scope delay in full, the cross-boundary share of the rest rounded half up
+                    inside=min(delay_layers,config.automation.in_scope_layers);delay_layers=inside+math.floor(config.automation.cross_boundary_share*(delay_layers-inside)+.5)
                 if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+delay_layers*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
                 peers=[j for j in links['collaboration_peers'][str(i)] if j in present_set]
                 excluded=set()

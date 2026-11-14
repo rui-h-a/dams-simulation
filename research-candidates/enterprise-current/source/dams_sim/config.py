@@ -73,6 +73,11 @@ class Config:
     # Administrative hours per present member-day already embodied in the fatigue constants (the load of the
     # manual hierarchy the constants were set for). Only the difference from it changes fatigue.
     administrative_fatigue_reference: float = 0.0
+    # Base-level processing charge, identical for every arm: when set, the day's processing units (automated verification,
+    # witness verification units of human reviews, coordination automation) times this rate are paid from cash at the end of
+    # the day, also by an arm without an `automation` block. None keeps the earlier model. An arm whose automation block
+    # charges processing uses the block's rate instead.
+    processing_charge_rate: float | None = None
 
     def validate(self) -> Config:
         if self.longitudinal is not None and not isinstance(self.longitudinal, LongitudinalConfig):
@@ -102,6 +107,10 @@ class Config:
         if not isinstance(self.administrative_fatigue,bool):raise ValueError('administrative_fatigue must be boolean')
         if isinstance(self.administrative_fatigue_reference,bool) or not isinstance(self.administrative_fatigue_reference,(int,float)) or not 0<=self.administrative_fatigue_reference<=1 or (self.administrative_fatigue_reference and not self.administrative_fatigue):raise ValueError('administrative_fatigue_reference must be in [0, 1] and needs administrative_fatigue')
         if self.administrative_fatigue and self.longitudinal is None:raise ValueError('administrative_fatigue requires the longitudinal engine')
+        if self.processing_charge_rate is not None:
+            r=self.processing_charge_rate
+            if isinstance(r,bool) or not isinstance(r,(int,float)) or not math.isfinite(r) or not 0<=r<=1e6:raise ValueError('processing_charge_rate must be finite in [0, 1000000]')
+            if self.longitudinal is None:raise ValueError('processing_charge_rate requires the longitudinal engine')
         horizon_limit = 50_000 if self.longitudinal is not None else 3650
         if self.automation is not None:
             if not isinstance(self.automation, AutomationConfig):raise ValueError('automation must be typed')
@@ -184,6 +193,7 @@ class Config:
         else:value['automation']=self.automation.to_dict()   # project-sandbox fields appear only when that feature is on
         if self.decision_effect is None:value.pop('decision_effect')
         if not self.administrative_fatigue:value.pop('administrative_fatigue');value.pop('administrative_fatigue_reference')
+        if self.processing_charge_rate is None:value.pop('processing_charge_rate')
         return value
 
     @classmethod

@@ -377,6 +377,13 @@ def _person_context_base(cx):
 
 # Structural/assumption variants for institutional-counterfactual robustness.
 # Each changes one family of psychological, cultural or economic assumptions.
+# Configuration of the formal study (variant `full`): every base-level mechanism on. The processing charge is a base-level
+# setting (processing_charge_rate), so every arm pays for the processing units it accumulates at the same rate, also an
+# arm without an automation block; the automation blocks carry the same rate.
+_FULL = {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
+         'automation.record_classes': True, 'automation.charge_processing': True, 'automation.resource_units_per_processing_unit': 0.01,
+         'processing_charge_rate': 0.01}
+
 VARIANTS = {
     'baseline': {},
     'independent-traits': {'person_context.trait_correlations': {}},
@@ -413,8 +420,18 @@ VARIANTS = {
                                          'automation.record_classes': True},
     # Configuration of the formal study: every base-level mechanism on (work accounting reference 0.14, decision effect with
     # its defaults, record classes, processing charged to cash at 0.01). See docs/automation-arms.md for the parameter table.
-    'full': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
-             'automation.record_classes': True, 'automation.charge_processing': True, 'automation.resource_units_per_processing_unit': 0.01},
+    'full': dict(_FULL),
+    # Sensitivity variants of `full` (small runs). Collusive review with a cohort of 5 % / 20 %; decision effect gamma 0.2;
+    # processing charge 0.1 per unit; automated share of coordination and reporting 0.25 / 0.75 (set only on the arms that
+    # have coordination automation); record class mix 0.50 / 0.35 / 0.15 (objective / inferential / disputed).
+    'full-collude05': {**_FULL, 'collude': 0.05},
+    'full-collude20': {**_FULL, 'collude': 0.2},
+    'full-g20': {**_FULL, 'decision_effect': {'gamma': 0.2}},
+    'full-charge10': {**_FULL, 'automation.resource_units_per_processing_unit': 0.1, 'processing_charge_rate': 0.1},
+    'full-coord25': {**_FULL, 'automation_coordination_share': 0.25},
+    'full-coord75': {**_FULL, 'automation_coordination_share': 0.75},
+    'full-classes-503515': {**_FULL, 'automation.class_share_objective': 0.50, 'automation.class_share_inferential': 0.35,
+                            'automation.class_share_disputed': 0.15},
     'accounted-work-decisions-classes-charged': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
                                                  'automation.record_classes': True, 'automation.charge_processing': True,
                                                  'automation.resource_units_per_processing_unit': 0.01},
@@ -486,7 +503,7 @@ def apply_variant(d, branch, name, context=None):
             if context not in DEMAND_MATCH:
                 raise ValueError('demand-matched variant has no measured factor for this context')
             d['enterprise_operations']['base_orders_per_workday'] *= DEMAND_MATCH[context]
-        elif key.startswith('automation.'):
+        elif key.startswith('automation.') or key == 'automation_coordination_share':
             continue   # set on each arm's automation block by arm_config
         elif key == 'collude':
             d.update(attack='collude', attack_cohort_fraction=value, attack_start_day=branch, attack_stop_day=d['days'],
@@ -524,6 +541,8 @@ def arm_config(base, branch, arm, variant=None):
         for key, value in VARIANTS.get(variant, {}).items():     # variant settings for the automation block of an arm that has one
             if key.startswith('automation.'):
                 d['automation'][key.split('.', 1)[1]] = value
+            elif key == 'automation_coordination_share' and d['automation'].get('coordination_automation'):
+                d['automation']['coordination_automation'] = value   # only arms that automate coordination
     L = d['longitudinal']
     if spec['adoption'] == 'never':
         L['adoption_mode'] = 'never'

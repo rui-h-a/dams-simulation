@@ -872,14 +872,15 @@ class _RawDailyAccounting:
             if klass is not None:self.metrics['rc_'+klass+'_confirmed']+=1;self.metrics['rc_'+klass+'_confirm_days']+=day-created
             if value['correction']:self.metrics['corrections']+=1
         charged=None
-        if p.automation is not None and p.automation.charge_processing:
+        charge_rate=p.automation.resource_units_per_processing_unit if p.automation is not None and p.automation.charge_processing else p.processing_charge_rate
+        if charge_rate is not None:
             # Processing units of the day re-derived from the records above (automated verification, witness units of human reviews,
             # coordination automation), paid from the cash left at the end of the day.
             if present is None or len(charge_events)!=1:raise ValueError('raw processing charge missing, duplicated or without a known roster')
             units={k:self.metrics.get(k,0.)-before.get(k,0.) for k in ('automated_processing_units','verification_resource_units','coordination_processing_units')}
-            requested=math.fsum(units.values())*p.automation.resource_units_per_processing_unit
+            requested=math.fsum(units.values())*charge_rate
             charged=min(requested,self.cash)
-            if charge_events[0]!={'units':units,'rate':p.automation.resource_units_per_processing_unit,'requested':requested,'charged':charged}:raise ValueError('raw processing charge differs from the day\'s processing records')
+            if charge_events[0]!={'units':units,'rate':charge_rate,'requested':requested,'charged':charged}:raise ValueError('raw processing charge differs from the day\'s processing records')
             self.cash-=charged;self.metrics['operating_resource_units']+=charged;self.metrics['processing_charge_resource_units']+=charged
             self.metrics['operating_unfunded_resource_units']+=requested-charged
         elif charge_events:raise ValueError('raw processing charge without declared charged processing')

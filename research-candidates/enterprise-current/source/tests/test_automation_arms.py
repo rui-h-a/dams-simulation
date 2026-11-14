@@ -317,7 +317,7 @@ class ScopedAuthorityTest(unittest.TestCase):
     def test_layers_borne_under_scoped_authority(self):
         c = AutomationConfig(sandboxes=True, scoped_authority=True)
         self.assertEqual([A.effective_layers(c, d) for d in (0, 1, 2, 5)], [0, 1, 1.25, 2.0])
-        self.assertEqual([A.in_scope_delay_layers(c, d) for d in (0, 1, 4)], [0, 1, 1])
+        self.assertEqual([A.in_scope_delay_layers(c, d) for d in (0, 1, 4)], [0, 1, 2])      # 1 + floor(.25 * 3 + .5)
         full = AutomationConfig(sandboxes=True, scoped_authority=True, cross_boundary_share=1.)
         self.assertEqual([A.effective_layers(full, d) for d in range(6)], list(range(6)))        # share 1: no change
         with self.assertRaises(ValueError):AutomationConfig.from_dict({'scoped_authority': True})  # needs sandboxes

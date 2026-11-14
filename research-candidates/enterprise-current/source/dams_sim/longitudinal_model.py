@@ -532,7 +532,7 @@ class LongitudinalEngine:
                 cost=lambda human,verdict_:(0. if human else float(_automation.is_wrong(verdict_,rule)))+w*human
                 live=cost(result=='exception',result)
                 candidate=u_sample<sh['value'] if sh['phase']=='shadow' else None
-                shadow_cost=cost(candidate or route=='quota' or hypothetical=='exception',hypothetical) if candidate is not None else 0.
+                shadow_cost=cost(_automation.shadow_to_human(candidate,route,hypothetical),hypothetical) if candidate is not None else 0.
                 g.observe(sandbox,live,shadow_cost)
             if klass is not None:
                 self.metrics['rc_'+klass+'_claims']+=1
@@ -1058,7 +1058,10 @@ class LongitudinalEngine:
             self.ledger.add_journal(day,'enterprise_market_end',f'market:end:{day}',operation_end)
         else:
             self.cash+=revenue;self.metrics['revenue_resource_units']+=revenue
-        charging=p.automation is not None and p.automation.charge_processing
+        # Processing is charged by the automation block of an arm that has one and declares it, else by the base-level rate
+        # (identical for every arm, so an arm without automation pays for the witness units of its reviews at the same rate).
+        charge_rate=p.automation.resource_units_per_processing_unit if p.automation is not None and p.automation.charge_processing else p.processing_charge_rate
+        charging=charge_rate is not None
         if self.enterprise is not None and not charging:
             self.enterprise.observe(day,revenue,paid+(material_cost if self.operations is not None else 0.)+acquisition_cost,working=working and operating)
         if de is not None:self.metrics['decision_effect_output_factor_sum']+=math.fsum(decision_factors);self.metrics['decision_effect_output_factor_count']+=len(decision_factors)
@@ -1083,11 +1086,11 @@ class LongitudinalEngine:
             # that is left: the next morning's funding fraction, growth and closure respond to the lower cash, and growth also
             # sees the charge as a cost of this day. What cash cannot cover is recorded as unfunded.
             units={k:self.metrics.get(k,0.)-before.get(k,0.) for k in ('automated_processing_units','verification_resource_units','coordination_processing_units')}
-            requested=math.fsum(units.values())*p.automation.resource_units_per_processing_unit
+            requested=math.fsum(units.values())*charge_rate
             charged=min(requested,self.cash)
             self.cash-=charged;self.metrics['operating_resource_units']+=charged;self.metrics['processing_charge_resource_units']+=charged
             self.metrics['operating_unfunded_resource_units']+=requested-charged
-            self.ledger.add_journal(day,'processing_charge',f'processing-charge:{day}',{'units':units,'rate':p.automation.resource_units_per_processing_unit,'requested':requested,'charged':charged})
+            self.ledger.add_journal(day,'processing_charge',f'processing-charge:{day}',{'units':units,'rate':charge_rate,'requested':requested,'charged':charged})
             if self.enterprise is not None:
                 self.enterprise.observe(day,revenue,paid+(material_cost if self.operations is not None else 0.)+acquisition_cost+charged,working=working and operating)
         backlog=self.ledger.pending_count('review')+self.ledger.pending_count('commit');self.metrics['backlog_peak_records']=max(self.metrics['backlog_peak_records'],backlog)
