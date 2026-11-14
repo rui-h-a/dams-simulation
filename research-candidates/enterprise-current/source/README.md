@@ -114,6 +114,24 @@ followed, after every arm has its receipt, by retiring intermediate checkpoints 
          --worlds 0 --arms control-hierarchy,dams-witness --jobs 2 --output runs/smoke
 ```
 
+The automation and sandbox study (see `docs/automation-arms.md`; source commit `56ff5e9`) regenerates its own shared history under the work-accounting variant and compares six arms on each firm:
+
+```sh
+./run.sh --spec enterprise-r11 --scale 10000 --context multinational --growth organic --pre-years 2 --post-years 5 \
+         --variant accounted-work --worlds $(seq -s, 1000 1009) \
+         --arms control-hierarchy,hierarchy-auto,dams-witness,dams-auto,dams-isa,dams-isa-x50 \
+         --jobs 6 --output /path/on/a/large/volume/isa-n10000
+```
+
+Each world needs six single-threaded processes and about 40 GB of disk per arm while it runs; the worlds are independent and can run on separate machines. The mechanism study uses the same command at `--scale 300` with worlds 2000 to 2009 and the further arms `control-process`, `dams-isa-unscoped`, `dams-isa-fault`, `dams-isa-saturated`, `hierarchy-auto-measured` and `dams-auto-measured`. A check of the whole path with the six main arms takes about ten minutes on the reference workstation:
+
+```sh
+./run.sh --spec enterprise-r11 --scale 300 --context multinational --growth organic --pre-years 2 --post-years 1 \
+         --variant accounted-work --worlds 1000 \
+         --arms control-hierarchy,hierarchy-auto,dams-witness,dams-auto,dams-isa,dams-isa-x50 --jobs 6 --output runs/isa-smoke
+python -m research_tools.r11_isa_measures runs/isa-smoke/n300-*/dams-isa
+```
+
 ## Computing resources
 
 Measured complete runs (`docs/r11-resource-measurements.md`): a 10,000-member arm needs about 15 hours for five simulated years and 12 to 14 hours of full validation (both measured with 12 arms sharing 16 vCPU), about 7.3 GB of retained output and up to about 14 GB of working space; the main study (40 arms) therefore needs about 320 GB retained, 6 to 8 cores for about four to five days, and memory well below 1 GB per process. A 50,000-member arm needs at least 75 hours of simulation.
