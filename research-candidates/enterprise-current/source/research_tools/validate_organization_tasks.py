@@ -228,10 +228,17 @@ def verify_organization_accounts(config,state,database):
             present_set=set(present)  # membership only; iteration keeps the sorted list order
             if set(plan['allocations'])!={str(i) for i in present}:raise ValueError('organization allocation roster differs')
             funding=plan['funding_fraction'];_close(funding,min(1.,max(0.,funding)),'funding')
-            remaining={};net=quality=learning=0.
+            remaining={};net=quality=learning=0.;layers_borne={}
             for i in present:
                 key=str(i);a=plan['allocations'][key];peers=[j for j in links['collaboration_peers'][key] if j in present_set]
-                request=links['reporting_depth'][key]*c.reporting_hours_per_layer+len(peers)*c.collaboration_hours_per_contact+c.verification_hours_per_member_workday
+                depth=links['reporting_depth'][key]
+                if 'reporting_layers' in a:
+                    auto=getattr(config,'automation',None)
+                    if auto is None or not auto.scoped_authority:raise ValueError('scoped reporting layers without declared scoped authority')
+                    inside=min(depth,auto.in_scope_layers);depth=inside+auto.cross_boundary_share*(depth-inside)
+                    _close(a['reporting_layers'],depth,'scoped reporting layers')
+                layers_borne[key]=depth
+                request=depth*c.reporting_hours_per_layer+len(peers)*c.collaboration_hours_per_contact+c.verification_hours_per_member_workday
                 _close(a['requested_network_hours'],request,'network request')
                 available=a['available_hours'];_close(available,max(0.,available),'available capacity')
                 reorganization=0.;still_training=False
@@ -249,7 +256,7 @@ def verify_organization_accounts(config,state,database):
                 for field,w in zip(('production_cap_hours','quality_hours','learning_hours'),weights):
                     _close(a[field],residual*w,field)
                 net+=fixed*funding;quality+=a['quality_hours']*funding;learning+=a['learning_hours']*funding
-                served=max(0.,network-links['reporting_depth'][key]*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
+                served=max(0.,network-depth*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
                 remaining[key]=int((served+1e-12)/c.verification_hours_per_claim)
             metrics['organization_network_hours']+=net;metrics['organization_quality_hours']+=quality;metrics['organization_learning_hours']+=learning
             work=[p for k,e,p in events if k=='work']
@@ -265,9 +272,10 @@ def verify_organization_accounts(config,state,database):
                 _close(o['quality_hours'],a['quality_hours']*funding,'quality work reservation')
                 _close(o['learning_hours'],a['learning_hours']*funding,'learning work reservation')
                 if o['planned_effort']>a['production_cap_hours']*funding+1e-12:raise ValueError('organization production exceeds local objective time')
-                readiness=1/(1+c.reporting_readiness_penalty_per_layer*links['reporting_depth'][str(i)])
+                readiness=1/(1+c.reporting_readiness_penalty_per_layer*layers_borne[str(i)])
                 _close(o['reporting_readiness_fraction'],readiness,'reporting readiness')
-                if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+links['reporting_depth'][str(i)]*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
+                delay_layers=min(links['reporting_depth'][str(i)],config.automation.in_scope_layers) if 'reporting_layers' in a else links['reporting_depth'][str(i)]
+                if type(o['claim_ready_day']) is not int or o['claim_ready_day']!=day+1+delay_layers*c.reporting_delay_days_per_layer:raise ValueError('organization report latency differs')
                 peers=[j for j in links['collaboration_peers'][str(i)] if j in present_set]
                 # R11: cross-language collaboration contacts carry the declared discount (independent re-statement).
                 lang=(lambda j:1. if pc is None else (1. if pc_language[i]==pc_language[j] else 1-pc.cross_language_help_discount)*(1. if pc_ethnicity[i]==pc_ethnicity[j] else 1-pc.cross_ethnic_help_discount))
@@ -356,6 +364,13 @@ def verify_organization_accounts(config,state,database):
                     remaining[str(reviewer)]-=1;metrics['organization_verification_hours']+=p['verification_hours']
             worked={p['person'] for p in work}
             for person in active-worked:fatigue[person]=max(0.,min(1.,fatigue[person]-.1))
+            for kind_,_event,payload_ in events:
+                if kind_=='administrative_work':
+                    if not getattr(config,'administrative_fatigue',False):raise ValueError('administrative work recorded without the declared accounting')
+                    for person,hours in payload_['hours_by_person'].items():
+                        if not isinstance(hours,(int,float)) or isinstance(hours,bool) or not 0<=hours<=1:raise ValueError('administrative work hours invalid')
+                        fatigue[int(person)]=max(0.,min(1.,fatigue[int(person)]+.25*(hours-config.administrative_fatigue_reference)));metrics['administrative_work_hours']+=hours
+                    if sorted(int(k) for k in payload_['hours_by_person'])!=sorted(plan['present_people']):raise ValueError('administrative work roster differs from the present roster')
             guild_size=collections.Counter(guilds[i] for i in active);guild_effort=collections.defaultdict(list)
             for p in work:
                 if p['person'] in active:guild_effort[guilds[p['person']]].append(p['effort'])

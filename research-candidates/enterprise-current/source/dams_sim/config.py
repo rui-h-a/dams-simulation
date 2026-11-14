@@ -64,6 +64,12 @@ class Config:
     organization_tasks: OrganizationTasksConfig | None = None
     person_context: PersonContextConfig | None = None
     automation: AutomationConfig | None = None
+    # Review, appeal, governance and verification work actually done by members counts as workload in
+    # the fatigue update (False keeps the earlier accounting, in which only time reserved for it was withheld).
+    administrative_fatigue: bool = False
+    # Administrative hours per present member-day already embodied in the fatigue constants (the load of the
+    # manual hierarchy the constants were set for). Only the difference from it changes fatigue.
+    administrative_fatigue_reference: float = 0.0
 
     def validate(self) -> Config:
         if self.longitudinal is not None and not isinstance(self.longitudinal, LongitudinalConfig):
@@ -90,6 +96,9 @@ class Config:
             if self.longitudinal is None:raise ValueError('person_context requires the longitudinal engine')
             if self.joint_population is not None:raise ValueError('person_context supersedes joint_population; enable only one entry copula')
             self.person_context.validate()
+        if not isinstance(self.administrative_fatigue,bool):raise ValueError('administrative_fatigue must be boolean')
+        if isinstance(self.administrative_fatigue_reference,bool) or not isinstance(self.administrative_fatigue_reference,(int,float)) or not 0<=self.administrative_fatigue_reference<=1 or (self.administrative_fatigue_reference and not self.administrative_fatigue):raise ValueError('administrative_fatigue_reference must be in [0, 1] and needs administrative_fatigue')
+        if self.administrative_fatigue and self.longitudinal is None:raise ValueError('administrative_fatigue requires the longitudinal engine')
         horizon_limit = 50_000 if self.longitudinal is not None else 3650
         if self.automation is not None:
             if not isinstance(self.automation, AutomationConfig):raise ValueError('automation must be typed')
@@ -160,6 +169,7 @@ class Config:
         if self.organization_tasks is None:value.pop('organization_tasks')
         if self.person_context is None:value.pop('person_context')
         if self.automation is None:value.pop('automation')
+        if not self.administrative_fatigue:value.pop('administrative_fatigue');value.pop('administrative_fatigue_reference')
         return value
 
     @classmethod

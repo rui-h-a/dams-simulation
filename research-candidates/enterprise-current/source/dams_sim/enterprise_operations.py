@@ -222,7 +222,8 @@ class EnterpriseOperatingState:
             if when.weekday() in clock.config.work_weekdays and when.date().isoformat() not in clock.config.holidays and c.work_start_local<=when.hour<c.work_end_local:available+=1
         return available/(c.work_end_local-c.work_start_local)
 
-    def coordination_required(self, active, guilds, departments, sites, site):
+    def coordination_required(self, active, guilds, departments, sites, site, scope=None):
+        """scope: None, or a function layers -> layers borne under scoped authority."""
         c=self.context(site)
         managers=max(1,guilds)
         if self.c.coordination_manager_basis=='span':
@@ -232,6 +233,7 @@ class EnterpriseOperatingState:
         else:
             layers=1+math.ceil(math.log(max(1,departments),self.c.management_span)) if self.c.management_span>1 else departments
         reports=active/managers
+        if scope is not None:layers=scope(layers)
         return (self.c.coordination_workday_units_per_layer*layers+
                 self.c.management_overload_workday_units_per_report*max(0,reports-self.c.management_span)+
                 c.communication_workday_units*(sites>1))
@@ -245,7 +247,7 @@ class EnterpriseOperatingState:
         return min(self.c.coordination_service_budget_workday_fraction,
                    max(0.,1-care_fraction-other_reservations))
 
-    def prepare_coordination(self, day, *, active, guilds, departments, sites, people, funding):
+    def prepare_coordination(self, day, *, active, guilds, departments, sites, people, funding, scoped=None, scope=None):
         """One staged phase per day; (person, site, capacity) uses real time bounds.
 
         Old debt is served with today's requests. Unserved work remains pending;
@@ -273,13 +275,18 @@ class EnterpriseOperatingState:
         for site in sorted(set(groups)|{int(k) for k in self.coordination_pending}):
             members=groups.get(site,[])
             raw=self.coordination_required(active,guilds,departments,sites,site)
-            requested=math.fsum(raw for _ in members)
+            inside=[person for person,_ in members if person in scoped] if scoped else []
+            need={person:raw for person,_ in members}
+            if inside:
+                low=self.coordination_required(active,guilds,departments,sites,site,scope)
+                for person in inside:need[person]=low
+            requested=math.fsum(need[person] for person,_ in members)
             pending=self.coordination_pending.get(str(site),0.)
             total=pending+requested
             capacity=math.fsum(v for _,v in members)
             # Preserve the unbound default exactly; no aggregate rounding detour.
-            if pending==0 and all(v>=raw for _,v in members):
-                chosen={person:raw for person,_ in members}
+            if pending==0 and all(v>=need[person] for person,v in members):
+                chosen=dict(need)
             else:
                 ratio=min(1.,total/capacity) if capacity else 0.
                 chosen={person:v*ratio for person,v in members}
@@ -292,7 +299,7 @@ class EnterpriseOperatingState:
             service.update(chosen);readiness[site]=ready
             rows.append({'site':site,'people':len(members),'required_per_person':raw,'requested':requested,
                          'pending_before':pending,'service_capacity':capacity,'served':served,
-                         'pending_after':after,'readiness_fraction':ready})
+                         'pending_after':after,'readiness_fraction':ready,**({'scoped_people':len(inside),'required_per_scoped_person':low} if inside else {})})
         self.coordination_plan={'day':day,'funding_fraction':funding,'sites':rows,
                                 'service_by_person':[[i,v] for i,v in sorted(service.items())]}
         return service,readiness,copy.deepcopy(self.coordination_plan)

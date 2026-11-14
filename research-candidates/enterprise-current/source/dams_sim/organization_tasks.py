@@ -250,7 +250,8 @@ class OrganizationTasksState:
             s['pending'].pop(0);s['history'].append(copy.deepcopy(record));events.append(('task_reorganization_complete',record))
         return events
 
-    def prepare(self,day,active,present,available,cooperation,*,funding):
+    def prepare(self,day,active,present,available,cooperation,*,funding,scoped=None,scope=None):
+        """scoped: members under scoped authority; scope: reporting depth -> layers they bear (others bear their depth)."""
         if type(day) is not int or day!=self.completed_days or self.last_plan is not None and self.last_plan['day']>=day:raise ValueError('organization plan day is not sequential')
         _number(funding,0,1,'funding fraction')
         if len(present)!=len(set(present)) or not set(present)<=set(active):raise ValueError('organization present roster not active')
@@ -262,6 +263,7 @@ class OrganizationTasksState:
         self.review_remaining={}
         for i in sorted(present):
             key=str(i);depth=links['reporting_depth'][key]
+            if scoped and i in scoped:depth=scope(depth)
             peers=[j for j in links['collaboration_peers'][key] if j in present]
             request=depth*self.c.reporting_hours_per_layer+len(peers)*self.c.collaboration_hours_per_contact+self.c.verification_hours_per_member_workday
             reorganization=0.
@@ -279,6 +281,7 @@ class OrganizationTasksState:
             if self.structure is not None:
                 choices[key]['reorganization_hours']=reorganization
                 choices[key]['remaining_reorganization_hours']=remaining
+            if scoped and i in scoped:choices[key]['reporting_layers']=depth
             help_input[i]=math.fsum(cooperation.get(j,0.) for j in peers)/len(peers) if peers else 0.
             readiness[i]=1/(1+self.c.reporting_readiness_penalty_per_layer*depth)
             # Network work serves reporting/collaboration first; only residual funds verification.
@@ -423,7 +426,9 @@ class OrganizationTasksState:
                 key=str(i);a=self.last_plan['allocations'][key];links=self.last_plan['topology']
                 available=a['available_hours'];_number(available,0,1,'organization available capacity')
                 peers=[j for j in links['collaboration_peers'][key] if j in present]
-                request=links['reporting_depth'][key]*self.c.reporting_hours_per_layer+len(peers)*self.c.collaboration_hours_per_contact+self.c.verification_hours_per_member_workday
+                depth=a.get('reporting_layers',links['reporting_depth'][key])
+                if 'reporting_layers' in a:_number(depth,0,links['reporting_depth'][key],'scoped reporting layers')
+                request=depth*self.c.reporting_hours_per_layer+len(peers)*self.c.collaboration_hours_per_contact+self.c.verification_hours_per_member_workday
                 reorganization=a.get('reorganization_hours',0.) if self.structure is not None else 0.
                 _number(reorganization,0,available,'reorganization paid reservation')
                 network=min(available-reorganization,request);fixed=network+reorganization
@@ -431,8 +436,9 @@ class OrganizationTasksState:
                 if self.structure is not None:
                     remaining=a['remaining_reorganization_hours'];_number(remaining,0,1e300,'remaining reorganization time')
                     expected.update(reorganization_hours=reorganization,remaining_reorganization_hours=remaining)
+                if 'reporting_layers' in a:expected['reporting_layers']=depth
                 if set(a)!={'available_hours'}|set(expected) or any(not isinstance(a[k],(int,float)) or isinstance(a[k],bool) or not math.isfinite(a[k]) or not math.isclose(a[k],v,rel_tol=1e-12,abs_tol=1e-12) for k,v in expected.items()):raise ValueError('organization allocation arithmetic differs')
-                verification=max(0.,network-links['reporting_depth'][key]*self.c.reporting_hours_per_layer-len(peers)*self.c.collaboration_hours_per_contact)*self.last_plan['funding_fraction']
+                verification=max(0.,network-depth*self.c.reporting_hours_per_layer-len(peers)*self.c.collaboration_hours_per_contact)*self.last_plan['funding_fraction']
                 if self.review_remaining.get(key,0)>int((verification+1e-12)/self.c.verification_hours_per_claim):raise ValueError('organization retained review quota exceeds paid capacity')
             if set(self.review_remaining)!={str(i) for i in self.last_plan['present_people']}:raise ValueError('organization reviewer capacity roster differs')
             if any(type(v) is not int or v<0 for v in self.review_remaining.values()):raise ValueError('organization reviewer capacity invalid')

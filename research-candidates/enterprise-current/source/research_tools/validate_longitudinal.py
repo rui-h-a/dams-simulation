@@ -233,7 +233,7 @@ class _RawDailyAccounting:
         'automated_verifications','automated_processing_units','automated_accepts','automated_rejects','auto_false_accepts','auto_false_rejects',
         'exception_claims','exception_sampled','exception_uncertain','exception_quota','sandbox_requests','sandbox_requests_approved','sandbox_borrowed_units','sandbox_approval_latency_days',
         'sandboxes_created','sandboxes_split','sandboxes_merged','sandboxes_closed','privacy_blocks','core_blocks','selfmod_adoptions','selfmod_rollbacks',
-        'faults_injected','faults_detected','faults_recovered','exception_outage','sandbox_read_deferred_records'))
+        'faults_injected','faults_detected','faults_recovered','exception_outage','sandbox_read_deferred_records','administrative_work_hours'))
     def __init__(self,config,state,config_history=()):
         self.config=config;self.state=state;self.config_history=config_history
         self.enterprise=EnterpriseGrowthState(config) if config.enterprise_growth is not None else None
@@ -375,7 +375,7 @@ class _RawDailyAccounting:
             ready={slot:self.operations.recruit_ready(slot,day) for slot in range(self.enterprise.target) if slot not in occupied} if operating else {}
             for k,e,v in events:
                 if k=='entry' and not v['initial'] and not ready.get(v['slot'],False):raise ValueError('raw recruitment bypasses talent lead time')
-        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[]
+        work=[];votes={};decisions={};reviews=[];appeals=[];commits=[];auto_closure=False;administrative=None;autos=[];sandbox_requests=[];sandbox_quotas=[];sandbox_counted=[]
         for kind,event,value in events:
             if kind=='acquisition_entry':
                 i=value['person'];person=self.people.get(i)
@@ -452,6 +452,9 @@ class _RawDailyAccounting:
             elif kind=='sandbox_request':sandbox_requests.append(value)
             elif kind=='sandbox_quota':sandbox_quotas.append(value)
             elif kind in SANDBOX_COUNTED:sandbox_counted.append(kind)
+            elif kind=='administrative_work':
+                if not p.administrative_fatigue:raise ValueError('raw administrative work without the declared accounting')
+                administrative=value['hours_by_person']
             elif kind=='sandbox_read_deferred':
                 if p.automation is None or not p.automation.sandboxes:raise ValueError('raw sandbox read deferral without sandboxes')
                 self.metrics['sandbox_read_deferred_records']+=1
@@ -586,7 +589,10 @@ class _RawDailyAccounting:
                 coordination_inputs[i]=value;people.append((i,agent['site'],capacity))
             coordination_service,coordination_readiness,coordination_plan=self.operations.prepare_coordination(day,
                 active=len(active),guilds=self.enterprise.guilds,departments=self.enterprise.departments,sites=self.enterprise.sites,
-                people=people,funding=funding)
+                people=people,funding=funding,
+                **({'scoped':frozenset(i for i,_site,_capacity in people if self.adoption[str(self.members[i])] is not None),
+                    'scope':lambda layers:min(layers,p.automation.in_scope_layers)+p.automation.cross_boundary_share*(layers-min(layers,p.automation.in_scope_layers))}
+                   if p.automation is not None and p.automation.scoped_authority else {}))
             if phase['plan']!=coordination_plan:raise ValueError('raw requested/served/unmet coordination differs')
             self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
             self.metrics['enterprise_coordination_served_workdays']+=math.fsum(v['served'] for v in coordination_plan['sites'])
@@ -653,6 +659,8 @@ class _RawDailyAccounting:
                     plans=[v for k,e,v in events if k=='organization_plan']
                     if len(plans)!=1:raise ValueError('organization raw plan missing')
                     allocation=plans[0]['allocations'][str(i)]
+                    if ('reporting_layers' in allocation)!=(p.automation is not None and p.automation.scoped_authority and self.adoption[str(self.members[i])] is not None):
+                        raise ValueError('scoped reporting differs from the declared scope and adoption state')
                     expected_available=max(0.,1-agent['care_hours']-reservations-.05)
                     if not math.isclose(allocation['available_hours'],expected_available,rel_tol=1e-12,abs_tol=1e-12):raise ValueError('organization planning capacity differs from inherited time budget')
                     reservations+=allocation['network_hours']+allocation['quality_hours']+allocation['learning_hours']
@@ -755,6 +763,14 @@ class _RawDailyAccounting:
                 unit=p.backend_review_multipliers[('central','witness','consensus').index(backend)]
                 if review_counts[domain]>int(size*p.review_capacity_per_member_day*funding/unit) or appeal_counts[domain]>int(size*p.appeal_capacity_per_member_day*funding):
                     raise ValueError('raw review/appeal exceeds funded domain capacity')
+        if p.administrative_fatigue and observed_present:
+            pooled=.1*len(reviews)+.15*len(appeals)+math.fsum(v.get('verification_hours',0.) for _e,v in reviews)
+            recorded=math.fsum((administrative or {}).values())
+            # Governance time is re-derived from work records; on a present day without work records it is bounded.
+            low,high=(pooled+math.fsum(governance.get(i,0.) for i in present),)*2 if work else (pooled,pooled+.05*len(present))
+            if administrative is None or recorded<low-1e-9*(1+low) or recorded>high+1e-9*(1+high):raise ValueError('raw administrative work differs from review, appeal, verification and governance records')
+            self.metrics['administrative_work_hours']+=recorded
+        elif administrative is not None:raise ValueError('raw administrative work outside a funded present workday')
         if (autos or sandbox_requests or sandbox_quotas or sandbox_counted) and p.automation is None:raise ValueError('raw automated verification without declared automation')
         work_fraud={f"work:{day}:{self.people[v['person']]['token']}:g:{v['guild']}":v['fraudulent'] for v in work}
         work_rule={f"work:{day}:{self.people[v['person']]['token']}:g:{v['guild']}":(v['observed']>=self.acceptance_floor(v['guild'],p) and not v['audit']) for v in work}

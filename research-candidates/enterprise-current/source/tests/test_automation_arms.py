@@ -313,6 +313,36 @@ class ExistingArmsUnchangedTest(unittest.TestCase):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
+class ScopedAuthorityTest(unittest.TestCase):
+    def test_layers_borne_under_scoped_authority(self):
+        c = AutomationConfig(sandboxes=True, scoped_authority=True)
+        self.assertEqual([A.effective_layers(c, d) for d in (0, 1, 2, 5)], [0, 1, 1.25, 2.0])
+        self.assertEqual([A.in_scope_delay_layers(c, d) for d in (0, 1, 4)], [0, 1, 1])
+        full = AutomationConfig(sandboxes=True, scoped_authority=True, cross_boundary_share=1.)
+        self.assertEqual([A.effective_layers(full, d) for d in range(6)], list(range(6)))        # share 1: no change
+        with self.assertRaises(ValueError):AutomationConfig.from_dict({'scoped_authority': True})  # needs sandboxes
+
+    def test_scoped_coordination_and_reporting_cost_less_and_validate(self):
+        tmp = tempfile.mkdtemp(dir=os.environ.get('TMPDIR')); root = Path(tmp)
+        try:
+            r11_study.prehistory(dict(scale=60, context='multinational', growth='organic', world=5, seed=20261017, pre_years=0, post_years=1,
+                                      variant='accounted-work', out=str(root/'pre')))
+            out = {}
+            for arm in ('dams-isa-unscoped', 'dams-isa', 'dams-isa-x50', 'control-hierarchy', 'hierarchy-auto'):
+                r11_study.arm(dict(prehistory=str(root/'pre'), arm=arm, retain_journal=False, out=str(root/arm)))   # raw validators run
+                out[arm] = json.loads((root/arm/'summary.json').read_text())
+            coordination = {k: v['enterprise_coordination_hours'] for k, v in out.items()}
+            network = {k: v['organization_network_hours'] for k, v in out.items()}
+            self.assertLess(coordination['dams-isa'], coordination['dams-isa-x50']); self.assertLess(coordination['dams-isa-x50'], coordination['dams-isa-unscoped'])
+            self.assertLess(network['dams-isa'], network['dams-isa-unscoped'])
+            self.assertLess(out['dams-isa']['confirmation_mean_days'], out['dams-isa-unscoped']['confirmation_mean_days'])
+            # work accounting: members of the manual arm do more administrative work than those of the automated arm
+            self.assertGreater(out['control-hierarchy']['administrative_work_hours'], out['hierarchy-auto']['administrative_work_hours'])
+            self.assertGreater(out['hierarchy-auto']['administrative_work_hours'], 0)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 class EngineArmsTest(unittest.TestCase):
     """Small validated runs (each arm passes the raw-journal validators in r11_study.arm)."""
     EXTRA = {

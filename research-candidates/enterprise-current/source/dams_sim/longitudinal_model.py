@@ -392,6 +392,11 @@ class LongitudinalEngine:
         c=self.config.automation
         return _automation.acceptance_floor(c) if c is not None and self.adoption[guild] is not None else .25
 
+    def _scoped(self,guild):
+        """Scoped authority is in force for an adopted guild of a sandbox arm that declares it."""
+        c=self.config.automation
+        return c is not None and c.sandboxes and c.scoped_authority and self.adoption[guild] is not None
+
     def _sandboxed(self,guild):
         c=self.config.automation
         return c is not None and c.sandboxes and self.adoption[guild] is not None
@@ -559,8 +564,11 @@ class LongitudinalEngine:
         if claim.observed>=self._acceptance_floor(source) and a.trust>.2 and (self.pc is None or self.rng.uniform('pc_voice',day,token)<self.pc.voice_probability(claim.agent,self.pc.team_safety(self.teams.get(a.team,[]),self.agents))):self.ledger.push('appeal',source,dataclasses.replace(claim,ready=day+p.appeal_delay_days))
 
     def _review(self,present,funding):
+        """Human review and appeal of ready claims. Returns the member-hours of that work by person:
+        pooled review (0.1 workday) and appeal (0.15) time is shared by the present members of the
+        domain; organizational verification time belongs to the named reviewer."""
         from .model import clip
-        p,day=self.config,self.day
+        p,day=self.config,self.day;administrative=defaultdict(float)
         for g in range(self.guild_count):
             domain=self.guild_alias[g]; ids=[i for i in self.members.get(domain,[]) if i in present]
             # Source-domain queues survive mergers, but share the successor's
@@ -572,7 +580,7 @@ class LongitudinalEngine:
             appeal_slots=int(len(ids)*p.appeal_capacity_per_member_day*funding)
             source_domains=[v for v in range(self.guild_count) if self.guild_alias[v]==domain]
             # Global lottery/order across merged queues, not one free pool per old domain.
-            remaining=slots
+            remaining=slots;pooled=0.
             while remaining>0:
                 batch=self.ledger.take_ready_domains('review',source_domains,day,min(1024,remaining))
                 if not batch:break
@@ -593,13 +601,17 @@ class LongitudinalEngine:
                             self.ledger.add_journal(day,'sandbox_read_deferred',claim.event,{'person':claim.agent,'reviewer':reviewer,'ready':day+1})
                             continue
                         self.metrics['organization_verification_hours']+=self.organization.c.verification_hours_per_claim
-                    self._review_one(source,claim,day,backend,unit,settlement,reviewer=reviewer)
+                        administrative[reviewer]+=self.organization.c.verification_hours_per_claim
+                    self._review_one(source,claim,day,backend,unit,settlement,reviewer=reviewer);pooled+=.1
             remaining=appeal_slots
             while remaining>0:
                 batch=self.ledger.take_ready_domains('appeal',source_domains,day,min(1024,remaining))
                 if not batch:break
                 remaining-=len(batch)
-                for source,claim in batch:self._appeal_one(source,claim,day,settlement)
+                for source,claim in batch:self._appeal_one(source,claim,day,settlement);pooled+=.15
+            if pooled and ids:
+                for i in ids:administrative[i]+=pooled/len(ids)
+        return administrative
 
     def _review_one(self,source,claim,day,backend,unit,settlement,*,reviewer=None):
         from .model import clip
@@ -761,7 +773,8 @@ class LongitudinalEngine:
                                             'morning_fatigue':snapshot[i][2],'service_capacity':capacity})
             coordination,coordination_readiness,coordination_plan=self.operations.prepare_coordination(day,
                 active=len(active),guilds=self.guild_count,departments=self.enterprise.departments,sites=self.site_count,
-                people=[(v['person'],v['site'],v['service_capacity']) for v in coordination_inputs],funding=funding)
+                people=[(v['person'],v['site'],v['service_capacity']) for v in coordination_inputs],funding=funding,
+                **({'scoped':frozenset(i for i in present if self._scoped(self.agents[i].guild)),'scope':lambda layers:_automation.effective_layers(p.automation,layers)} if p.automation is not None and p.automation.scoped_authority else {}))
             self.ledger.add_journal(day,'enterprise_coordination_begin',f'coordination:begin:{day}',
                                     {'inputs':coordination_inputs,'plan':coordination_plan})
             self.metrics['enterprise_coordination_requested_workdays']+=math.fsum(v['requested'] for v in coordination_plan['sites'])
@@ -776,9 +789,8 @@ class LongitudinalEngine:
                     self.metrics['task_reorganization_sunk_work_hours']+=math.fsum(reorganization['served_work_hours_by_person'].values())
                     self.metrics['task_reorganization_cancelled_unserved_hours']+=math.fsum(reorganization['cancelled_unserved_hours_by_person'].values())
                 self.ledger.add_journal(day,kind,f'task:structure:{day}:{index}',reorganization)
-            fixed,organization_quality,organization_learning,organization_cap,organization_help,organization_readiness,plan=self.organization.prepare(day,self.active,present,available,cooperation,funding=funding)
-            if self.organization.structure is not None:
-                self.metrics['task_reorganization_work_hours']+=math.fsum(a['reorganization_hours'] for a in plan['allocations'].values())*funding
+            fixed,organization_quality,organization_learning,organization_cap,organization_help,organization_readiness,plan=self.organization.prepare(day,self.active,present,available,cooperation,funding=funding,
+                **({'scoped':frozenset(i for i in present if self._scoped(self.agents[i].guild)),'scope':lambda layers:_automation.effective_layers(p.automation,layers)} if p.automation is not None and p.automation.scoped_authority else {}))
             for i in present:variable_reservations[i]+=fixed[i]+organization_quality[i]+organization_learning[i]
             self.metrics['organization_network_hours']+=math.fsum(fixed.values())*funding
             self.metrics['organization_quality_hours']+=math.fsum(organization_quality.values())*funding
@@ -911,7 +923,10 @@ class LongitudinalEngine:
             audit=self.rng.uniform('review_audit',day,token)<(.6 if fraud else .02)
             event=f'work:{day}:{token}:g:{a.guild}'
             ready=day+1
-            if self.organization is not None:ready+=self.organization.last_plan['topology']['reporting_depth'][str(i)]*self.organization.c.reporting_delay_days_per_layer
+            if self.organization is not None:
+                report_layers=self.organization.last_plan['topology']['reporting_depth'][str(i)]
+                if self._scoped(a.guild):report_layers=_automation.in_scope_delay_layers(p.automation,report_layers)
+                ready+=report_layers*self.organization.c.reporting_delay_days_per_layer
             claim=Claim(ready,event,i,day,observed,audit,fraud,priority=self.rng.uniform('review_priority',day,token))
             _,backend=self.policy(a.guild);resistance=p.administrative_censorship_exposure[('central','witness','consensus').index(backend)]
             censor=attack_active and p.attack=='censor' and i not in attacker_set and self.rng.uniform('censor',day,token)<min(1.,p.attack_budget_hours_per_day/max(1,len(present)))*resistance
@@ -953,7 +968,17 @@ class LongitudinalEngine:
         consumed=attack_time*len(attackers) if attack_active else 0.;self.metrics['attack_hours_consumed']+=consumed;self.metrics['attack_budget_hours']+=consumed
         self.last_work_per_present_member=daily_output/max(1,len(present))
         if auto_batch:self._automate(day,auto_batch)
-        if present:self._review(present,funding)
+        administrative=self._review(present,funding) if present else {}
+        if p.administrative_fatigue and present:
+            # Work done today on review, appeal, verification and governance counts as workload: the fatigue
+            # update is linear in workload, so each hour adds 0.25 (0.15 load + 0.10 lost recovery). The
+            # reference load is the one the fatigue constants were set for, so only the difference counts.
+            hours={}
+            for i in sorted(present):
+                h=administrative.get(i,0.)+governance_time[i]
+                hours[str(i)]=h;self.agents[i].fatigue=clip(self.agents[i].fatigue+.25*(h-p.administrative_fatigue_reference))
+            self.metrics['administrative_work_hours']+=math.fsum(hours.values())
+            self.ledger.add_journal(day,'administrative_work',f'administrative-work:{day}',{'hours_by_person':hours})
         if '_sbg' in self.__dict__ and self._sbg.log:self._journal_sandbox_log(day,'r')
         backlog=self.ledger.pending_count('review')+self.ledger.pending_count('commit');self.metrics['backlog_peak_records']=max(self.metrics['backlog_peak_records'],backlog)
         if day%p.trace_every_days==0 or day+1==p.days:

@@ -37,6 +37,8 @@ def measures(arm_dir):
         'arm': arm['arm'], 'member_years': years,
         'governance_cost': {
             'member_hours_per_member_year': per(member_hours),
+            'administrative_work_hours_per_member_year': per(g('administrative_work_hours')) if 'administrative_work_hours' in s else None,
+            'coordination_hours_per_member_year': per(g('enterprise_coordination_hours')), 'reporting_and_network_hours_per_member_year': per(g('organization_network_hours')),
             'review_hours': g('review_hours'), 'appeal_hours': g('appeal_hours'), 'governance_hours': g('governance_hours'),
             'processing_units_automated': g('automated_processing_units'),
             'processing_units_per_member_year': per(g('automated_processing_units')),

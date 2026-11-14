@@ -72,6 +72,13 @@ class AutomationConfig:
     sandbox_level: str = 'guild'                # 'guild' or 'team'
     quota_units_per_member_day: float = 1.35    # 1.25 x expected demand 1.08 (witness, 10 % sampled)
     borrow_limit_fraction: float = 0.5          # of the borrower's own quota
+    # Scoped authority (sandbox architecture). A member's work is in the scope of its own team sandbox,
+    # which has full authority over it: such work reports through `in_scope_layers` layers only. The share
+    # `cross_boundary_share` of reporting and coordination concerns work that crosses the sandbox boundary
+    # and still passes the layers above. Share 1 reproduces the unscoped organization.
+    scoped_authority: bool = False
+    in_scope_layers: int = 1
+    cross_boundary_share: float = 0.25
     # Approval of upward/lateral crossings (sandbox graph).
     approval_rejection_probability: float = 0.1
     approval_latency_days: int = 0
@@ -118,7 +125,7 @@ class AutomationConfig:
             raise ValueError('unknown automation schema')
         for name, low, high in (('exception_fraction', 0., 1.), ('false_accept_probability', 0., 1.),
                                 ('false_reject_probability', 0., 1.), ('uncertain_probability', 0., 1.),
-                                ('borrow_limit_fraction', 0., 1.), ('approval_rejection_probability', 0., 1.), ('self_modify_step', 0., 0.3), ('fault_bad_false_reject', 0., 1.), ('fault_detect_threshold', 0., 1.), ('fault_drop_threshold', 0., 1.), ('health_tolerance', 0., 1.), ('human_load_weight', 0., 10.), ('resource_units_per_processing_unit', 0., 1e6)):
+                                ('borrow_limit_fraction', 0., 1.), ('cross_boundary_share', 0., 1.), ('approval_rejection_probability', 0., 1.), ('self_modify_step', 0., 0.3), ('fault_bad_false_reject', 0., 1.), ('fault_detect_threshold', 0., 1.), ('fault_drop_threshold', 0., 1.), ('health_tolerance', 0., 1.), ('human_load_weight', 0., 10.), ('resource_units_per_processing_unit', 0., 1e6)):
             v = getattr(self, name)
             if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not low <= v <= high:
                 raise ValueError(f'{name} must be finite in [{low}, {high}]')
@@ -126,7 +133,7 @@ class AutomationConfig:
             v = getattr(self, name)
             if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not 0 < v <= 1e6:
                 raise ValueError(f'{name} must be finite and positive')
-        for name, low in (('approval_latency_days', 0), ('grant_validity_days', 1), ('split_size', 0), ('merge_size', 0),
+        for name, low in (('in_scope_layers', 0), ('approval_latency_days', 0), ('grant_validity_days', 1), ('split_size', 0), ('merge_size', 0),
                           ('proposal_interval_days', 1), ('shadow_window_days', 1), ('fault_start_day', 0), ('fault_days', 1),
                           ('fault_detect_min_claims', 1), ('fault_baseline_days', 1)):
             v = getattr(self, name)
@@ -140,6 +147,8 @@ class AutomationConfig:
             raise ValueError('acceptance_rule must be measured or threshold')
         if not isinstance(self.self_modify, bool):
             raise ValueError('self_modify must be boolean')
+        if not isinstance(self.scoped_authority, bool) or (self.scoped_authority and not self.sandboxes):
+            raise ValueError('scoped_authority is boolean and needs sandboxes')
         if not isinstance(self.sandboxes, bool):
             raise ValueError('sandboxes must be boolean')
         if self.sandbox_level not in ('guild', 'team'):
@@ -204,6 +213,23 @@ def settled_ready(claim_ready, settlement_days):
     settlement lag counted from d; the reporting delay is kept.
     """
     return claim_ready-1+settlement_days
+
+
+# ---- scoped authority: layers a member's work passes --------------------------------------
+
+def effective_layers(config, layers):
+    """Layers of reporting or coordination borne under scoped authority.
+
+    Work inside the sandbox passes at most `in_scope_layers`; the cross-boundary share of the
+    remaining layers is still borne.  With share 1 the result equals `layers`.
+    """
+    inside = min(layers, config.in_scope_layers)
+    return inside+config.cross_boundary_share*(layers-inside)
+
+
+def in_scope_delay_layers(config, layers):
+    """Layers that delay a member's own work record: the record is in scope."""
+    return min(layers, config.in_scope_layers)
 
 
 # ---- sandboxes: quota and borrowing ----------------------------------------------------

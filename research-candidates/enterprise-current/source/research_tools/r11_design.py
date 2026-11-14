@@ -141,16 +141,23 @@ ARMS = {
     'hierarchy-auto-measured': dict(adoption='fixed', regime='hierarchy', backend='central', automation={'acceptance_rule': 'measured'}),
     'dams-auto-measured': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'acceptance_rule': 'measured'}),
     # dams-auto plus the sandbox architecture (quotas, scoped authority, approvals, lifecycle, self-modification).
-    'dams-isa': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'sandboxes': True}),
+    'dams-isa': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'sandboxes': True, 'scoped_authority': True}),
+    # Sensitivity of the scope rule: half of reporting and coordination crosses the sandbox boundary
+    # (default one quarter); with share 1 the arm would equal dams-isa-unscoped.
+    'dams-isa-x50': dict(adoption='fixed', regime='sublinear', backend='witness',
+                         automation={'sandboxes': True, 'scoped_authority': True, 'cross_boundary_share': 0.5}),
+    # The sandbox graph (quotas, grants, lifecycle, self-modification) without scoped authority: every
+    # member keeps the reporting and coordination layers of the whole organization.
+    'dams-isa-unscoped': dict(adoption='fixed', regime='sublinear', backend='witness', automation={'sandboxes': True}),
     # dams-isa with a verification-service outage in sandbox g0 for 14 days, 120 days after the boundary
     # (fault containment study; a separate arm so that dams-isa itself carries no injected fault).
     'dams-isa-fault': dict(adoption='fixed', regime='sublinear', backend='witness', fault_after_boundary_days=120,
-                           automation={'sandboxes': True, 'fault_mode': 'service_stop', 'fault_sandbox': 'g0', 'fault_days': 14}),
+                           automation={'sandboxes': True, 'scoped_authority': True, 'fault_mode': 'service_stop', 'fault_sandbox': 'g0', 'fault_days': 14}),
     # dams-isa with verification processing capped at 0.6 units per member-day, about half of the expected
     # demand, in every sandbox (processing saturation study: no sandbox has spare quota to lend, so the
     # overflow goes to the human exception lane).
     'dams-isa-saturated': dict(adoption='fixed', regime='sublinear', backend='witness',
-                               automation={'sandboxes': True, 'quota_units_per_member_day': 0.6}),
+                               automation={'sandboxes': True, 'scoped_authority': True, 'quota_units_per_member_day': 0.6}),
 }
 
 
@@ -355,6 +362,12 @@ VARIANTS = {
     'reversed-share-response': {'autonomy_response': -0.25},
     # The engine's two other effort rules (dams_sim/longitudinal_model.py): effort that depends on confirmed
     # credit instead of trust, and effort that adjusts slowly from its own past level.
+    # Work-accounting model: review, appeal, verification and governance work that members actually do
+    # counts as workload in the fatigue update (all arms and the shared history of the study).
+    # The reference, 0.14 workday, is the administrative work of a present member in the manual hierarchy
+    # of the earlier model (300-member pilot world: review 0.071, verification 0.018, governance 0.050,
+    # appeal 0.001), so that the hierarchy keeps the fatigue level its constants were set for.
+    'accounted-work': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14},
     'satisficing-effort': {'behavior_rule': 'satisficing'},
     'reinforcement-effort': {'behavior_rule': 'reinforcement'},
     'demand-shock': {'longitudinal.demand_schedule': 'shock'},
