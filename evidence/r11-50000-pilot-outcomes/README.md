@@ -5,7 +5,7 @@ retains the hierarchy in one arm and adopts DAMS with independently witnessed
 records in the other. Both arms share 731 days before adoption and run through
 31 December 2026. The comparison changes allocation, transition and the record
 procedure together. The two worlds fall short of the original variance check
-and the pilot's full event validation remains pending.
+and the event journals were not replayed in full against the daily series.
 
 Run `python3 -I -S -B verify.py` with Python 3.11 or later. The verifier uses
 local files and the standard library.
