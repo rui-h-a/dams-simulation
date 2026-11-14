@@ -25,6 +25,25 @@ constants were set for and only departures from that load matter. The variant ap
 history and to every arm of a study; time freed by automation is not converted into extra production
 time (the reservations are unchanged), it lowers the workload.
 
+Freed time. Two kinds of time must be told apart. The review and appeal time that members reserve (0.1 and 0.15
+workday of capacity per member, the same in every arm) is withheld from production whether or not automation leaves
+reviews to do, so the reservation that automated verification frees is not converted into production. Coordination
+and reporting hours are different: they are computed from the layers borne and the automated share, so the hours that
+coordination automation (`coordination_automation`) and scoped authority save return to the member's available time. In
+the organization-tasks model that residual is divided between production, quality and learning time by the
+department's objective weights; in the enterprise-operations model a smaller coordination demand raises the production
+time limit.
+
+The reference 0.14 workday is an internal calibration, not an external estimate: it is the administrative work per present
+member measured in the manual hierarchy of a 300-member pilot world of this model (review 0.071, verification 0.018,
+governance 0.050, appeal 0.001), chosen so that the hierarchy keeps the fatigue level its constants were set for.
+Organization verification hours (0.025 workday per verified claim, done by the named reviewer) enter twice: as part of the
+administrative hours of the fatigue update, and, through `verification_hours_per_member_workday` (0.025), as reserved
+network time that lowers the time available for production. The reference already contains the verification hours of the
+manual hierarchy (0.018), so at the reference level the administrative term of the fatigue update is zero and the verification
+hours cancel there: only the departure from the reference changes fatigue. The reserved network time is a separate channel (time
+available, not fatigue) and is not netted out.
+
 ## Automated verification (`dams-auto`, `hierarchy-auto`)
 The first review of a claim is automated on the submission day. Per claim:
 
@@ -44,8 +63,8 @@ The exception queue is the ordinary review queue (same slots, 0.1 workday per hu
 the review-time reservation of the manual arms; the model assumes no extra production time from reviews
 that no longer happen. Accepted claims settle `settlement_days` after submission (the reporting delay is
 kept). Automated rejections have the consequences of a human rejection (trust, appeal path). Processing
-units are reported, not debited from cash (`resource_units_per_processing_unit` 0.01 is a reporting
-conversion), as for witness units.
+units are reported; they are debited from cash only where processing is charged (see "Processing charged to
+cash"), at `resource_units_per_processing_unit` (0.01, which is also the reporting conversion).
 
 `hierarchy-auto` is `control-process` (same migration, training and dual-running costs) plus the same
 verification. Record verification exists independently of the authority rule, so the comparison of
@@ -74,17 +93,27 @@ for both the hierarchy and DAMS so that its effect can be separated from the eff
   sandbox can modify; attempts are blocked and logged;
 - self-modification of the sandbox-local `exception_fraction` inside declared bounds (0.02-0.30): a
   proposal runs on a shadow copy for 14 days, is adopted only if the health measure does not degrade, is
-  watched for 14 more days and rolled back automatically if health falls below its earlier level.
+  watched for 14 more days and rolled back automatically if health falls below its earlier level. The health
+  measure counts wrong decisions plus `human_load_weight` (0.5) per claim left to a human. In the shadow phase each
+  claim is costed as live handling would handle it under the candidate fraction: it goes to a human if the candidate
+  would audit-sample it, if the verifier abstains, or if it cannot be processed automatically whatever the
+  fraction (no quota left, the sandbox's verification service is down, or the record is disputed); only the audit
+  sample depends on the candidate. A candidate therefore cannot look cheaper because it is credited with automating
+  claims that humans handle anyway. (`automation.shadow_to_human`.)
 
 Scoped authority (`scoped_authority`, on in `dams-isa`). A member's work lies in the scope of its own
 team sandbox, which has full authority over it. Such work therefore passes `in_scope_layers` (1) layer
 of reporting and coordination instead of the layers of the whole organization; the share
 `cross_boundary_share` (0.25, the dependency of a work unit on other departments' output) of the remaining
 layers is still borne, because work that crosses the boundary needs the units above. For a member at
-reporting depth d the layers borne are min(d, 1) + 0.25 (d - min(d, 1)); the same rule applies to the
-coordination layers. It changes reporting time, the readiness penalty per layer, the delay of a work
-record (the record is in scope: at most one layer) and coordination demand. With share 1 the arm equals
-`dams-isa-unscoped`; `dams-isa-x50` uses 0.5. Team sandboxes are represented by this rule; guild sandboxes
+reporting depth d the layers borne are nu(d) = min(d, 1) + 0.25 (d - min(d, 1)); the same rule applies to the
+coordination layers. It changes reporting hours, the readiness penalty per layer, the delay of a work record and
+coordination demand. The delay is counted in whole days (one day per layer) and rounds the same expression half up:
+min(d, l0) + floor(0.25 (d - min(d, l0)) + 0.5), with l0 = `in_scope_layers`. Share 1 gives the full depth d and
+share 0 gives l0, so with `cross_boundary_share` = 1 the scoped rule equals the unscoped rule, delay included (before
+this was corrected the delay was min(d, l0) days for any share, so cross-boundary reports were never delayed by the
+layers above the scope). `dams-isa-x50` uses 0.5. Even then the arm differs from `dams-isa-unscoped` in the formal
+shares, which are normalised inside each team. Team sandboxes are represented by this rule; guild sandboxes
 are graph objects that carry quota, grants, lifecycle, self-modification and faults.
 
 The engine drives guild sandboxes, the lifecycle, quotas and borrowing, reviewer read grants,
@@ -203,6 +232,12 @@ mechanisms; the digests of two of them are asserted in `tests/test_decision_proj
 Both probabilities and `project_idle_days` are declared design assumptions, as is that a refused collaboration costs the
 peer's help for the day.
 
+What an attempt changes. Neither kind of attempt is ever carried out. A core attempt is blocked and logged (`core_block`). An
+allocation proposal never alters the sandbox's authority parameter or any engine parameter: it is sent to the parent as a request
+(logged and counted in `allocation_attempts`; a request to the organization root is logged as needing approval), and whatever the
+parent decides, nothing in the engine uses the outcome. Apart from the counts, the log entries and the sandbox request and
+grant records, the only effect of an attempt is that the sandbox's ordinary local proposal for that round is not made.
+
 Counts (engine metrics and summary): `project_sandboxes_created`, `project_sandboxes_closed`, `project_sandboxes_live`
 (summary), `project_sandbox_member_workdays` (members in live projects, counted once per workday after the day's joins and
 closures), `project_collaboration_pair_days` (approved or granted), `refused_collaboration_pair_days` (refused or
@@ -248,6 +283,13 @@ Sampling into the exception lane (`exception_fraction`) and outages apply to obj
 class is not stored on the claim: it is a keyed draw of (submission day, person), repeated at human review and at commit; only
 records submitted after the adoption of their domain have one. The class is journalled on the `auto_verify` record.
 
+The draw is exact and independent of the evidence. The verifier is not misled about the class (there is no misclassification),
+and the draw does not depend on the claim's observed work, its audit alarm or whether it is forged, so forged records are
+distributed over the classes like honest ones. The classes differ in automation eligibility (disputed records are never
+automated), in the verifier's abstention and error rates, and in the processing units charged (inferential x2). They do not
+differ in the human review rule (the same acceptance floor and audit alarm), in the review time (0.1 workday), in the witness
+units of the evidence backend or in the settlement lag; the class of a human review is only counted.
+
 Per class the engine counts (metrics `rc_<class>_*`, summary `record_class_summary`, `r11_isa_measures`): claims, automated
 decisions (so the automated share), wrong automated decisions (accept of a record the rule refuses, or reject of one it accepts),
 human first reviews, confirmed records and the days from submission to commit (mean days to confirmation), and processing units.
@@ -262,7 +304,7 @@ the rule outcome and the wrong-decision count follow from the records; the rates
 coordination time (`coordination_workday_units_per_layer`) and the per-layer reporting hours (`reporting_hours_per_layer`) of
 each member are multiplied by (1 - share). Only those two per-layer terms change: the overload and communication terms of
 coordination, the collaboration and verification hours, the readiness penalty per layer and the report delay still use the layers
-borne. Each such present member-day consumes `coordination_processing_units_per_member_day` (default 0.5) processing units,
+borne (the delay in whole days, rounded as described under scoped authority). Each such present member-day consumes `coordination_processing_units_per_member_day` (default 0.5) processing units,
 counted in `coordination_processing_units` and added to the processing total of `r11_isa_measures`
 (`processing_units_automated` is verification only; `processing_units_total` includes coordination). The share and the 0.5
 units are declared design assumptions.
@@ -293,6 +335,19 @@ the growth model sees it as a cost of that day. What cash cannot cover is not pa
 `operating_unfunded_resource_units`. The morning funding fraction, growth and closure therefore respond from the next day on, not
 on the same day (the morning funding fraction is fixed before the day's processing exists); this is a deliberate simplification.
 Each day carries a `processing_charge` journal record (units by source, rate, requested, charged).
+
+Unpaid part. When cash cannot cover a day's charge the charge is limited to the cash left (cash never turns negative) and the
+unpaid part is recorded in `operating_unfunded_resource_units`; no debt is carried to later days and the unpaid units are not
+charged again.
+
+Symmetric charge (`processing_charge_rate`). The charge used to apply only to arms that have an automation block, although an arm
+without one (`dams-witness`) accumulates `verification_resource_units` for its witnessed record and automated DAMS arms pay for the
+same record units. The setting `processing_charge_rate` (top-level, absent by default so earlier configurations keep their digest) makes the
+charge a base-level setting: where it is set, every arm pays for the processing units it accumulates at that rate, including an arm
+without an automation block. An arm whose automation block charges processing uses the block's rate (equal to the base rate under
+the variants below). A control hierarchy on a central record accumulates no units and pays nothing; the summary of every charging
+arm carries `processing_charge_resource_units`. Variant `full` sets the base rate (0.01) and the automation keys together; the
+earlier charged variants set only the automation keys and are unchanged.
 
 Variants (on top of `accounted-work-decisions`): `accounted-work-decisions-charged` (rate 0.01) and
 `accounted-work-decisions-charged-r10` (0.1). Variant keys beginning with `automation.` are not applied to the shared history;
@@ -350,6 +405,7 @@ unless stated.
 | record classes objective / inferential / disputed | 0.70 / 0.25 / 0.05 | variant, arms with automation |
 | inferential abstention / error / units multiplier | 0.20 / 0.10 / 2 | variant, arms with automation |
 | charge_processing / resource_units_per_processing_unit | on / 0.01 | variant, arms with automation |
+| processing_charge_rate (base-level) | 0.01 | variant, every arm (also without automation) |
 | exception_fraction; false accept, false reject, abstain (objective) | 0.1; 0.05, 0.05, 0.05 | automation defaults |
 | acceptance_rule | threshold (0.25) | automation default |
 | coordination_automation / units per member-day | 0.5 / 0.5 (-coord arms) | arm |
@@ -360,4 +416,47 @@ unless stated.
 | self-modification: interval, shadow window, step | 30 days, 14 days, 0.02 | automation defaults |
 | management span; coordination units per layer; reporting hours per layer | 8; 0.02; 0.01 | study template |
 
-`control-hierarchy` and `dams-witness` have no automation block and are unaffected by the automation keys of the variant.
+`control-hierarchy` and `dams-witness` have no automation block and are unaffected by the automation keys of the variant. They
+are charged through the base-level `processing_charge_rate` of the variant: `dams-witness` pays 0.01 per witness verification unit of its
+reviews, like the automated DAMS arms; `control-hierarchy` accumulates no units and pays nothing.
+
+### Sensitivity variants (small runs)
+Each differs from `full` in one setting; configuration only.
+
+| variant | change from `full` |
+|---|---|
+| `full-collude05`, `full-collude20` | collusive review, cohort fraction 0.05 / 0.2 (window from the boundary to the horizon, 0.1 workday per cohort member) |
+| `full-g20` | decision effect `gamma` 0.2 |
+| `full-charge10` | processing charge 0.1 per unit (base-level rate and automation block) |
+| `full-coord25`, `full-coord75` | `coordination_automation` 0.25 / 0.75, set only on the arms that automate coordination (the `-coord` arms) |
+| `full-classes-503515` | record class mix objective / inferential / disputed 0.50 / 0.35 / 0.15 (the class thresholds follow from the shares) |
+
+### Parameters introduced by the automation and sandbox model
+None of the values below has an empirical source; each is a declared design assumption, chosen as stated or as a round conservative
+value. Results that depend on them are conditional on them and are probed by the sensitivity variants where listed.
+
+| parameter | value | role |
+|---|---|---|
+| exception_fraction | 0.1 | share of claims audit-sampled to humans (self-modified inside 0.02-0.30 by step 0.02) |
+| false_accept_probability / false_reject_probability | 0.05 / 0.05 | verifier error relative to the review rule |
+| uncertain_probability | 0.05 | verifier abstains |
+| acceptance_rule | threshold (0.25) or measured | the human review's floor, or no floor |
+| processing_units_per_claim | 1.0 | units before the backend multiplier |
+| resource_units_per_processing_unit / processing_charge_rate | 0.01 (0.1 in `full-charge10`) | price of a processing unit in cash |
+| quota_units_per_member_day | 1.35 (0.6 in `dams-isa-saturated`) | sandbox processing quota (1.25 x expected demand 1.08) |
+| borrow_limit_fraction | 0.5 | borrowing cap relative to own quota |
+| approval_rejection_probability / approval_latency_days / grant_validity_days | 0.1 / 0 / 30 | approvals of crossings |
+| split_size / merge_size | 400 / 4 | sandbox lifecycle |
+| in_scope_layers / cross_boundary_share | 1 / 0.25 (0.5 in the x50 arms) | scoped authority |
+| proposal_interval_days / shadow_window_days / self_modify_step / health_tolerance / human_load_weight | 30 / 14 / 0.02 / 0 / 0.5 | self-modification |
+| local bounds of exception_fraction | 0.02-0.30 | self-modification bounds |
+| fault_start_day (120 days after the boundary) / fault_days / fault_bad_false_reject | 120 / 14 / 0.5 | fault injection (`dams-isa-fault`) |
+| fault_detect_threshold / fault_detect_min_claims / fault_drop_threshold / fault_baseline_days | 0.2 / 5 / 0.2 / 30 | fault detection and containment measure |
+| project_idle_days / core_attempt_probability / allocation_attempt_probability | 30 / 0.05 / 0.05 | project sandboxes and attempts |
+| class shares objective / inferential / disputed | 0.70 / 0.25 / 0.05 (0.50 / 0.35 / 0.15 in `full-classes-503515`) | record classes |
+| inferential_uncertain_probability / inferential_error_probability / inferential_processing_multiplier | 0.20 / 0.10 / 2 | inferential records |
+| coordination_automation / coordination_processing_units_per_member_day | 0.5 (0.25, 0.75 in sensitivity) / 0.5 | automated coordination |
+| decision_effect gamma / memory_workdays / reference_loss | 0.05 (0.2 in `full-g20`) / 20 / 0.7978845608 (the last follows from the proposal distribution) | decision quality to output |
+| administrative_fatigue_reference | 0.14 workday | internal calibration to the manual hierarchy of a 300-member pilot world, not an external estimate |
+| collusion: cohort fraction / budget per cohort member | 0.05, 0.2 / 0.1 workday | collusive review |
+
