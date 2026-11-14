@@ -207,7 +207,8 @@ def _verified_outcomes(path, arm, plan, prehistory, prehistory_proof):
         if file_digest(directory/name) != files.get(key):
             raise ValueError('arm input bytes differ: '+name)
     parent = Config.from_dict(prehistory['config'])
-    child = Config.from_dict(arm_config(prehistory['config'], prehistory['branch_day'], arm))
+    # The variant recorded in the shared-history receipt also sets the automation block of an arm that has one.
+    child = Config.from_dict(arm_config(prehistory['config'], prehistory['branch_day'], arm, prehistory.get('variant')))
     if Config.from_dict(receipt['config']).to_dict() != child.to_dict() or receipt.get('days') != child.days:
         raise ValueError('arm configuration differs from prescribed counterfactual')
     final = directory/'final_state.json'

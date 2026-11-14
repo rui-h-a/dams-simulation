@@ -90,14 +90,9 @@ The output directory contains:
 - `inference.json` and `effects.pdf`: the paired comparison against `control-hierarchy` and its figure; see the note
   below. With a single world there is no interval; intervals need at least two worlds.
 
-Status of the inference step. In the shipped `research_tools/r11_inference.py`, `_verified_outcomes` rebuilds each arm's
-configuration with `arm_config(parent_config, branch_day, arm)` without the study variant, whereas the study driver builds
-it with the variant stored in `prehistory.json`. For a variant that sets `automation.*` keys or an automation coordination
-share (`full` and every variant derived from it) the two differ for every arm that has an automation block. In the quick
-start, `inference.json` therefore lists `control-hierarchy` and `dams-witness` as `raw verified` and the other five arms as
-`invalid raw evidence` with the reason `arm configuration differs from prescribed counterfactual`, and `comparisons`
-contains no world values for them. The arm receipts (`arm.json`, `validators`) are unaffected: the longitudinal and
-organization validators pass inside the arm run. The per-arm measures below do not use the inference step.
+The inference step rebuilds every arm's configuration from the shared-history receipt, including the study variant, and
+verifies the arm's original journal again with the same validators before it reads a summary. The per-arm measures below
+do not use the inference step.
 
 The automation and sandbox measures of an arm are computed from its directory:
 
