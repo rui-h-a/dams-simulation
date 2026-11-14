@@ -51,7 +51,7 @@ The second command generates two independent worlds of a 30-member startup, runs
 
 The short example is an engineering demonstration, not a formal study or archive acceptance. The public flow does not run the standalone `r11_outcomes.py` aggregate or publish `paired-outcomes.json`; its analysis goes through original-evidence inference validation, and the figure refuses reports with admission errors. Existing historical aggregates are preserved without becoming accepted evidence. The same bound source, command and output can resume from verified checkpoints. A legacy plan without the full dependency binding refuses ordinary resume; a nonempty output with a missing plan cannot be relabelled as a new study. Completed historical compact arms are reported missing original journals and are not rerun to manufacture original evidence. New batches keep complete journals and recovery/interruption evidence; old space forecasts based on journal deletion do not admit this retention policy.
 
-Options: `--context startup|unicorn|listed|traditional|century|multinational`, `--growth none|organic|organic+acquisition`, `--pre-years` (history before adoption), `--post-years`, `--worlds`, `--arms`, `--jobs`, `--variant`. Acquisition-only growth is still rejected by the current design; it is not an implemented comparison. The arms are `control-hierarchy`, `control-process`, `dams-central`, `dams-witness`, `dams-consensus`, `linear-witness`, `equal-witness`, `dams-staged-witness` and `dams-triggered-witness`. The variants are listed in `research_tools/r11_design.py` (`VARIANTS`); each changes one family of assumptions.
+Options: `--context startup|unicorn|listed|traditional|century|multinational`, `--growth none|organic|organic+acquisition`, `--pre-years` (history before adoption), `--post-years`, `--worlds`, `--arms`, `--jobs`, `--variant`. Acquisition-only growth is still rejected by the current design; it is not an implemented comparison. The arms are `control-hierarchy`, `control-process`, `dams-central`, `dams-witness`, `dams-consensus`, `linear-witness`, `equal-witness`, `dams-staged-witness` and `dams-triggered-witness`. The arms of the automation and sandbox study are listed in [docs/automation-study.md](docs/automation-study.md). The variants are listed in `research_tools/r11_design.py` (`VARIANTS`); each changes one family of assumptions.
 
 ## Inspect, recover and preserve
 
@@ -114,23 +114,32 @@ followed, after every arm has its receipt, by retiring intermediate checkpoints 
          --worlds 0 --arms control-hierarchy,dams-witness --jobs 2 --output runs/smoke
 ```
 
-The automation and sandbox study (see `docs/automation-arms.md`; source commit `56ff5e9`) regenerates its own shared history under the work-accounting variant and compares six arms on each firm:
+The automation and sandbox study compares manual and automated governance work, hierarchy and contribution-based
+authority, with and without the sandbox graph and scoped authority, on a central or witnessed record. The guide
+[docs/automation-study.md](docs/automation-study.md) gives its requirements, a quick start, the parameters and how to change them,
+the daily loop, validation, tests and limits; [docs/automation-arms.md](docs/automation-arms.md) specifies every mechanism and parameter.
+A small run of the seven study arms (about four to five minutes on a loaded 12-core laptop, about 340 MB) is
+
+```sh
+./run.sh --spec enterprise-r11 --scale 60 --context multinational --growth organic \
+         --pre-years 1 --post-years 1 --variant full --worlds 1000 \
+         --arms control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord \
+         --jobs 3 --output runs/automation-quick
+.venv/bin/python -m research_tools.r11_isa_measures runs/automation-quick/n60-*/dams-isa-coord
+```
+
+The formal design is 10,000 members, 2 years of shared history and 5 years
+after adoption, variant `full`, one world per machine (worlds 1000 to 1006, seed 20261017):
 
 ```sh
 ./run.sh --spec enterprise-r11 --scale 10000 --context multinational --growth organic --pre-years 2 --post-years 5 \
-         --variant accounted-work --worlds $(seq -s, 1000 1009) \
-         --arms control-hierarchy,hierarchy-auto,dams-witness,dams-auto,dams-isa,dams-isa-x50 \
-         --jobs 6 --output /path/on/a/large/volume/isa-n10000
+         --variant full --worlds 1000 \
+         --arms control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord \
+         --jobs 7 --output /path/on/a/large/volume/world-1000
 ```
 
-Each world needs six single-threaded processes and about 40 GB of disk per arm while it runs; the worlds are independent and can run on separate machines. The mechanism study uses the same command at `--scale 300` with worlds 2000 to 2009 and the further arms `control-process`, `dams-isa-unscoped`, `dams-isa-fault`, `dams-isa-saturated`, `hierarchy-auto-measured` and `dams-auto-measured`. A check of the whole path with the six main arms takes about ten minutes on the reference workstation:
-
-```sh
-./run.sh --spec enterprise-r11 --scale 300 --context multinational --growth organic --pre-years 2 --post-years 1 \
-         --variant accounted-work --worlds 1000 \
-         --arms control-hierarchy,hierarchy-auto,dams-witness,dams-auto,dams-isa,dams-isa-x50 --jobs 6 --output runs/isa-smoke
-python -m research_tools.r11_isa_measures runs/isa-smoke/n300-*/dams-isa
-```
+One world needed about 28 hours on 8 vCPUs (4 physical cores) and about 300 GB of disk with the seven arms in parallel; this is one
+measurement on one machine type.
 
 ## Computing resources
 
@@ -147,6 +156,13 @@ The storage layer refuses paths through symbolic links, so tests need a temporar
 ```sh
 mkdir -p "$PWD/runs/tmp"
 TMPDIR="$PWD/runs/tmp" PYTHONPATH=.:tests .venv/bin/python -m unittest discover -s tests -p 'test_r11*.py'
+```
+
+The modules that cover the automation and sandbox study are listed in [docs/automation-study.md](docs/automation-study.md#9-tests):
+
+```sh
+TMPDIR="$PWD/runs/tmp" PYTHONPATH=.:tests .venv/bin/python -m unittest test_small_batch_variants test_full_fixes \
+    test_automation_arms test_decision_project test_classes_coordination_collusion
 ```
 
 ## Limits

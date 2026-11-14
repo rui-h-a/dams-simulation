@@ -12,4 +12,14 @@ cd source
 ./run.sh --help
 ```
 
+The automation and sandbox study (manual against automated governance work, with and without the sandbox graph and scoped authority) has its own guide, [source/docs/automation-study.md](source/docs/automation-study.md), with a quick start that finishes in minutes:
+
+```sh
+cd source
+./run.sh --spec enterprise-r11 --scale 60 --context multinational --growth organic \
+         --pre-years 1 --post-years 1 --variant full --worlds 1000 \
+         --arms control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord \
+         --jobs 3 --output runs/automation-quick
+```
+
 The data provider is not automatically selected by the enterprise entry. These commands do not constitute an accepted 10k/50k study or authorize cloud spending. Use the exact source required by each historical result.

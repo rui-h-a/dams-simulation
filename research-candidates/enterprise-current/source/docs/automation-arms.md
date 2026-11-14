@@ -1,26 +1,27 @@
 # Automation and sandbox arms (opt-in)
 
-Study design of the automation and sandbox comparison: variant `accounted-work`, arms `control-hierarchy`,
-`hierarchy-auto`, `dams-witness`, `dams-auto`, `dams-isa` and `dams-isa-x50` (10,000 members); the other arms
-below are mechanism and sensitivity studies.
+Study design of the automation and sandbox comparison: variant `full`, arms `control-hierarchy`, `dams-witness`,
+`hierarchy-auto-coord`, `dams-auto-coord`, `hierarchy-isa-coord`, `dams-isa-central-coord` and `dams-isa-coord`
+(10,000 members); the other arms and variants are mechanism and sensitivity studies. Requirements, commands, the
+description of the daily loop and the tests are in [automation-study.md](automation-study.md).
 
-New arms: `hierarchy-auto`, `dams-auto`, `hierarchy-auto-measured`, `dams-auto-measured`, `dams-isa`,
-`dams-isa-fault`, `dams-isa-saturated`, `dams-isa-full`, `hierarchy-isa-full` (project sandboxes, see below).
-New variants: `accounted-work-decisions` and `accounted-work-decisions-g20` (decision effect, see below). The arms of the earlier studies are unchanged: they carry no
-`automation` block, and `tests/test_automation_arms.py::ExistingArmsUnchangedTest` checks that their daily
-series are byte-identical to those of the source that ran the 10,000-member study (source SHA-256
-`76246e9f…`, commit `fe08659`).
+Arms and variants are configurations in `research_tools/r11_design.py` (`ARMS`, `VARIANTS`): the arms `hierarchy-auto`,
+`dams-auto`, `hierarchy-auto-measured`, `dams-auto-measured`, `dams-isa`, `dams-isa-fault`, `dams-isa-saturated`,
+`dams-isa-full` and `hierarchy-isa-full` (project sandboxes, see below) and the variants `accounted-work-decisions` and
+`accounted-work-decisions-g20` (decision effect, see below). The arms of the earlier studies carry no `automation`
+block, and `tests/test_automation_arms.py::ExistingArmsUnchangedTest` checks that their daily series are byte-identical
+to those of the source that ran the 10,000-member study (source SHA-256 `76246e9f…`, commit `fe08659`).
 
 All probabilities and quantities below are declared design assumptions, not calibrated values. The
 behavioural equations of the engine (effort, trust, fatigue, learning) are the same in every arm.
 
 ## Work accounting (variant `accounted-work`)
-In the earlier model members withheld time for review, appeal and governance, but the work itself did not
+Without the variant members withhold time for review, appeal and governance, but the work itself does not
 enter the workload of the fatigue update. The variant counts the review (0.1 workday per record, shared by
 the present members of the domain), appeal (0.15), organizational verification (0.025, the named reviewer)
 and governance (0.05) work a member actually does. Fatigue changes by 0.25 x (hours - reference), the
 slope of the existing update in workload. The reference, 0.14 workday, is the administrative work of a
-present member in the manual hierarchy of the earlier model, so the hierarchy keeps the fatigue level the
+present member in the manual hierarchy of the model without the variant, so the hierarchy keeps the fatigue level the
 constants were set for and only departures from that load matter. The variant applies to the shared
 history and to every arm of a study; time freed by automation is not converted into extra production
 time (the reservations are unchanged), it lowers the workload.
@@ -61,7 +62,7 @@ verifies and when, not what is accepted.
 
 The exception queue is the ordinary review queue (same slots, 0.1 workday per human review). Members keep
 the review-time reservation of the manual arms; the model assumes no extra production time from reviews
-that no longer happen. Accepted claims settle `settlement_days` after submission (the reporting delay is
+that automation replaces. Accepted claims settle `settlement_days` after submission (the reporting delay is
 kept). Automated rejections have the consequences of a human rejection (trust, appeal path). Processing
 units are reported; they are debited from cash only where processing is charged (see "Processing charged to
 cash"), at `resource_units_per_processing_unit` (0.01, which is also the reporting conversion).
@@ -110,22 +111,21 @@ reporting depth d the layers borne are nu(d) = min(d, 1) + 0.25 (d - min(d, 1));
 coordination layers. It changes reporting hours, the readiness penalty per layer, the delay of a work record and
 coordination demand. The delay is counted in whole days (one day per layer) and rounds the same expression half up:
 min(d, l0) + floor(0.25 (d - min(d, l0)) + 0.5), with l0 = `in_scope_layers`. Share 1 gives the full depth d and
-share 0 gives l0, so with `cross_boundary_share` = 1 the scoped rule equals the unscoped rule, delay included (before
-this was corrected the delay was min(d, l0) days for any share, so cross-boundary reports were never delayed by the
-layers above the scope). `dams-isa-x50` uses 0.5. Even then the arm differs from `dams-isa-unscoped` in the formal
-shares, which are normalised inside each team. Team sandboxes are represented by this rule; guild sandboxes
+share 0 gives l0, so with `cross_boundary_share` = 1 the scoped rule equals the unscoped rule, delay included.
+`dams-isa-x50` and `dams-isa-coord-x50` use 0.5. The formal shares are not affected by the scope rule (they are normalised inside each team
+only with `sandbox_level='team'`, which no study arm uses). Team sandboxes are represented by this rule; guild sandboxes
 are graph objects that carry quota, grants, lifecycle, self-modification and faults.
 
 The engine drives guild sandboxes, the lifecycle, quotas and borrowing, reviewer read grants,
 self-modification and scoped authority. Project sandboxes, core-modification attempts and allocation-rule proposals are
-driven by the daily loop only in the `*-isa-full` arms (`project_sandboxes: true`, see "Project sandboxes and
-core-protection attempts"); in every other arm they remain graph mechanisms exercised by unit tests. With
+driven by the daily loop only in the arms with `project_sandboxes: true` (the `*-isa-full` and `*-isa-coord*` arms, see
+"Project sandboxes and core-protection attempts"); in every other arm they remain graph mechanisms exercised by unit tests. With
 `sandbox_level='team'` formal shares are normalised inside each team sandbox (tested; not used by the study arms).
 
 ## Delegated hierarchy (`hierarchy-isa`) and span variants
 `hierarchy-isa` gives the retained hierarchy automated verification and the same sandbox architecture and
 scope rule as `dams-isa`; authority stays with performance tiers and the record stays central. It is the
-strongest hierarchical competitor: the difference between `dams-isa` and `hierarchy-isa` is what the
+hierarchical counterpart of `dams-isa`: the difference between `dams-isa` and `hierarchy-isa` is what the
 contribution-based authority rule and the witnessed record add once scope and automation are equal.
 Variants `accounted-work-span4` and `accounted-work-span16` change the span of control from 8, and with it
 the supervisory depth and the sizes at which a layer is added. Arms and variants are configurations:
@@ -220,7 +220,7 @@ existing mirror rule.
 
 Attempts. When a sandbox makes its periodic self-modification proposal (every `proposal_interval_days`, but only on a
 workday, because the verification step that makes it runs only on workdays with claims, so a multiple of the interval
-that falls on a weekend is skipped; sandboxes with members that are not in a shadow window; `self_modify` on) one keyed draw (new process `sandbox_attempt`, identity day and
+that falls on a weekend is skipped; sandboxes with members that are not in a shadow window; `self_modify` on) one keyed draw (process `sandbox_attempt`, identity day and
 sandbox) decides: below `core_attempt_probability` (0.05) it proposes to change a protected-core item instead, cycling
 through `PROTECTED_CORE` in a persisted order (counter `core_cycle` in the sandbox state); the graph blocks and logs it
 (`core_block`). Below the sum with `allocation_attempt_probability` (0.05) it proposes a change of `authority_alpha`, which
@@ -242,7 +242,7 @@ Counts (engine metrics and summary): `project_sandboxes_created`, `project_sandb
 (summary), `project_sandbox_member_workdays` (members in live projects, counted once per workday after the day's joins and
 closures), `project_collaboration_pair_days` (approved or granted), `refused_collaboration_pair_days` (refused or
 pending, once per pair and day), `refused_collaboration_links` (directed member-peer links excluded),
-`allocation_attempts`; `core_blocks` and the sandbox request counters already existed and now include these events.
+`allocation_attempts`; `core_blocks` and the sandbox request counters include these events.
 `research_tools/r11_isa_measures.py` exports them (collaboration, safety and governance-quality groups).
 
 Validated independently (longitudinal validator): every `collaborate` request is re-drawn with the keyed stream
@@ -330,7 +330,7 @@ With `charge_processing` the day's processing units (automated verification, wit
 (`verification_resource_units`), coordination automation) times `resource_units_per_processing_unit` (default 0.01, the
 existing reporting conversion) are paid from cash as an operating expense. Timing: verification and review happen after the
 day's production, so the charge is made at the end of that same day, from the cash that is left; it is added to
-`operating_resource_units` (so the cash identity of the engine holds), to the new metric `processing_charge_resource_units`, and
+`operating_resource_units` (so the cash identity of the engine holds), to the metric `processing_charge_resource_units`, and
 the growth model sees it as a cost of that day. What cash cannot cover is not paid and is added to
 `operating_unfunded_resource_units`. The morning funding fraction, growth and closure therefore respond from the next day on, not
 on the same day (the morning funding fraction is fixed before the day's processing exists); this is a deliberate simplification.
@@ -354,7 +354,7 @@ Variants (on top of `accounted-work-decisions`): `accounted-work-decisions-charg
 `arm_config(base, branch, arm, variant)` sets them on the automation block of every arm that has one (an arm without a block,
 such as `control-hierarchy`, is unchanged), and `r11_study` records the variant in the prehistory receipt so that `arm` can pass it
 (a receipt without one means none). Two further variants of the same kind switch record classes on
-(`accounted-work-decisions-classes`, and `-classes-charged` with rate 0.01); the check run uses the latter.
+(`accounted-work-decisions-classes`, and `-classes-charged` with rate 0.01).
 
 Validated independently: the validator re-derives the day's units from its own re-derived records (automated units from the
 `auto_verify` records, witness units from the reviews, coordination units from the roster), the requested and charged amounts
@@ -362,7 +362,7 @@ Validated independently: the validator re-derives the day's units from its own r
 metrics and growth observation. Not validated: the economic meaning of the rate.
 
 ## Collusive review (`attack='collude'`)
-A new attack beside `forge`, `duplicate`, `censor` and `freeride` (longitudinal engine only). The cohort and window are those of
+An attack beside `forge`, `duplicate`, `censor` and `freeride` (longitudinal engine only). The cohort and window are those of
 the existing attacks: the present members whose initial slot is below `ceil(n x attack_cohort_fraction)` are the attackers, inside
 `[attack_start_day, attack_stop_day)`, and each spends `attack_budget_hours_per_day` / (present attackers) of his day. Attackers
 submit forged records exactly as under `forge` (the observed work is inflated by the hours spent, and the audit alarm rings with
@@ -391,12 +391,12 @@ real bribe works this way. In particular there is NO laundering model: credit is
 or payments between members, so a bribe has no flow to launder and none is modelled; the cost of bribery to the attackers is only
 the time budget above, and the payment itself is not represented.
 
-## Configuration of the formal study (variant `full`, eight arms)
+## Configuration of the formal study (variant `full`, seven arms)
 Variant `full` turns on every base-level mechanism at once; the arm-level mechanisms are carried by the arms. Formal arm list:
-`control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord,dams-isa-coord-x50`.
-`dams-isa-central-coord` is `dams-isa-coord` on a central record; `dams-isa-coord-x50` has `cross_boundary_share` 0.5. All four isa
-`-coord` arms carry the `-full` features (project sandboxes with core and allocation attempts). All values are declared design assumptions
-unless stated.
+`control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord`.
+`dams-isa-central-coord` is `dams-isa-coord` on a central record. The arm `dams-isa-coord-x50` (`cross_boundary_share` 0.5) is
+not in the formal list; it is available for sensitivity studies. All isa `-coord` arms carry the `-full` features (project
+sandboxes with core and allocation attempts). All values are declared design assumptions unless stated.
 
 | parameter | value | where |
 |---|---|---|
@@ -414,7 +414,7 @@ unless stated.
 | approval rejection probability / latency / grant validity | 0.1 / 0 / 30 days | automation defaults |
 | project sandboxes: idle days, core attempt, allocation attempt | 30, 0.05, 0.05 | -coord isa arms |
 | self-modification: interval, shadow window, step | 30 days, 14 days, 0.02 | automation defaults |
-| management span; coordination units per layer; reporting hours per layer | 8; 0.02; 0.01 | study template |
+| management span; coordination units per layer; reporting hours per layer | 8; 0.02; 0.015 (multinational context; 0.005 to 0.015 across contexts) | study template, `CONTEXTS` |
 
 `control-hierarchy` and `dams-witness` have no automation block and are unaffected by the automation keys of the variant. They
 are charged through the base-level `processing_charge_rate` of the variant: `dams-witness` pays 0.01 per witness verification unit of its
@@ -432,7 +432,7 @@ Each differs from `full` in one setting; configuration only.
 | `full-classes-503515` | record class mix objective / inferential / disputed 0.50 / 0.35 / 0.15 (the class thresholds follow from the shares) |
 | `full-span4`, `full-span16` | span of control 4 / 16 instead of 8 in the enterprise-operations and task-structure sections (supervisory depth and the layer thresholds of the scope rule follow) |
 
-Three further arms for the sensitivity studies are copies of `dams-isa-coord` with one change each (configuration only):
+Three further arms for the sensitivity studies are copies of `dams-isa-coord` with one change each (configuration only), besides `dams-isa-coord-x50`:
 `dams-isa-coord-unscoped` has no scope rule (`scoped_authority` off, sandboxes and project sandboxes kept, so every member bears the reporting
 and coordination layers of the whole organization; `cross_boundary_share` 1 would still run the scoped code path and is not used for this);
 `dams-isa-coord-fault` adds the 14-day outage of sandbox `g0` 120 days after the boundary, as in `dams-isa-fault`;

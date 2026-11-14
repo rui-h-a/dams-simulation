@@ -6,6 +6,17 @@ The [complete latest enterprise snapshot](research-candidates/enterprise-current
 
 The current candidate adds complete-retention evidence admission, full-history two-firm counterfactuals, measured ACS joint-population diagnostics, a deterministic temporal allocation experiment and an observed-population data provider. The provider is not integrated into the enterprise engine. These changes add no formal worlds. The paired summaries of the ten-world, 10,000-member study reported in the thesis are kept, with their verifier and checksums, in the [`evidence/r11-10000-paired-results`](https://github.com/rui-h-a/dams-simulation/tree/2c921307a0aad405b515426c43c8ab156762fcd0/evidence/r11-10000-paired-results) bundle; the original event journals of those worlds are not retained, and no 50,000-member study is complete.
 
+The [automation and sandbox study](research-candidates/enterprise-current/source/docs/automation-study.md) (manual against automated governance work, hierarchy against contribution-based authority, with and without the sandbox graph and scoped authority) runs through the same enterprise command. A small run of its seven study arms, from the repository root (about four to five minutes on a loaded 12-core laptop, about 340 MB):
+
+```sh
+./run.sh --spec enterprise-r11 --scale 60 --context multinational --growth organic \
+         --pre-years 1 --post-years 1 --variant full --worlds 1000 \
+         --arms control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord \
+         --jobs 3 --output runs/automation-quick
+```
+
+The guide lists the requirements, the formal design, the parameters and how to change them, validation, tests and the limits of the model.
+
 The root commands and historical results below keep their original implementation. The enterprise command also runs from the repository root: `./run.sh --spec enterprise-r11 ...` is forwarded to the launcher in `research-candidates/enterprise-current/source/`, whose README lists the options. The two implementations retain separate source histories and are not silently substituted for one another. No historical result is relabelled under a new model.
 
 
