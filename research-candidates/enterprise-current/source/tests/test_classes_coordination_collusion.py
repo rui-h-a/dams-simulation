@@ -130,6 +130,35 @@ class CoordinationAndVariantTest(unittest.TestCase):
         with self.assertRaises(ValueError):Config.from_dict({**Config().to_dict(), 'attack': 'collude'})     # longitudinal engine only
 
 
+class FormalStudyConfigurationTest(unittest.TestCase):
+    ARMS = ('control-hierarchy', 'dams-witness', 'hierarchy-auto-coord', 'dams-auto-coord', 'hierarchy-isa-coord', 'dams-isa-central-coord',
+            'dams-isa-coord', 'dams-isa-coord-x50')
+
+    def test_eight_formal_arms_under_variant_full_at_scale_300(self):
+        d, branch = r11_design.base_config(scale=300, context='multinational', growth='organic', world=1000, seed=20261017, pre_years=2, post_years=1, variant='full')
+        c0 = Config.from_dict(d)
+        self.assertEqual((c0.administrative_fatigue, c0.administrative_fatigue_reference, c0.decision_effect.gamma), (True, .14, .05))
+        self.assertNotIn('automation', d)
+        cfg = {a: Config.from_dict(r11_design.arm_config(d, branch, a, 'full')) for a in self.ARMS}
+        for a in ('control-hierarchy', 'dams-witness'):self.assertIsNone(cfg[a].automation, a)
+        self.assertEqual((cfg['control-hierarchy'].regime, cfg['control-hierarchy'].backend), ('hierarchy', 'central'))
+        self.assertEqual((cfg['dams-witness'].regime, cfg['dams-witness'].backend), ('sublinear', 'witness'))
+        expect = {'hierarchy-auto-coord': ('hierarchy', 'central', False, False), 'dams-auto-coord': ('sublinear', 'witness', False, False),
+                  'hierarchy-isa-coord': ('hierarchy', 'central', True, True), 'dams-isa-central-coord': ('sublinear', 'central', True, True),
+                  'dams-isa-coord': ('sublinear', 'witness', True, True), 'dams-isa-coord-x50': ('sublinear', 'witness', True, True)}
+        for a, (regime, backend, sandboxes, project) in expect.items():
+            c = cfg[a]; au = c.automation
+            self.assertEqual((c.regime, c.backend, au.sandboxes, au.project_sandboxes), (regime, backend, sandboxes, project), a)
+            self.assertEqual((au.coordination_automation, au.record_classes, au.charge_processing, au.resource_units_per_processing_unit), (.5, True, True, .01), a)
+            self.assertEqual(au.scoped_authority, sandboxes, a)
+            self.assertEqual(au.cross_boundary_share, .5 if a == 'dams-isa-coord-x50' else .25, a)
+            if project:self.assertEqual((au.core_attempt_probability, au.allocation_attempt_probability, au.self_modify), (.05, .05, True), a)
+            self.assertEqual(c.decision_effect, c0.decision_effect); self.assertEqual(c.attack, 'none')
+        self.assertEqual(cfg['dams-isa-central-coord'].automation, dataclasses.replace(cfg['dams-isa-coord'].automation))
+        self.assertEqual(dataclasses.replace(cfg['dams-isa-coord-x50'].automation, cross_boundary_share=.25), cfg['dams-isa-coord'].automation)
+        self.assertEqual(r11_study.ARMS.keys() >= set(self.ARMS), True)
+
+
 class PlainEngineCollusionTest(unittest.TestCase):
     """Without the organization-tasks model there is no named reviewer: a present member of the domain is drawn."""
     def setUp(self):

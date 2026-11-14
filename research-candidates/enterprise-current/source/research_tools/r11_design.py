@@ -177,6 +177,13 @@ ARMS = {
                                 automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5}),
     'dams-isa-coord': dict(adoption='fixed', regime='sublinear', backend='witness',
                            automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5}),
+    # The formal study's two further isa-coord arms: a central record (backend central) and half of reporting and
+    # coordination crossing the sandbox boundary (cross_boundary_share 0.5). All four isa -coord arms carry the -full features.
+    'dams-isa-central-coord': dict(adoption='fixed', regime='sublinear', backend='central',
+                                   automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5}),
+    'dams-isa-coord-x50': dict(adoption='fixed', regime='sublinear', backend='witness',
+                               automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True, 'coordination_automation': 0.5,
+                                           'cross_boundary_share': 0.5}),
     'hierarchy-isa-full': dict(adoption='fixed', regime='hierarchy', backend='central',
                                automation={'sandboxes': True, 'scoped_authority': True, 'project_sandboxes': True}),
 }
@@ -404,6 +411,10 @@ VARIANTS = {
     # Record classes on every automation block (and the charge at 0.01): the check run of the coordination arms.
     'accounted-work-decisions-classes': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
                                          'automation.record_classes': True},
+    # Configuration of the formal study: every base-level mechanism on (work accounting reference 0.14, decision effect with
+    # its defaults, record classes, processing charged to cash at 0.01). See docs/automation-arms.md for the parameter table.
+    'full': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
+             'automation.record_classes': True, 'automation.charge_processing': True, 'automation.resource_units_per_processing_unit': 0.01},
     'accounted-work-decisions-classes-charged': {'administrative_fatigue': True, 'administrative_fatigue_reference': 0.14, 'decision_effect': {},
                                                  'automation.record_classes': True, 'automation.charge_processing': True,
                                                  'automation.resource_units_per_processing_unit': 0.01},

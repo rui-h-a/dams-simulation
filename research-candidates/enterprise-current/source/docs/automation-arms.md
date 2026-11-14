@@ -335,3 +335,29 @@ collusion metrics and the forged credit are re-summed from the reviews, automate
 real bribe works this way. In particular there is NO laundering model: credit is non-transferable and the model has no assets
 or payments between members, so a bribe has no flow to launder and none is modelled; the cost of bribery to the attackers is only
 the time budget above, and the payment itself is not represented.
+
+## Configuration of the formal study (variant `full`, eight arms)
+Variant `full` turns on every base-level mechanism at once; the arm-level mechanisms are carried by the arms. Formal arm list:
+`control-hierarchy,dams-witness,hierarchy-auto-coord,dams-auto-coord,hierarchy-isa-coord,dams-isa-central-coord,dams-isa-coord,dams-isa-coord-x50`.
+`dams-isa-central-coord` is `dams-isa-coord` on a central record; `dams-isa-coord-x50` has `cross_boundary_share` 0.5. All four isa
+`-coord` arms carry the `-full` features (project sandboxes with core and allocation attempts). All values are declared design assumptions
+unless stated.
+
+| parameter | value | where |
+|---|---|---|
+| administrative_fatigue / reference | on / 0.14 workday | variant (shared history) |
+| decision_effect gamma / memory_workdays / reference_loss | 0.05 / 20 / 0.7978845608 | variant (shared history) |
+| record classes objective / inferential / disputed | 0.70 / 0.25 / 0.05 | variant, arms with automation |
+| inferential abstention / error / units multiplier | 0.20 / 0.10 / 2 | variant, arms with automation |
+| charge_processing / resource_units_per_processing_unit | on / 0.01 | variant, arms with automation |
+| exception_fraction; false accept, false reject, abstain (objective) | 0.1; 0.05, 0.05, 0.05 | automation defaults |
+| acceptance_rule | threshold (0.25) | automation default |
+| coordination_automation / units per member-day | 0.5 / 0.5 (-coord arms) | arm |
+| scoped authority: in_scope_layers / cross_boundary_share | 1 / 0.25 (0.5 in x50) | arm |
+| sandboxes: quota per member-day, borrow limit, split, merge | 1.35, 0.5, 400, 4 | automation defaults |
+| approval rejection probability / latency / grant validity | 0.1 / 0 / 30 days | automation defaults |
+| project sandboxes: idle days, core attempt, allocation attempt | 30, 0.05, 0.05 | -coord isa arms |
+| self-modification: interval, shadow window, step | 30 days, 14 days, 0.02 | automation defaults |
+| management span; coordination units per layer; reporting hours per layer | 8; 0.02; 0.01 | study template |
+
+`control-hierarchy` and `dams-witness` have no automation block and are unaffected by the automation keys of the variant.
