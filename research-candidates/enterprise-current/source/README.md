@@ -138,8 +138,10 @@ after adoption, variant `full`, one world per machine (worlds 1000 to 1006, seed
          --jobs 7 --output /path/on/a/large/volume/world-1000
 ```
 
-One world needed about 28 hours on 8 vCPUs (4 physical cores) and about 300 GB of disk with the seven arms in parallel; this is one
-measurement on one machine type.
+Resource needs of one world at this size have not yet been measured end to end. The driver verifies every yearly checkpoint by
+replaying the whole journal, so wall time is well above the simulation time alone, and the working databases of seven arms
+(about 3 GB each after the first year after the boundary, growing by about 1 GB a year) need more than 16 GB of memory to stay
+in the page cache. See `docs/automation-study.md`, section 4.
 
 ## Computing resources
 

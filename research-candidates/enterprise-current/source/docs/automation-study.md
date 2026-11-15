@@ -47,7 +47,8 @@ quantities introduced by the automation and sandbox model are declared design as
   arm is a single-threaded process.
 - Small run (section 3): about 340 MB of disk and about 80 MB of memory per process (60 members, seven arms, one year of
   shared history and one year after the boundary); the measured wall time is given in section 3.
-- Formal design (section 4): about 28 hours and about 300 GB of disk for one world; see there for the conditions.
+- Formal design (section 4): not yet measured end to end; plan for more than a day per world, 32 GB of memory and several
+  hundred GB of disk. See there for what has been measured.
 
 Check the toolchain without running anything:
 
@@ -139,9 +140,14 @@ combined with:
 .venv/bin/python research_tools/r11_pool.py world-1000/inference.json world-1001/inference.json ... > pooled.json
 ```
 
-Measured resource needs of one world, seven arms in parallel (`--jobs 7`): about 28 hours on a machine with 8 vCPUs
-(4 physical cores), about 300 GB of disk for the original journals and the yearly checkpoints, and a peak memory of a few
-hundred MB per process. These are measurements on one machine type and will differ on other hardware, disks and loads;
+Resource needs of one world, seven arms in parallel (`--jobs 7`), have not yet been measured end to end. Measured so far on
+a machine with 8 vCPUs (4 physical cores): the shared history takes about 2.9 hours; the first year after the boundary takes
+about 3.7 hours of simulation per arm; each working database is about 3 GB at that point and grows by about 1 GB per simulated
+year, so seven arms need 32 GB of memory or more to keep their databases in the page cache, and on 16 GB the run is limited
+by disk operations. Wall time is dominated by verification and not by simulation: the driver replays the whole journal with
+the organization validator after every yearly checkpoint and twice on a restart, and once more in the final validation, about
+9,100 simulated days of replay per arm for a 2+5-year run against 1,826 simulated days after the boundary. Peak memory is a
+few hundred MB per process. These figures come from one machine type and will differ on other hardware, disks and loads;
 worker count changes wall time and simultaneous disk demand, not the declared design. The plan binds the arguments
 (including `--jobs`), the interpreter and the hashes of the model, design, execution and validation files; a resume with
 anything different is refused. An interrupted run is therefore restarted with the same command and output directory
