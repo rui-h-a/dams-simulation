@@ -1,0 +1,89 @@
+name: Four-year aggregate verification
+
+'on':
+  push:
+    branches: [research/isa-four-year-platform]
+    paths: [.github/workflows/isa-four-year-platform.yml]
+
+permissions: {}
+
+jobs:
+  verify:
+    name: Verify on ${{ matrix.system }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: Linux
+          - runner: windows-2022
+            system: Windows
+          - runner: macos-15
+            system: Darwin
+
+    steps:
+      - name: Verify pinned public inputs and recompute the aggregates
+        shell: python
+        env:
+          EXPECTED_SYSTEM: ${{ matrix.system }}
+        run: |
+          from hashlib import sha256
+          import json
+          import os
+          from pathlib import Path
+          import platform
+          import subprocess
+          import sys
+          from tempfile import TemporaryDirectory
+          from urllib.request import urlopen
+
+          revision = "9a5038a199d3b8515406c2613bf548e1b194e175"
+          base = f"https://raw.githubusercontent.com/rui-h-a/dams-simulation/{revision}/evidence/isa-four-year/"
+          manifest_hash = "510e09e819ec2c9bdc86305c54aad5df762581923f349a7ece544ad40c405a85"
+          files = {
+              "README.md", "arm-outcomes.json", "expected-mechanisms.json",
+              "expected-statistics.json", "isa_spec.py", "mechanism-counts.json",
+              "stats.py", "verify.py",
+          }
+          system = platform.system()
+          if system != os.environ["EXPECTED_SYSTEM"] or sys.version_info < (3, 11):
+              raise RuntimeError(f"Unexpected platform: {system}, Python {platform.python_version()}")
+
+          def fetch(name, expected):
+              with urlopen(base + name, timeout=30) as source:
+                  raw = source.read(800_001)
+              if len(raw) > 800_000 or sha256(raw).hexdigest() != expected:
+                  raise RuntimeError(f"Public artifact differs: {name}")
+              return raw
+
+          manifest = fetch("SHA256SUMS.json", manifest_hash)
+          hashes = json.loads(manifest)
+          if hashes.keys() != files:
+              raise RuntimeError("The manifest contains a different file roster")
+
+          with TemporaryDirectory(prefix="dams-isa-four-year-") as directory:
+              bundle = Path(directory)
+              (bundle / "SHA256SUMS.json").write_bytes(manifest)
+              for name, digest in sorted(hashes.items()):
+                  (bundle / name).write_bytes(fetch(name, digest))
+
+              offline = os.environ.copy()
+              for variable in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY"):
+                  value = "" if variable == "NO_PROXY" else "http://127.0.0.1:1"
+                  offline[variable] = offline[variable.lower()] = value
+              checked = subprocess.check_output(
+                  [sys.executable, "-I", "-S", "-B", "verify.py"],
+                  cwd=bundle, env=offline, text=True, timeout=90,
+              )
+          result = json.loads(checked)
+          if tuple(result[k] for k in (
+              "four_years", "worlds", "arms", "paired_outcome_estimates", "primary_holm_tests"
+          )) != (4, 4, 7, 513, 4):
+              raise RuntimeError("Unexpected scope or check counts")
+          print("PLATFORM_EVIDENCE " + json.dumps({
+              "revision": revision, "manifest_sha256": manifest_hash,
+              "system": system, "architecture": platform.machine(),
+              "python": platform.python_version(), "result": result,
+          }, sort_keys=True), flush=True)
