@@ -22,6 +22,16 @@ def _source():
     if file_digest(Path(__file__))!=IMPORT_SHA:raise ValueError("organization verifier source changed after import")
 
 
+def daily_administrative_hours(hours_by_person):
+    """One day's administrative hours, summed exactly as the model sums them."""
+    return math.fsum(hours_by_person.values())
+
+
+def daily_planned_hours(hours,funding):
+    """One day's planned network, quality or learning hours, summed exactly and scaled once as the model does."""
+    return math.fsum(hours)*funding
+
+
 def _close(a,b,label):
     if not isinstance(a,(int,float)) or isinstance(a,bool) or not math.isfinite(a) or not math.isclose(a,b,rel_tol=1e-11,abs_tol=1e-9):raise ValueError('organization raw mismatch: '+label)
 
@@ -235,7 +245,7 @@ def verify_organization_accounts(config,state,database):
             present_set=set(present)  # membership only; iteration keeps the sorted list order
             if set(plan['allocations'])!={str(i) for i in present}:raise ValueError('organization allocation roster differs')
             funding=plan['funding_fraction'];_close(funding,min(1.,max(0.,funding)),'funding')
-            remaining={};net=quality=learning=0.;layers_borne={}
+            remaining={};network_hours=[];quality_hours=[];learning_hours=[];layers_borne={}
             for i in present:
                 key=str(i);a=plan['allocations'][key];peers=[j for j in links['collaboration_peers'][key] if j in present_set]
                 depth=links['reporting_depth'][key]
@@ -266,10 +276,13 @@ def verify_organization_accounts(config,state,database):
                 residual=available-fixed;weights=c.department_objectives[department(i)]
                 for field,w in zip(('production_cap_hours','quality_hours','learning_hours'),weights):
                     _close(a[field],residual*w,field)
-                net+=fixed*funding;quality+=a['quality_hours']*funding;learning+=a['learning_hours']*funding
+                network_hours.append(a['network_hours']);quality_hours.append(a['quality_hours']);learning_hours.append(a['learning_hours'])
                 served=max(0.,network-reporting_time*c.reporting_hours_per_layer-len(peers)*c.collaboration_hours_per_contact)*funding
                 remaining[key]=int((served+1e-12)/c.verification_hours_per_claim)
-            metrics['organization_network_hours']+=net;metrics['organization_quality_hours']+=quality;metrics['organization_learning_hours']+=learning
+            # the model adds each day's planned hours as one exactly rounded sum times the funding fraction (math.fsum); adding
+            # person by person differs by up to about 1e-13 relative per day at 10,000 members and accumulates toward the tolerance
+            for key_,values_ in (('organization_network_hours',network_hours),('organization_quality_hours',quality_hours),('organization_learning_hours',learning_hours)):
+                metrics[key_]+=daily_planned_hours(values_,funding)
             work=[p for k,e,p in events if k=='work']
             dmorning=dict(dstate)   # decision-quality debt held in the morning (before today's decisions move it)
             project_pairs=None
@@ -409,8 +422,11 @@ def verify_organization_accounts(config,state,database):
                     if not getattr(config,'administrative_fatigue',False):raise ValueError('administrative work recorded without the declared accounting')
                     for person,hours in payload_['hours_by_person'].items():
                         if not isinstance(hours,(int,float)) or isinstance(hours,bool) or not 0<=hours<=1:raise ValueError('administrative work hours invalid')
-                        fatigue[int(person)]=max(0.,min(1.,fatigue[int(person)]+.25*(hours-config.administrative_fatigue_reference)));metrics['administrative_work_hours']+=hours
+                        fatigue[int(person)]=max(0.,min(1.,fatigue[int(person)]+.25*(hours-config.administrative_fatigue_reference)))
                     if sorted(int(k) for k in payload_['hours_by_person'])!=sorted(plan['present_people']):raise ValueError('administrative work roster differs from the present roster')
+                    # the model adds each day's hours as one exactly rounded sum; adding person by person drifts by
+                    # about 1e-11 relative over ten million terms and then exceeds the comparison tolerance
+                    metrics['administrative_work_hours']+=daily_administrative_hours(payload_['hours_by_person'])
             guild_size=collections.Counter(guilds[i] for i in active);guild_effort=collections.defaultdict(list)
             for p in work:
                 if p['person'] in active:guild_effort[guilds[p['person']]].append(p['effort'])
