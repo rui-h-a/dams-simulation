@@ -26,3 +26,10 @@ Git. Full world states, all trace CSVs and reports are in the hashed release raw
 archive. Private layout-validation links were excluded without following them.
 These outputs are synthetic research data and measured local hardware evidence;
 there are no customer datasets, private keys or restricted literature fulltexts.
+
+## Four-year automation and sandbox comparison
+
+The [four-year bundle](isa-four-year/) recomputes paired statistics and Holm
+adjustments from the published aggregate outcomes for four simulated firms.
+From the repository root, run `python3 evidence/isa-four-year/verify.py`.
+This check runs offline and starts from checkpoint-derived aggregates.
