@@ -22,6 +22,11 @@ def _source():
     if file_digest(Path(__file__))!=IMPORT_SHA:raise ValueError("organization verifier source changed after import")
 
 
+def daily_administrative_hours(hours_by_person):
+    """One day's administrative hours, summed exactly as the model sums them."""
+    return math.fsum(hours_by_person.values())
+
+
 def _close(a,b,label):
     if not isinstance(a,(int,float)) or isinstance(a,bool) or not math.isfinite(a) or not math.isclose(a,b,rel_tol=1e-11,abs_tol=1e-9):raise ValueError('organization raw mismatch: '+label)
 
@@ -409,8 +414,11 @@ def verify_organization_accounts(config,state,database):
                     if not getattr(config,'administrative_fatigue',False):raise ValueError('administrative work recorded without the declared accounting')
                     for person,hours in payload_['hours_by_person'].items():
                         if not isinstance(hours,(int,float)) or isinstance(hours,bool) or not 0<=hours<=1:raise ValueError('administrative work hours invalid')
-                        fatigue[int(person)]=max(0.,min(1.,fatigue[int(person)]+.25*(hours-config.administrative_fatigue_reference)));metrics['administrative_work_hours']+=hours
+                        fatigue[int(person)]=max(0.,min(1.,fatigue[int(person)]+.25*(hours-config.administrative_fatigue_reference)))
                     if sorted(int(k) for k in payload_['hours_by_person'])!=sorted(plan['present_people']):raise ValueError('administrative work roster differs from the present roster')
+                    # the model adds each day's hours as one exactly rounded sum; adding person by person drifts by
+                    # about 1e-11 relative over ten million terms and then exceeds the comparison tolerance
+                    metrics['administrative_work_hours']+=daily_administrative_hours(payload_['hours_by_person'])
             guild_size=collections.Counter(guilds[i] for i in active);guild_effort=collections.defaultdict(list)
             for p in work:
                 if p['person'] in active:guild_effort[guilds[p['person']]].append(p['effort'])
