@@ -1,0 +1,276 @@
+{
+  "end_day_exclusive": 2191,
+  "first_day": 731,
+  "routing_percent": {
+    "abstain_inferential": 20,
+    "abstain_objective": 5,
+    "audit_fixed": 10,
+    "audit_minimum": 2,
+    "class_disputed": 5,
+    "class_inferential": 25,
+    "class_objective": 70
+  },
+  "schema": "isa-four-year-mechanism-counts-v1",
+  "worlds": {
+    "1000": {
+      "first_review": {
+        "control-hierarchy": {
+          "automated_rejected": 0,
+          "filed": 8805944,
+          "human_rejected": 3017655
+        },
+        "dams-auto-coord": {
+          "automated_rejected": 2558172,
+          "filed": 8880551,
+          "human_rejected": 1317235
+        },
+        "dams-isa-central-coord": {
+          "automated_rejected": 2280259,
+          "filed": 8925611,
+          "human_rejected": 1062663
+        },
+        "dams-isa-coord": {
+          "automated_rejected": 2276349,
+          "filed": 8923177,
+          "human_rejected": 1058325
+        },
+        "dams-witness": {
+          "automated_rejected": 0,
+          "filed": 8804507,
+          "human_rejected": 2721384
+        },
+        "hierarchy-auto-coord": {
+          "automated_rejected": 2568189,
+          "filed": 8883724,
+          "human_rejected": 1324700
+        },
+        "hierarchy-isa-coord": {
+          "automated_rejected": 2283899,
+          "filed": 8928151,
+          "human_rejected": 1061992
+        }
+      },
+      "sandboxes": {
+        "dams-isa-central-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 21,
+          "projects_created": 801,
+          "split_retirements": 0
+        },
+        "dams-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 25,
+          "projects_created": 805,
+          "split_retirements": 0
+        },
+        "hierarchy-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 779,
+          "projects_closed": 19,
+          "projects_created": 798,
+          "split_retirements": 0
+        }
+      }
+    },
+    "1001": {
+      "first_review": {
+        "control-hierarchy": {
+          "automated_rejected": 0,
+          "filed": 8812911,
+          "human_rejected": 3011274
+        },
+        "dams-auto-coord": {
+          "automated_rejected": 2570002,
+          "filed": 8886160,
+          "human_rejected": 1326866
+        },
+        "dams-isa-central-coord": {
+          "automated_rejected": 2286182,
+          "filed": 8931386,
+          "human_rejected": 1072325
+        },
+        "dams-isa-coord": {
+          "automated_rejected": 2286603,
+          "filed": 8929027,
+          "human_rejected": 1070684
+        },
+        "dams-witness": {
+          "automated_rejected": 0,
+          "filed": 8812842,
+          "human_rejected": 2725291
+        },
+        "hierarchy-auto-coord": {
+          "automated_rejected": 2578056,
+          "filed": 8887542,
+          "human_rejected": 1333585
+        },
+        "hierarchy-isa-coord": {
+          "automated_rejected": 2291766,
+          "filed": 8931177,
+          "human_rejected": 1073974
+        }
+      },
+      "sandboxes": {
+        "dams-isa-central-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 35,
+          "projects_created": 815,
+          "split_retirements": 0
+        },
+        "dams-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 779,
+          "projects_closed": 34,
+          "projects_created": 813,
+          "split_retirements": 0
+        },
+        "hierarchy-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 39,
+          "projects_created": 819,
+          "split_retirements": 0
+        }
+      }
+    },
+    "1002": {
+      "first_review": {
+        "control-hierarchy": {
+          "automated_rejected": 0,
+          "filed": 8806176,
+          "human_rejected": 3015394
+        },
+        "dams-auto-coord": {
+          "automated_rejected": 2579736,
+          "filed": 8884840,
+          "human_rejected": 1333362
+        },
+        "dams-isa-central-coord": {
+          "automated_rejected": 2300522,
+          "filed": 8926064,
+          "human_rejected": 1076969
+        },
+        "dams-isa-coord": {
+          "automated_rejected": 2296496,
+          "filed": 8928038,
+          "human_rejected": 1076641
+        },
+        "dams-witness": {
+          "automated_rejected": 0,
+          "filed": 8804817,
+          "human_rejected": 2722543
+        },
+        "hierarchy-auto-coord": {
+          "automated_rejected": 2593687,
+          "filed": 8884397,
+          "human_rejected": 1341198
+        },
+        "hierarchy-isa-coord": {
+          "automated_rejected": 2304192,
+          "filed": 8928858,
+          "human_rejected": 1078525
+        }
+      },
+      "sandboxes": {
+        "dams-isa-central-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 9,
+          "projects_created": 789,
+          "split_retirements": 0
+        },
+        "dams-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 779,
+          "projects_closed": 25,
+          "projects_created": 804,
+          "split_retirements": 0
+        },
+        "hierarchy-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 23,
+          "projects_created": 803,
+          "split_retirements": 0
+        }
+      }
+    },
+    "1003": {
+      "first_review": {
+        "control-hierarchy": {
+          "automated_rejected": 0,
+          "filed": 8815526,
+          "human_rejected": 2966888
+        },
+        "dams-auto-coord": {
+          "automated_rejected": 2539797,
+          "filed": 8886231,
+          "human_rejected": 1302842
+        },
+        "dams-isa-central-coord": {
+          "automated_rejected": 2258234,
+          "filed": 8927151,
+          "human_rejected": 1055747
+        },
+        "dams-isa-coord": {
+          "automated_rejected": 2256099,
+          "filed": 8926055,
+          "human_rejected": 1052291
+        },
+        "dams-witness": {
+          "automated_rejected": 0,
+          "filed": 8812663,
+          "human_rejected": 2674828
+        },
+        "hierarchy-auto-coord": {
+          "automated_rejected": 2540278,
+          "filed": 8882711,
+          "human_rejected": 1306715
+        },
+        "hierarchy-isa-coord": {
+          "automated_rejected": 2251353,
+          "filed": 8927993,
+          "human_rejected": 1053964
+        }
+      },
+      "sandboxes": {
+        "dams-isa-central-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 27,
+          "projects_created": 807,
+          "split_retirements": 0
+        },
+        "dams-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 779,
+          "projects_closed": 41,
+          "projects_created": 820,
+          "split_retirements": 0
+        },
+        "hierarchy-isa-coord": {
+          "guild_sandboxes": 40,
+          "merge_retirements": 0,
+          "projects_active": 780,
+          "projects_closed": 27,
+          "projects_created": 807,
+          "split_retirements": 0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "automatic_claim_review_percent": {
+    "dams-auto-coord": "77.9",
+    "dams-isa-coord": "83.4"
+  },
+  "expected_automatic_first_review_percent": {
+    "audit_fixed": "77.85",
+    "audit_minimum": "84.77"
+  },
+  "mean_honest_rejections_per_100_period_filings": {
+    "control-hierarchy": "34.1",
+    "dams-auto-coord": "43.7",
+    "dams-isa-central-coord": "37.5",
+    "dams-isa-coord": "37.5",
+    "dams-witness": "30.8",
+    "hierarchy-auto-coord": "43.9",
+    "hierarchy-isa-coord": "37.5"
+  },
+  "operating_result_steps": {
+    "S1": {
+      "estimate": "236.86",
+      "first_arm": "dams-isa-coord",
+      "paired_ci95": [
+        "231.42",
+        "242.29"
+      ],
+      "second_arm": "dams-auto-coord"
+    },
+    "S3": {
+      "estimate": "-5.11",
+      "first_arm": "dams-isa-coord",
+      "paired_ci95": [
+        "-8.40",
+        "-1.82"
+      ],
+      "second_arm": "hierarchy-isa-coord"
+    },
+    "S4": {
+      "estimate": "240.84",
+      "first_arm": "hierarchy-isa-coord",
+      "paired_ci95": [
+        "235.89",
+        "245.79"
+      ],
+      "second_arm": "hierarchy-auto-coord"
+    },
+    "S5": {
+      "estimate": "320.80",
+      "first_arm": "dams-auto-coord",
+      "paired_ci95": [
+        "315.00",
+        "326.60"
+      ],
+      "second_arm": "dams-witness"
+    },
+    "S7": {
+      "estimate": "316.90",
+      "first_arm": "hierarchy-auto-coord",
+      "paired_ci95": [
+        "307.30",
+        "326.51"
+      ],
+      "second_arm": "control-hierarchy"
+    }
+  },
+  "witnessed_custody_loss_offset": {
+    "estimate": "4.39",
+    "paired_ci95": [
+      "2.29",
+      "6.49"
+    ],
+    "unit": "resource units per member-year"
+  },
+  "witnessed_project_count_ranges": {
+    "projects_active": [
+      779,
+      780
+    ],
+    "projects_closed": [
+      25,
+      41
+    ],
+    "projects_created": [
+      804,
+      820
+    ]
+  },
+  "witnessed_review_percent": {
+    "automated_decisions": "83.4",
+    "human_reviews": "16.5"
+  },
+  "witnessed_review_totals": {
+    "automated_decisions": 29776561,
+    "claims": 35706297,
+    "human_reviews": 5893063
+  }
+}
